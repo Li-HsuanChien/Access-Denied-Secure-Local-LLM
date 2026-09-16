@@ -1,0 +1,128 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://securelocaldocqa.local/schemas/validation_result/1.0.0",
+  "title": "ValidationResult",
+  "description": "The outcome of validating one candidate file, before any indexing. Produced by validate(). SDD 6.1 requires the review screen to list accepted files, rejected files, warnings, page counts, and rejection reasons; this object carries all of that for one file.",
+  "type": "object",
+  "required": [
+    "schema_version", "validated_at", "validator_version", "extractor",
+    "source_path", "source_filename", "byte_size", "checksum_sha256",
+    "outcome", "reject_reason", "reject_detail", "checks", "warnings",
+    "document", "policy"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "validated_at": { "type": "string", "format": "date-time" },
+    "validator_version": { "type": "string" },
+    "extractor": { "type": "string" },
+    "source_path": { "type": "string" },
+    "source_filename": { "type": "string" },
+    "byte_size": { "type": "integer", "minimum": 0 },
+    "checksum_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "outcome": {
+      "type": "string",
+      "enum": ["accepted", "accepted_with_warnings", "rejected"]
+    },
+    "reject_reason": {
+      "type": ["string", "null"],
+      "enum": ["password_protected", "corrupt", "scanned_only", "oversized", "non_pdf", null],
+      "description": "The SDD 6.1 rejection vocabulary. Extending it requires an SDD change, since E4 renders one message per reason."
+    },
+    "reject_detail": {
+      "type": ["string", "null"],
+      "description": "Plain language, user-facing, naming the file's actual problem. SDD 9 requires errors to use plain language and carry an actionable next step."
+    },
+    "checks": {
+      "type": "array", "minItems": 1,
+      "description": "Every check run, in order, including passes. Recording observed and expected on a pass is what lets a regression diff show what moved rather than only that something broke.",
+      "items": { "$ref": "#/$defs/check" }
+    },
+    "warnings": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "pages": { "type": "array", "items": { "type": "integer" } }
+        }
+      }
+    },
+    "document": {
+      "oneOf": [
+        { "type": "null" },
+        { "$ref": "https://securelocaldocqa.local/schemas/document/1.0.0" }
+      ],
+      "description": "Present when the outcome is not 'rejected'; null otherwise."
+    },
+    "policy": {
+      "$ref": "#/$defs/policy",
+      "description": "The policy in force for this validation, recorded so a result can be reproduced and so a changed rule is visible in the diff."
+    }
+  },
+  "$defs": {
+    "check": {
+      "type": "object",
+      "required": ["check_id", "status", "message", "observed", "expected", "reject_reason"],
+      "additionalProperties": false,
+      "properties": {
+        "check_id": {
+          "type": "string",
+          "enum": [
+            "file_nonempty",
+            "magic_bytes",
+            "parser_opens",
+            "no_open_password",
+            "within_size_limits",
+            "extraction_permitted",
+            "structural_integrity",
+            "text_yield"
+          ]
+        },
+        "status": { "type": "string", "enum": ["pass", "warn", "fail", "skipped"] },
+        "message": { "type": "string" },
+        "observed": {},
+        "expected": {},
+        "reject_reason": {
+          "type": ["string", "null"],
+          "enum": ["password_protected", "corrupt", "scanned_only", "oversized", "non_pdf", null]
+        }
+      }
+    },
+    "policy": {
+      "type": "object",
+      "required": [
+        "repaired_document", "extraction_restricted",
+        "min_pages_with_text_ratio_reject", "min_pages_with_text_ratio_warn",
+        "min_chars_per_page_when_repaired", "max_pages", "max_bytes"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "repaired_document": {
+          "type": "string", "enum": ["accept_with_warning", "reject"],
+          "description": "Decision 1. What to do with a PDF the parser rebuilt but read completely."
+        },
+        "extraction_restricted": {
+          "type": "string", "enum": ["reject", "accept_with_warning", "ignore"],
+          "description": "Decision 2. Whether to honor a document's stated no-extraction restriction or the parser's ability to ignore it."
+        },
+        "min_pages_with_text_ratio_reject": {
+          "type": "number", "minimum": 0, "maximum": 1,
+          "description": "Decision 3a. At or below this share of pages carrying text, the document is scanned-only and rejected."
+        },
+        "min_pages_with_text_ratio_warn": {
+          "type": "number", "minimum": 0, "maximum": 1,
+          "description": "Decision 3b. Below this share, the document is accepted with the empty pages named in the import report."
+        },
+        "min_chars_per_page_when_repaired": {
+          "type": "integer", "minimum": 0,
+          "description": "The truncation catcher. A repaired document below this density has lost most of its text even though its page count looks correct."
+        },
+        "max_pages": { "type": "integer", "minimum": 1, "description": "Decision 4a." },
+        "max_bytes": { "type": "integer", "minimum": 1, "description": "Decision 4b." }
+      }
+    }
+  }
+}
