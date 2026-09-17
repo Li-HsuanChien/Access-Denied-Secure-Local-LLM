@@ -1,0 +1,6 @@
+# Document store benchmark (E3: RAG and Document Store).
+# Pinned so results are reproducible and the same wheels can be mirrored to the air-gapped host.
+chromadb==1.5.9
+qdrant-client==1.19.1
+sentence-transformers==6.0.1
+psutil==7.2.2

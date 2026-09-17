@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+.venv/
+
+# Embedding model weights (populated by scripts/fetch_model.py)
+models/
+
+# Benchmark indexes and result files
+.bench_data/
