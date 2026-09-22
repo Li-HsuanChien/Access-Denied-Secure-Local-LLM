@@ -1,0 +1,139 @@
+{
+  "source_pdf": "fixtures/layout/layout_arxiv_two_column_2112.11583.pdf",
+  "total_chars": 43317,
+  "page_count": 13,
+  "chars_per_page_mean": 3332.1,
+  "note": "Offsets index into <stem>.text.txt. The .pages.txt copy inserts markers for reading and its offsets do not match.",
+  "pages": [
+    {
+      "page_number": 1,
+      "char_start": 0,
+      "char_end": 4556,
+      "chars": 4556,
+      "has_text": true,
+      "span_count": 1188,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 2,
+      "char_start": 4556,
+      "char_end": 9653,
+      "chars": 5097,
+      "has_text": true,
+      "span_count": 1284,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 3,
+      "char_start": 9653,
+      "char_end": 11385,
+      "chars": 1732,
+      "has_text": true,
+      "span_count": 472,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 4,
+      "char_start": 11385,
+      "char_end": 17137,
+      "chars": 5752,
+      "has_text": true,
+      "span_count": 1453,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 5,
+      "char_start": 17137,
+      "char_end": 18080,
+      "chars": 943,
+      "has_text": true,
+      "span_count": 247,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 6,
+      "char_start": 18080,
+      "char_end": 21950,
+      "chars": 3870,
+      "has_text": true,
+      "span_count": 968,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 7,
+      "char_start": 21950,
+      "char_end": 23642,
+      "chars": 1692,
+      "has_text": true,
+      "span_count": 406,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 8,
+      "char_start": 23642,
+      "char_end": 26478,
+      "chars": 2836,
+      "has_text": true,
+      "span_count": 754,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 9,
+      "char_start": 26478,
+      "char_end": 27706,
+      "chars": 1228,
+      "has_text": true,
+      "span_count": 291,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 10,
+      "char_start": 27706,
+      "char_end": 31201,
+      "chars": 3495,
+      "has_text": true,
+      "span_count": 976,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 11,
+      "char_start": 31201,
+      "char_end": 35343,
+      "chars": 4142,
+      "has_text": true,
+      "span_count": 1043,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 12,
+      "char_start": 35343,
+      "char_end": 40908,
+      "chars": 5565,
+      "has_text": true,
+      "span_count": 1364,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 13,
+      "char_start": 40908,
+      "char_end": 43317,
+      "chars": 2409,
+      "has_text": true,
+      "span_count": 686,
+      "width": 612.0,
+      "height": 792.0
+    }
+  ]
+}

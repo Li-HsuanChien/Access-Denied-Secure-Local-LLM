@@ -1,0 +1,969 @@
+{
+  "source_pdf": "fixtures/large/large_doe_nuclear_physics_v1.pdf",
+  "total_chars": 201287,
+  "page_count": 96,
+  "chars_per_page_mean": 2096.7,
+  "note": "Offsets index into <stem>.text.txt. The .pages.txt copy inserts markers for reading and its offsets do not match.",
+  "pages": [
+    {
+      "page_number": 1,
+      "char_start": 0,
+      "char_end": 4074,
+      "chars": 4074,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 2,
+      "char_start": 4074,
+      "char_end": 7557,
+      "chars": 3483,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 3,
+      "char_start": 7557,
+      "char_end": 11398,
+      "chars": 3841,
+      "has_text": true,
+      "span_count": 67,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 4,
+      "char_start": 11398,
+      "char_end": 13771,
+      "chars": 2373,
+      "has_text": true,
+      "span_count": 40,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 5,
+      "char_start": 13771,
+      "char_end": 17594,
+      "chars": 3823,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 6,
+      "char_start": 17594,
+      "char_end": 18819,
+      "chars": 1225,
+      "has_text": true,
+      "span_count": 15,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 7,
+      "char_start": 18819,
+      "char_end": 20864,
+      "chars": 2045,
+      "has_text": true,
+      "span_count": 36,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 8,
+      "char_start": 20864,
+      "char_end": 23304,
+      "chars": 2440,
+      "has_text": true,
+      "span_count": 57,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 9,
+      "char_start": 23304,
+      "char_end": 24973,
+      "chars": 1669,
+      "has_text": true,
+      "span_count": 37,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 10,
+      "char_start": 24973,
+      "char_end": 25564,
+      "chars": 591,
+      "has_text": true,
+      "span_count": 15,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 11,
+      "char_start": 25564,
+      "char_end": 29563,
+      "chars": 3999,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 12,
+      "char_start": 29563,
+      "char_end": 29658,
+      "chars": 95,
+      "has_text": true,
+      "span_count": 2,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 13,
+      "char_start": 29658,
+      "char_end": 33143,
+      "chars": 3485,
+      "has_text": true,
+      "span_count": 48,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 14,
+      "char_start": 33143,
+      "char_end": 35034,
+      "chars": 1891,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 15,
+      "char_start": 35034,
+      "char_end": 36807,
+      "chars": 1773,
+      "has_text": true,
+      "span_count": 25,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 16,
+      "char_start": 36807,
+      "char_end": 38294,
+      "chars": 1487,
+      "has_text": true,
+      "span_count": 56,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 17,
+      "char_start": 38294,
+      "char_end": 41846,
+      "chars": 3552,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 18,
+      "char_start": 41846,
+      "char_end": 43893,
+      "chars": 2047,
+      "has_text": true,
+      "span_count": 35,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 19,
+      "char_start": 43893,
+      "char_end": 45628,
+      "chars": 1735,
+      "has_text": true,
+      "span_count": 26,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 20,
+      "char_start": 45628,
+      "char_end": 47696,
+      "chars": 2068,
+      "has_text": true,
+      "span_count": 37,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 21,
+      "char_start": 47696,
+      "char_end": 51307,
+      "chars": 3611,
+      "has_text": true,
+      "span_count": 51,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 22,
+      "char_start": 51307,
+      "char_end": 54437,
+      "chars": 3130,
+      "has_text": true,
+      "span_count": 68,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 23,
+      "char_start": 54437,
+      "char_end": 54702,
+      "chars": 265,
+      "has_text": true,
+      "span_count": 17,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 24,
+      "char_start": 54702,
+      "char_end": 58009,
+      "chars": 3307,
+      "has_text": true,
+      "span_count": 72,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 25,
+      "char_start": 58009,
+      "char_end": 58615,
+      "chars": 606,
+      "has_text": true,
+      "span_count": 14,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 26,
+      "char_start": 58615,
+      "char_end": 61079,
+      "chars": 2464,
+      "has_text": true,
+      "span_count": 48,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 27,
+      "char_start": 61079,
+      "char_end": 63156,
+      "chars": 2077,
+      "has_text": true,
+      "span_count": 48,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 28,
+      "char_start": 63156,
+      "char_end": 66931,
+      "chars": 3775,
+      "has_text": true,
+      "span_count": 91,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 29,
+      "char_start": 66931,
+      "char_end": 67844,
+      "chars": 913,
+      "has_text": true,
+      "span_count": 26,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 30,
+      "char_start": 67844,
+      "char_end": 71427,
+      "chars": 3583,
+      "has_text": true,
+      "span_count": 63,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 31,
+      "char_start": 71427,
+      "char_end": 72042,
+      "chars": 615,
+      "has_text": true,
+      "span_count": 14,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 32,
+      "char_start": 72042,
+      "char_end": 75626,
+      "chars": 3584,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 33,
+      "char_start": 75626,
+      "char_end": 76243,
+      "chars": 617,
+      "has_text": true,
+      "span_count": 9,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 34,
+      "char_start": 76243,
+      "char_end": 78426,
+      "chars": 2183,
+      "has_text": true,
+      "span_count": 68,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 35,
+      "char_start": 78426,
+      "char_end": 78553,
+      "chars": 127,
+      "has_text": true,
+      "span_count": 3,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 36,
+      "char_start": 78553,
+      "char_end": 80607,
+      "chars": 2054,
+      "has_text": true,
+      "span_count": 38,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 37,
+      "char_start": 80607,
+      "char_end": 82302,
+      "chars": 1695,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 38,
+      "char_start": 82302,
+      "char_end": 82420,
+      "chars": 118,
+      "has_text": true,
+      "span_count": 3,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 39,
+      "char_start": 82420,
+      "char_end": 83991,
+      "chars": 1571,
+      "has_text": true,
+      "span_count": 48,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 40,
+      "char_start": 83991,
+      "char_end": 86348,
+      "chars": 2357,
+      "has_text": true,
+      "span_count": 55,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 41,
+      "char_start": 86348,
+      "char_end": 88839,
+      "chars": 2491,
+      "has_text": true,
+      "span_count": 46,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 42,
+      "char_start": 88839,
+      "char_end": 91888,
+      "chars": 3049,
+      "has_text": true,
+      "span_count": 63,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 43,
+      "char_start": 91888,
+      "char_end": 92064,
+      "chars": 176,
+      "has_text": true,
+      "span_count": 23,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 44,
+      "char_start": 92064,
+      "char_end": 94476,
+      "chars": 2412,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 45,
+      "char_start": 94476,
+      "char_end": 94610,
+      "chars": 134,
+      "has_text": true,
+      "span_count": 7,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 46,
+      "char_start": 94610,
+      "char_end": 97218,
+      "chars": 2608,
+      "has_text": true,
+      "span_count": 58,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 47,
+      "char_start": 97218,
+      "char_end": 101068,
+      "chars": 3850,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 48,
+      "char_start": 101068,
+      "char_end": 102319,
+      "chars": 1251,
+      "has_text": true,
+      "span_count": 16,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 49,
+      "char_start": 102319,
+      "char_end": 105317,
+      "chars": 2998,
+      "has_text": true,
+      "span_count": 63,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 50,
+      "char_start": 105317,
+      "char_end": 106119,
+      "chars": 802,
+      "has_text": true,
+      "span_count": 10,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 51,
+      "char_start": 106119,
+      "char_end": 108933,
+      "chars": 2814,
+      "has_text": true,
+      "span_count": 36,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 52,
+      "char_start": 108933,
+      "char_end": 111451,
+      "chars": 2518,
+      "has_text": true,
+      "span_count": 54,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 53,
+      "char_start": 111451,
+      "char_end": 114808,
+      "chars": 3357,
+      "has_text": true,
+      "span_count": 63,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 54,
+      "char_start": 114808,
+      "char_end": 114895,
+      "chars": 87,
+      "has_text": true,
+      "span_count": 5,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 55,
+      "char_start": 114895,
+      "char_end": 116419,
+      "chars": 1524,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 56,
+      "char_start": 116419,
+      "char_end": 116756,
+      "chars": 337,
+      "has_text": true,
+      "span_count": 34,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 57,
+      "char_start": 116756,
+      "char_end": 120021,
+      "chars": 3265,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 58,
+      "char_start": 120021,
+      "char_end": 121403,
+      "chars": 1382,
+      "has_text": true,
+      "span_count": 23,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 59,
+      "char_start": 121403,
+      "char_end": 123306,
+      "chars": 1903,
+      "has_text": true,
+      "span_count": 36,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 60,
+      "char_start": 123306,
+      "char_end": 127506,
+      "chars": 4200,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 61,
+      "char_start": 127506,
+      "char_end": 131015,
+      "chars": 3509,
+      "has_text": true,
+      "span_count": 44,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 62,
+      "char_start": 131015,
+      "char_end": 132809,
+      "chars": 1794,
+      "has_text": true,
+      "span_count": 32,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 63,
+      "char_start": 132809,
+      "char_end": 136492,
+      "chars": 3683,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 64,
+      "char_start": 136492,
+      "char_end": 136853,
+      "chars": 361,
+      "has_text": true,
+      "span_count": 5,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 65,
+      "char_start": 136853,
+      "char_end": 137727,
+      "chars": 874,
+      "has_text": true,
+      "span_count": 15,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 66,
+      "char_start": 137727,
+      "char_end": 139417,
+      "chars": 1690,
+      "has_text": true,
+      "span_count": 31,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 67,
+      "char_start": 139417,
+      "char_end": 141276,
+      "chars": 1859,
+      "has_text": true,
+      "span_count": 34,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 68,
+      "char_start": 141276,
+      "char_end": 142634,
+      "chars": 1358,
+      "has_text": true,
+      "span_count": 28,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 69,
+      "char_start": 142634,
+      "char_end": 144546,
+      "chars": 1912,
+      "has_text": true,
+      "span_count": 45,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 70,
+      "char_start": 144546,
+      "char_end": 148129,
+      "chars": 3583,
+      "has_text": true,
+      "span_count": 81,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 71,
+      "char_start": 148129,
+      "char_end": 149392,
+      "chars": 1263,
+      "has_text": true,
+      "span_count": 23,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 72,
+      "char_start": 149392,
+      "char_end": 152681,
+      "chars": 3289,
+      "has_text": true,
+      "span_count": 63,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 73,
+      "char_start": 152681,
+      "char_end": 155737,
+      "chars": 3056,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 74,
+      "char_start": 155737,
+      "char_end": 155892,
+      "chars": 155,
+      "has_text": true,
+      "span_count": 3,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 75,
+      "char_start": 155892,
+      "char_end": 160000,
+      "chars": 4108,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 76,
+      "char_start": 160000,
+      "char_end": 160161,
+      "chars": 161,
+      "has_text": true,
+      "span_count": 5,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 77,
+      "char_start": 160161,
+      "char_end": 163969,
+      "chars": 3808,
+      "has_text": true,
+      "span_count": 66,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 78,
+      "char_start": 163969,
+      "char_end": 164146,
+      "chars": 177,
+      "has_text": true,
+      "span_count": 6,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 79,
+      "char_start": 164146,
+      "char_end": 165708,
+      "chars": 1562,
+      "has_text": true,
+      "span_count": 59,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 80,
+      "char_start": 165708,
+      "char_end": 169426,
+      "chars": 3718,
+      "has_text": true,
+      "span_count": 57,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 81,
+      "char_start": 169426,
+      "char_end": 171947,
+      "chars": 2521,
+      "has_text": true,
+      "span_count": 47,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 82,
+      "char_start": 171947,
+      "char_end": 174307,
+      "chars": 2360,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 83,
+      "char_start": 174307,
+      "char_end": 174812,
+      "chars": 505,
+      "has_text": true,
+      "span_count": 29,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 84,
+      "char_start": 174812,
+      "char_end": 177180,
+      "chars": 2368,
+      "has_text": true,
+      "span_count": 45,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 85,
+      "char_start": 177180,
+      "char_end": 179970,
+      "chars": 2790,
+      "has_text": true,
+      "span_count": 51,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 86,
+      "char_start": 179970,
+      "char_end": 182638,
+      "chars": 2668,
+      "has_text": true,
+      "span_count": 54,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 87,
+      "char_start": 182638,
+      "char_end": 184888,
+      "chars": 2250,
+      "has_text": true,
+      "span_count": 52,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 88,
+      "char_start": 184888,
+      "char_end": 187686,
+      "chars": 2798,
+      "has_text": true,
+      "span_count": 54,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 89,
+      "char_start": 187686,
+      "char_end": 191601,
+      "chars": 3915,
+      "has_text": true,
+      "span_count": 86,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 90,
+      "char_start": 191601,
+      "char_end": 192321,
+      "chars": 720,
+      "has_text": true,
+      "span_count": 20,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 91,
+      "char_start": 192321,
+      "char_end": 195507,
+      "chars": 3186,
+      "has_text": true,
+      "span_count": 62,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 92,
+      "char_start": 195507,
+      "char_end": 195910,
+      "chars": 403,
+      "has_text": true,
+      "span_count": 11,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 93,
+      "char_start": 195910,
+      "char_end": 199024,
+      "chars": 3114,
+      "has_text": true,
+      "span_count": 61,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 94,
+      "char_start": 199024,
+      "char_end": 199247,
+      "chars": 223,
+      "has_text": true,
+      "span_count": 13,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 95,
+      "char_start": 199247,
+      "char_end": 201215,
+      "chars": 1968,
+      "has_text": true,
+      "span_count": 31,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 96,
+      "char_start": 201215,
+      "char_end": 201287,
+      "chars": 72,
+      "has_text": true,
+      "span_count": 2,
+      "width": 612.0,
+      "height": 792.0
+    }
+  ]
+}

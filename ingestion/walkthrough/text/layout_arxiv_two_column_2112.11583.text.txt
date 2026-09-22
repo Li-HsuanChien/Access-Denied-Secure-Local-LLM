@@ -1,0 +1,1159 @@
+Nuclear History, Politics, and Futures from (A)toms-to(Z)oom:
+
+Design and Deployment of a Remote-Learning Special-Topics
+
+Course For Nuclear Engineering Education
+
+Aaron J. Berliner and Jake Hecla
+Department of Nuclear Engineering, University of California Berkeley, Berkeley, CA
+
+(Dated: December 28, 2021)
+
+To address the lack of familiarity with nuclear history common among nuclear engineers and
+physicists, we outline the design and deployment of a special-topics course entitled “NE290: Nu-
+clear History, Politics, and Futures” across which we contextualize the importance of the ﬁeld at
+its inception, in current aﬀairs, and in future endeavors. We argue that understanding this history
+is paramount in internalizing a sense of respect for the scientiﬁc, technical, and sociological ramiﬁ-
+cations of an unlocked atom – as well as their perils. We begin by outlining the gaps in secondary
+educational oﬀerings for nuclear history and their importance in consideration with nontechnical en-
+gineering guidelines. We then outline a number ABET speciﬁcations as pedagogical goals for NE290
+from which we derive a list of target student learning objectives. Next, we outline the NE290 syl-
+labus in terms of assignments and an overview of course content in the form of a class timeline. We
+provide an extensive description of the materials and teaching methodologies for the four units of
+NE290: 20th-Century Physics, Physics in WWII, the Early Cold War, and the Late Cold War and
+Modern Era. We detail the sequence of lectures across the course and historical timelines – leading
+up to a showcasing of NE290 ﬁnal projects which mirror in creativity the novelty of course oﬀering.
+Because NE290 was ﬁrst oﬀered during Spring 2021 during the COVID-19 pandemic, additional
+measures in the form of new tools were used to augment the mandate of remote learning. In partic-
+ular, we leveraged the newfound ubiquity of videoconferencing technology to recruit geographically
+diverse guest lecturers, and used the MIRO tool for virtual whiteboarding. Lastly, we provide an
+accounting of course outcomes drawn from student feedback which – in tandem with the complete
+distribution of course material – facilitates the integration of nuclear history into the curriculum for
+the wider nuclear engineering and physics communities.
+
+I.
+INTRODUCTION
+
+As of 2021, the Accreditation Board for Engineering
+and Technology (ABET) program criteria (C) for Nu-
+clear, Radiological, and Similarly Named Engineering
+programs require curriculum[1] in
+
+C1. mathematics, to support analyses of complex nu-
+
+clear or radiological problems;
+
+C2. atomic and nuclear physics;
+
+C3. transport and interaction of radiation with matter;
+
+C4. nuclear or radiological systems and processes;
+
+C5. nuclear fuel cycles;
+
+C6. nuclear radiation detection and measurement; and
+
+C7. nuclear or radiological system design
+
+While a mastery of the material presented in the sum-
+mary of the general criteria for Master’s level and inte-
+grated Baccalaureate and Master’s level engineering pro-
+grams would enable suﬃcient depth for engineering prac-
+tice, there is no requirement of any criterion that would
+aid in a student’s understanding of the history of nuclear
+energy and its interaction with society. For instance, the
+aforementioned ABET technical criteria would not aide
+in understanding
+
+H1. how Henri Poincare’s (1854-1912)’s mathematical
+
+discovery in 1905 was delayed in publication un-
+til a 1906 paper[2] in which he extended the work
+of Hendrik Lorentz (1853-1928) to show radiation
+could be considered “a ﬁctitious ﬂuid” with an
+equivalent mass of E = mc2, preempting Einstein’s
+(1879-1955) 1905 work[3] on special relativity.
+
+H2. how atomic and nuclear physics of the early 20th-
+
+century was shaped by the eﬀorts in quantum me-
+chanics enabled by Lorentz’s 1903 meeting of Paul
+Ehrenfest[4] (1880-1933) and their collaboration
+with Einstein[5].
+
+H3. how the transport and interaction of radiation with
+
+matter could be understood through the equations
+of Ehrenfest’s student Gregory Breit[6] (1899-1981)
+in collaboration with Eugene Wigner[7] (1902-
+1995).
+
+H4. how Wigner’s eﬀorts in the Manhattan project
+
+aided a fellow Ehrenfest pupil, Robert Oppen-
+heimer (1904-1967) to weaponize the ﬁrst nuclear
+system;
+
+H5. how Oppenheimer’s eﬀorts at Los Alamos were
+
+aided by those at the Met-Lab of another Ehren-
+fest student, Enrico Fermi (1901-1954) to lever-
+age nuclear fuel cycles in the production of ﬁssile
+materials[8, 9];
+
+arXiv:2112.11583v2  [physics.ed-ph]  26 Dec 2021
+
+2
+
+H6. how nuclear radiation detection and measurement
+
+of the β spectra was enabled through the 1939
+eﬀorts of Robert Oppenheimer’s brother, Frank
+Oppenheimer[10] (1912-1985).
+
+H7. how the methods of nuclear or radiological system
+
+design today are heavily inﬂuenced by the eﬀorts
+of Fermi in Chicago[11, 12] and many more math-
+ematicians, scientists, and engineers whose names
+should not be forgotten.
+
+While the “hows” described above (H) do not factor
+into the technical aspects (H) required for the engineer-
+ing challenges that await B.S. and M.S. graduates of
+ABET certiﬁed programs, the importance of understand-
+ing the historical context as described above enriches the
+ﬁeld[13, 14]. For aspiring students still in secondary ed-
+ucation, the framing of Nuclear Engineering in terms of
+an evolving story in shades of 6-degrees-of-separation of-
+fer an alternative pedagogical pathway to learning[15].
+In undergraduate and graduate STEM programs, such
+anecdotes are most often found in a slide-or-two as pref-
+ace for a technical discussion of engineering principles.
+For students at the undergraduate and graduate level,
+ABET has provided a Code of Ethics of Engineers replete
+with a number of fundamental principles and canons[16]
+to guide future engineer as they uphold and advance the
+integrity, honor and dignity of the engineering profes-
+sion. However, there can be no advance of engineering
+integrity, honor, and dignity without an appreciation of
+the history that shaped the transformation from ideas
+and imagination to realized engineering marvels.
+
+To address the lack of familiarity with nuclear history
+common among nuclear engineers and physicists, we de-
+signed a special-topics course entitled “NE290: Nuclear
+History, Politics, and Futures” across which we contex-
+tualize the importance of the ﬁeld at its inception, in
+current aﬀairs, and in future endeavors. We argue that
+understanding this history is paramount in internalizing
+a sense of respect for the fruits of an unlocked atom, as
+well as its perils.
+
+II.
+NE290 DESCRIPTION
+
+The NE290 course was designed to address and exceed
+the nontechnical ABET speciﬁcations for Student Out-
+comes (O), primarily:
+
+O1. an ability to recognize ethical and professional re-
+
+sponsibilities in engineering situations and make in-
+formed judgments, which must consider the impact
+of engineering solutions in global, economic, envi-
+ronmental, and societal contexts.
+
+O2. an ability to function eﬀectively on a team whose
+
+members together provide leadership, create a
+collaborative and inclusive environment, establish
+goals, plan tasks, and meet objectives.
+
+O3. an ability to acquire and apply new knowledge as
+
+needed, using appropriate learning strategies.
+
+These nontechnical outcomes correspond to many of the
+precepts that would be gained through the proposed for-
+mal historical education.
+
+NE290 spans over a century of nuclear history.
+We
+began with a unit on 20th-century developments in fun-
+damental physics and mathematics that evolved along-
+side the ﬁrst experimental evidence of atomic and nu-
+clear structure. Our next unit described the lead-up to
+and developments of the Manhattan project, as well as its
+foreign counterparts. We then explored the early atomic
+age with a look at how the growing tension with the
+Soviets led to an arms race that dominated foreign pol-
+icy for decades.
+This unit oﬀered additional focus on
+the era of nuclear-adjacent technologies such as strategic
+bombers, as well as the development of the nuclear sub-
+marine, the space race, and the hydrogen bomb. In along
+this timeline of key events, we explored the social and po-
+litical aspects of the ﬁeld through literature that speaks
+to the tolls of the nuclear complex, nuclear testing, and
+the growing disillusionment and terror inspired by nu-
+clear technology. We also explored the still-present shad-
+ows of nuclear winter and the evolution of post-Cold War
+nuclear arsenals. Throughout each of these units, we or-
+ganized the lectures and assignments in accordance with
+following set of learning outcomes (B) based on Bloom’s
+Taxonomy[17]
+
+B1 Analyze how the Manhattan project was inﬂu-
+
+enced by these discoveries.
+
+B2 Sequence the complex historical basis for nuclear
+
+armament.
+
+B3 Summarize the landmark players that shaped the
+
+nuclear engineering communities.
+
+B4 Summarize the persistent problems in nuclear
+
+policy and engineering from a historical perspec-
+tive.
+
+B5 Analyze how current persistent problems in nu-
+
+clear policy and engineering can be related to prob-
+lems solved through a historical perspective.
+
+B6 Synthesize solutions to current persistent prob-
+
+lems in nuclear policy and engineering from solu-
+tions to past problems.
+
+B7 Analyze impact of nuclear physics on international
+
+relations and world aﬀairs.
+
+These learning outcomes roughly correspond to the the
+breakdown of the NE290 timeline of nuclear history into
+units as shown in Figure 1. Throughout the semester,
+the class was graded based on the following:
+
+• Weekly Reading Responses 30%
+
+• Class Participation 20%
+
+• Term Paper 50%
+
+3
+
+FIG. 1. Graphical syllabus for NE290 course as broken down hierarchically in terms of units, weeks, and lectures. Units are
+colored. Guest lectures are indicated by a # marker. All lectures slides are provided as Supporting Information.
+
+III.
+ACTIVE READING ASSIGNMENTS
+
+Much of the process for becoming conversant in his-
+tory is active reading. We prepared a schedule with a
+wide array of readings spanning historical biographies to
+social science literature. Whenever possible, we also pro-
+vided media in terms of audiobooks, ﬁlms, and artwork
+to augment the learning process. Students were expected
+to provide a thoughtful weekly response of ∼1 page to
+the reading materials and class lectures. Each week, a
+random selection of students where be asked to share
+their responses with the class to foster a discussion, so
+students will need to be prepared to engage and discuss
+both the literature and their interpretation of it. Becom-
+ing conversant in history means developing a faculty for
+creatively processing the past in the present for a bet-
+ter future, and to aid in this, we prepared an interactive
+
+MIRO board across which we will all be posting mate-
+rials and adding comments and suggestions. When not
+asked for a response page, students were assigned with
+the task to add content to MIRO that they felt brings
+the history to life.
+
+IV.
+COURSE CONTENT
+
+A.
+20th-Century Physics
+
+NE290 began with a unit on the history of physics from
+antiquity through 20th-Century physics. Our lecture on
+nuclear prehistory (W1L2) focused on natural nuclear
+reactors[18–20], ﬁrst encounters with radiation-induced
+illness[21], and the initial industrial uses of Uranium[22].
+This lecture was intended to give broad background on
+
+4
+
+natural radioactivity and non-nuclear uses of nuclear ma-
+terial.
+
+We began our initial history lecture with a discussion
+of some of the ﬁrst observations of plasma eﬀects such as
+the 1675 “ghostly lights in barometers”[23] and the 1719
+developments in the “inﬂuence matchine” that could pro-
+duce signiﬁcant Mercury discharge and its relationship to
+“exceed the performance of cat fur and a glass rod[24].
+This later bit of humor set the tone for the course in terms
+of our use of humor and anecdotes while also playing a
+part of the basis for the 1880s development of cathode
+rays[25], 1985 discovery of x-rays by Rontgen[26], 1896
+discovery of radioactivity by Becquerel[27], 1897 discov-
+ery of the electron by Thomson[28], and the 1890s eﬀorts
+by Curie leading to the co-discovery of Radium[29]. Lec-
+tures by the primary teaching team were then augmented
+by guest lectures on the history of the cyclotron (W3L5)
+by Dr. Tim Koeth (University of Maryland, Figure 2)
+the “Radium Era” (W3L6, Figure 3) by Dr. Carl Willis
+(University of New Mexico) which combined early nu-
+clear history with technical elements of engineering.
+
+We then transitioned into the crux of the initial unit
+on 20th-Century physics with the learning outcomes or-
+ganized such that students would be able to:
+
+L1 Recall the major historical milestones in early
+
+20th-Century physics and describe the experiments
+that led to them.
+
+L2 Organize the events on a timeline.
+
+L3 Draw connections between the developments in
+
+atomic physics, relativity, and quantum mechanics
+and explain how their roots in nuclear physics.
+
+The beginning of this unit focused on setting the stage
+of physics (1890-1899) and understanding the “play in 3
+parts” (1900-1910) between quantum mechanics, atomic
+physics, and relativity (1910-1930) as shown in Figure
+4.
+Lectures dealing with the early history from 1900-
+1910 began with a discussion of the development of
+the mathematical landscape and key players that pro-
+vided the historical context for later revelations in nu-
+clear, atomic, quantum, and relativistic theories. Among
+these were Georg Cantors (1845-1918) standardization
+of mathematics through set theory[30], David Hilbert’s
+(1862-1943) distillation of what would later be christened
+“Hilbert Spaces” by John von Neumann (1903-1957)[31]
+and would prove critical in downstream developments in
+quantum mechanics[32], especially as it relates to Werner
+Heisenberg’s (1901-1976) matrix methods[33].
+
+With this requisite appreciation of the mathematical
+underpinnings taken care of, we introduced quantum me-
+chanics through the works of Max Karl Planck (1858-
+1947) and his interest in addressing a 1859 question
+from Kirchoﬀ, “how does the intensity of the electromag-
+netic radiation emitted by a black-body depend on the
+frequency of the radiation and the temperature of the
+body?” Using Planck as the primary ﬁgure allowed us
+to begin discussions of the ﬁrst primary reading in the
+
+form of Segre’s Faust in Copenhagen[34] (Figure 5) and
+the framing of the importance of historical ﬁgures at sci-
+entiﬁc gatherings such as the Solvey conferences (Figure
+6).
+Our goal in these early NE290 lectures was to tell the
+nuclear history through tales of the physicists who played
+a central role in its development. In order to augment
+this history, we used the tale of Goethe’s Faust[35] to por-
+tray the dual nature of nuclear technologies. The works
+by Goethe and Segre set the stage as literary basis and
+historical yarn respectively for our introduction of Max
+Delbr¨uck (1906-1981) 1932 The Blegdamsvej Faust – as
+translated by George Gamow (1904-1968)[36]. Reserving
+class-time for students to act out (over zoom) selected
+passages from the parody, we aimed to provide an im-
+mersive environment where 21st-centry nuclear engineer-
+ing students in California could don the mantle of 20th-
+century physicists on a make-shift Swedish stage who
+themselves were playing roles of 16th-century personas.
+We then built on this physics-as-theater concept to re-
+late previously introduced names from earlier lectures to
+the outstanding full cast of prominent 20th-century sci-
+entists.
+Here, the fable allowed us to trace the obses-
+sion of the neutron by Pauli and Bohr. Fittingly, The
+Blegdamsvej Faust ends with the neutron’s discovery by
+James Chadwick (1891-1974) cast as Wagner – herald-
+ing the transition from scientiﬁc discovery to wartime
+use, and we outlined this subtle point with a discussion
+of Lise Meitner’s (1878-1968) attendance of the perfor-
+mance, but lack of participation amongst the cast. The
+use of The Blegdamsvej Faust was developed throughout
+NE290 both as an emphasis of the complex bargains in-
+herent to nuclear physicists and as a lens for exploring
+nuclear history in literature.
+
+B.
+Physics of WWII
+
+Following the establishment of critical aspects of 20th-
+century physics, we continued NE290 with a unit that
+traced the foundations, establishment, and exploitation
+of nuclear energy across World War II (WWII). With
+similar learning outcomes (L1,2) to the previous unit, we
+aimed for students
+
+L3 Draw connections between the developments in
+
+20th-century physics and latter Manhattan project.
+
+Like we did with our 1927 introduction of cyclotron
+technologies[37], we began with Szilard’s 1933 conceiv-
+ing of the nuclear chain reduction as an insight garnered
+from reading H.G. Well’s The World Set Free[38] in a
+bathtub[39] (Figure 7). From here, our initial lecture out-
+lined the proceeding events that vindicated Szilard and
+his idea starting with the Ida Noddack’s (1896-1978) 1934
+proposal for ﬁssion and observation of Neptunium[40],
+Otto Hahn’s (1879-1968) 1938 observation[41], and Meit-
+ner’s 1938 synthesis[42] – culminating in Fermi’s 1938
+
+5
+
+FIG. 2. Cyclotron History Slides. Lecture W3L5.
+
+4
+
+FIG. 3. Radium Era Slides. Lecture W3L6.
+
+FIG. 4. A Play in Two parts. Lecture W2L3.
+
+Nobel Prize and his collaboration with Szilard in real-
+
+FIG. 5. Planck in Faust in Copenhagen. Lecture W2L3.
+
+FIG. 6. Important Players in 20th-Century Physics. Lecture
+W2L4.
+
+izing 2n neutron production[43]. Framing these achieve-
+ments in the context of a 1930s world on the brink of war,
+our initial lecture ended by recounting the 1939 story of
+Teller and Szilard lost in upstate New York – searching
+for Einstein and his signature on the letter to the U.S.
+President that would mark the start of the Manhattan
+Project.
+
+Throughout the remaining lectures in this unit (W4L8-
+W7L13), we primarily focused on guiding NE290 stu-
+dents through the timeline of events from 1939 to 1945 –
+outlined in large part by – and with our considerable ap-
+preciation to – the Atomic Heritage Foundation[44]. In
+
+6
+
+W4L8, we ﬁrst outlined the 1939-1941 investigations of
+nuclear weapons through the cross-talk between the U.S.
+Advisory Committee on Uranium, U.K. consideration of
+235U fast ﬁssion by Otto Frisch and Rudolf Peirls, and
+the interplay between the MAUD and Briggs Commit-
+tees. We then outlined the 1941-1942 Allies’ eﬀorts to
+organize with emphasis on the establishment of Oﬃce of
+Scientiﬁc Research (OSRD) and later formation of the
+S-1 and its scientiﬁc pillars (Figure 8). Splitting this lec-
+ture, we then provided a technical guide on ﬁssile 235U
+puriﬁcation – as outlined originally by the S-1 committee
+– via liquid thermal diﬀusion, gaseous thermal diﬀusion,
+electromagnetic separation using the Calutron.
+
+In W5L9, we continued our lessons on the early Man-
+hattan Project of 1942-1943 beginning with a portrait
+of the military overseer of the Manhattan Engineer Dis-
+trict (MED), General Leslie Richard Groves Jr., drawn
+from a number of historical accounts[45] (Figure 9). The
+character of Groves was juxtaposed in discussion when
+reintroducing MED scientiﬁc director J. Robert Oppen-
+heimer to the class – building on the characterization of
+Oppenheimer as a young idiosyncratic graduate student
+from the pages of Faust in Copenhagen. Given the grav-
+ity of their achievements, we dedicated the entirety of
+W10L19 to Oppenheimer and we made use of a variety
+of educational mediums beyond biographies[46, 47] such
+as graphic novels[39], plays[48], and even an opera[49] to
+ensure a unique and complete accounting beﬁtting Amer-
+ica’s ﬁrst scientiﬁc superstar[50]. In contrast to the his-
+torical and literary aspects, we also aimed to frame the
+story in conjunction with the technical physics for which
+we provided reading and discussion of the Los Alamos
+Primer[51].
+
+In lectures W6L12 (Developing the Bomb) and W7L13
+(Ending the War) we concluded the historical timelines
+for the unit. Our slides demonstrate our eﬀort in por-
+traying the complexity of outcomes from America’s ﬁrst
+use of the Atomic Bomb across a variety of factions that
+included the Japanese victims, the men and women of
+
+FIG. 7. Slide detailing Leo Szilard’s conceiving of a nuclear
+chain reaction following insight from H.G. Well’s The World
+Set Free Similar scientiﬁc insights from adjacent disciplines
+also shown. Lecture W4L7.
+
+FIG. 8. Slide detailing organizational leadership and struc-
+ture of early MED. Lecture W4L8.
+
+FIG. 9. Slide recounting the character of General Groves by
+Kenneth Nichols[45]. Lecture W5L9.
+
+MED, and the sociopolitical operatives across the mil-
+itary and government hierarchy. In W6L11, guest lec-
+turer Dr. Alex Wellerstein led the class in exploring the
+morality of ﬁrst-use, making use of a number of arti-
+cles that resolved misconceptions and “set the historical
+record straight”[52, 53].
+
+Although the focus of this unit was the U.S. led MED
+eﬀorts, we also endeavored to provide an accountancy for
+the nuclear wartime weapons programs mounted by Ger-
+many, Japan (Ni-Go), and the Soviet Union (Sovetskiy
+proyekt atomnoy bomby). The historical record of nuclear
+weapon development was written by scientists from all
+corners of the globe, and we endeavored to showcase this
+global eﬀort whenever possible (Figure 10). While signiﬁ-
+cant events in non-U.S. programs can be found integrated
+into the timeline presented in lectures, W5L10 guest lec-
+turer Dr. Miriam Hiebert provided an in-depth analysis
+of the Nazi Uranprojekt (“Uranium Project”) and the
+U.S.-led Alsos Mission tasked with scientiﬁc intelligence
+gathering (Figure 11). Here the NE290 class was reintro-
+duced to an older Heisenberg – who, like Oppenheimer,
+was scripted into The Blegdamsvej Faust. Following this
+lecture, the class was provided the audiobook of Michael
+Frayn’s play Copenhagen[54] (with voice acting by Bene-
+dict Cumberbatch) based on the 1941 meeting in Copen-
+
+7
+
+FIG. 10. Slide recounting earliest conceptualization of a ther-
+monuclear weapon in Japan. Lecture W4L8.
+
+hagen between the physicists Niels Bohr and Heisen-
+berg – and provides a literary window into the circum-
+stances for and ramiﬁcations of Heisenberg’s place in his-
+tory. Additionally Hiebert’s lecture introduced the class
+to technical engineering literature which applied mod-
+ern nuclear phyiscs simulations to reconstructed Nazi-era
+reactors[55]. Heibert’s discussion of the Alsos mission led
+into our ﬁnal lecture W7L14 detailed the sharing of nu-
+clear data (voluntary and otherwise). Here we outlined
+a number of cases of Soviet spy-craft occurring through-
+out the wartime MED, and ushering the class into the
+following unit on the early Cold War.
+
+FIG. 11. Slides depicting Nazi Uranprojekt laboratory led by
+Heisenberg in Haigerloch and experimental setup of the BVII
+reactor. Lecture W5L10.
+
+C.
+Early Cold War
+
+The early cold war section of the course focused on
+the US eﬀorts to build a nuclear arsenal and consider the
+conditions under which it would be used. This included
+the formation of the AEC, the provisions of the atomic
+energy act, the formulation of the ﬁrst nuclear strategies
+and the evolution of command and control.
+Topics in-
+
+FIG. 12. Slides outlining the Acheson-Lillienthal (top) and
+Baruch (bottom) Plans. W7L14.
+
+FIG. 13. Slides describing Soviet spymasters. W7L14.
+
+cluded the Berlin crisis, massive retaliation, the Castle
+Bravo test and the beginning of global anti-nuclear ac-
+tivism.
+On the Soviet side, topics included the Soviet
+nuclear program, starting from Flyorov’s letter to Stalin,
+to the test of RDS-1 in 1949 and RDS-37 in 1955. This
+
+8
+
+FIG. 14. Slides outlining the public and scientiﬁc response to
+the trial of Robert Oppenheimer. W10L19.
+
+series of lectures were augmented with readings from de-
+classiﬁed documents that aided students in understand-
+ing the gulf between perceptions and the military reality
+in this era.
+
+This unit provided an opportunity to coordinate class-
+room discussions on topics of public nuclear policy such
+as the Acheson-Lillienthal Plan as compared to the
+Baruch Plan (Figure 12). Such discussions allowed the
+students follow the historical record through the lens of
+public response to the nuclear energy. Additionally, we
+contrasted the history of public nuclear policy with lec-
+tures on the private aspects of early Cold War nuclear
+spycraft (Figure 13).
+
+In addition to the technical and international foreign
+aﬀairs aspects of the early Cold War, we dedicated an en-
+tire lecture to examining the 1954 trial of Robert Oppen-
+heimer. We began this lecture with his departure from
+
+Los Alamos in 1945 and his subsequent 1947 move to
+Princeton – setting the stage for Oppenheimer’s rise and
+fall as a public ﬁgure. We provided a historical account-
+ing of the political tensions arising from Oppenheimer’s
+chairmanship of the Atomic Energy Commission (AEC)
+and his diﬃcult relationship to Lewis Strauss – the man
+who would lead the campaign to remove his security
+clearance. This lecture allowed us to build on Oppen-
+heimer’s role in the previous two units from young scien-
+tist to scientiﬁc statesman and expand on the narrative
+of Oppenheimer as a Faustian ﬁgure through classroom
+discussion (Figure 14).
+
+D.
+Late Cold War and Modern Era
+
+This section of the course was wide-ranging, and cov-
+ered everything from the ”missile gap” of the early 1960s
+through contemporary struggles with nuclear prolifera-
+tion. Guest lecturers were brought in to cover cooper-
+ative threat reduction, civil defense, nuclear smuggling,
+the Iran Deal, and modern eﬀorts to grapple with the
+toll of the nuclear weapons complex. Of particular im-
+
+FIG. 15. Slide outlining imperial and colonial history in the
+nuclear southwest. W11L22
+
+portance was the guest lecture by Marty Pfeiﬀer on Nu-
+clear Colonialism which prompted students to address a
+number of challenging sociological and ethical consider-
+ations inherent to Nuclear Engineering at large.
+This
+course material was unique in that people involved di-
+rectly in these events were lecturing, connecting the cur-
+rent generation of nuclear scientists to those who made
+the history they must live with. In comparison to earlier
+lectures, these dealt with topics that do not have settled
+interpretations. In particular, we had the opportunity
+to explore varying interpretations of the Iran deal, the
+value of deterrence in a post-Cold War world, and the
+modernization of the nuclear arsenal.
+
+9
+
+FIG. 16. Top left shows the complete MIRO board for NE290 and is annotated with speciﬁc features including the integrative
+evolving timeline, student interpretation timeline, and lecture slide integration. Top right in blue shows an example of a student
+response in regards to a lecture that discussed sociological issues concerning Radon contamination. Bottom shows an expanded
+timeline composed of milestones added by students throughout the course of NE290.
+
+V.
+REMOTE LEARNING ENVIRONMENT
+
+The initial Spring 2021 oﬀering of NE290 occurred
+during the Pandemic and thus the course was exclu-
+sively taught remotely. In order to facilitate an eﬀective
+learning environment, we tailored NE290 with a number
+of modern tools including SLACK for communication,
+bCourses as the primary course ﬁle system and location
+for students to submit assignments and collect grades,
+
+and MIRO for interactive class collaboration on a time-
+line of historical events. The use of MIRO shown in Fig-
+ure 16.
+In conjunction with the timeline of historical
+events, students were provided a “response” or “meta”
+timeline across which they added their reﬂection assign-
+ments. Our goal was to explore the connection between
+these two timelines.
+
+10
+
+VI.
+TERM PAPER
+
+In accordance with the ABET student outcomes (O)
+and the target NE290 learning goals (B), students were
+assigned a ﬁnal project based on selection from two op-
+tions as shown in Figure 17. In Option 1 (“Historical
+
+FIG. 17. Final project assignment options and corresponding
+initial questions from Lecture W7L13.
+
+Answers to Modern Problems”), students were asked to
+consider a problem facing the nuclear community that
+transcends the bounds of scientiﬁc, technical, economic,
+or security communities, and with their newfound un-
+derstanding of nuclear history and its impact across the
+20th-century, propose a solution to the present, for the fu-
+ture, based on the past. In Option 2 (“Nuclear Bedtime
+Story”), students were asked to consider either adapting
+a work of literature to ﬁt the scope of an important his-
+torical event in nuclear physics, nuclear engineering, or
+national defense such that a reader would be compelled
+to consider the weight their chosen theme.
+
+In a fortunate happenstance given the diﬀerences in
+student preference, the class divided itself in approx-
+imately equal measure between the two options.
+A
+midterm assignment was given for each group to pro-
+vide answers to the initial questions shown in Figure 17
+which were later used for an in-class discussion and we
+endeavored to foster cross-talk between the two groups
+in the form of peer review.
+
+The ﬁnal deliverable from the Option 1 prompt was
+a technosociological paper entitled “A Nonproliferation
+Retrospective: How Past Successes and Failures of the
+
+Nonproliferation Regime can Inform Future Actions”
+with the following synopsis:
+
+A modern-day problem the nuclear community
+continuously faces is how to successfully prevent
+proliferation.
+This term describes both instances of
+preventing nuclear states with interests in developing
+nuclear weapons from actively pursuing them, as well
+as the more diﬃcult task of halting active develop-
+ment and the elimination of stockpiles.
+Whether
+through peaceful negotiations, credible threats, or use
+of force, a variety of strategies have been attempted
+throughout the course of the nuclear age with varying
+degrees of success. We will be undertaking the task
+of analyzing these precedents to piece together an
+understanding relating the contextual factors, histor-
+ical timing, international relationships, and chosen
+nonproliferation approaches to the resultant response
+ranging from successful peaceful disarmament in some
+cases, to hostility and increased risk of nuclear war in
+others.
+
+The ﬁnal deliverable from the Option 2 prompt was
+an illustrated story entitled The Little Scientist based
+on Antoine de Saint-Exup´ery’s The Little Prince. In the
+original book, the narrator crashes his plane in the Sa-
+hara desert and meets the titular young boy. In the re-
+crafted story – the beginning of which is shown in Figure
+18 – Stranded in the desert, the narrator tries to repair
+his aircraft from the crash while the little prince recounts
+his life story. The prince is from his own planet, and he
+leaves to explore the universe and visits six other plan-
+ets before arriving on planet Earth. On each planet, the
+
+FIG. 18. Section of Final Project Option 2.
+
+prince interacts with a diﬀerent character that teaches
+the readers of this book diﬀerent things about life and
+adulthood.
+The six planets will represent a diﬀerent
+theme of life that coincides with a diﬀerent nuclear tech-
+nological application.
+The primary resident on each
+
+11
+
+planet will represent a prominent ﬁgure for that partic-
+ular nuclear technology as shown in Figure 19.
+
+FIG. 19. Section of Final Project Option 2. Note the intro-
+duction of Oppenheimer as a character in the narrative.
+
+VII.
+COURSE OUTCOMES
+
+NE290 was oﬀered at UC Berkeley during the COVID-
+19 pandemic spring of 2021, and so the entirety of the
+course was conducted remotely via the Zoom tool. The
+class was composed of 11 students (2 female and 9 male).
+In terms of background, 10 were enrolled in nuclear en-
+gineering programs; 4 were 1st-year graduate students, 3
+were 2nd-year graduate students, 1 was a 3rd-year gradu-
+ate student, and 1 was an undergraduate junior who was
+enrolled studying environmental engineering. Following
+the completion of the course, students were provided a
+survey to determine the impact of lesson in terms of its
+pedagogical targets. First students were asked to evalu-
+ate how NE290 aided their agency towards the nontech-
+nical ABET goals (O) as shown in Table I. The results
+
+O AVG STD
+
+1 7.67
+2.12
+2 5.67
+3.71
+3 8.0
+2.96
+
+TABLE I. Calculated student survey responses addressing
+ABET Outcomes O.
+
+show post NE290, students feel they gained agency in
+(O1) an ability to recognize ethical and professional re-
+sponsibilities in engineering situations and (O3) an abil-
+ity to acquire and apply new knowledge as needed, using
+appropriate learning strategies. However, the feedback
+for (O2) suggest that the strategies taken to provide ad-
+ditional practice on engineering teams were insuﬃcient
+– providing an important path forward for educators in
+preparing to oﬀer an NE290-like course. Students were
+also to evaluate their abilities relating to the learning out-
+comes based on Bloom’s taxonomy (B) prior to and post
+completion of the NE290 course. The results The results
+shown in Table II show an average agency of 4.47/10
+across all B prior to NE290 with an average increase of
+
+B PRIOR
+POST
+DIFF
+
+AVG STD AVG STD AVG STD
+1
+3.33
+1.5
+7.56
+1.51 4.22
+1.09
+2
+4.67
+2.4
+8.22
+1.09 3.56
+1.59
+3
+4.44
+1.81 8.11
+0.78 3.67
+2.12
+4
+3.89
+2.03 7.22
+1.86 3.33
+1.94
+5
+4.56
+2.19 7.89
+0.93 3.33
+2.35
+6
+5.22
+1.86 7.78
+1.2
+2.56
+2.07
+7
+5.22
+1.39 8.11
+0.78 2.89
+1.54
+
+TABLE II. Calculated student survey responses addressing
+targeted learning outcomes B based on Bloom’s taxonomy.
+
+∼3.37 to 7.84/10 following the course. Given the novelty
+in providing fully-remote education, we also questioned
+students on the eﬀectiveness (on a similar scale of 1-10) of
+using the the tools MIRO for collaborative whiteboard-
+ing and SLACK for class-wide communication and the
+results are shown in Table III. When asked to select only
+
+Tool
+AVG STD
+
+MIRO
+5.78
+3.49
+SLACK 7.33
+3.24
+
+TABLE III. Remote Learning Tool Survey
+
+a single tool to keep if NE290 was taught in-person, 44%
+opted for recorded lectures (enabled by Zoom), 33% se-
+lected SLACK, and only 22% opted for keeping MIRO
+. These results suggest that our use of MIRO will re-
+quire additional eﬀort in integrating the software during
+proceeding semesters. In reviewing the free-form feed-
+back from students, we recieved a comment noting, “I
+thought that MIRO was not helpful at all. It was just
+too clunky, unpleasant to look at. There’s too much in-
+formation to pack into a nice looking timeline. However,
+I did like the idea of having all the class content laid out
+like MIRO did. The execution was oﬀ.” However, in re-
+viewing the outcome survey, we are pleased the report
+that when asked to evaluate their understanding of Nu-
+clear History prior to and post completion of the course,
+the students indicated an average jump of ∼3.67 from
+4 to 7.67. Such feedback, while unoﬃcial, suggests that
+the eﬀorts to oﬀer the opportunity of exploring nuclear
+science and engineering from a historical and literary per-
+spective was valuable from an educational perspective.
+
+RESOURCE AVAILABILITY
+
+The
+complete
+set
+of
+all
+Spring
+2021
+NE290
+course
+materials
+(lecture,
+assignments,
+open-
+source
+readings)
+can
+be
+accessed
+via
+GitHub
+https://github.com/aaronreichmenberliner/
+NE290-Spring2021-Nuclear-History-Politics-Futures-.
+For additional readings, please contact authors.
+
+12
+
+ACKNOWLEDGMENTS
+
+We thank the students of NE290 Clara Alivisatos, Pre-
+ston Awedisean, Michael Bondin, Arnold Eng, Isaac Lip-
+ski, Carla McKinley, Austin Mullen, Darren Parkison,
+Daniel Payne, Chaitanya Peddeti, and Matthew Verlie
+as well as CAPT. Travis Petzoldt for their patience with
+our teaching team as we bumbled about Zoom in our
+ﬁrst attempt at this new course. We thank the battery
+of guest lecturers Tim Koeth (University of Maryland),
+Carl Willis (University of New Mexico), Sarah Schrieber,
+Mimi Hiebert (University of Maryland), Alex Wellerstein
+
+(Stevens Institute of Technology), Anne Harrington (Uni-
+versity of Cardiﬀ), Sonja Schmid (Virginia Tech), Marty
+Pfeiﬀer (University of New Mexico), Cheryl Rofer (Los
+Alamos National Laboratory), Ed Geist (RAND), Laura
+Rockwood (IAEA), and Shirley Johnson (IAEA) for pro-
+viding their time and expertise to imbuing our course
+with that je ne sais quoi. We thank Dr. Peter Hose-
+mann for his time as the NE290 instructor-of-record and
+ensuring we did not burn down virtual classroom. We
+thank our PIs Adam Arkin and Kai Vetter for allowing
+us to spend our time away from the laboratory.
+
+[1] ABET,
+Accreditation
+Policy
+and
+Procedure
+Manual
+(APPM), 2020-2021, Tech. Rep. (ABET Engineering Ac-
+creditation Commission., Baltimore, MD, 2021).
+[2] H. Poincar´e, Sur la dynamique de l’´electron, Circolo
+
+Matematico di Palermo (1906).
+[3] A. Einstein, Zur Elektrodynamik bewegter K¨orper, An-
+
+nalen der Phsik 17 (1905).
+[4] P. Huijnen and A. J. Kox, Paul Ehrenfest’s Rough Road
+
+to Leiden: A Physicist’s Search for a Position, 1904–1912,
+Physics in perspective 9, 186 (2007).
+[5] J. Illy, Einstein teaches Lorentz, Lorentz teaches Ein-
+
+stein their collaboration in general relativity, 1913–1920,
+Archive for history of exact sciences 39, 247 (1989).
+[6] P. Ehrenfest and G. Breit, A remarkable case of Quanti-
+
+zation, in Proceedings of the Amsterdam Accademy (Am-
+sterdam, Netherlands, 1922) pp. 2–5.
+[7] G. Breit and E. Wigner, Capture of slow neutrons, Phys-
+
+ical review 49, 519 (1936).
+[8] F. Enrico and S. Leo, Neutronic reactor (1955).
+[9] F. Enrico,
+A. Edoardo,
+P. Bruno,
+R. Franco, and
+S. Emilio, Process for the production of radioactive sub-
+stances (1940).
+[10] F. Oppenheimer, Beta ray spectra (1939).
+[11] A. P. Donnell, R. W. Hartwell, and H. A. Wagner, Enrico
+
+Fermi Atomic Power Plant, Tech. Rep. (1958).
+[12] R. Hargraves and R. Moir, Liquid Fluoride Thorium Re-
+
+actors: An old idea in nuclear power gets reexamined,
+American Scientist 98, 304 (2010).
+[13] K. M. Olesko, Science pedagogy as a category of historical
+
+analysis: Past, present, and future, Science & Education
+15, 863 (2006).
+[14] M. Monk and J. Osborne, Placing the history and philos-
+
+ophy of science on the curriculum: A model for the devel-
+opment of pedagogy, Science education 81, 405 (1997).
+[15] R. H. Foster, M. K. McBeth, and R. S. Clemons, Pub-
+
+lic policy pedagogy: Mixing methodologies using cases,
+Journal of Public Aﬀairs Education 16, 517 (2010).
+[16] C. W. Rice, The Ethics of the Mechanical Engineer, The
+
+Annals of the American Academy of Political and Social
+Science 101, 72 (1922).
+[17] B. S. Bloom, D. R. Krathwohl, and B. B. Masia, Bloom
+
+taxonomy of educational objectives, in Allyn and Bacon
+(Pearson Education, 1984).
+[18] R. Mathieu, L. Zetterstr¨om, M. Cuney, F. Gauthier-
+
+Lafaye, and H. Hidaka, Alteration of monazite and zir-
+con and lead migration as geochemical tracers of ﬂuid
+
+paleocirculations around the Oklo–Ok´elobondo and Ban-
+gomb´e natural nuclear reaction zones (Franceville basin,
+Gabon), Chemical Geology 171, 147 (2001).
+[19] T. Ebisuzaki and S. Maruyama, Nuclear geyser model of
+
+the origin of life: Driving force to promote the synthe-
+sis of building blocks of life, Geoscience Frontiers 8, 275
+(2017).
+[20] K. A. Jensen, R. C. Ewing, and F. Gauthier-Lafaye,
+
+Uraninite: a 2 Ga spent nuclear fuel from the natural ﬁs-
+sion reactor at Bangomb´e in Gabon, West Africa, MRS
+Online Proceedings Library 465, 1209 (1996).
+[21] R. F. Robison and R. F. Mould, St. Joachimstal: pitch-
+
+blende, uranium and radon-induced lung cancer, Nowot-
+wory 56, 275 (2006).
+[22] E. R. Caley, The earliest known use of a material con-
+
+taining uranium, Isis 38, 190 (1948).
+[23] D. Banks, Starting science in the vernacular. Notes on
+
+some early issues of the Philosophical Transactions and
+the Journal des S¸cavans, 1665-1700, ASp. la revue du
+GERAS , 5 (2009).
+[24] J. Picard, 1676. Sur la lumiere du barometre, Mem. Acad.
+
+R. Sci 2, 202.
+[25] F. Braun, ¨Uber ein Verfahren zur Demonstration und
+
+zum Studium des zeitlichen Verlaufes variabler Str¨ome,
+Annalen der Physik 296, 552 (1897).
+[26] W. C. R¨ontgen, On a new kind of ray, a preliminary com-
+
+munication, Wurzburg Physico-M´edical Society on De-
+cember 28 (1895).
+[27] H. Becquerel, Sur les radiations ´emises par phosphores-
+
+cence, Comptes rendus de 1’Academie des Sciences, Paris
+122, 420 (1896).
+[28] J. J. Thomson, Cathode Rays, The Electrician, vol. 39,
+
+No. 104, also published in, in Proceedings of the Royal
+Institution, Vol. 30 (1897) pp. 1–14.
+[29] M. Curie and G. Lippmann (M., Rayons ´emis par les
+
+compos´es de l’uranium et du thorium (Gauthier-Villars,
+1898).
+[30] G. Cantor, Ueber unendliche, lineare Punktmannich-
+
+faltigkeiten, Mathematische Annalen 15, 1 (1879).
+[31] J. v Neumann, Allgemeine eigenwerttheorie hermitescher
+
+funktionaloperatoren, Mathematische Annalen 102, 49
+(1930).
+[32] D. Hilbert, J. v. Neumann, and L. Nordheim, ¨Uber die
+
+grundlagen der quantenmechanik, Mathematische An-
+nalen 98, 1 (1928).
+
+13
+
+[33] A. Peres and M. E. Mayer, Quantum theory: concepts
+
+and methods, Physics Today 47, 65 (1994).
+[34] G. Segr`e, Faust in Copenhagen: A struggle for the soul
+
+of physics (Penguin, 2007).
+[35] J. W. Goethe, Faust (De Gruyter, 2021).
+[36] G. Gamow, Thirty Years that Shook Physics: The Story
+
+of Quantam Physics (Doubleday, Incorporated, 1966).
+[37] V. L. Telegdi, Szilard as an Inventor: accelerators and
+
+more, in APS April Meeting Abstracts (1998) pp. 4–02.
+[38] H. G. Wells, The world set free (1914).
+[39] J.
+Ottaviani,
+J.
+Johnston,
+S.
+Lieber,
+J.
+Parker,
+B. Mireault, and C. Kemple, Fallout:
+J. Robert Op-
+penheimer, Leo Szilard, and the political science of the
+atomic bomb (Gt Labs, 2001).
+[40] I. Noddack, ¨uber das Element 93, Angew. Chem 47, 653
+
+(1934).
+[41] O. Hahn and F. Strassmann, ¨Uber den Nachweis und
+
+das Verhalten der bei der Bestrahlung des Urans mit-
+tels Neutronen entstehenden Erdalkalimetalle, Naturwis-
+senschaften 27, 11 (1939).
+[42] L. Meitner and O. R. Frisch, Disintegration of uranium
+
+by neutrons: a new type of nuclear reaction, Nature 143,
+239 (1939).
+[43] H. L. Anderson, E. Fermi, and L. Szilard, Neutron pro-
+
+duction and absorption in uranium, Physical Review 56,
+284 (1939).
+[44] https://www.atomicheritage.org/.
+[45] K. D. Nichols, The road to Trinity (1987).
+[46] K. Bird and M. J. Sherwin, American Prometheus: the
+
+triumph and tragedy of J. Robert Oppenheimer (Knopf,
+2005).
+[47] J. Conant, 109 East palace: Robert Oppenheimer and the
+
+secret city of Los Alamos (Simon and Schuster, 2006).
+[48] P. Goodchild, Oppenheimer: the father of the atom bomb
+
+(British Broadcasting Corporation, 1983).
+[49] J. Adams, P. Sellars, G. Finley, J. Rivera, E. Owens,
+
+R. P. Fink, J. Maddalena, T. Glenn, J. H. Morris, and
+E. Rabiner, Doctor Atomic: Opera in Two Acts (Opus
+Arte, 2008).
+[50] J. R. Oppenheimer, The eternal apprentice, Time 52, 70
+
+(1948).
+[51] R. Serber, Los Alamos Primer, Tech. Rep. (1943).
+[52] A. Wellerstein, Nagasaki: the last bomb, The New Yorker
+
+7 (2015).
+[53] A. Wellerstein, 3. The Kyoto Misconception: What Tru-
+
+man Knew, and Didn’t Know, about Hiroshima, in The
+Age of Hiroshima (Princeton University Press, 2020) pp.
+34–55.
+[54] M. Frayn, Copenhagen (Bloomsbury Publishing, 2017).
+[55] G. Grasso, C. Oppici, F. Rocchi, and M. Sumini, A Neu-
+
+tronics Study of the 1945 Haigerloch B-VIII Nuclear Re-
+actor, Physics in Perspective 11, 318 (2009).
+

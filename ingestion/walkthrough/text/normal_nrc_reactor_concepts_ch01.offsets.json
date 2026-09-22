@@ -1,0 +1,249 @@
+{
+  "source_pdf": "fixtures/normal/normal_nrc_reactor_concepts_ch01.pdf",
+  "total_chars": 18938,
+  "page_count": 24,
+  "chars_per_page_mean": 789.1,
+  "note": "Offsets index into <stem>.text.txt. The .pages.txt copy inserts markers for reading and its offsets do not match.",
+  "pages": [
+    {
+      "page_number": 1,
+      "char_start": 0,
+      "char_end": 534,
+      "chars": 534,
+      "has_text": true,
+      "span_count": 14,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 2,
+      "char_start": 534,
+      "char_end": 1249,
+      "chars": 715,
+      "has_text": true,
+      "span_count": 18,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 3,
+      "char_start": 1249,
+      "char_end": 1652,
+      "chars": 403,
+      "has_text": true,
+      "span_count": 8,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 4,
+      "char_start": 1652,
+      "char_end": 2077,
+      "chars": 425,
+      "has_text": true,
+      "span_count": 19,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 5,
+      "char_start": 2077,
+      "char_end": 2823,
+      "chars": 746,
+      "has_text": true,
+      "span_count": 30,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 6,
+      "char_start": 2823,
+      "char_end": 3427,
+      "chars": 604,
+      "has_text": true,
+      "span_count": 24,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 7,
+      "char_start": 3427,
+      "char_end": 3782,
+      "chars": 355,
+      "has_text": true,
+      "span_count": 9,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 8,
+      "char_start": 3782,
+      "char_end": 4479,
+      "chars": 697,
+      "has_text": true,
+      "span_count": 15,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 9,
+      "char_start": 4479,
+      "char_end": 5368,
+      "chars": 889,
+      "has_text": true,
+      "span_count": 21,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 10,
+      "char_start": 5368,
+      "char_end": 7540,
+      "chars": 2172,
+      "has_text": true,
+      "span_count": 30,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 11,
+      "char_start": 7540,
+      "char_end": 7841,
+      "chars": 301,
+      "has_text": true,
+      "span_count": 20,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 12,
+      "char_start": 7841,
+      "char_end": 8182,
+      "chars": 341,
+      "has_text": true,
+      "span_count": 8,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 13,
+      "char_start": 8182,
+      "char_end": 9979,
+      "chars": 1797,
+      "has_text": true,
+      "span_count": 43,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 14,
+      "char_start": 9979,
+      "char_end": 10954,
+      "chars": 975,
+      "has_text": true,
+      "span_count": 34,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 15,
+      "char_start": 10954,
+      "char_end": 11603,
+      "chars": 649,
+      "has_text": true,
+      "span_count": 24,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 16,
+      "char_start": 11603,
+      "char_end": 12571,
+      "chars": 968,
+      "has_text": true,
+      "span_count": 28,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 17,
+      "char_start": 12571,
+      "char_end": 13170,
+      "chars": 599,
+      "has_text": true,
+      "span_count": 33,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 18,
+      "char_start": 13170,
+      "char_end": 14216,
+      "chars": 1046,
+      "has_text": true,
+      "span_count": 25,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 19,
+      "char_start": 14216,
+      "char_end": 14926,
+      "chars": 710,
+      "has_text": true,
+      "span_count": 23,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 20,
+      "char_start": 14926,
+      "char_end": 15648,
+      "chars": 722,
+      "has_text": true,
+      "span_count": 21,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 21,
+      "char_start": 15648,
+      "char_end": 16200,
+      "chars": 552,
+      "has_text": true,
+      "span_count": 19,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 22,
+      "char_start": 16200,
+      "char_end": 16994,
+      "chars": 794,
+      "has_text": true,
+      "span_count": 34,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 23,
+      "char_start": 16994,
+      "char_end": 18067,
+      "chars": 1073,
+      "has_text": true,
+      "span_count": 54,
+      "width": 612.0,
+      "height": 792.0
+    },
+    {
+      "page_number": 24,
+      "char_start": 18067,
+      "char_end": 18938,
+      "chars": 871,
+      "has_text": true,
+      "span_count": 41,
+      "width": 612.0,
+      "height": 792.0
+    }
+  ]
+}
