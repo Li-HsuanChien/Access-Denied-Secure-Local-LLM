@@ -1,0 +1,110 @@
+{
+  "schema_version": "1.0.0",
+  "validated_at": "2026-09-22T15:55:51+00:00",
+  "validator_version": "e2-validate-1.0.0",
+  "extractor": "pymupdf/1.28.2",
+  "source_path": "/home/claude/e2-fixtures/fixtures/normal/normal_nrc_reactor_concepts_ch01.pdf",
+  "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+  "byte_size": 1291325,
+  "checksum_sha256": "591a0381163923768eee93a5908e0f1d68e184be4365493c2f05c76df707abcd",
+  "outcome": "accepted",
+  "reject_reason": null,
+  "reject_detail": null,
+  "checks": [
+    {
+      "check_id": "file_nonempty",
+      "status": "pass",
+      "message": "File has content.",
+      "observed": 1291325,
+      "expected": "> 0",
+      "reject_reason": null
+    },
+    {
+      "check_id": "magic_bytes",
+      "status": "pass",
+      "message": "File begins with a PDF header.",
+      "observed": "%PDF-",
+      "expected": "%PDF-",
+      "reject_reason": null
+    },
+    {
+      "check_id": "parser_opens",
+      "status": "pass",
+      "message": "The PDF parser opened the file.",
+      "observed": "opens",
+      "expected": "opens",
+      "reject_reason": null
+    },
+    {
+      "check_id": "no_open_password",
+      "status": "pass",
+      "message": "No open password required.",
+      "observed": false,
+      "expected": false,
+      "reject_reason": null
+    },
+    {
+      "check_id": "within_size_limits",
+      "status": "pass",
+      "message": "Within size limits.",
+      "observed": {
+        "pages": 24,
+        "bytes": 1291325
+      },
+      "expected": {
+        "max_pages": 2000,
+        "max_bytes": 209715200
+      },
+      "reject_reason": null
+    },
+    {
+      "check_id": "extraction_permitted",
+      "status": "pass",
+      "message": "The document permits text extraction.",
+      "observed": -4,
+      "expected": "PDF_PERM_COPY set",
+      "reject_reason": null
+    },
+    {
+      "check_id": "structural_integrity",
+      "status": "pass",
+      "message": "The document structure is intact.",
+      "observed": false,
+      "expected": false,
+      "reject_reason": null
+    },
+    {
+      "check_id": "text_yield",
+      "status": "pass",
+      "message": "All pages contain extractable text.",
+      "observed": {
+        "pages_with_text": 24,
+        "pages": 24
+      },
+      "expected": ">= 95% of pages",
+      "reject_reason": null
+    }
+  ],
+  "warnings": [],
+  "document": {
+    "schema_version": "1.0.0",
+    "document_id": "doc_72f2433a1e2f2e6340f14040",
+    "checksum_sha256": "591a0381163923768eee93a5908e0f1d68e184be4365493c2f05c76df707abcd",
+    "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+    "display_title": "normal_nrc_reactor_concepts_ch01",
+    "page_count": 24,
+    "byte_size": 1291325,
+    "pdf_version": "PDF 1.7",
+    "extractor": "pymupdf/1.28.2",
+    "import_warnings": []
+  },
+  "policy": {
+    "repaired_document": "accept_with_warning",
+    "extraction_restricted": "reject",
+    "min_pages_with_text_ratio_reject": 0.1,
+    "min_pages_with_text_ratio_warn": 0.95,
+    "min_chars_per_page_when_repaired": 200,
+    "max_pages": 2000,
+    "max_bytes": 209715200
+  }
+}
