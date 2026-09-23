@@ -1,0 +1,369 @@
+<title>Chunk Boundary Inspector</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans:wght@400;500;600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+<style>
+  :root{
+    --ground:#f4f6f9; --surface:#ffffff; --surface-2:#eef1f6;
+    --ink:#161a21; --ink-2:#414b5a; --ink-3:#6f7b8d;
+    --line:#d8dee8; --line-2:#c3ccda;
+    --accent:#2f5d8a; --accent-ink:#ffffff;
+    --warn:#9a5b12; --good:#1f6b4a;
+    --sel:#1d4ed8;
+    --c0:205; --c1:150; --c2:32; --c3:284; --c4:340; --c5:96; --c6:248; --c7:12;
+    --tint-s:58%; --tint-l:90%;
+    --rail:#e7ecf3;
+  }
+  @media (prefers-color-scheme:dark){
+    :root:not([data-theme="light"]){
+      --ground:#0f1319; --surface:#161b23; --surface-2:#1d242e;
+      --ink:#e6ebf3; --ink-2:#b3bdcc; --ink-3:#7d8899;
+      --line:#2a323e; --line-2:#3a4453;
+      --accent:#7db2e8; --accent-ink:#0f1319;
+      --warn:#e0a45c; --good:#5fc39a;
+      --sel:#8ab4f8;
+      --tint-s:42%; --tint-l:24%;
+      --rail:#1a212a;
+    }
+  }
+  :root[data-theme="dark"]{
+    --ground:#0f1319; --surface:#161b23; --surface-2:#1d242e;
+    --ink:#e6ebf3; --ink-2:#b3bdcc; --ink-3:#7d8899;
+    --line:#2a323e; --line-2:#3a4453;
+    --accent:#7db2e8; --accent-ink:#0f1319;
+    --warn:#e0a45c; --good:#5fc39a;
+    --sel:#8ab4f8;
+    --tint-s:42%; --tint-l:24%;
+    --rail:#1a212a;
+  }
+
+  body{
+    background:var(--ground); color:var(--ink);
+    font-family:"IBM Plex Sans",system-ui,-apple-system,sans-serif;
+    line-height:1.5; margin:0;
+  }
+  .wrap{ max-width:1400px; margin:0 auto; padding:0 16px; padding-block:24px 48px; }
+
+  header.masthead{ border-bottom:1px solid var(--line); padding-bottom:18px; margin-bottom:20px; }
+  .eyebrow{
+    font-size:11px; letter-spacing:.14em; text-transform:uppercase;
+    color:var(--ink-3); font-weight:500; margin:0 0 6px;
+  }
+  h1{ font-size:clamp(20px,3.4vw,28px); line-height:1.2; margin:0 0 4px; font-weight:600; text-wrap:balance; }
+  .sub{ color:var(--ink-2); font-size:14px; margin:0; }
+  .docid{
+    font-family:"IBM Plex Mono",ui-monospace,monospace; font-size:12px;
+    color:var(--ink-3); margin-top:8px; word-break:break-all;
+  }
+
+  .stats{ display:flex; flex-wrap:wrap; gap:8px; margin-top:16px; }
+  .stat{
+    background:var(--surface); border:1px solid var(--line); border-radius:6px;
+    padding:8px 12px; min-width:92px;
+  }
+  .stat .v{ font-family:"IBM Plex Mono",monospace; font-size:17px; font-weight:500;
+            font-variant-numeric:tabular-nums; display:block; }
+  .stat .k{ font-size:10.5px; letter-spacing:.08em; text-transform:uppercase; color:var(--ink-3); }
+  .stat.flag .v{ color:var(--warn); }
+
+  .note{
+    margin-top:16px; padding:12px 14px; border-left:3px solid var(--warn);
+    background:var(--surface); font-size:13.5px; color:var(--ink-2); border-radius:0 5px 5px 0;
+  }
+  .note b{ color:var(--ink); font-weight:600; }
+
+  /* document map ------------------------------------------------------ */
+  .maprow{ margin:22px 0 6px; }
+  .maplabel{ display:flex; justify-content:space-between; align-items:baseline;
+             font-size:11px; letter-spacing:.1em; text-transform:uppercase;
+             color:var(--ink-3); margin-bottom:6px; }
+  .map{
+    position:relative; height:40px; background:var(--rail);
+    border:1px solid var(--line); border-radius:5px; overflow:hidden; cursor:pointer;
+  }
+  .map .mchunk{ position:absolute; top:0; height:26px; border-right:1px solid var(--surface); }
+  .map .mpage{ position:absolute; bottom:0; height:14px; width:1px; background:var(--line-2); }
+  .map .mlabel{ position:absolute; bottom:0; font-size:9px; color:var(--ink-3);
+                font-family:"IBM Plex Mono",monospace; padding-left:2px; }
+
+  /* controls ---------------------------------------------------------- */
+  .controls{ display:flex; flex-wrap:wrap; gap:8px; align-items:center; margin:18px 0 14px; }
+  button.toggle{
+    font:inherit; font-size:12.5px; padding:6px 11px; border-radius:5px;
+    border:1px solid var(--line-2); background:var(--surface); color:var(--ink-2); cursor:pointer;
+  }
+  button.toggle[aria-pressed="true"]{ background:var(--accent); border-color:var(--accent); color:var(--accent-ink); }
+  button.toggle:focus-visible, .map:focus-visible, .seg:focus-visible{ outline:2px solid var(--sel); outline-offset:2px; }
+  .legend{ display:flex; flex-wrap:wrap; gap:14px; font-size:12px; color:var(--ink-2); margin-left:auto; }
+  .legend span{ display:inline-flex; align-items:center; gap:6px; }
+  .sw{ width:15px; height:15px; border-radius:3px; border:1px solid var(--line-2); display:inline-block; }
+  .sw.ov{ background:repeating-linear-gradient(45deg,
+          hsl(var(--c0) var(--tint-s) var(--tint-l)) 0 4px,
+          hsl(var(--c1) var(--tint-s) var(--tint-l)) 4px 8px); }
+  .sw.pl{ background:hsl(var(--c0) var(--tint-s) var(--tint-l)); }
+
+  /* main -------------------------------------------------------------- */
+  .cols{ display:grid; grid-template-columns:minmax(0,1fr) 330px; gap:18px; align-items:start; }
+  @media (max-width:900px){ .cols{ grid-template-columns:minmax(0,1fr); } }
+
+  .stream{
+    background:var(--surface); border:1px solid var(--line); border-radius:7px;
+    padding:18px; font-family:"IBM Plex Mono",ui-monospace,monospace;
+    font-size:12.5px; line-height:1.72; white-space:pre-wrap; overflow-wrap:break-word;
+    max-height:74vh; overflow-y:auto;
+  }
+  .seg{ border-radius:2px; }
+  .seg[data-own="1"]{ background:var(--tint); }
+  .seg[data-own="2"]{ background:repeating-linear-gradient(45deg,
+        var(--tintA) 0 5px, var(--tintB) 5px 10px); }
+  .seg.dim{ background:none !important; color:var(--ink-3); }
+  /* Selection recedes the rest rather than outlining the selection: an outline on
+     a multi-line inline element draws a box around every line box, which turns the
+     passage into a grid of boxes instead of one continuous highlight. */
+  .stream.focused .seg{ opacity:.3; }
+  .stream.focused .seg.hit{ opacity:1; filter:saturate(1.45) contrast(1.04); }
+  .stream.focused .pagemark{ opacity:.45; }
+  .stream.plain .seg{ background:none !important; }
+
+  .pagemark{
+    display:block; margin:14px 0 6px; padding-top:8px; border-top:1px dashed var(--line-2);
+    font-family:"IBM Plex Sans",sans-serif; font-size:10.5px; letter-spacing:.1em;
+    text-transform:uppercase; color:var(--ink-3); font-weight:500;
+  }
+  .stream.nopages .pagemark{ display:none; }
+
+  /* inspector --------------------------------------------------------- */
+  .inspect{ position:sticky; top:calc(env(safe-area-inset-top,0px) + 12px); }
+  .panel{ background:var(--surface); border:1px solid var(--line); border-radius:7px; overflow:hidden; }
+  .panel h2{ font-size:11px; letter-spacing:.12em; text-transform:uppercase; color:var(--ink-3);
+             margin:0; padding:11px 14px; border-bottom:1px solid var(--line); font-weight:500; }
+  .panel .body{ padding:12px 14px; }
+  .kv{ display:grid; grid-template-columns:auto 1fr; gap:4px 12px; font-size:12.5px; }
+  .kv dt{ color:var(--ink-3); }
+  .kv dd{ margin:0; font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums;
+          word-break:break-all; }
+  .pill{ display:inline-block; font-size:10.5px; padding:2px 7px; border-radius:99px;
+         font-family:"IBM Plex Sans",sans-serif; letter-spacing:.04em; }
+  .pill.span{ background:color-mix(in srgb, var(--warn) 16%, transparent); color:var(--warn); }
+  .pill.one{ background:color-mix(in srgb, var(--good) 16%, transparent); color:var(--good); }
+  table.spans{ width:100%; border-collapse:collapse; font-size:12px; margin-top:10px; }
+  table.spans th{ text-align:left; font-weight:500; color:var(--ink-3); font-size:10.5px;
+                  letter-spacing:.07em; text-transform:uppercase; padding:4px 6px 4px 0;
+                  border-bottom:1px solid var(--line); }
+  table.spans td{ padding:5px 6px 5px 0; border-bottom:1px solid var(--line);
+                  font-family:"IBM Plex Mono",monospace; font-variant-numeric:tabular-nums; }
+  .empty{ color:var(--ink-3); font-size:13px; }
+  .chunklist{ max-height:230px; overflow-y:auto; }
+  .chunklist button{
+    display:grid; grid-template-columns:26px 1fr auto; gap:8px; width:100%; text-align:left;
+    font:inherit; font-size:12px; background:none; border:0; border-bottom:1px solid var(--line);
+    padding:7px 14px; cursor:pointer; color:var(--ink-2); align-items:center;
+  }
+  .chunklist button:hover{ background:var(--surface-2); }
+  .chunklist button[aria-current="true"]{ background:var(--surface-2); color:var(--ink); font-weight:500; }
+  .chunklist .dot{ width:11px; height:11px; border-radius:3px; display:inline-block; }
+  .chunklist .pg{ font-family:"IBM Plex Mono",monospace; color:var(--ink-3); font-size:11px; }
+  footer{ margin-top:28px; padding-top:14px; border-top:1px solid var(--line);
+          font-size:12px; color:var(--ink-3); }
+  code{ font-family:"IBM Plex Mono",monospace; background:var(--surface-2);
+        padding:1px 5px; border-radius:3px; font-size:.92em; }
+  @media (prefers-reduced-motion:reduce){ *{ transition:none !important; } }
+</style>
+
+<div class="wrap">
+  <header class="masthead">
+    <p class="eyebrow">E2 · Ingestion and chunking</p>
+    <h1>Chunk Boundary Inspector</h1>
+    <p class="sub" id="sub"></p>
+    <p class="docid" id="docid"></p>
+    <div class="stats" id="stats"></div>
+    <div class="note" id="note"></div>
+  </header>
+
+  <div class="maprow">
+    <div class="maplabel"><span>Document map</span><span id="maphint">click to jump</span></div>
+    <div class="map" id="map" tabindex="0" role="group" aria-label="Document map, click a chunk to inspect it"></div>
+  </div>
+
+  <div class="controls">
+    <button class="toggle" id="tTint" aria-pressed="true">Chunk tint</button>
+    <button class="toggle" id="tPages" aria-pressed="true">Page markers</button>
+    <button class="toggle" id="tOverlap" aria-pressed="false">Overlap only</button>
+    <div class="legend">
+      <span><i class="sw pl"></i> one chunk</span>
+      <span><i class="sw ov"></i> overlap, two chunks</span>
+    </div>
+  </div>
+
+  <div class="cols">
+    <div class="stream" id="stream" role="region" aria-label="Full document character stream"></div>
+    <div class="inspect">
+      <div class="panel">
+        <h2>Chunk inspector</h2>
+        <div class="body" id="inspector"><p class="empty">Select any tinted passage, or a bar on the map.</p></div>
+      </div>
+      <div class="panel" style="margin-top:14px;">
+        <h2>All chunks</h2>
+        <div class="chunklist" id="chunklist"></div>
+      </div>
+    </div>
+  </div>
+
+  <footer>
+    Generated by <code>tools/build_chunk_viewer.py</code> from live pipeline output.
+    Offsets index into <code>walkthrough/text/&lt;name&gt;.text.txt</code>.
+  </footer>
+</div>
+
+<script>
+const D = {"document": {"schema_version": "1.0.0", "document_id": "doc_72f2433a1e2f2e6340f14040", "checksum_sha256": "591a0381163923768eee93a5908e0f1d68e184be4365493c2f05c76df707abcd", "source_filename": "normal_nrc_reactor_concepts_ch01.pdf", "display_title": "normal_nrc_reactor_concepts_ch01", "page_count": 24, "byte_size": 1291325, "pdf_version": "PDF 1.7", "extractor": "pymupdf/1.28.2", "import_warnings": []}, "label": "NRC Reactor Concepts Manual, Chapter 1", "source": "fixtures/normal/normal_nrc_reactor_concepts_ch01.pdf", "config": {"target_chars": 1200, "overlap_chars": 200, "min_chunk_chars": 100, "split_on_word_boundary": true, "chunker_version": "refchunk-1.0.0", "config_id": "cfg_eacf62fb2b8c"}, "text": "Reactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-1\n0703\n\nNuclear\n\nPower\n\n for\nElectrical\nGeneration\n\nThe purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a\nnuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant\nhas many similarities to other electrical generating facilities.  It should also be obvious that nuclear\npower plants have some significant differences from other plants.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-2\n0703\n\nFlange\n\nStationary Coil\n\nRotor\n\nElectrical\n\nOutput\n\nGenerator Housing\n\nDrive Shaft\n\nELECTRICAL GENERATOR\n\nOf the several known methods to produce electricity, by far the most practical for large scale production\nand distribution involves the use of an “electrical generator.”  In an electrical generator, a magnet (rotor)\nrevolves inside a coil of wire (stator), creating a flow of electrons inside the wire.  This flow of electrons\nis called electricity.  Some mechanical device (wind turbine, water turbine, steam turbine, diesel engine,\netc.) must be available to provide the motive force for the rotor.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-3\n0703\n\nWhen a turbine is attached to the electrical generator, the kinetic energy (i.e., motion) of the wind, falling\nwater, or steam pushes against the fan-type blades of the turbine, causing the turbine, and therefore, the\nattached rotor of the electrical generator, to spin and produce electricity.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-4\n0703\n\nHYDROELECTRIC PLANT\n\nELECTRICAL\nGENERATOR\n\nDAM\n\nW ATER\n\nINLET\nVALVE\n\nW ATER\nOUTLET\n\nW ATER\nTURBINE\n\nIn a hydroelectric power plant, water, flowing from a higher level to a lower level, travels through the\nmetal blades of a water turbine, causing the rotor of the electrical generator to spin and produce\nelectricity.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-5\n0703\n\nMain\nCondenser\n\nMain\nTurbine\n\nElectric\nGenerator\n\nThrottle\n\nValve\n\nFeedwater\n\nPump\n\nA\n\nB\n\nC\n\nD\n\nE\nF\n\nFuel\nSupply\n\nBoiler\n\nFOSSIL FUEL STEAM PLANT\n\nIn a fossil-fueled power plant, heat, from the burning of coal, oil, or natural gas, converts (boils) water\ninto steam (A), which is piped to the turbine (B).  In the turbine, the steam passes through the blades,\nwhich spins the electrical generator (C), resulting in a flow of electricity.  After leaving the turbine, the\nsteam is converted (condensed) back into water in the condenser (D).  The water is then pumped (E)\nback to the boiler (F) to be reheated and converted back into steam.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-6\n0703\n\nMain\nCondenser\n\nMain\nTurbine\n\nElectric\nGenerator\nNuclear\n\nSteam\n\nSupply\n\nSystem\n\nThrottle\n\nValve\n\nFeedwater\n\nPump\n\nNuclear Fuel Steam Plant\n\nIn a nuclear power plant, many of the components are similar to those in a fossil-fueled plant, except that\nthe steam boiler is replaced by a Nuclear Steam Supply System (NSSS).  The NSSS consists of a nuclear\nreactor and all of the components necessary to produce high pressure steam, which will be used to turn\nthe turbine for the electrical generator.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-7\n0703\n\nFission\n\nLike a fossil-fueled plant, a nuclear power plant boils water to produce electricity.  Unlike a fossil-fueled\nplant, the nuclear plant’s energy does not come from the combustion of fuel, but from the fissioning\n(splitting) of fuel atoms.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-8\n0703\n\nENRICHMENT\n\n(% U-235)\n\nUranium Ore (0.7%)\n   Fuel Pellet (3.5%)\n\nThe most common fuel for the electrical producing reactor plants in the United States is uranium.  The\nuranium starts out as ore, and contains a very low percentage (or low enrichment) of the desired atoms\n(U-235).  The U-235 is a more desirable atom for fuel, because it is easier to cause the U-235 atoms to\nfission (split) than the much more abundant U-238 atoms.  Therefore, the fuel fabrication process\nincludes steps to increase the number of U-235 atoms in relation to the number of U-238 atoms\n(enrichment process).\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-9\n0703\n\nCHEMICAL CONVERSION TO UF6\n\nENRICHMENT\n\nPELLETIZING\n\nROD LOADING\n\nBUNDLE ASSEMBLY\n\nBUNDLE FINAL INSPECTION\n\nPACKAGING & SHIPPING\n\nSITE INSPECTION & CHANNELING\n\nTubing & End Plugs\n\nSpacers & Tie Plates\n\nOnce the fuel has been enriched, it is fabricated into ceramic pellets.  The pellets are stacked into 12-foot\nlong, slender metal tubes, generally made of a zirconium alloy.  The tube is called the “fuel cladding.”\nWhen a tube is filled with the uranium pellets, it is pressurized with helium gas, and plugs are installed\nand welded to seal the tube.  The filled rod is called a “fuel rod.”  The fuel rods are bundled together into\n“fuel assemblies” or “fuel elements.”  The completed assemblies are now ready to be shipped to the plant\nfor installation into the reactor vessel.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-10\n0703\n\nREACTOR FUEL ASSEMBLIES\n\nBoth boiling water reactor and pressurized water reactor fuel assemblies consist of the same major\ncomponents.  These major components are the fuel rods, the spacer grids, and the upper and lower end\nfittings.  The fuel assembly drawing on page 1-11 shows these major components (pressurized water\nreactor fuel assembly).\n\nThe fuel rods contain the ceramic fuel pellets.  The fuel rods are approximately 12 feet long and contain\na space at the top for the collection of any gases that are produced by the fission process.  These rods are\narranged in a square matrix ranging from 17 x 17 for pressurized water reactors to 8 x 8 for boiling water\nreactors.\n\nThe spacer grids separate the individual rods with pieces of sprung metal.  This provides the rigidity of\nthe assemblies and allows the coolant to flow freely up through the assemblies and around the fuel rods.\nSome spacer grids may have flow mixing vanes that are used to promote mixing of the coolant as it\nflows around and though the fuel assembly.\n\nThe upper and lower end fittings serve as the upper and lower structural elements of the assemblies.  The\nlower fitting (or bottom nozzle) will direct the coolant flow to the assembly through several small holes\nmachined into the fitting.  There are also holes drilled in the upper fitting to allow the coolant flow to\nexit the fuel assembly.  The upper end fitting will also have a connecting point for the refueling\nequipment to attach for the moving of the fuel with a crane.\n\nFor pressurized water reactor fuel, there will also be guide tubes in which the control rods travel.  The\nguide tubes will be welded to the spacer grids and attached to the upper and lower end fittings.  The\nguide tubes provide a channel for the movement of the control rods and provide for support of the rods.\nThe upper end of the control rod will be attached to a drive shaft, which will be used to position the rod\nduring operations.\n\nA brief description and a picture of boiling water reactor fuel can be found in Chapter3 (pages 3-3 and\n3-7).\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-11\n0703\n\nROD CLUSTER CONTROL\n\nTOP NOZZLE\n\nCONTROL ROD\n\nGRID\n\nHOLD DOWN SPRING\n\nFUEL ROD\n\nTHIMBLE TUBE\n\nMIXING VANES\n\nDASHPOT REGION\n\nDIMPLE\n\nBULGE JOINTS\n\nGRID SPRING\n\nBOTTOM NOZZLE\nTHIMBLE SCREW\n\n   \n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-12\n0703\n\nAt the nuclear power plant, the fuel assemblies are inserted vertically into the reactor vessel (a large steel\ntank filled with water with a removable top).  The fuel is placed in a precise grid pattern known as the\n“reactor core.”\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-13\n0703\n\nJet Pump\n\nReactor\n\nVessel\n\nSteam\n\nLine\n\nSteam Dryer\n\n&\nMoisture\nSeparator\n\nReactor Core\n\nRecirculation\n\nPump\n\nThrottle\n\nValve\n\nElectrical\nGenerator\n\nTurbine\n\nCondenser\n\nPump\n\nContainment Suppression Chamber\n\nTurbine Building\n\nTo/From\n\nRiver\n\nContainment/Drywell\n\nThere are two basic types of reactor plants being used in the United States to produce electricity, the\nboiling water reactor (BWR) and the pressurized water reactor (PWR).  The boiling water reactor\noperates in essentially the same way as a fossil-fueled generating plant.  Inside the reactor vessel, a\nsteam/water mixture is produced when very pure water (reactor coolant) moves upward through the core\nabsorbing heat.  The major difference in the operation of a boiling water reactor as compared to other\nnuclear systems is the steam void formation in the core.  The steam/water mixture leaves the top of the\ncore and enters two stages of moisture separation, where water droplets are removed before the steam\nis allowed to enter the steam line.  The steam line, in turn, directs the steam to the main turbine, causing\nit to turn the turbine and the attached electrical generator.  The unused steam is exhausted to the\ncondenser where it is condensed into water.  The resulting water (condensate) is pumped out of the\ncondenser with a series of pumps and back to the reactor vessel.  The recirculation pumps and the jet\npumps allow the operator to vary coolant flow through the core and to change reactor power.\n\nBoiling water reactors are manufactured in the United States by the General Electric Company, San Jose,\nCalifornia.  Boiling water reactors comprise about one-third of the power reactors in the United States.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-14\n0703\n\nCore\n\nP\nZ\nR\n\nS/G\n\nRCP\n\nReactor Coolant\n\nSystem\n\nContainment\n\nThrottle\n\nValve\n\nElectric\nGenerator\nMain\nTurbine\n\nMain\nCondenser\n\nFeedwater\n\nPump\n\nThe pressurized water reactor (PWR) differs from the boiling water reactor in that steam is produced in\nthe steam generator rather than in the reactor vessel.  The pressurizer keeps the water that is flowing\nthrough the reactor vessel under very high pressure (more than 2,200 pounds per square inch) to prevent\nit from boiling, even at operating temperatures of more than 600EF.  Pressurized water reactors make\nup about two-thirds of the power reactors in the United States.\n\nPressurized water reactors were manufactured in the United States by Westinghouse Electric Corporation\n(Pittsburgh, Pennsylvania), Babcock and Wilcox Company (Lynchburg, Virginia), and the Combustion\nEngineering Company (Windsor, Connecticut).\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-15\n0703\n\nHelium\nCirculator\n\nMain\nCondenser\n\nMain\nTurbine\n\nElectric\nGenerator\n\nThrottle\n\nValve\n\nFeedwater Pump\n\nCore\n\nSteam\nGenerator\n\nHigh Temperature Gas-Cooled Reactor (HTGR)\n\nAnother type of reactor uses helium gas instead of water as its media for removing heat from the core.\nThe only high temperature gas-cooled reactor (HTGR) in the United States was the Fort St. Vrain plant\nin Colorado.  The plant was manufactured by General Atomic Company of La Jolla, California.  High\ntemperature gas-cooled reactors are widely used in other countries.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-16\n0703\n\nCoal\n(55%)\n\nNuclear\n\n(22%)\n\nGas\n(10%)\n\nHydroelectric\n\n(10%)\n\nPetroleum\n\n(2%)\n\nOther\n(biomass fuels, wood, wind,\n\nphotovoltaic, and solar)\n\n(<1%)\n\nElectrical Production by Type\n\nCommercial nuclear power plants generate approximately 22% of the electricity produced in the United\nStates.  The total generation is approximately 3,800 thousand gigawatt-hours.\n\nFor comparison purposes, nuclear generation accounts for the following of the total electrical production\nin some other countries:   75% in France, 46% in Sweden, 43% in Ukraine, 39% in south Korea, 30%\nin Germany, and 30% in Japan.\n\nThe electricity produced in the United States from nuclear power is equivalent to 31% of the world’s\ntotal nuclear generated electrical power.  This compares with 16% for France, 13% for Japan, 7% for\nGermany, 5% for Russia, and 4% for South Korea and United Kingdom.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-17\n0703\n\nWestinghouse\n\nGeneral Electric\n\nCombustion Engineering\n\nBabcock & Wilcox\n\n1\n\n4\n\n11\n\n13\n\n7\n\n1\n\n20\n\n9\n\n2\n\n1\n\n1\n\n3\n\n8\n8\n\n4\n\n11\n\nRegion I\nRegion II\n\nRegion III\nRegion IV\n\nThere are currently 104 licensed commercial nuclear power plants in the United States.  Of the 104\nplants, 48 were built by Westinghouse, 35 by General Electric, 14 by Combustion Engineering, and 7\nby Babcock & Wilcox.\n\nThe illustration above shows the breakdown of the plants, by vendor, assigned to the four NRC Regions.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-18\n0703\n\nMAIN\nTURBINE\n\nELECTRIC\nGENERATOR\n\nCONDENSATE\n\nPUMP\n\nSTEAM\n\nMAIN\nCONDENSER\n\nCIRCULATING\n\nWATER PUMP\n\nTo operate properly, all steam plants, whether nuclear or fossil-fueled, need a circulating water system\nto remove excess heat from the steam system in order to condense the steam, and transfer that heat to\nthe environment.  The circulating water system pumps water from the environment (river, lake, ocean)\nthrough thousands of metal tubes in the plant’s condenser.  Steam exiting the plant’s turbine is very\nrapidly cooled and condensed into water when it comes in contact with the much cooler tubes.  Since\nthe tubes provide a barrier between the steam and the environment, there is no physical contact between\nthe plant’s steam and the cooling water.  Because a condenser operates at a vacuum, any tube leakage\nin this system will produce an “inflow” of water into the condenser rather than an “outflow” of water\nto the environment.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-19\n0703\n\nMAIN\nTURBINE\n\nELECTRIC\nGENERATOR\n\nMAIN\nCONDENSER\n\nCIRCULATING\n\nWATER PUMP\n\nINTAKE\n\nDISCHARGE\n\nLarge Body\n\nof Water\n(ocean, lake, etc.)\n\nPower plants located on the ocean (or other large bodies of water) will often discharge their circulating\nwater directly back to the ocean under strict environmental protection regulations.  Water is taken from\nthe ocean, pumped through the thousands of small tubes in the condenser to remove the excess heat, and\nis then discharged back into the ocean.  The expected temperature increase from circulating water inlet\nto outlet is about 5 to 10 degrees Fahrenheit.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-20\n0703\n\nFORCED DRAFT\nCOOLING TOWER\n\nFANS\n\nMAIN\nTURBINE\n\nELECTRIC\nGENERATOR\n\nMAIN\nCONDENSER\n\nCIRCULATING\n\nWATER PUMP\n\nMost nuclear power plants not located on the ocean need cooling towers to remove the excess heat from\nthe circulating water system.  One type of cooling tower is the forced draft cooling tower.  The\ncirculating water is pumped into the tower, after passing through the condenser, and allowed to splash\ndownward through the tower, transferring some of its heat to the air.  Several large electrical fans,\nlocated at the top of the cooling tower, provide forced air circulation for more efficient cooling.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-21\n0703\n\nMAIN\nTURBINE\n\nELECTRIC\nGENERATOR\n\nMAIN\nCONDENSER\n\nCIRCULATING\n\nWATER PUMP\n\nCOOLING\n\nTOWER\n\nThe taller hourglass shaped, natural convection cooling towers do not require fans to transfer the excess\nheat from the circulating water system into the air.  Rather, the natural tendency of hot air to rise\nremoves the excess heat as the circulating water splashes down inside the cooling tower.  These towers\nare typically several hundred feet tall.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-22\n0703\n\n30\n50\n70\n90\n\nEF\n\n5\n\n10\n\n15\n\n20\n\n25\n\n30\n\n35\n\n100% RELATIVE HUMIDITY\n\nGrams of\nWater per\n\nCubic\nMeter\nof Air\n\nWarm\n\nWet\n\nAir\n\nCold Dry Air\n\nThe “steam” vented from the top of a cooling tower is really lukewarm water vapor.  IT IS NOT\nRADIOACTIVE.  As the warm, wet air from inside the cooling tower contacts the cooler, dryer air\nabove the cooling tower, the water vapor which cannot be held by the cooler air forms a visible cloud.\nThis is because the colder the air is, the lower its ability to hold water.  The released cloud of vapor will\nonly be visible until it is dispersed and absorbed by the air.  The graph above shows air’s ability to hold\nwater as air temperature increases.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-23\n0703\n\nCO R E\n\nS/G\n\nRCP\n\nAUXILIARY BUILDING\n\nRHR\n\nHX\n\nCONTAINMENT\n\nSUMP\n\nCONTAINMENT BUILDING\n\nP\nZ\nR\n\nREACTOR\nCOOLANT SYSTEM\n\nTURBINE BUILDING\n\nFW\nHTR\n\nMSR\n\nHP\nLP\n\nMAIN\nCONDENSER\n\nELECTRIC\nGENERATOR\n\nCOOLING TOWER\n\nCIRC. WATER\n\nPUMP\n\nRHR\nPUMP\n\nMAIN\nTURBINE\n\nCONDENSATE\n\nPUMP\nMAIN FEED\n\nPUMP\n\nPRESSURIZED WATER REACTOR PLANT LAYOUT\n\nThe major structures at a pressurized water reactor plant are:\n\n•\nThe containment building, which houses the reactor and its high pressure steam\ngenerating equipment;\n•\nThe turbine building, which houses the steam turbines, condensers, and the electrical\ngenerator; and\n•\nThe auxiliary building, which houses normal and emergency support systems (such as\nthe residual heat removal (RHR) system, fuel handling and storage equipment,\nlaboratories, maintenance areas, and the control room).\n\nDepending upon the plant location and environmental regulations, there may or may not be a cooling\ntower to remove the excess heat from the facility.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-24\n0703\n\nJet Pump\n\nReactor\n\nVessel\n\nSteam\n\nLine\n\nSteam Dryer\n\n&\nMoisture\nSeparator\n\nReactor Core\n\nRecirculation\n\nPump\n\nThrottle\n\nValve\n\nElectrical\nGenerator\n\nTurbine\n\nCondenser\n\nPump\n\nContainment Suppression Chamber\n\nTurbine Building\n\nTo/From\n\nRiver\n\nContainment/Drywell\n\nThe major structures at a boiling water reactor plant are:\n\n•\nThe primary containment, which includes the suppression chamber, and houses the\nreactor and recirculation pumps;\n•\nThe reactor building (secondary containment), which surrounds the primary containment\nand serves many of the same functions as a pressurized water reactor’s auxiliary building;\nand\n•\nThe turbine building.\n\nDepending upon the plant location, there may or may not be a cooling tower to remove excess heat from\nthe facility.\n\n", "pages": [{"n": 1, "a": 0, "b": 534, "chars": 534, "spans": 14}, {"n": 2, "a": 534, "b": 1249, "chars": 715, "spans": 18}, {"n": 3, "a": 1249, "b": 1652, "chars": 403, "spans": 8}, {"n": 4, "a": 1652, "b": 2077, "chars": 425, "spans": 19}, {"n": 5, "a": 2077, "b": 2823, "chars": 746, "spans": 30}, {"n": 6, "a": 2823, "b": 3427, "chars": 604, "spans": 24}, {"n": 7, "a": 3427, "b": 3782, "chars": 355, "spans": 9}, {"n": 8, "a": 3782, "b": 4479, "chars": 697, "spans": 15}, {"n": 9, "a": 4479, "b": 5368, "chars": 889, "spans": 21}, {"n": 10, "a": 5368, "b": 7540, "chars": 2172, "spans": 30}, {"n": 11, "a": 7540, "b": 7841, "chars": 301, "spans": 20}, {"n": 12, "a": 7841, "b": 8182, "chars": 341, "spans": 8}, {"n": 13, "a": 8182, "b": 9979, "chars": 1797, "spans": 43}, {"n": 14, "a": 9979, "b": 10954, "chars": 975, "spans": 34}, {"n": 15, "a": 10954, "b": 11603, "chars": 649, "spans": 24}, {"n": 16, "a": 11603, "b": 12571, "chars": 968, "spans": 28}, {"n": 17, "a": 12571, "b": 13170, "chars": 599, "spans": 33}, {"n": 18, "a": 13170, "b": 14216, "chars": 1046, "spans": 25}, {"n": 19, "a": 14216, "b": 14926, "chars": 710, "spans": 23}, {"n": 20, "a": 14926, "b": 15648, "chars": 722, "spans": 21}, {"n": 21, "a": 15648, "b": 16200, "chars": 552, "spans": 19}, {"n": 22, "a": 16200, "b": 16994, "chars": 794, "spans": 34}, {"n": 23, "a": 16994, "b": 18067, "chars": 1073, "spans": 54}, {"n": 24, "a": 18067, "b": 18938, "chars": 871, "spans": 41}], "chunks": [{"ordinal": 0, "chunk_id": "chk_442eb6c07358e762846a8fde", "a": 0, "b": 1195, "len": 1195, "page_start": 1, "page_end": 2, "spans_pages": true, "tokens": 298, "checksum": "2b0cba105cc74022a76a7cd9b82af2332beed5da1d0ea75cff093f7fa272eb24", "page_spans": [{"page": 1, "a": 0, "b": 534, "pa": 0, "pb": 534, "rects": 14, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 2, "a": 534, "b": 1195, "pa": 0, "pb": 661, "rects": 18, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 2}, {"ordinal": 1, "chunk_id": "chk_c33e37b01b670ad6e1af6610", "a": 995, "b": 2167, "len": 1172, "page_start": 2, "page_end": 5, "spans_pages": true, "tokens": 293, "checksum": "04988a54e860a059df9bc5b36b2b943b0194a1bcdee2c45952cc6396fdce3904", "page_spans": [{"page": 2, "a": 995, "b": 1249, "pa": 461, "pb": 715, "rects": 3, "first_rect": [54.0, 672.89, 540.0, 686.17], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 3, "a": 1249, "b": 1652, "pa": 0, "pb": 403, "rects": 8, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 4, "a": 1652, "b": 2077, "pa": 0, "pb": 425, "rects": 19, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 5, "a": 2077, "b": 2167, "pa": 0, "pb": 90, "rects": 3, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 4}, {"ordinal": 2, "chunk_id": "chk_093a2264779a75fe9312c9a4", "a": 1967, "b": 3167, "len": 1200, "page_start": 4, "page_end": 6, "spans_pages": true, "tokens": 300, "checksum": "cc93c504dccba49d149195bce02133026b2d196c94ddc02dc92fb5d5cbfb6862", "page_spans": [{"page": 4, "a": 1967, "b": 2077, "pa": 315, "pb": 425, "rects": 2, "first_rect": [54.0, 559.61, 540.11, 572.89], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 5, "a": 2077, "b": 2823, "pa": 0, "pb": 746, "rects": 30, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 6, "a": 2823, "b": 3167, "pa": 0, "pb": 344, "rects": 21, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 3}, {"ordinal": 3, "chunk_id": "chk_9292d808bb3ee05c0c507c14", "a": 2967, "b": 4154, "len": 1187, "page_start": 6, "page_end": 8, "spans_pages": true, "tokens": 296, "checksum": "6c7f731e0b206e2756753ada2ab6e932fb6eb5216397f99154b54f5f0783084e", "page_spans": [{"page": 6, "a": 2967, "b": 3427, "pa": 144, "pb": 604, "rects": 15, "first_rect": [223.8, 97.69, 266.4, 112.5], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 7, "a": 3427, "b": 3782, "pa": 0, "pb": 355, "rects": 9, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 8, "a": 3782, "b": 4154, "pa": 0, "pb": 372, "rects": 11, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 3}, {"ordinal": 4, "chunk_id": "chk_3070b0147e9d22e3f0dfe3b0", "a": 3954, "b": 5151, "len": 1197, "page_start": 8, "page_end": 9, "spans_pages": true, "tokens": 299, "checksum": "0e9c024d29f0c71e59cc0d549b16a1b5efa3d3e5deab8318b47ff3b5116dffa1", "page_spans": [{"page": 8, "a": 3954, "b": 4479, "pa": 172, "pb": 697, "rects": 6, "first_rect": [54.0, 551.69, 540.01, 564.97], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 9, "a": 4479, "b": 5151, "pa": 0, "pb": 672, "rects": 19, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 2}, {"ordinal": 5, "chunk_id": "chk_16f13547571ce355dcaa8eb4", "a": 4951, "b": 6140, "len": 1189, "page_start": 9, "page_end": 10, "spans_pages": true, "tokens": 297, "checksum": "1cdbaf01f05e9228556ec4cc08fd84614048a35d5cbe8f918196904889bd8cef", "page_spans": [{"page": 9, "a": 4951, "b": 5368, "pa": 472, "pb": 889, "rects": 5, "first_rect": [72.0, 559.61, 558.03, 572.89], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 10, "a": 5368, "b": 6140, "pa": 0, "pb": 772, "rects": 13, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 2}, {"ordinal": 6, "chunk_id": "chk_0eddd2c4b9efdd1d76e90ab5", "a": 5940, "b": 7137, "len": 1197, "page_start": 10, "page_end": 10, "spans_pages": false, "tokens": 299, "checksum": "e8fa686a39d60d733097c456ef0caf307566e309ae104f8469c400221325ebd2", "page_spans": [{"page": 10, "a": 5940, "b": 7137, "pa": 572, "pb": 1769, "rects": 14, "first_rect": [54.0, 219.53, 540.01, 232.81], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 1}, {"ordinal": 7, "chunk_id": "chk_768a50ba5049b224a28bb5af", "a": 6937, "b": 8131, "len": 1194, "page_start": 10, "page_end": 12, "spans_pages": true, "tokens": 298, "checksum": "6b455b88b3769e68f9e56d09ab3defb85b04d151e7689c3ba36f8920754f3987", "page_spans": [{"page": 10, "a": 6937, "b": 7540, "pa": 1569, "pb": 2172, "rects": 8, "first_rect": [54.0, 403.61, 340.15, 416.89], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 11, "a": 7540, "b": 7841, "pa": 0, "pb": 301, "rects": 20, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 12, "a": 7841, "b": 8131, "pa": 0, "pb": 290, "rects": 7, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 3}, {"ordinal": 8, "chunk_id": "chk_b3b6e37583e01e1a4af8fc20", "a": 7931, "b": 9123, "len": 1192, "page_start": 12, "page_end": 13, "spans_pages": true, "tokens": 298, "checksum": "28990a3f71a6d2c8c18d74a0a727b03896c9bc6647b02074b98b794159cd7132", "page_spans": [{"page": 12, "a": 7931, "b": 8182, "pa": 90, "pb": 341, "rects": 6, "first_rect": [54.0, 545.45, 540.03, 558.73], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 13, "a": 8182, "b": 9123, "pa": 0, "pb": 941, "rects": 34, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 2}, {"ordinal": 9, "chunk_id": "chk_108736b91619de4214e70fdc", "a": 8923, "b": 10118, "len": 1195, "page_start": 13, "page_end": 14, "spans_pages": true, "tokens": 298, "checksum": "f4e58348868c81db87ac966a48b5e5df64b54b9446fc6dc334907ad4753516da", "page_spans": [{"page": 13, "a": 8923, "b": 9979, "pa": 741, "pb": 1797, "rects": 11, "first_rect": [72.0, 517.13, 558.05, 530.41], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 14, "a": 9979, "b": 10118, "pa": 0, "pb": 139, "rects": 12, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 2}, {"ordinal": 10, "chunk_id": "chk_4a64b219ef27f7e613b5422d", "a": 9918, "b": 11044, "len": 1126, "page_start": 13, "page_end": 15, "spans_pages": true, "tokens": 281, "checksum": "8e8f8d6d6138cf57e8287027258c43b3244d19cc8cbc2d9dbf82fd81c2bbc9c8", "page_spans": [{"page": 13, "a": 9918, "b": 9979, "pa": 1736, "pb": 1797, "rects": 1, "first_rect": [72.0, 672.89, 558.05, 686.17], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 14, "a": 9979, "b": 10954, "pa": 0, "pb": 975, "rects": 32, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 15, "a": 10954, "b": 11044, "pa": 0, "pb": 90, "rects": 3, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 3}, {"ordinal": 11, "chunk_id": "chk_515c858cabfc696de8b27b71", "a": 10844, "b": 12042, "len": 1198, "page_start": 14, "page_end": 16, "spans_pages": true, "tokens": 299, "checksum": "cfb7be22294bd9f252e2e98728ff254849eaee64ad3846f2ec77db92a01f6bcb", "page_spans": [{"page": 14, "a": 10844, "b": 10954, "pa": 865, "pb": 975, "rects": 2, "first_rect": [54.0, 644.57, 540.05, 657.85], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 15, "a": 10954, "b": 11603, "pa": 0, "pb": 649, "rects": 22, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 16, "a": 11603, "b": 12042, "pa": 0, "pb": 439, "rects": 21, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 3}, {"ordinal": 12, "chunk_id": "chk_b823f56524ef5508d7e56465", "a": 11842, "b": 13042, "len": 1200, "page_start": 16, "page_end": 17, "spans_pages": true, "tokens": 300, "checksum": "137c19d49d3e52b0afd1165ab958ffd09079943c8845cfa878821a110fa013cd", "page_spans": [{"page": 16, "a": 11842, "b": 12571, "pa": 239, "pb": 968, "rects": 11, "first_rect": [339.3, 93.36, 454.55, 106.71], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 17, "a": 12571, "b": 13042, "pa": 0, "pb": 471, "rects": 28, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 2}, {"ordinal": 13, "chunk_id": "chk_30c3589aaa9f71dcc45bbb12", "a": 12842, "b": 14042, "len": 1200, "page_start": 17, "page_end": 18, "spans_pages": true, "tokens": 300, "checksum": "bb8afe8e4a224339854407b7bd0e8921ecb6fbfddf5c2dbddb6c01284f348cb4", "page_spans": [{"page": 17, "a": 12842, "b": 13170, "pa": 271, "pb": 599, "rects": 5, "first_rect": [398.88, 292.22, 439.13, 302.78], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 18, "a": 13170, "b": 14042, "pa": 0, "pb": 872, "rects": 21, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 2}, {"ordinal": 14, "chunk_id": "chk_739799964b91c84582d2cc64", "a": 13842, "b": 15041, "len": 1199, "page_start": 18, "page_end": 20, "spans_pages": true, "tokens": 299, "checksum": "8d5258f57f5cc99f8e5e3bd93d856912213c713cd23e03e3d327de2dd27c9671", "page_spans": [{"page": 18, "a": 13842, "b": 14216, "pa": 672, "pb": 1046, "rects": 5, "first_rect": [54.0, 587.93, 540.11, 601.21], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 19, "a": 14216, "b": 14926, "pa": 0, "pb": 710, "rects": 21, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 20, "a": 14926, "b": 15041, "pa": 0, "pb": 115, "rects": 6, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 3}, {"ordinal": 15, "chunk_id": "chk_2624eab5bb52f7e551ad462b", "a": 14841, "b": 16039, "len": 1198, "page_start": 19, "page_end": 21, "spans_pages": true, "tokens": 299, "checksum": "2c4e4ec214c789e7971f138d281169fdb783f142bc8b665cb28f32443c27b2b1", "page_spans": [{"page": 19, "a": 14841, "b": 14926, "pa": 625, "pb": 710, "rects": 2, "first_rect": [72.0, 587.93, 558.02, 601.21], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 20, "a": 14926, "b": 15648, "pa": 0, "pb": 722, "rects": 19, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 21, "a": 15648, "b": 16039, "pa": 0, "pb": 391, "rects": 15, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 3}, {"ordinal": 16, "chunk_id": "chk_708973eb708de8dd578e918a", "a": 15839, "b": 17036, "len": 1197, "page_start": 21, "page_end": 23, "spans_pages": true, "tokens": 299, "checksum": "bf1a68af712c0557040709ac3528ce1e594650f9cc7127c942d64128fc806983", "page_spans": [{"page": 21, "a": 15839, "b": 16200, "pa": 191, "pb": 552, "rects": 5, "first_rect": [484.74, 144.66, 521.29, 156.22], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 22, "a": 16200, "b": 16994, "pa": 0, "pb": 794, "rects": 32, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 23, "a": 16994, "b": 17036, "pa": 0, "pb": 42, "rects": 2, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 3}, {"ordinal": 17, "chunk_id": "chk_5fe8999d9429043e413e6e93", "a": 16836, "b": 18035, "len": 1199, "page_start": 22, "page_end": 23, "spans_pages": true, "tokens": 299, "checksum": "6083485a8ce19dc06a6062ac4a90d5e5f67d520a42fd7aa8a8747f463c28662c", "page_spans": [{"page": 22, "a": 16836, "b": 16994, "pa": 636, "pb": 794, "rects": 3, "first_rect": [54.0, 573.77, 540.03, 587.05], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 23, "a": 16994, "b": 18035, "pa": 0, "pb": 1041, "rects": 47, "first_rect": [72.0, 36.74, 184.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 2}, {"ordinal": 18, "chunk_id": "chk_e230524a6ec524a3f7c3c566", "a": 17835, "b": 18938, "len": 1103, "page_start": 23, "page_end": 24, "spans_pages": true, "tokens": 275, "checksum": "03cee89153d96274ee80ed53adcec77455f78f360a430e3623a2e82b4592a51b", "page_spans": [{"page": 23, "a": 17835, "b": 18067, "pa": 841, "pb": 1073, "rects": 4, "first_rect": [144.0, 644.57, 558.11, 657.85], "reliable": true, "w": 612.0, "h": 792.0}, {"page": 24, "a": 18067, "b": 18938, "pa": 0, "pb": 871, "rects": 40, "first_rect": [54.0, 36.74, 166.65, 47.9], "reliable": true, "w": 612.0, "h": 792.0}], "citations": 2}], "segments": [{"a": 0, "b": 534, "owners": [0], "page": 1, "page_start": true}, {"a": 534, "b": 995, "owners": [0], "page": 2, "page_start": true}, {"a": 995, "b": 1195, "owners": [0, 1], "page": 2, "page_start": false}, {"a": 1195, "b": 1249, "owners": [1], "page": 2, "page_start": false}, {"a": 1249, "b": 1652, "owners": [1], "page": 3, "page_start": true}, {"a": 1652, "b": 1967, "owners": [1], "page": 4, "page_start": true}, {"a": 1967, "b": 2077, "owners": [1, 2], "page": 4, "page_start": false}, {"a": 2077, "b": 2167, "owners": [1, 2], "page": 5, "page_start": true}, {"a": 2167, "b": 2823, "owners": [2], "page": 5, "page_start": false}, {"a": 2823, "b": 2967, "owners": [2], "page": 6, "page_start": true}, {"a": 2967, "b": 3167, "owners": [2, 3], "page": 6, "page_start": false}, {"a": 3167, "b": 3427, "owners": [3], "page": 6, "page_start": false}, {"a": 3427, "b": 3782, "owners": [3], "page": 7, "page_start": true}, {"a": 3782, "b": 3954, "owners": [3], "page": 8, "page_start": true}, {"a": 3954, "b": 4154, "owners": [3, 4], "page": 8, "page_start": false}, {"a": 4154, "b": 4479, "owners": [4], "page": 8, "page_start": false}, {"a": 4479, "b": 4951, "owners": [4], "page": 9, "page_start": true}, {"a": 4951, "b": 5151, "owners": [4, 5], "page": 9, "page_start": false}, {"a": 5151, "b": 5368, "owners": [5], "page": 9, "page_start": false}, {"a": 5368, "b": 5940, "owners": [5], "page": 10, "page_start": true}, {"a": 5940, "b": 6140, "owners": [5, 6], "page": 10, "page_start": false}, {"a": 6140, "b": 6937, "owners": [6], "page": 10, "page_start": false}, {"a": 6937, "b": 7137, "owners": [6, 7], "page": 10, "page_start": false}, {"a": 7137, "b": 7540, "owners": [7], "page": 10, "page_start": false}, {"a": 7540, "b": 7841, "owners": [7], "page": 11, "page_start": true}, {"a": 7841, "b": 7931, "owners": [7], "page": 12, "page_start": true}, {"a": 7931, "b": 8131, "owners": [7, 8], "page": 12, "page_start": false}, {"a": 8131, "b": 8182, "owners": [8], "page": 12, "page_start": false}, {"a": 8182, "b": 8923, "owners": [8], "page": 13, "page_start": true}, {"a": 8923, "b": 9123, "owners": [8, 9], "page": 13, "page_start": false}, {"a": 9123, "b": 9918, "owners": [9], "page": 13, "page_start": false}, {"a": 9918, "b": 9979, "owners": [9, 10], "page": 13, "page_start": false}, {"a": 9979, "b": 10118, "owners": [9, 10], "page": 14, "page_start": true}, {"a": 10118, "b": 10844, "owners": [10], "page": 14, "page_start": false}, {"a": 10844, "b": 10954, "owners": [10, 11], "page": 14, "page_start": false}, {"a": 10954, "b": 11044, "owners": [10, 11], "page": 15, "page_start": true}, {"a": 11044, "b": 11603, "owners": [11], "page": 15, "page_start": false}, {"a": 11603, "b": 11842, "owners": [11], "page": 16, "page_start": true}, {"a": 11842, "b": 12042, "owners": [11, 12], "page": 16, "page_start": false}, {"a": 12042, "b": 12571, "owners": [12], "page": 16, "page_start": false}, {"a": 12571, "b": 12842, "owners": [12], "page": 17, "page_start": true}, {"a": 12842, "b": 13042, "owners": [12, 13], "page": 17, "page_start": false}, {"a": 13042, "b": 13170, "owners": [13], "page": 17, "page_start": false}, {"a": 13170, "b": 13842, "owners": [13], "page": 18, "page_start": true}, {"a": 13842, "b": 14042, "owners": [13, 14], "page": 18, "page_start": false}, {"a": 14042, "b": 14216, "owners": [14], "page": 18, "page_start": false}, {"a": 14216, "b": 14841, "owners": [14], "page": 19, "page_start": true}, {"a": 14841, "b": 14926, "owners": [14, 15], "page": 19, "page_start": false}, {"a": 14926, "b": 15041, "owners": [14, 15], "page": 20, "page_start": true}, {"a": 15041, "b": 15648, "owners": [15], "page": 20, "page_start": false}, {"a": 15648, "b": 15839, "owners": [15], "page": 21, "page_start": true}, {"a": 15839, "b": 16039, "owners": [15, 16], "page": 21, "page_start": false}, {"a": 16039, "b": 16200, "owners": [16], "page": 21, "page_start": false}, {"a": 16200, "b": 16836, "owners": [16], "page": 22, "page_start": true}, {"a": 16836, "b": 16994, "owners": [16, 17], "page": 22, "page_start": false}, {"a": 16994, "b": 17036, "owners": [16, 17], "page": 23, "page_start": true}, {"a": 17036, "b": 17835, "owners": [17], "page": 23, "page_start": false}, {"a": 17835, "b": 18035, "owners": [17, 18], "page": 23, "page_start": false}, {"a": 18035, "b": 18067, "owners": [18], "page": 23, "page_start": false}, {"a": 18067, "b": 18938, "owners": [18], "page": 24, "page_start": true}]};
+const HUES = [205,150,32,284,340,96,248,12];
+const hue = o => HUES[o % HUES.length];
+const tint = o => `hsl(${hue(o)} var(--tint-s) var(--tint-l))`;
+const esc = s => s.replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+const n = x => x.toLocaleString();
+
+const spanning = D.chunks.filter(c => c.spans_pages).length;
+const maxPages = Math.max(...D.chunks.map(c => c.page_spans.length));
+
+document.getElementById('sub').textContent =
+  `${D.label} — the complete character stream, with every chunk boundary drawn on it.`;
+document.getElementById('docid').textContent =
+  `${D.document.document_id}  ·  chunker ${D.config.config_id}  ·  target ${D.config.target_chars} chars, overlap ${D.config.overlap_chars}`;
+
+document.getElementById('stats').innerHTML = [
+  ['characters', n(D.text.length)],
+  ['pages', n(D.pages.length)],
+  ['chunks', n(D.chunks.length)],
+  ['chars / page', n(Math.round(D.text.length / D.pages.length))],
+  ['span &gt;1 page', `${spanning} of ${D.chunks.length}`, true],
+  ['widest chunk', `${maxPages} pages`, true],
+].map(([k,v,flag]) =>
+  `<div class="stat${flag?' flag':''}"><span class="v">${v}</span><span class="k">${k}</span></div>`
+).join('');
+
+document.getElementById('note').innerHTML =
+  `<b>${spanning} of ${D.chunks.length} chunks cross a page boundary</b>, and the widest covers ${maxPages} pages. ` +
+  `SDD 5.1 records a chunk as carrying a single page number; that is why this schema carries ` +
+  `<code>page_start</code>, <code>page_end</code> and a <code>page_spans</code> list instead. ` +
+  `Striped passages belong to two chunks at once, which is the ${D.config.overlap_chars}-character overlap.`;
+
+/* ---- stream ---- */
+const stream = document.getElementById('stream');
+stream.innerHTML = D.segments.map((s, i) => {
+  const body = esc(D.text.slice(s.a, s.b));
+  const mark = s.page_start
+    ? `<span class="pagemark">page ${s.page} · char ${n(s.a)}</span>` : '';
+  if (!s.owners.length) return mark + `<span class="seg dim">${body}</span>`;
+  const style = s.owners.length > 1
+    ? `--tintA:${tint(s.owners[0])};--tintB:${tint(s.owners[1])}`
+    : `--tint:${tint(s.owners[0])}`;
+  const title = s.owners.length > 1
+    ? `chars ${n(s.a)}–${n(s.b)} · shared by chunks ${s.owners.join(' and ')}`
+    : `chars ${n(s.a)}–${n(s.b)} · chunk ${s.owners[0]}`;
+  return mark + `<span class="seg" tabindex="0" role="button" data-own="${s.owners.length}"`
+    + ` data-chunk="${s.owners[0]}" data-i="${i}" style="${style}" title="${title}">${body}</span>`;
+}).join('');
+
+/* ---- map ---- */
+const map = document.getElementById('map');
+const total = D.text.length;
+map.innerHTML =
+  D.chunks.map(c => {
+    const left = (c.a / total * 100).toFixed(3), w = ((c.b - c.a) / total * 100).toFixed(3);
+    const row = c.ordinal % 2 ? 13 : 0;
+    return `<div class="mchunk" data-chunk="${c.ordinal}" title="chunk ${c.ordinal} · pages ${c.page_start}–${c.page_end}"`
+      + ` style="left:${left}%;width:${w}%;top:${row}px;height:13px;background:${tint(c.ordinal)}"></div>`;
+  }).join('') +
+  D.pages.map(p => `<div class="mpage" style="left:${(p.a / total * 100).toFixed(3)}%"></div>`).join('') +
+  `<span class="mlabel" style="left:2px">char 0</span>` +
+  `<span class="mlabel" style="right:4px">${n(total)}</span>`;
+
+/* ---- chunk list ---- */
+const list = document.getElementById('chunklist');
+list.innerHTML = D.chunks.map(c =>
+  `<button data-chunk="${c.ordinal}">
+     <i class="dot" style="background:${tint(c.ordinal)}"></i>
+     <span>${c.chunk_id.slice(0, 14)}…</span>
+     <span class="pg">p${c.page_start}${c.spans_pages ? '–' + c.page_end : ''}</span>
+   </button>`).join('');
+
+/* ---- inspector ---- */
+let selected = null;
+function select(ordinal, scroll = true) {
+  const c = D.chunks[ordinal];
+  if (!c) return;
+  selected = ordinal;
+
+  stream.classList.add('focused');
+  document.querySelectorAll('.seg.hit').forEach(el => el.classList.remove('hit'));
+  document.querySelectorAll(`.seg[data-chunk]`).forEach(el => {
+    const own = D.segments[+el.dataset.i].owners;
+    if (own.includes(ordinal)) el.classList.add('hit');
+  });
+  list.querySelectorAll('button').forEach(b =>
+    b.setAttribute('aria-current', String(+b.dataset.chunk === ordinal)));
+
+  const rows = c.page_spans.map(s => `<tr>
+      <td>${s.page}</td><td>${n(s.a)}–${n(s.b)}</td>
+      <td>${n(s.pa)}–${n(s.pb)}</td><td>${s.rects}</td></tr>`).join('');
+
+  document.getElementById('inspector').innerHTML = `
+    <dl class="kv">
+      <dt>chunk_id</dt><dd>${c.chunk_id}</dd>
+      <dt>ordinal</dt><dd>${c.ordinal}</dd>
+      <dt>chars</dt><dd>${n(c.a)}–${n(c.b)} <span style="color:var(--ink-3)">(${n(c.len)})</span></dd>
+      <dt>pages</dt><dd>${c.page_start}${c.spans_pages ? '–' + c.page_end : ''}
+        <span class="pill ${c.spans_pages ? 'span' : 'one'}">${c.spans_pages ? c.page_spans.length + ' pages' : 'single page'}</span></dd>
+      <dt>tokens</dt><dd>~${n(c.tokens)}</dd>
+      <dt>citations</dt><dd>${c.citations}</dd>
+      <dt>checksum</dt><dd style="font-size:11px">${c.checksum.slice(0, 32)}…</dd>
+    </dl>
+    <table class="spans">
+      <thead><tr><th>page</th><th>doc offsets</th><th>page offsets</th><th>rects</th></tr></thead>
+      <tbody>${rows}</tbody>
+    </table>
+    <p style="font-size:12px;color:var(--ink-3);margin:10px 0 0">
+      ${c.page_spans.length} page span${c.page_spans.length > 1 ? 's' : ''} →
+      ${c.citations} citation target${c.citations > 1 ? 's' : ''}, each with its own highlight rectangles.
+    </p>`;
+
+  // Scroll inside the stream panel only. scrollIntoView would move the whole
+  // window and push the masthead out of frame.
+  if (!scroll) return;
+  const first = stream.querySelector(`.seg.hit`);
+  if (!first) return;
+  const top = first.offsetTop - stream.offsetTop - stream.clientHeight / 3;
+  stream.scrollTo({ top: Math.max(0, top), behavior: 'smooth' });
+}
+
+document.addEventListener('click', e => {
+  const t = e.target.closest('[data-chunk]');
+  if (t) select(+t.dataset.chunk);
+});
+document.addEventListener('keydown', e => {
+  if (e.key !== 'Enter' && e.key !== ' ') return;
+  const t = e.target.closest('.seg[data-chunk]');
+  if (t) { e.preventDefault(); select(+t.dataset.chunk); }
+});
+
+/* ---- toggles ---- */
+function toggle(id, fn) {
+  const b = document.getElementById(id);
+  b.addEventListener('click', () => {
+    const on = b.getAttribute('aria-pressed') !== 'true';
+    b.setAttribute('aria-pressed', String(on));
+    fn(on);
+  });
+}
+toggle('tTint', on => stream.classList.toggle('plain', !on));
+toggle('tPages', on => stream.classList.toggle('nopages', !on));
+toggle('tOverlap', on => {
+  stream.querySelectorAll('.seg').forEach(el => {
+    if (el.dataset.own !== '2') el.classList.toggle('dim', on);
+  });
+});
+
+// Open on the first page-spanning chunk, which is the thing the page exists to
+// show, but without scrolling: the masthead belongs in the first frame.
+const opening = D.chunks.findIndex(c => c.spans_pages);
+select(opening >= 0 ? opening : 0, false);
+</script>
