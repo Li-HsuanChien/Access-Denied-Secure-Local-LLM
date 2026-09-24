@@ -1,0 +1,3 @@
+# Desktop shell
+
+Scaffold only. This area will contain the Tauri Rust shell described in the [codebase design](../../docs/superpowers/specs/2026-09-22-secure-local-document-qa-codebase-design.md) and [ADR 0002](../../docs/architecture/decisions/0002-feature-first-layout.md). Its future `src-tauri/` tree will own approved application paths, platform packaging, Python and llama.cpp sidecar lifecycle, readiness, and shutdown. A bundled startup screen will precede navigation to the loopback Open WebUI frontend. The webview has no Tauri shell or filesystem capability by default. No executable desktop code is present.
