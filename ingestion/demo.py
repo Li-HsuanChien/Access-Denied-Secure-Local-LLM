@@ -216,6 +216,5 @@ def main():
     print(f'   Visual: walkthrough/chunk_viewer.html\n')
     return 0
 
-
 if __name__ == '__main__':
     sys.exit(main())
