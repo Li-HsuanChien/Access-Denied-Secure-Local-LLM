@@ -254,6 +254,41 @@ def test_chunk_size_respects_the_target():
     return f'{checked} chunks stay within target across {len(SIZE_CONFIGS)} configs'
 
 
+def test_overlap_is_exactly_the_configured_window():
+    """
+    Consecutive chunks share exactly overlap_chars of the stream, and the shared
+    region is the same characters in both: the tail of one, the head of the next.
+    Retrieval dedupes neighbouring hits against this, so it has to be exact
+    rather than approximate.
+    """
+    text = _stream(NORMAL)
+    pairs = 0
+    for cfg in SIZE_CONFIGS:
+        cs = chunks(NORMAL, cfg)
+        for a, b in zip(cs, cs[1:]):
+            overlap = a.char_end - b.char_start
+            assert overlap == cfg.overlap_chars, (
+                f'chunks {a.ordinal}->{b.ordinal} overlap {overlap}, '
+                f'expected {cfg.overlap_chars}')
+            if overlap:
+                shared = text[b.char_start:a.char_end]
+                assert a.text.endswith(shared), 'overlap is not the tail of the earlier chunk'
+                assert b.text.startswith(shared), 'overlap is not the head of the later chunk'
+            pairs += 1
+    return f'{pairs} adjacent pairs overlap by exactly the configured window'
+
+
+def test_zero_overlap_produces_a_clean_partition():
+    """With overlap disabled the chunks are a partition: no gaps, no duplication."""
+    cfg = ChunkerConfig(overlap_chars=0)
+    text = _stream(NORMAL)
+    cs = chunks(NORMAL, cfg)
+    for a, b in zip(cs, cs[1:]):
+        assert b.char_start == a.char_end, f'gap or overlap at chunk {b.ordinal}'
+    assert ''.join(c.text for c in cs) == text, 'concatenated chunks do not rebuild the stream'
+    return f'{len(cs)} chunks partition the stream exactly, reproducing it verbatim'
+
+
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith('test_')]
 
 if __name__ == '__main__':
