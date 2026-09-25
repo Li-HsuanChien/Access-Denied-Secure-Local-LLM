@@ -211,6 +211,49 @@ def test_truncation_is_caught_despite_correct_page_count():
     return 'truncated file rejected despite reporting a full 24-page count'
 
 
+# ---------------------------------------------------------------------------
+# Week 2  "chunk size/overlap behavior is testable"
+#
+# The chunker is naive on purpose, but naive is not the same as unspecified.
+# These pin the two knobs E3 will tune against, so replacing the chunker with a
+# sentence-aware one cannot quietly change what target_chars and overlap_chars
+# mean.
+# ---------------------------------------------------------------------------
+SIZE_CONFIGS = [
+    ChunkerConfig(),
+    ChunkerConfig(target_chars=600, overlap_chars=100),
+    ChunkerConfig(target_chars=2400, overlap_chars=400),
+    ChunkerConfig(target_chars=1200, overlap_chars=0),
+]
+
+
+def _stream(path):
+    text, _, doc = extract(path)
+    doc.close()
+    return text
+
+
+def test_chunk_size_respects_the_target():
+    """
+    target_chars is a budget, not a suggestion. Only the final chunk may exceed
+    it, and only because a tail shorter than min_chunk_chars is folded back in
+    rather than emitted as a runt.
+    """
+    checked = 0
+    for cfg in SIZE_CONFIGS:
+        cs = chunks(NORMAL, cfg)
+        assert cs, f'config {cfg.config_id} produced no chunks'
+        for c in cs[:-1]:
+            size = c.char_end - c.char_start
+            assert size <= cfg.target_chars, (
+                f'chunk {c.ordinal} is {size} chars, over target {cfg.target_chars}')
+        budget = cfg.target_chars + cfg.min_chunk_chars
+        tail = cs[-1].char_end - cs[-1].char_start
+        assert tail <= budget, f'final chunk is {tail} chars, over budget {budget}'
+        checked += len(cs)
+    return f'{checked} chunks stay within target across {len(SIZE_CONFIGS)} configs'
+
+
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith('test_')]
 
 if __name__ == '__main__':
