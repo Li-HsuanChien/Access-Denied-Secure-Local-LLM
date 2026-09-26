@@ -289,6 +289,41 @@ def test_zero_overlap_produces_a_clean_partition():
     return f'{len(cs)} chunks partition the stream exactly, reproducing it verbatim'
 
 
+def test_chunks_cover_the_whole_stream():
+    """
+    No character of the extracted stream is unreachable. A dropped region would
+    be text the user can see in the PDF and the system can never retrieve.
+    """
+    text = _stream(NORMAL)
+    for cfg in SIZE_CONFIGS:
+        cs = chunks(NORMAL, cfg)
+        assert cs[0].char_start == 0, 'stream does not start at the first chunk'
+        assert cs[-1].char_end == len(text), 'stream is truncated at the last chunk'
+        assert [c.ordinal for c in cs] == list(range(len(cs))), 'ordinals are not contiguous'
+        for a, b in zip(cs, cs[1:]):
+            assert b.char_start <= a.char_end, f'gap before chunk {b.ordinal}'
+    return f'stream of {len(text)} chars fully covered under every config'
+
+
+def test_chunker_progresses_when_overlap_exceeds_chunk_size():
+    """
+    The obvious way to hang this loop: set overlap_chars at or above the chunk
+    size, so stepping back by the full overlap never advances the cursor. The
+    step is clamped to at least one character, and overlap degrades to whatever
+    the chunk can give rather than stalling.
+    """
+    cfg = ChunkerConfig(target_chars=300, overlap_chars=250)
+    text = _stream(NORMAL)
+    cs = chunks(NORMAL, cfg)
+    assert cs, 'degenerate config produced no chunks'
+    steps = [b.char_start - a.char_start for a, b in zip(cs, cs[1:])]
+    assert min(steps) >= 1, f'chunker failed to advance (min step {min(steps)})'
+    assert cs[-1].char_end == len(text), 'degenerate config lost the tail of the stream'
+    for a, b in zip(cs, cs[1:]):
+        assert b.char_start <= a.char_end, 'degenerate config opened a gap'
+    return f'{len(cs)} chunks, min forward step {min(steps)}, full coverage held'
+
+
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith('test_')]
 
 if __name__ == '__main__':
