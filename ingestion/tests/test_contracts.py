@@ -324,6 +324,35 @@ def test_chunker_progresses_when_overlap_exceeds_chunk_size():
     return f'{len(cs)} chunks, min forward step {min(steps)}, full coverage held'
 
 
+# ---------------------------------------------------------------------------
+# Week 2  "normal PDFs extract page text; unreadable/encrypted/malformed
+#          inputs return explicit errors"
+# ---------------------------------------------------------------------------
+def test_normal_pdfs_extract_page_text():
+    """
+    Every page of an accepted document contributes text, and the per-page
+    offsets tile the canonical stream exactly. A page that silently extracts to
+    nothing is the failure mode behind the truncated fixture, so absence of text
+    is never allowed to pass unnoticed on a document we accept.
+    """
+    total_pages = 0
+    for path in ACCEPTING:
+        text, pages, doc = extract(path)
+        page_count = doc.page_count
+        doc.close()
+        assert len(pages) == page_count, (
+            f'{path.name}: extracted {len(pages)} pages, PDF reports {page_count}')
+        blank = [p.number for p in pages if not p.has_text]
+        assert not blank, f'{path.name}: pages with no extracted text: {blank}'
+        assert pages[0].char_start == 0, f'{path.name}: stream does not start at page one'
+        assert pages[-1].char_end == len(text), f'{path.name}: stream ends before the last page'
+        for a, b in zip(pages, pages[1:]):
+            assert b.char_start == a.char_end, (
+                f'{path.name}: page offsets leave a gap at page {b.number}')
+        total_pages += len(pages)
+    return f'{total_pages} pages across {len(ACCEPTING)} documents all yield text'
+
+
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith('test_')]
 
 if __name__ == '__main__':
