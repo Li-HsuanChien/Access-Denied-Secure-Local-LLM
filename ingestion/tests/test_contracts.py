@@ -26,7 +26,7 @@ from referencing import Registry, Resource
 
 from src.ingest import chunks, extract, validate
 from src.schema import ChunkerConfig, Document, citation_targets
-from src.validation import IngestionPolicy, Outcome
+from src.validation import CheckStatus, IngestionPolicy, Outcome, RejectReason
 
 FIX = ROOT / 'fixtures'
 NORMAL = FIX / 'normal' / 'normal_nrc_reactor_concepts_ch01.pdf'
@@ -351,6 +351,43 @@ def test_normal_pdfs_extract_page_text():
                 f'{path.name}: page offsets leave a gap at page {b.number}')
         total_pages += len(pages)
     return f'{total_pages} pages across {len(ACCEPTING)} documents all yield text'
+
+
+def test_rejections_carry_an_explicit_reason_and_detail():
+    """
+    "Explicit" means three things, and a rejection is only actionable with all
+    of them: a reason from the closed SDD 6.1 vocabulary for E4 to render, a
+    human-readable detail naming the file's actual problem (SDD 9), and at least
+    one failing check recording what was observed against what was expected.
+
+    validate() also has to survive input that is not a PDF at all. Rejection is
+    data, not an exception.
+    """
+    manifest = json.loads((ROOT / 'manifest.json').read_text())
+    vocabulary = {r.value for r in RejectReason}
+    rejected = 0
+    for f in manifest['fixtures']:
+        result = validate(ROOT / f['path'])
+        if result.outcome is not Outcome.REJECTED:
+            assert result.reject_reason is None, (
+                f'{f["id"]} was not rejected but carries reason {result.reject_reason}')
+            continue
+        rejected += 1
+        assert result.reject_reason is not None, f'{f["id"]} rejected with no reason'
+        assert result.reject_reason.value in vocabulary, (
+            f'{f["id"]} rejected with {result.reject_reason.value}, outside SDD 6.1')
+        assert result.reject_detail and result.reject_detail.strip(), (
+            f'{f["id"]} rejected with no human-readable detail')
+        failing = [c for c in result.checks if c.status is CheckStatus.FAIL]
+        assert failing, f'{f["id"]} rejected with no failing check to point at'
+
+    with tempfile.TemporaryDirectory() as td:
+        junk = Path(td) / 'not_really.pdf'
+        junk.write_bytes(b'\x00\xff' * 512)
+        result = validate(junk)
+        assert result.outcome is Outcome.REJECTED, 'random bytes were not rejected'
+        assert result.reject_reason is not None, 'random bytes rejected without a reason'
+    return f'{rejected} rejections carry a vocabulary reason, a detail and a failing check'
 
 
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith('test_')]
