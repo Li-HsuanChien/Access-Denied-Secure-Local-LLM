@@ -165,7 +165,11 @@ def test_outcomes_match_manifest():
         elif expected == 'reject' and result.reject_reason.value != f['reject_reason']:
             mismatches.append((f['id'], f['reject_reason'], result.reject_reason.value, None))
     assert not mismatches, f'manifest disagrees with validator: {mismatches}'
-    return f'{len(manifest["fixtures"])} fixtures validate as the manifest labels them'
+    deferred = [f['id'] for f in manifest['fixtures']
+                if f['expected_outcome'] == 'decision_required']
+    asserted = len(manifest['fixtures']) - len(deferred)
+    return (f'{asserted} fixtures validate as labeled, '
+            f'{len(deferred)} deferred pending the open decisions')
 
 
 def test_policy_decisions_are_live_knobs():
