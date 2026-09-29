@@ -49,8 +49,8 @@ curl http://127.0.0.1:8080/health
 On a machine with internet:
 
 ```powershell
-scripts\windows\fetch_runtime.ps1              # official llama.cpp Windows CPU build -> bin\
-scripts\windows\fetch_models.ps1 -Set week2    # Qwen3-4B-Instruct-2507 at Q4_K_M and Q8_0 -> models\
+scripts\windows\fetch_runtime.ps1              # official llama.cpp Windows CPU build (pinned b11242) -> bin\
+scripts\windows\fetch_models.ps1 -Set week2    # Qwen3-4B-Instruct-2507 at Q4_K_M and Q8_0 -> models\ (SHA-256 checked)
 scripts\windows\build_exe.ps1 -IncludeBin -IncludeModels -Zip   # -> dist\DocQA-Runtime.zip
 ```
 

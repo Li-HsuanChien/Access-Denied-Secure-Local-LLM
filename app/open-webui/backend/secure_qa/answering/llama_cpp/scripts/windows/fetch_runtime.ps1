@@ -3,15 +3,20 @@
   Download the official llama.cpp Windows build into .\bin (run this on a machine WITH internet, then copy the folder).
 
 .EXAMPLE
-  powershell -ExecutionPolicy Bypass -File scripts\windows\fetch_runtime.ps1
+  powershell -ExecutionPolicy Bypass -File scripts\windows\fetch_runtime.ps1                 # pinned build from models\shortlist.json
+  powershell -ExecutionPolicy Bypass -File scripts\windows\fetch_runtime.ps1 -Tag latest
   powershell -ExecutionPolicy Bypass -File scripts\windows\fetch_runtime.ps1 -Tag b6500 -Variant cpu-x64
 #>
 param(
-  [string]$Tag = "latest",            # a release tag like b6500, or "latest"
+  [string]$Tag = "",                  # a release tag like b6500, "latest", or empty for the pinned tag
   [string]$Variant = "cpu-x64",       # cpu-x64 (reference laptop), vulkan-x64, cuda-12.4-x64 ...
   [string]$Dest = (Join-Path $PSScriptRoot "..\..\bin")
 )
 $ErrorActionPreference = "Stop"
+if (-not $Tag) {
+  $manifest = Get-Content (Join-Path $PSScriptRoot "..\..\models\shortlist.json") -Raw | ConvertFrom-Json
+  $Tag = if ($manifest.llama_cpp.tag) { $manifest.llama_cpp.tag } else { "latest" }
+}
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 
 $headers = @{ "User-Agent" = "docqa-runtime" }

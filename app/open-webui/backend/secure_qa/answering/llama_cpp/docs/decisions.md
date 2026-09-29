@@ -88,4 +88,5 @@ report banners), so simulated numbers can't be mistaken for real ones. It also h
   `.exe` build) follow documented APIs but need a first run on the reference laptop.
 * No real-model numbers yet. `docs/sample-results` contains stub data and tiny-random-model data only.
 * One model per runtime instance. Switching models means a restart (`--model`).
-* The model shortlist's Hugging Face repo and file names should be verified before downloading.
+* The Qwen3-4B Q4_K_M and Q8_0 downloads are verified and pinned by SHA-256 in `models/shortlist.json`. The other
+  shortlisted models' Hugging Face repo and file names are still unverified.

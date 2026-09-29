@@ -1,5 +1,12 @@
 {
-  "_note": "Week 1 candidate shortlist for the reference laptop (Windows, 8-16 GB RAM, CPU only). Repo/file names follow the usual Hugging Face GGUF naming; sizes are approximate. Verify each link and licence before first download - fetch_models.ps1 stops with a clear error if a file has moved.",
+  "_note": "Week 1 candidate shortlist for the reference laptop (Windows, 8-16 GB RAM, CPU only). Sizes are approximate unless size_bytes is given. Files with a sha256 were downloaded and checked against the Hugging Face checksum on 2026-09-28; fetch_models.ps1 refuses a download that does not match. Verify links and licences of the others before first download.",
+  "llama_cpp": {
+    "_note": "Pinned llama.cpp build used for the Week 1/2 runs. fetch_runtime.ps1 downloads this tag by default; pass -Tag latest to try a newer build.",
+    "tag": "b11242",
+    "commit": "526c43b8f",
+    "windows_asset": "llama-b11242-bin-win-cpu-x64.zip",
+    "release_url": "https://github.com/ggml-org/llama.cpp/releases/tag/b11242"
+  },
   "candidates": [
     {
       "key": "qwen3-4b-2507",
@@ -10,9 +17,11 @@
       "why": "Primary pick: strongest instruction following / grounding in the 4B class, permissive licence, long context, non-thinking variant (no <think> blocks to strip).",
       "repo": "bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF",
       "files": {
-        "Q4_K_M": {"file": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf", "approx_gb": 2.5},
+        "Q4_K_M": {"file": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf", "approx_gb": 2.5, "size_bytes": 2497280736,
+                   "sha256": "2fde00ce69dd4899c70d020845e2638353015bba0fdf161b3eb965f2bca4464e"},
         "Q5_K_M": {"file": "Qwen_Qwen3-4B-Instruct-2507-Q5_K_M.gguf", "approx_gb": 2.9},
-        "Q8_0":   {"file": "Qwen_Qwen3-4B-Instruct-2507-Q8_0.gguf",   "approx_gb": 4.3}
+        "Q8_0":   {"file": "Qwen_Qwen3-4B-Instruct-2507-Q8_0.gguf",   "approx_gb": 4.3, "size_bytes": 4280405216,
+                   "sha256": "260b5b5b6ad73e44df81a43ea1f5c11c37007b6bac18eb3cd2016e8667c19662"}
       }
     },
     {

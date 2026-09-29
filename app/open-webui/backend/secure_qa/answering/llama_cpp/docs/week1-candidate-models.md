@@ -31,6 +31,23 @@ approximate Q4_K_M file sizes.
 reasoning or "thinking" models (slow on CPU, and their output needs stripping); vision-language models (not needed,
 larger); Qwen2.5-3B (its research licence restricts commercial use).
 
+## Pinned versions
+
+These are the exact files used for the Week 1/2 runs. They were downloaded on 2026-09-28, and each SHA-256 matched
+the checksum Hugging Face publishes. `shortlist.json` records them, and `fetch_models.ps1` refuses a download
+that doesn't match. Model files are not committed to git; they are over GitHub's 100 MB file limit.
+
+| File | Bytes | SHA-256 |
+|---|---:|---|
+| `Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf` | 2,497,280,736 | `2fde00ce69dd4899c70d020845e2638353015bba0fdf161b3eb965f2bca4464e` |
+| `Qwen_Qwen3-4B-Instruct-2507-Q8_0.gguf` | 4,280,405,216 | `260b5b5b6ad73e44df81a43ea1f5c11c37007b6bac18eb3cd2016e8667c19662` |
+
+Source: [bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF](https://huggingface.co/bartowski/Qwen_Qwen3-4B-Instruct-2507-GGUF).
+
+**llama.cpp:** release [`b11242`](https://github.com/ggml-org/llama.cpp/releases/tag/b11242) (commit `526c43b8f`),
+Windows CPU build `llama-b11242-bin-win-cpu-x64.zip`. `fetch_runtime.ps1` downloads this tag by default; pass
+`-Tag latest` to try a newer build.
+
 **Before relying on this list:** the model landscape moves fast. Check Hugging Face for newer small instruct models
 and confirm each licence with whoever owns legal sign-off. The benchmark takes any GGUF you drop into `models\`,
 so adding a candidate costs nothing.

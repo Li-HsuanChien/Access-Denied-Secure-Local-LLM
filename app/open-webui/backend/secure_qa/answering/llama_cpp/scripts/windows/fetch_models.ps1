@@ -44,9 +44,14 @@ foreach ($pair in $wanted) {
   $fs = [IO.File]::OpenRead("$out.part"); $magic = New-Object byte[] 4; $null = $fs.Read($magic, 0, 4); $len = $fs.Length; $fs.Close()
   if ([Text.Encoding]::ASCII.GetString($magic) -ne "GGUF") { Remove-Item "$out.part"; throw "$($f.file) is not a GGUF file (moved or renamed on Hugging Face? check $url)" }
   if ($len -lt ($f.approx_gb * 0.7GB)) { Write-Warning "$($f.file) is smaller than expected ($([math]::Round($len/1GB,2)) GB) - it may be incomplete" }
+  $hash = (Get-FileHash "$out.part" -Algorithm SHA256).Hash
+  if ($f.sha256 -and $hash -ne $f.sha256.ToUpper()) {
+    Remove-Item "$out.part"
+    throw "$($f.file) SHA256 mismatch: got $hash, shortlist.json pins $($f.sha256.ToUpper()). The download is corrupt or the file changed upstream."
+  }
   Move-Item "$out.part" $out -Force
-  $hash = (Get-FileHash $out -Algorithm SHA256).Hash
   Add-Content -Path (Join-Path $Dest "SHA256SUMS.txt") -Value "$hash  $($f.file)"
-  Write-Host "  ok  $([math]::Round($len/1GB,2)) GB  sha256 $hash"
+  $check = if ($f.sha256) { "matches shortlist.json" } else { "not pinned - compare with the Hugging Face file page" }
+  Write-Host "  ok  $([math]::Round($len/1GB,2)) GB  sha256 $hash ($check)"
 }
-Write-Host "`nDone. Compare SHA256SUMS.txt with the sha256 shown on each Hugging Face file page before moving the files to the air-gapped machine."
+Write-Host "`nDone. Files pinned in shortlist.json were verified; compare any others in SHA256SUMS.txt with the sha256 shown on their Hugging Face file page before moving them to the air-gapped machine."
