@@ -27,6 +27,14 @@ _SHARD_RE = re.compile(r"-(\d{5})-of-(\d{5})\.gguf$", re.I)
 def stub_command() -> list[str]:
     if getattr(sys, "frozen", False):
         return [sys.executable, "_stub-server"]
+    base = getattr(sys, "_base_executable", None)
+    if IS_WINDOWS and base and Path(base).is_file() and Path(base).resolve() != Path(sys.executable).resolve():
+        # A Windows venv python.exe is a launcher that runs the real interpreter as a child process, so the pid
+        # we measure (RAM, sockets) would be the ~4 MB launcher. The stub needs only the stdlib, so run it on the
+        # base interpreter directly with this package's source directory on sys.path.
+        src = str(Path(__file__).resolve().parent.parent)
+        return [base, "-c", f"import runpy, sys; sys.path.insert(0, {src!r}); "
+                            "runpy.run_module('docqa_runtime.stub_server', run_name='__main__', alter_sys=True)"]
     return [sys.executable, "-m", "docqa_runtime.stub_server"]
 
 
