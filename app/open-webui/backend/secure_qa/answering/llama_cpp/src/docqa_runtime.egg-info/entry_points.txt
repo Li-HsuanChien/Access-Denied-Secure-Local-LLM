@@ -1,0 +1,2 @@
+[console_scripts]
+docqa-runtime = docqa_runtime.cli:main
