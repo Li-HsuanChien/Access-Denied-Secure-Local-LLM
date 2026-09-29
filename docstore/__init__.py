@@ -1,22 +1,29 @@
-"""Document store I/O contract and backend implementations for the RAG workstream.
+"""Document store for the RAG workstream: E2 Chunks in, ranked SearchResults out.
 
-Backends are imported lazily so that using one does not require the other's client library.
+Chroma (embedded, on-disk) is the selected store. `ChromaStore` is imported
+lazily so the chunk types can be used without chromadb installed.
 """
 
-from .base import DocumentStore
-from .chunk import Chunk, SearchResult
-from .embedding import Embedder
+from .base import DocumentStore, EmbeddingMismatchError
+from .chunk import Chunk, IndexResult, PageSpan, SearchResult
+from .embedding import Embedder, FakeEmbedder
 
-__all__ = ["Chunk", "DocumentStore", "Embedder", "SearchResult", "make_store"]
+__all__ = [
+    "ChromaStore",
+    "Chunk",
+    "DocumentStore",
+    "Embedder",
+    "EmbeddingMismatchError",
+    "FakeEmbedder",
+    "IndexResult",
+    "PageSpan",
+    "SearchResult",
+]
 
 
-def make_store(name: str, embedder: Embedder, **options) -> DocumentStore:
-    if name == "chroma":
+def __getattr__(name: str):
+    if name == "ChromaStore":
         from .chroma_store import ChromaStore
 
-        return ChromaStore(embedder, **options)
-    if name == "qdrant":
-        from .qdrant_store import QdrantStore
-
-        return QdrantStore(embedder, **options)
-    raise ValueError(f"Unknown store '{name}' (expected 'chroma' or 'qdrant')")
+        return ChromaStore
+    raise AttributeError(name)

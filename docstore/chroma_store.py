@@ -1,15 +1,14 @@
-"""Chroma running embedded in-process with an on-disk PersistentClient."""
+"""Chroma running embedded in-process with an on-disk PersistentClient (no server, no port)."""
 
 from __future__ import annotations
 
 from collections.abc import Sequence
 from pathlib import Path
 
-from .base import DocumentStore
+from .base import DocumentStore, EmbeddingMismatchError
 from .chunk import Chunk, SearchResult
 from .embedding import Embedder
 
-# Matched to QdrantStore so both indexes are built with the same HNSW settings.
 HNSW_CONFIG = {"space": "cosine", "max_neighbors": 16, "ef_construction": 100, "ef_search": 100}
 
 
@@ -22,7 +21,7 @@ class ChromaStore(DocumentStore):
         from chromadb.config import Settings
 
         self.path = Path(path)
-        self.collection_name = collection
+        self._collection_name = collection
         self._client = chromadb.PersistentClient(
             path=str(self.path),
             settings=Settings(anonymized_telemetry=False, allow_reset=True),
@@ -30,21 +29,41 @@ class ChromaStore(DocumentStore):
         self._collection = None
 
     @property
+    def collection_name(self) -> str:
+        return self._collection_name
+
+    @property
     def collection(self):
         if self._collection is None:
-            self._collection = self._client.get_or_create_collection(
-                name=self.collection_name,
+            collection = self._client.get_or_create_collection(
+                name=self._collection_name,
                 embedding_function=None,  # we always pass vectors; avoids Chroma's model download
                 configuration={"hnsw": HNSW_CONFIG},
+                metadata={
+                    "embedding_model": self.embedder.model_name,
+                    "embedding_dim": self.embedder.dimension,
+                },
             )
+            self._check_embedding_model(collection)
+            self._collection = collection
         return self._collection
+
+    def _check_embedding_model(self, collection) -> None:
+        meta = collection.metadata or {}
+        built_with = (meta.get("embedding_model"), meta.get("embedding_dim"))
+        using = (self.embedder.model_name, self.embedder.dimension)
+        if built_with != using:
+            raise EmbeddingMismatchError(
+                f"Collection '{self._collection_name}' was built with {built_with[0]} ({built_with[1]}-dim) "
+                f"but the embedder is {using[0]} ({using[1]}-dim)"
+            )
 
     def _upsert(self, chunks: Sequence[Chunk], vectors) -> None:
         batch = self._client.get_max_batch_size()
         for i in range(0, len(chunks), batch):
             part = chunks[i : i + batch]
             self.collection.upsert(
-                ids=[c.id for c in part],
+                ids=[c.chunk_id for c in part],
                 embeddings=vectors[i : i + batch],
                 documents=[c.text for c in part],
                 metadatas=[c.to_metadata() for c in part],
@@ -64,26 +83,23 @@ class ChromaStore(DocumentStore):
             )
         ]
 
-    def persist(self) -> None:
-        # PersistentClient writes through to SQLite on every upsert and flushes the
-        # HNSW segment itself; there is no explicit flush API in chromadb 1.x.
-        pass
-
     def load(self) -> int:
         from chromadb.errors import NotFoundError
 
         try:
-            self._collection = self._client.get_collection(self.collection_name)
+            collection = self._client.get_collection(self._collection_name)
         except NotFoundError as exc:
-            raise LookupError(f"No persisted Chroma collection '{self.collection_name}' at {self.path}") from exc
+            raise LookupError(f"No persisted Chroma collection '{self._collection_name}' at {self.path}") from exc
+        self._check_embedding_model(collection)
+        self._collection = collection
         return self.count()
 
     def count(self) -> int:
         return self.collection.count()
 
     def reset(self) -> None:
-        if any(c.name == self.collection_name for c in self._client.list_collections()):
-            self._client.delete_collection(self.collection_name)
+        if any(c.name == self._collection_name for c in self._client.list_collections()):
+            self._client.delete_collection(self._collection_name)
         self._collection = None
 
     def close(self) -> None:

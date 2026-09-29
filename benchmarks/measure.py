@@ -46,8 +46,8 @@ class Measurement:
 def measure(fn: Callable[[], Any], label: str, verbose: bool = True) -> Measurement:
     """Run `fn()` and record elapsed time and the change in this process's RSS.
 
-    RSS covers this Python process only. A store running in another process
-    (Qdrant in Docker) must have its memory sampled separately.
+    RSS covers this Python process only, which is the whole footprint of an
+    in-process store such as Chroma.
     """
     gc.collect()  # keep garbage from earlier steps out of the delta
     mem_before = rss_mb()
