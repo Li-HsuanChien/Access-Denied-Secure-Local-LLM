@@ -3,6 +3,7 @@
 import http.client
 import json
 import os
+import signal
 import subprocess
 import sys
 import threading
@@ -227,9 +228,13 @@ def test_cli_up_json_ready_file_and_clean_shutdown(stub_models, tmp_path):
     port = free_port()
     ready = tmp_path / "ready.json"
     env = {**os.environ, "DOCQA_STUB_SPEED": "25"}
+    # On Windows, terminate() is TerminateProcess (a hard kill, exit code 1); a graceful stop is Ctrl+Break,
+    # which needs the child in its own process group so the signal does not reach pytest.
+    flags = subprocess.CREATE_NEW_PROCESS_GROUP if os.name == "nt" else 0
     p = subprocess.Popen([sys.executable, "-m", "docqa_runtime", "up", "--server-bin", "stub", "--models-dir",
                           str(stub_models), "--port", str(port), "--json", "--ready-file", str(ready)],
-                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, cwd=tmp_path, env=env)
+                         stdout=subprocess.PIPE, stderr=subprocess.PIPE, text=True, cwd=tmp_path, env=env,
+                         creationflags=flags)
     try:
         line = p.stdout.readline()
         info = json.loads(line)
@@ -240,7 +245,10 @@ def test_cli_up_json_ready_file_and_clean_shutdown(stub_models, tmp_path):
         assert out.returncode == 0 and "[stub]" in out.stdout
         backend_pid = info["backend"]["pid"]
     finally:
-        p.terminate()
+        if os.name == "nt":
+            p.send_signal(signal.CTRL_BREAK_EVENT)
+        else:
+            p.terminate()
         rc = p.wait(20)
     assert rc == 0
     import psutil
