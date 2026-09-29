@@ -26,7 +26,7 @@ from referencing import Registry, Resource
 
 from src.ingest import chunks, extract, validate
 from src.schema import ChunkerConfig, Document, citation_targets
-from src.validation import IngestionPolicy, Outcome
+from src.validation import CheckStatus, IngestionPolicy, Outcome, RejectReason
 
 FIX = ROOT / 'fixtures'
 NORMAL = FIX / 'normal' / 'normal_nrc_reactor_concepts_ch01.pdf'
@@ -165,7 +165,11 @@ def test_outcomes_match_manifest():
         elif expected == 'reject' and result.reject_reason.value != f['reject_reason']:
             mismatches.append((f['id'], f['reject_reason'], result.reject_reason.value, None))
     assert not mismatches, f'manifest disagrees with validator: {mismatches}'
-    return f'{len(manifest["fixtures"])} fixtures validate as the manifest labels them'
+    deferred = [f['id'] for f in manifest['fixtures']
+                if f['expected_outcome'] == 'decision_required']
+    asserted = len(manifest['fixtures']) - len(deferred)
+    return (f'{asserted} fixtures validate as labeled, '
+            f'{len(deferred)} deferred pending the open decisions')
 
 
 def test_policy_decisions_are_live_knobs():
@@ -209,6 +213,185 @@ def test_truncation_is_caught_despite_correct_page_count():
     import pymupdf
     assert pymupdf.open(truncated).page_count == 24
     return 'truncated file rejected despite reporting a full 24-page count'
+
+
+# ---------------------------------------------------------------------------
+# Week 2  "chunk size/overlap behavior is testable"
+#
+# The chunker is naive on purpose, but naive is not the same as unspecified.
+# These pin the two knobs E3 will tune against, so replacing the chunker with a
+# sentence-aware one cannot quietly change what target_chars and overlap_chars
+# mean.
+# ---------------------------------------------------------------------------
+SIZE_CONFIGS = [
+    ChunkerConfig(),
+    ChunkerConfig(target_chars=600, overlap_chars=100),
+    ChunkerConfig(target_chars=2400, overlap_chars=400),
+    ChunkerConfig(target_chars=1200, overlap_chars=0),
+]
+
+
+def _stream(path):
+    text, _, doc = extract(path)
+    doc.close()
+    return text
+
+
+def test_chunk_size_respects_the_target():
+    """
+    target_chars is a budget, not a suggestion. Only the final chunk may exceed
+    it, and only because a tail shorter than min_chunk_chars is folded back in
+    rather than emitted as a runt.
+    """
+    checked = 0
+    for cfg in SIZE_CONFIGS:
+        cs = chunks(NORMAL, cfg)
+        assert cs, f'config {cfg.config_id} produced no chunks'
+        for c in cs[:-1]:
+            size = c.char_end - c.char_start
+            assert size <= cfg.target_chars, (
+                f'chunk {c.ordinal} is {size} chars, over target {cfg.target_chars}')
+        budget = cfg.target_chars + cfg.min_chunk_chars
+        tail = cs[-1].char_end - cs[-1].char_start
+        assert tail <= budget, f'final chunk is {tail} chars, over budget {budget}'
+        checked += len(cs)
+    return f'{checked} chunks stay within target across {len(SIZE_CONFIGS)} configs'
+
+
+def test_overlap_is_exactly_the_configured_window():
+    """
+    Consecutive chunks share exactly overlap_chars of the stream, and the shared
+    region is the same characters in both: the tail of one, the head of the next.
+    Retrieval dedupes neighbouring hits against this, so it has to be exact
+    rather than approximate.
+    """
+    text = _stream(NORMAL)
+    pairs = 0
+    for cfg in SIZE_CONFIGS:
+        cs = chunks(NORMAL, cfg)
+        for a, b in zip(cs, cs[1:]):
+            overlap = a.char_end - b.char_start
+            assert overlap == cfg.overlap_chars, (
+                f'chunks {a.ordinal}->{b.ordinal} overlap {overlap}, '
+                f'expected {cfg.overlap_chars}')
+            if overlap:
+                shared = text[b.char_start:a.char_end]
+                assert a.text.endswith(shared), 'overlap is not the tail of the earlier chunk'
+                assert b.text.startswith(shared), 'overlap is not the head of the later chunk'
+            pairs += 1
+    return f'{pairs} adjacent pairs overlap by exactly the configured window'
+
+
+def test_zero_overlap_produces_a_clean_partition():
+    """With overlap disabled the chunks are a partition: no gaps, no duplication."""
+    cfg = ChunkerConfig(overlap_chars=0)
+    text = _stream(NORMAL)
+    cs = chunks(NORMAL, cfg)
+    for a, b in zip(cs, cs[1:]):
+        assert b.char_start == a.char_end, f'gap or overlap at chunk {b.ordinal}'
+    assert ''.join(c.text for c in cs) == text, 'concatenated chunks do not rebuild the stream'
+    return f'{len(cs)} chunks partition the stream exactly, reproducing it verbatim'
+
+
+def test_chunks_cover_the_whole_stream():
+    """
+    No character of the extracted stream is unreachable. A dropped region would
+    be text the user can see in the PDF and the system can never retrieve.
+    """
+    text = _stream(NORMAL)
+    for cfg in SIZE_CONFIGS:
+        cs = chunks(NORMAL, cfg)
+        assert cs[0].char_start == 0, 'stream does not start at the first chunk'
+        assert cs[-1].char_end == len(text), 'stream is truncated at the last chunk'
+        assert [c.ordinal for c in cs] == list(range(len(cs))), 'ordinals are not contiguous'
+        for a, b in zip(cs, cs[1:]):
+            assert b.char_start <= a.char_end, f'gap before chunk {b.ordinal}'
+    return f'stream of {len(text)} chars fully covered under every config'
+
+
+def test_chunker_progresses_when_overlap_exceeds_chunk_size():
+    """
+    The obvious way to hang this loop: set overlap_chars at or above the chunk
+    size, so stepping back by the full overlap never advances the cursor. The
+    step is clamped to at least one character, and overlap degrades to whatever
+    the chunk can give rather than stalling.
+    """
+    cfg = ChunkerConfig(target_chars=300, overlap_chars=250)
+    text = _stream(NORMAL)
+    cs = chunks(NORMAL, cfg)
+    assert cs, 'degenerate config produced no chunks'
+    steps = [b.char_start - a.char_start for a, b in zip(cs, cs[1:])]
+    assert min(steps) >= 1, f'chunker failed to advance (min step {min(steps)})'
+    assert cs[-1].char_end == len(text), 'degenerate config lost the tail of the stream'
+    for a, b in zip(cs, cs[1:]):
+        assert b.char_start <= a.char_end, 'degenerate config opened a gap'
+    return f'{len(cs)} chunks, min forward step {min(steps)}, full coverage held'
+
+
+# ---------------------------------------------------------------------------
+# Week 2  "normal PDFs extract page text; unreadable/encrypted/malformed
+#          inputs return explicit errors"
+# ---------------------------------------------------------------------------
+def test_normal_pdfs_extract_page_text():
+    """
+    Every page of an accepted document contributes text, and the per-page
+    offsets tile the canonical stream exactly. A page that silently extracts to
+    nothing is the failure mode behind the truncated fixture, so absence of text
+    is never allowed to pass unnoticed on a document we accept.
+    """
+    total_pages = 0
+    for path in ACCEPTING:
+        text, pages, doc = extract(path)
+        page_count = doc.page_count
+        doc.close()
+        assert len(pages) == page_count, (
+            f'{path.name}: extracted {len(pages)} pages, PDF reports {page_count}')
+        blank = [p.number for p in pages if not p.has_text]
+        assert not blank, f'{path.name}: pages with no extracted text: {blank}'
+        assert pages[0].char_start == 0, f'{path.name}: stream does not start at page one'
+        assert pages[-1].char_end == len(text), f'{path.name}: stream ends before the last page'
+        for a, b in zip(pages, pages[1:]):
+            assert b.char_start == a.char_end, (
+                f'{path.name}: page offsets leave a gap at page {b.number}')
+        total_pages += len(pages)
+    return f'{total_pages} pages across {len(ACCEPTING)} documents all yield text'
+
+
+def test_rejections_carry_an_explicit_reason_and_detail():
+    """
+    "Explicit" means three things, and a rejection is only actionable with all
+    of them: a reason from the closed SDD 6.1 vocabulary for E4 to render, a
+    human-readable detail naming the file's actual problem (SDD 9), and at least
+    one failing check recording what was observed against what was expected.
+
+    validate() also has to survive input that is not a PDF at all. Rejection is
+    data, not an exception.
+    """
+    manifest = json.loads((ROOT / 'manifest.json').read_text())
+    vocabulary = {r.value for r in RejectReason}
+    rejected = 0
+    for f in manifest['fixtures']:
+        result = validate(ROOT / f['path'])
+        if result.outcome is not Outcome.REJECTED:
+            assert result.reject_reason is None, (
+                f'{f["id"]} was not rejected but carries reason {result.reject_reason}')
+            continue
+        rejected += 1
+        assert result.reject_reason is not None, f'{f["id"]} rejected with no reason'
+        assert result.reject_reason.value in vocabulary, (
+            f'{f["id"]} rejected with {result.reject_reason.value}, outside SDD 6.1')
+        assert result.reject_detail and result.reject_detail.strip(), (
+            f'{f["id"]} rejected with no human-readable detail')
+        failing = [c for c in result.checks if c.status is CheckStatus.FAIL]
+        assert failing, f'{f["id"]} rejected with no failing check to point at'
+
+    with tempfile.TemporaryDirectory() as td:
+        junk = Path(td) / 'not_really.pdf'
+        junk.write_bytes(b'\x00\xff' * 512)
+        result = validate(junk)
+        assert result.outcome is Outcome.REJECTED, 'random bytes were not rejected'
+        assert result.reject_reason is not None, 'random bytes rejected without a reason'
+    return f'{rejected} rejections carry a vocabulary reason, a detail and a failing check'
 
 
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith('test_')]
