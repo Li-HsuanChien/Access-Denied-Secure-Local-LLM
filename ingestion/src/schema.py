@@ -45,12 +45,23 @@ def _sid(*parts: Any, prefix: str, length: int = 24) -> str:
 # ---------------------------------------------------------------------------
 @dataclass(frozen=True)
 class ChunkerConfig:
-    """Chunking parameters. Its hash participates in every chunk ID."""
+    """
+    Text-production parameters. Its hash participates in every chunk ID.
+
+    Everything that determines what a chunk's text IS lives here, including the
+    two extraction switches. That is deliberate: if reading order or header
+    stripping changed without changing config_id, the same (start, end) pair
+    would name different text under the same chunk_id, and a stored citation
+    would silently resolve to the wrong passage. Changing any field below
+    changes every ID, which is the honest outcome.
+    """
     target_chars: int = 1200
     overlap_chars: int = 200
     min_chunk_chars: int = 100
     split_on_word_boundary: bool = True
-    chunker_version: str = 'refchunk-1.0.0'
+    # Extraction profile.
+    sorted_reading_order: bool = True
+    chunker_version: str = 'refchunk-1.1.0'
 
     @property
     def config_id(self) -> str:

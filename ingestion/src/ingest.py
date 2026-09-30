@@ -16,6 +16,7 @@ offset-then-search-for-coordinates step would keep getting subtly wrong.
 from __future__ import annotations
 
 import hashlib
+import re
 from dataclasses import dataclass
 from datetime import datetime, timezone
 from pathlib import Path
@@ -56,8 +57,58 @@ class _Page:
         return self.char_end > self.char_start
 
 
-def extract(path: Path) -> tuple[str, list[_Page], pymupdf.Document]:
-    """Build the canonical text stream and per-page span index."""
+def _page_lines(page, sort: bool) -> list[tuple[str, list[tuple]]]:
+    """One entry per layout line: its text and its spans, in reading order."""
+    out = []
+    for block in page.get_text('dict', sort=sort)['blocks']:
+        if block.get('type') != 0:            # 0 = text block; 1 = image
+            continue
+        for line in block['lines']:
+            pieces = [(s['text'], tuple(s['bbox'])) for s in line['spans'] if s['text']]
+            if pieces:
+                out.append((''.join(t for t, _ in pieces), pieces))
+    return out
+
+
+def _boilerplate_keys(doc, sort: bool) -> set[str]:
+    """
+    Find running headers and footers: lines that repeat in the top or bottom
+    margin across most pages.
+
+    This is text the reader never reads twice but a naive extractor repeats on
+    every page, where it lands mid-chunk, pollutes the embedding and burns
+    context budget. On the NRC manual it is 13% of the stream.
+
+    The bar is deliberately high - margin zone, and present on at least half of
+    at least three pages - because wrongly dropping body text is far worse than
+    keeping a header.
+    """
+    if doc.page_count < 3:
+        return set()
+    counts: dict[str, set[int]] = {}
+    for index, page in enumerate(doc):
+        height = page.rect.height or 1.0
+        for text, pieces in _page_lines(page, sort):
+            key = _running_key(text)
+            if not key:
+                continue
+            top = min(b[1] for _, b in pieces)
+            bottom = max(b[3] for _, b in pieces)
+            if top < 0.12 * height or bottom > 0.88 * height:
+                counts.setdefault(key, set()).add(index)
+    threshold = max(3, doc.page_count // 2)
+    return {k for k, pages in counts.items() if len(pages) >= threshold}
+
+
+def extract(path: Path, *, sort: bool = True) -> tuple[str, list[_Page], pymupdf.Document]:
+    """
+    Build the canonical text stream and per-page span index.
+
+    Spans are the unit of assembly, so every character offset maps to a bounding
+    box by construction. Dropping a line therefore drops its spans too, and the
+    offsets that remain stay consistent with the rectangles that remain - there
+    is no second pass that could disagree.
+    """
     doc = pymupdf.open(path)
     parts: list[str] = []
     pages: list[_Page] = []
@@ -66,20 +117,18 @@ def extract(path: Path) -> tuple[str, list[_Page], pymupdf.Document]:
     for index, page in enumerate(doc):
         page_start = cursor
         spans: list[_Span] = []
-        layout = page.get_text('dict')
-        for block in layout['blocks']:
-            if block.get('type') != 0:        # 0 = text block; 1 = image
-                continue
-            for line in block['lines']:
-                for span in line['spans']:
-                    t = span['text']
-                    if not t:
-                        continue
-                    parts.append(t)
-                    spans.append(_Span(cursor, cursor + len(t), tuple(span['bbox'])))
-                    cursor += len(t)
-                parts.append('\n')
-                cursor += 1
+        for text, pieces in _page_lines(page, sort):
+            for piece_text, bbox in pieces:
+                parts.append(piece_text)
+                spans.append(_Span(cursor, cursor + len(piece_text), bbox))
+                cursor += len(piece_text)
+            parts.append('\n')
+            cursor += 1
+        # Only separate pages that actually contributed text. Padding an empty
+        # page would give it a non-zero character range, and has_text - which
+        # the scanned_only rejection depends on - would report text where there
+        # is none.
+        if cursor > page_start:
             parts.append('\n')
             cursor += 1
         pages.append(_Page(index + 1, page_start, cursor, page.rect.width,
@@ -366,6 +415,8 @@ def chunks(path: str | Path, config: ChunkerConfig | None = None,
         cursor = max(cursor + 1, end - config.overlap_chars)
 
     return out
+
+
 
 
 def _page_spans(start: int, end: int, pages: list[_Page]) -> list[PageSpan]:
