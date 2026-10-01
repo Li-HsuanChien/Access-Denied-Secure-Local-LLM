@@ -61,7 +61,8 @@ class ChunkerConfig:
     split_on_word_boundary: bool = True
     # Extraction profile.
     sorted_reading_order: bool = True
-    chunker_version: str = 'refchunk-1.1.0'
+    strip_running_headers: bool = True
+    chunker_version: str = 'refchunk-1.2.0'
 
     @property
     def config_id(self) -> str:

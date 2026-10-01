@@ -57,6 +57,21 @@ class _Page:
         return self.char_end > self.char_start
 
 
+_DIGITS = re.compile(r'\d+')
+_WS = re.compile(r'\s+')
+
+
+def _running_key(text: str) -> str:
+    """
+    Normalize a line so the same running header matches across pages.
+
+    Page numbers and dates are the parts that vary, so digits collapse to '#'.
+    'USNRC Technical Training Center 1-7 0703' and the same line on page 8
+    reduce to one key.
+    """
+    return _DIGITS.sub('#', _WS.sub(' ', text.strip()).lower())
+
+
 def _page_lines(page, sort: bool) -> list[tuple[str, list[tuple]]]:
     """One entry per layout line: its text and its spans, in reading order."""
     out = []
@@ -100,7 +115,8 @@ def _boilerplate_keys(doc, sort: bool) -> set[str]:
     return {k for k, pages in counts.items() if len(pages) >= threshold}
 
 
-def extract(path: Path, *, sort: bool = True) -> tuple[str, list[_Page], pymupdf.Document]:
+def extract(path: Path, *, sort: bool = True,
+            strip_boilerplate: bool = True) -> tuple[str, list[_Page], pymupdf.Document]:
     """
     Build the canonical text stream and per-page span index.
 
@@ -110,6 +126,8 @@ def extract(path: Path, *, sort: bool = True) -> tuple[str, list[_Page], pymupdf
     is no second pass that could disagree.
     """
     doc = pymupdf.open(path)
+    skip = _boilerplate_keys(doc, sort) if strip_boilerplate else set()
+
     parts: list[str] = []
     pages: list[_Page] = []
     cursor = 0
@@ -118,6 +136,8 @@ def extract(path: Path, *, sort: bool = True) -> tuple[str, list[_Page], pymupdf
         page_start = cursor
         spans: list[_Span] = []
         for text, pieces in _page_lines(page, sort):
+            if skip and _running_key(text) in skip:
+                continue
             for piece_text, bbox in pieces:
                 parts.append(piece_text)
                 spans.append(_Span(cursor, cursor + len(piece_text), bbox))
