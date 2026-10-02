@@ -258,12 +258,17 @@ def test_chunk_size_respects_the_target():
     return f'{checked} chunks stay within target across {len(SIZE_CONFIGS)} configs'
 
 
-def test_overlap_is_exactly_the_configured_window():
+def test_overlap_covers_the_configured_window():
     """
-    Consecutive chunks share exactly overlap_chars of the stream, and the shared
-    region is the same characters in both: the tail of one, the head of the next.
-    Retrieval dedupes neighbouring hits against this, so it has to be exact
-    rather than approximate.
+    Overlap is now sentence-aligned, so it is a floor rather than an exact
+    figure: the chunk starts at the sentence boundary at or before
+    (previous_end - overlap_chars), which can only reach further back, never
+    less far. The shared region is still the same characters in both - the tail
+    of one, the head of the next - because retrieval dedupes against it.
+
+    The window is also capped at half the previous chunk. Without that, a chunk
+    shorter than overlap_chars would step back as far as it stepped forward and
+    the cursor would crawl one character at a time.
     """
     text = _stream(NORMAL)
     pairs = 0
@@ -271,15 +276,16 @@ def test_overlap_is_exactly_the_configured_window():
         cs = chunks(NORMAL, cfg)
         for a, b in zip(cs, cs[1:]):
             overlap = a.char_end - b.char_start
-            assert overlap == cfg.overlap_chars, (
-                f'chunks {a.ordinal}->{b.ordinal} overlap {overlap}, '
-                f'expected {cfg.overlap_chars}')
+            floor = min(cfg.overlap_chars, (a.char_end - a.char_start) // 2)
+            assert overlap >= floor, (
+                f'chunks {a.ordinal}->{b.ordinal} overlap {overlap}, floor {floor}')
+            assert b.char_start > a.char_start, 'chunker failed to advance'
             if overlap:
                 shared = text[b.char_start:a.char_end]
                 assert a.text.endswith(shared), 'overlap is not the tail of the earlier chunk'
                 assert b.text.startswith(shared), 'overlap is not the head of the later chunk'
             pairs += 1
-    return f'{pairs} adjacent pairs overlap by exactly the configured window'
+    return f'{pairs} adjacent pairs overlap by at least the configured window'
 
 
 def test_zero_overlap_produces_a_clean_partition():

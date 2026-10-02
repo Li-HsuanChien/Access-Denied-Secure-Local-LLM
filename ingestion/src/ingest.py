@@ -15,6 +15,7 @@ offset-then-search-for-coordinates step would keep getting subtly wrong.
 """
 from __future__ import annotations
 
+import bisect
 import hashlib
 import re
 from dataclasses import dataclass
@@ -372,12 +373,33 @@ def validate(path: str | Path, policy: IngestionPolicy | None = None) -> Validat
 # ---------------------------------------------------------------------------
 # chunking
 # ---------------------------------------------------------------------------
+_PARA_BREAK = re.compile(r'\n\s*\n')
+_SENTENCE_END = re.compile(r'[.!?]["\'”’)\]]*\s+')
+
+
 def _boundary(text: str, position: int, limit: int) -> int:
     """Move a split point back to the nearest word boundary, within reason."""
     if position >= limit:
         return limit
     window = text.rfind(' ', max(0, position - 120), position)
     return window + 1 if window != -1 else position
+
+
+def _boundaries(text: str) -> list[int]:
+    """
+    Offsets where a chunk may begin or end.
+
+    Paragraph breaks and sentence ends only. Line breaks are deliberately not
+    boundaries: PDF text wraps mid-sentence, so splitting on a newline is how a
+    chunk ends up starting with 'nuclear power plant is to produce electricity'
+    and no subject.
+    """
+    points = {0, len(text)}
+    for match in _PARA_BREAK.finditer(text):
+        points.add(match.end())
+    for match in _SENTENCE_END.finditer(text):
+        points.add(match.end())
+    return sorted(points)
 
 
 def chunks(path: str | Path, config: ChunkerConfig | None = None,
@@ -387,56 +409,89 @@ def chunks(path: str | Path, config: ChunkerConfig | None = None,
 
     Callers validate first. Running this on a rejected file is a caller bug, not
     something this function silently absorbs.
+
+    Boundaries land on sentence and paragraph ends, so a chunk reads as prose
+    rather than starting and stopping mid-clause. target_chars stays a budget:
+    the chunk runs to the last sentence that fits. Where a single sentence is
+    longer than the budget - a run of figure labels, a table - it falls back to
+    the word boundary so one pathological block cannot produce a giant chunk.
     """
     config = config or ChunkerConfig()
     path = Path(path)
     raw = path.read_bytes()
     document_id = document_id or Document.make_id(raw)
 
-    text, pages, doc = extract(path)
+    text, pages, doc = extract(path, sort=config.sorted_reading_order,
+                               strip_boilerplate=config.strip_running_headers)
     doc.close()
     if not text.strip():
         return []
 
+    length = len(text)
+    stops = _boundaries(text) if config.respect_sentence_boundaries else []
+
+    def snap(target: int, floor: int) -> int | None:
+        """The last boundary at or before target that still moves past floor."""
+        if not stops or target <= floor:
+            return None
+        index = bisect.bisect_right(stops, target) - 1
+        if index >= 0 and stops[index] > floor:
+            return stops[index]
+        return None
+
     out: list[Chunk] = []
-    cursor, ordinal, length = 0, 0, len(text)
+    cursor = ordinal = 0
 
     while cursor < length:
-        end = _boundary(text, min(cursor + config.target_chars, length), length)
-        body = text[cursor:end]
-        if not body.strip():
-            cursor = end
-            continue
-        # A short tail is folded into nothing; it is dropped only if it is also
-        # whitespace, otherwise it stays as its own small chunk.
+        budget = min(cursor + config.target_chars, length)
+        end = snap(budget, cursor)
+        # A boundary that barely clears the cursor means the sentence ends are
+        # sparse here - a run of figure labels, a table, a column of headings -
+        # so honouring it would spend a whole chunk on a fragment. Below half
+        # the budget, cut at the word boundary instead: in a block with no
+        # sentence structure there is no sentence to preserve.
+        if end is None or (end - cursor) * 2 < config.target_chars:
+            end = _boundary(text, budget, length)
+        if end <= cursor:
+            end = budget
+        # A tail too short to stand alone is folded in rather than left a runt.
         if length - end < config.min_chunk_chars:
             end = length
-            body = text[cursor:end]
 
-        spans = _page_spans(cursor, end, pages)
-        out.append(Chunk(
-            chunk_id=Chunk.make_id(document_id, config.config_id, cursor, end),
-            document_id=document_id,
-            ordinal=ordinal,
-            text=body,
-            text_checksum_sha256=text_checksum(body),
-            char_start=cursor,
-            char_end=end,
-            page_start=spans[0].page_number,
-            page_end=spans[-1].page_number,
-            page_spans=spans,
-            token_estimate=max(1, len(body) // 4),
-            chunker_config_id=config.config_id,
-            chunker_version=config.chunker_version,
-        ))
-        ordinal += 1
+        body = text[cursor:end]
+        if body.strip():
+            spans = _page_spans(cursor, end, pages)
+            out.append(Chunk(
+                chunk_id=Chunk.make_id(document_id, config.config_id, cursor, end),
+                document_id=document_id,
+                ordinal=ordinal,
+                text=body,
+                text_checksum_sha256=text_checksum(body),
+                char_start=cursor,
+                char_end=end,
+                page_start=spans[0].page_number,
+                page_end=spans[-1].page_number,
+                page_spans=spans,
+                token_estimate=max(1, len(body) // 4),
+                chunker_config_id=config.config_id,
+                chunker_version=config.chunker_version,
+            ))
+            ordinal += 1
+
         if end >= length:
             break
-        cursor = max(cursor + 1, end - config.overlap_chars)
+        # Step back by the overlap window, landing on a sentence start so the
+        # shared region is readable too, then clamp so the cursor always moves.
+        # Never step back by more than half the chunk, or a chunk shorter than
+        # the overlap window would cancel its own forward progress and the
+        # cursor would crawl one character at a time.
+        step_back = min(config.overlap_chars, (end - cursor) // 2)
+        nxt = snap(end - step_back, cursor)
+        if nxt is None or nxt <= cursor:
+            nxt = end - step_back
+        cursor = max(cursor + 1, min(nxt, end))
 
     return out
-
-
 
 
 def _page_spans(start: int, end: int, pages: list[_Page]) -> list[PageSpan]:
