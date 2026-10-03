@@ -488,7 +488,10 @@ def chunks(path: str | Path, config: ChunkerConfig | None = None,
         step_back = min(config.overlap_chars, (end - cursor) // 2)
         nxt = snap(end - step_back, cursor)
         if nxt is None or nxt <= cursor:
-            nxt = end - step_back
+            # No sentence start to land on, so at least land between words: a
+            # chunk beginning mid-word is unreadable to a person and unhelpful
+            # to an embedding.
+            nxt = _boundary(text, end - step_back, length)
         cursor = max(cursor + 1, min(nxt, end))
 
     return out

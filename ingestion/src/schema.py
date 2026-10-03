@@ -64,7 +64,7 @@ class ChunkerConfig:
     strip_running_headers: bool = True
     # Chunk boundary policy.
     respect_sentence_boundaries: bool = True
-    chunker_version: str = 'refchunk-2.0.0'
+    chunker_version: str = 'refchunk-2.0.1'
 
     @property
     def config_id(self) -> str:
