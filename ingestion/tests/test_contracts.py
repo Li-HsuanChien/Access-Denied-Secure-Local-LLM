@@ -24,7 +24,7 @@ sys.path.insert(0, str(ROOT))
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
-from src.ingest import chunks, extract, validate
+from src.ingest import _boundaries, chunks, extract, validate
 from src.schema import ChunkerConfig, Document, citation_targets
 from src.validation import CheckStatus, IngestionPolicy, Outcome, RejectReason
 
@@ -398,6 +398,111 @@ def test_rejections_carry_an_explicit_reason_and_detail():
         assert result.outcome is Outcome.REJECTED, 'random bytes were not rejected'
         assert result.reject_reason is not None, 'random bytes rejected without a reason'
     return f'{rejected} rejections carry a vocabulary reason, a detail and a failing check'
+
+
+# ---------------------------------------------------------------------------
+# Week 3  "same file/config yields same IDs; chunk text/page/offsets are
+#          stable; overlap/boundary tests pass"
+# ---------------------------------------------------------------------------
+def test_provenance_is_identical_across_runs():
+    """
+    The Week 3 demo, as an assertion: process the same document twice and every
+    field a citation depends on must match - not just the ID, but the text, the
+    offsets, the pages, and the highlight rectangles inside each page span.
+
+    IDs matching while rectangles drifted would be the worst outcome: a citation
+    that resolves and points somewhere wrong.
+    """
+    first, second = chunks(NORMAL), chunks(NORMAL)
+    assert len(first) == len(second), 'chunk count is not reproducible'
+    rects = 0
+    for a, b in zip(first, second):
+        assert a.chunk_id == b.chunk_id
+        assert a.text == b.text and a.text_checksum_sha256 == b.text_checksum_sha256
+        assert (a.char_start, a.char_end) == (b.char_start, b.char_end)
+        assert (a.page_start, a.page_end) == (b.page_start, b.page_end)
+        assert len(a.page_spans) == len(b.page_spans)
+        for p, q in zip(a.page_spans, b.page_spans):
+            assert p.page_number == q.page_number
+            assert (p.char_start, p.char_end) == (q.char_start, q.char_end)
+            assert (p.page_char_start, p.page_char_end) == (q.page_char_start, q.page_char_end)
+            assert p.coordinates_reliable == q.coordinates_reliable
+            assert p.highlight_rects == q.highlight_rects, 'highlight rectangles drifted'
+            rects += len(p.highlight_rects)
+    return f'{len(first)} chunks reproduce exactly, including {rects} highlight rectangles'
+
+
+def test_chunks_never_split_a_word():
+    """
+    No chunk may begin or end in the middle of a word. This is the floor for
+    'the chunk reads as text': a fragment starting 'ctrical generator' is
+    useless to a reader and misleading to an embedding.
+    """
+    for path in ACCEPTING:
+        text = _stream(path)
+        for c in chunks(path):
+            if c.char_start > 0:
+                assert not (text[c.char_start - 1].isalnum() and text[c.char_start].isalnum()), \
+                    f'{path.name} chunk {c.ordinal} starts mid-word'
+            if c.char_end < len(text):
+                assert not (text[c.char_end - 1].isalnum() and text[c.char_end].isalnum()), \
+                    f'{path.name} chunk {c.ordinal} ends mid-word'
+    return 'no chunk begins or ends inside a word, across all three documents'
+
+
+def test_chunks_begin_on_sentence_boundaries():
+    """
+    Chunk starts land on a sentence or paragraph boundary wherever the text has
+    one. Blocks with no sentence structure at all - a column of figure labels,
+    a table - fall back to the word boundary, so this is a strong majority
+    rather than an absolute.
+    """
+    for path in ACCEPTING:
+        text = _stream(path)
+        allowed = set(_boundaries(text))
+        cs = chunks(path)
+        on = sum(1 for c in cs if c.char_start in allowed)
+        assert on / len(cs) >= 0.9, (
+            f'{path.name}: only {on}/{len(cs)} chunks start on a sentence boundary')
+    return 'at least 90% of chunks start on a sentence or paragraph boundary'
+
+
+def test_running_headers_are_stripped():
+    """
+    The repeated header and footer are removed from the canonical stream.
+
+    Left in, they appear once per page inside chunk text - 13% of the NRC
+    stream - polluting every embedding with the same boilerplate and spending
+    context budget E3 needs for actual content.
+    """
+    kept, _, doc = extract(NORMAL, strip_boilerplate=False)
+    doc.close()
+    stripped = _stream(NORMAL)
+    header = 'Reactor Concepts Manual'
+    footer = 'USNRC Technical Training Center'
+    assert kept.count(header) >= 20, 'fixture no longer has a repeating header to strip'
+    assert stripped.count(header) == 0, 'running header survived into the stream'
+    assert stripped.count(footer) == 0, 'running footer survived into the stream'
+    # Body text must not be collateral damage.
+    assert 'The purpose of a nuclear power plant' in stripped
+    assert 'HYDROELECTRIC PLANT' in stripped
+    saved = len(kept) - len(stripped)
+    return f'{saved} chars of running boilerplate removed ({100 * saved // len(kept)}% of the raw stream)'
+
+
+def test_reading_order_follows_the_page():
+    """
+    Body text precedes the page footer, which is what reading order means and
+    what content-stream order does not guarantee. Before sorting, the NRC footer
+    was emitted before the body paragraph on all 24 pages.
+    """
+    text, pages, doc = extract(NORMAL, strip_boilerplate=False)
+    doc.close()
+    page1 = text[pages[0].char_start:pages[0].char_end]
+    body = page1.index('The purpose of a nuclear power plant')
+    footer = page1.index('USNRC Technical Training Center')
+    assert body < footer, 'footer still precedes the body text on page 1'
+    return 'body text precedes the page footer in the extracted stream'
 
 
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith('test_')]
