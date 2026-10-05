@@ -204,12 +204,30 @@ docqa-runtime up --server-bin stub
 - `.venv/`, `models/` and `.bench_data/` stay gitignored at the repository root.
 - `secure_qa/library/tests/fixtures/e2/` holds copies of E2's files from `E2-Chunking` at `36fda65`. Delete them once E2's branch is merged.
 
+## Parked items (revisit later)
+
+Set aside on 2026-10-05 so they aren't lost:
+
+1. **Relevance threshold, to revisit.** `min_score = 0.38` cosine (0.69 on Open WebUI's scale) is provisional. It rests on 24 questions, and the margin is narrow:
+   - weakest on-topic top-1: **0.407** ("Which files are rejected during import?")
+   - strongest off-topic: **0.354** ("What is the boiling point of ethanol?" against NRC steam text)
+   - every other off-topic question scored **≤ 0.21**
+
+   Re-measure on real questions over the real corpus, and with the frozen model, before freezing (SDD §7.1). Hand this data to E5. The value lives in `AnswerSettings.min_score` in `secure_qa/answering/service.py`. Golden record `r04` pins it, so a change will show up in tests.
+2. **Citation page format, a question for the team.** SDD §5.1 gives a Citation (and a Chunk) a single page number. E2's chunks span pages: 18 of 19 NRC chunks cross a page break. Our answer payload therefore carries `page_start`/`page_end` plus a per-page `pages[]` list with offsets and highlight boxes. The team needs to approve that format and update SDD §5.1 (E2 / SDD owner), because it is the contract E4 renders and E5 tests.
+3. **Real-model run: on hold.** The golden set hasn't run through a real GGUF model yet. Waiting on E1's frozen model rather than installing llama.cpp and downloading a model on the dev laptop.
+4. **Unbuilt pieces, for later:**
+   - streaming progress and cancellation (SDD §4.6)
+   - visual evidence (SDD §7.2)
+   - the run on the 8 GB reference laptop
+   - a packet capture covering native code that the Python audit hook can't see
+
 ## Open questions and dependencies
 
 | Question | Owner / who to ask |
 |---|---|
 | When is E1's frozen model and config available, and on which branch? The answer path is ready to run on it. | E1 |
-| SDD §5.1 update for page-spanning chunks (page range plus per-page spans in citations) | E2 / SDD owner |
+| **Bring to the team:** approve the citation page format (page range plus per-page spans) and update SDD §5.1 for page-spanning chunks. See Parked items. | E2 / SDD owner, whole team |
 | Should the answer payload (`answering/wire/answer.schema.json`) and the dev envelope be the E4/E5 contract for week 4? | E4, E5 |
 | E1's branch still uses `app/open-webui/`; `main` renamed it to `app/document-qa/`. E1's `answering/README.md` edit will conflict with ours on merge. | E1 |
 | When will `E2-Chunking` merge, so the library can import E2's schema and `chunks()`? | E2 |
