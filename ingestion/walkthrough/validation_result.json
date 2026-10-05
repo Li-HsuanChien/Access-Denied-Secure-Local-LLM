@@ -1,9 +1,9 @@
 {
   "schema_version": "1.0.0",
-  "validated_at": "2026-09-22T15:55:51+00:00",
+  "validated_at": "2026-10-06T15:50:30+00:00",
   "validator_version": "e2-validate-1.0.0",
   "extractor": "pymupdf/1.28.2",
-  "source_path": "/home/claude/e2-fixtures/fixtures/normal/normal_nrc_reactor_concepts_ch01.pdf",
+  "source_path": "/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/normal/normal_nrc_reactor_concepts_ch01.pdf",
   "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
   "byte_size": 1291325,
   "checksum_sha256": "591a0381163923768eee93a5908e0f1d68e184be4365493c2f05c76df707abcd",

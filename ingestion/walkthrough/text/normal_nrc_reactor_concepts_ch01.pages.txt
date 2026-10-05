@@ -1,22 +1,12 @@
 
 ==============================================================================
-PAGE 1  |  chars 0-534 (534 chars)  |  612x792 pt
+PAGE 1  |  chars 0-424 (424 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-1
-0703
-
 Nuclear
-
 Power
-
  for
 Electrical
 Generation
-
 The purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a
 nuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant
 has many similarities to other electrical generating facilities.  It should also be obvious that nuclear
@@ -24,31 +14,16 @@ power plants have some significant differences from other plants.
 
 
 ==============================================================================
-PAGE 2  |  chars 534-1249 (715 chars)  |  612x792 pt
+PAGE 2  |  chars 424-1024 (600 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-2
-0703
-
-Flange
-
 Stationary Coil
-
-Rotor
-
-Electrical
-
-Output
-
-Generator Housing
-
 Drive Shaft
-
+Rotor
+Electrical
+Output
+Flange
+Generator Housing
 ELECTRICAL GENERATOR
-
 Of the several known methods to produce electricity, by far the most practical for large scale production
 and distribution involves the use of an “electrical generator.”  In an electrical generator, a magnet (rotor)
 revolves inside a coil of wire (stator), creating a flow of electrons inside the wire.  This flow of electrons
@@ -57,98 +32,55 @@ etc.) must be available to provide the motive force for the rotor.
 
 
 ==============================================================================
-PAGE 3  |  chars 1249-1652 (403 chars)  |  612x792 pt
+PAGE 3  |  chars 1024-1320 (296 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-3
-0703
-
 When a turbine is attached to the electrical generator, the kinetic energy (i.e., motion) of the wind, falling
 water, or steam pushes against the fan-type blades of the turbine, causing the turbine, and therefore, the
 attached rotor of the electrical generator, to spin and produce electricity.
 
 
 ==============================================================================
-PAGE 4  |  chars 1652-2077 (425 chars)  |  612x792 pt
+PAGE 4  |  chars 1320-1631 (311 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-4
-0703
-
 HYDROELECTRIC PLANT
-
 ELECTRICAL
 GENERATOR
-
-DAM
-
 W ATER
-
 INLET
 VALVE
-
+DAM
 W ATER
 OUTLET
-
 W ATER
 TURBINE
-
 In a hydroelectric power plant, water, flowing from a higher level to a lower level, travels through the
 metal blades of a water turbine, causing the rotor of the electrical generator to spin and produce
 electricity.
 
 
 ==============================================================================
-PAGE 5  |  chars 2077-2823 (746 chars)  |  612x792 pt
+PAGE 5  |  chars 1631-2255 (624 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-5
-0703
-
-Main
-Condenser
-
-Main
-Turbine
-
+Throttle
+A
+Valve
+C
+B
 Electric
 Generator
-
-Throttle
-
-Valve
-
-Feedwater
-
-Pump
-
-A
-
-B
-
-C
-
+Main
+Turbine
+Main
+Condenser
 D
-
-E
-F
-
 Fuel
 Supply
-
+Feedwater
+Pump
+E
+F
 Boiler
-
 FOSSIL FUEL STEAM PLANT
-
 In a fossil-fueled power plant, heat, from the burning of coal, oil, or natural gas, converts (boils) water
 into steam (A), which is piped to the turbine (B).  In the turbine, the steam passes through the blades,
 which spins the electrical generator (C), resulting in a flow of electricity.  After leaving the turbine, the
@@ -157,41 +89,23 @@ back to the boiler (F) to be reheated and converted back into steam.
 
 
 ==============================================================================
-PAGE 6  |  chars 2823-3427 (604 chars)  |  612x792 pt
+PAGE 6  |  chars 2255-2741 (486 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-6
-0703
-
-Main
-Condenser
-
+Throttle
+Valve
 Main
 Turbine
-
 Electric
 Generator
 Nuclear
-
 Steam
-
+Main
+Condenser
 Supply
-
 System
-
-Throttle
-
-Valve
-
 Feedwater
-
 Pump
-
 Nuclear Fuel Steam Plant
-
 In a nuclear power plant, many of the components are similar to those in a fossil-fueled plant, except that
 the steam boiler is replaced by a Nuclear Steam Supply System (NSSS).  The NSSS consists of a nuclear
 reactor and all of the components necessary to produce high pressure steam, which will be used to turn
@@ -199,39 +113,21 @@ the turbine for the electrical generator.
 
 
 ==============================================================================
-PAGE 7  |  chars 3427-3782 (355 chars)  |  612x792 pt
+PAGE 7  |  chars 2741-2988 (247 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-7
-0703
-
 Fission
-
 Like a fossil-fueled plant, a nuclear power plant boils water to produce electricity.  Unlike a fossil-fueled
 plant, the nuclear plant’s energy does not come from the combustion of fuel, but from the fissioning
 (splitting) of fuel atoms.
 
 
 ==============================================================================
-PAGE 8  |  chars 3782-4479 (697 chars)  |  612x792 pt
+PAGE 8  |  chars 2988-3575 (587 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-8
-0703
-
 ENRICHMENT
-
 (% U-235)
-
 Uranium Ore (0.7%)
    Fuel Pellet (3.5%)
-
 The most common fuel for the electrical producing reactor plants in the United States is uranium.  The
 uranium starts out as ore, and contains a very low percentage (or low enrichment) of the desired atoms
 (U-235).  The U-235 is a more desirable atom for fuel, because it is easier to cause the U-235 atoms to
@@ -241,35 +137,18 @@ includes steps to increase the number of U-235 atoms in relation to the number o
 
 
 ==============================================================================
-PAGE 9  |  chars 4479-5368 (889 chars)  |  612x792 pt
+PAGE 9  |  chars 3575-4347 (772 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-9
-0703
-
 CHEMICAL CONVERSION TO UF6
-
 ENRICHMENT
-
 PELLETIZING
-
-ROD LOADING
-
-BUNDLE ASSEMBLY
-
-BUNDLE FINAL INSPECTION
-
-PACKAGING & SHIPPING
-
-SITE INSPECTION & CHANNELING
-
 Tubing & End Plugs
-
+ROD LOADING
 Spacers & Tie Plates
-
+BUNDLE ASSEMBLY
+BUNDLE FINAL INSPECTION
+PACKAGING & SHIPPING
+SITE INSPECTION & CHANNELING
 Once the fuel has been enriched, it is fabricated into ceramic pellets.  The pellets are stacked into 12-foot
 long, slender metal tubes, generally made of a zirconium alloy.  The tube is called the “fuel cladding.”
 When a tube is filled with the uranium pellets, it is pressurized with helium gas, and plugs are installed
@@ -279,158 +158,90 @@ for installation into the reactor vessel.
 
 
 ==============================================================================
-PAGE 10  |  chars 5368-7540 (2172 chars)  |  612x792 pt
+PAGE 10  |  chars 4347-6405 (2058 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-10
-0703
-
 REACTOR FUEL ASSEMBLIES
-
 Both boiling water reactor and pressurized water reactor fuel assemblies consist of the same major
 components.  These major components are the fuel rods, the spacer grids, and the upper and lower end
 fittings.  The fuel assembly drawing on page 1-11 shows these major components (pressurized water
 reactor fuel assembly).
-
 The fuel rods contain the ceramic fuel pellets.  The fuel rods are approximately 12 feet long and contain
 a space at the top for the collection of any gases that are produced by the fission process.  These rods are
 arranged in a square matrix ranging from 17 x 17 for pressurized water reactors to 8 x 8 for boiling water
 reactors.
-
 The spacer grids separate the individual rods with pieces of sprung metal.  This provides the rigidity of
 the assemblies and allows the coolant to flow freely up through the assemblies and around the fuel rods.
 Some spacer grids may have flow mixing vanes that are used to promote mixing of the coolant as it
 flows around and though the fuel assembly.
-
 The upper and lower end fittings serve as the upper and lower structural elements of the assemblies.  The
 lower fitting (or bottom nozzle) will direct the coolant flow to the assembly through several small holes
 machined into the fitting.  There are also holes drilled in the upper fitting to allow the coolant flow to
 exit the fuel assembly.  The upper end fitting will also have a connecting point for the refueling
 equipment to attach for the moving of the fuel with a crane.
-
 For pressurized water reactor fuel, there will also be guide tubes in which the control rods travel.  The
 guide tubes will be welded to the spacer grids and attached to the upper and lower end fittings.  The
 guide tubes provide a channel for the movement of the control rods and provide for support of the rods.
 The upper end of the control rod will be attached to a drive shaft, which will be used to position the rod
 during operations.
-
 A brief description and a picture of boiling water reactor fuel can be found in Chapter3 (pages 3-3 and
 3-7).
 
 
 ==============================================================================
-PAGE 11  |  chars 7540-7841 (301 chars)  |  612x792 pt
+PAGE 11  |  chars 6405-6585 (180 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-11
-0703
-
-ROD CLUSTER CONTROL
-
-TOP NOZZLE
-
-CONTROL ROD
-
-GRID
-
 HOLD DOWN SPRING
-
+ROD CLUSTER CONTROL
+TOP NOZZLE
+   
 FUEL ROD
-
+CONTROL ROD
 THIMBLE TUBE
-
+GRID
 MIXING VANES
-
-DASHPOT REGION
-
-DIMPLE
-
 BULGE JOINTS
-
+DASHPOT REGION
 GRID SPRING
-
+DIMPLE
 BOTTOM NOZZLE
 THIMBLE SCREW
 
-   
-
 
 ==============================================================================
-PAGE 12  |  chars 7841-8182 (341 chars)  |  612x792 pt
+PAGE 12  |  chars 6585-6818 (233 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-12
-0703
-
 At the nuclear power plant, the fuel assemblies are inserted vertically into the reactor vessel (a large steel
 tank filled with water with a removable top).  The fuel is placed in a precise grid pattern known as the
 “reactor core.”
 
 
 ==============================================================================
-PAGE 13  |  chars 8182-9979 (1797 chars)  |  612x792 pt
+PAGE 13  |  chars 6818-8485 (1667 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-13
-0703
-
-Jet Pump
-
+Containment/Drywell
 Reactor
-
 Vessel
-
 Steam
-
+Turbine Building
 Line
-
+Throttle
+Electrical
+Generator
+Valve
 Steam Dryer
-
 &
 Moisture
 Separator
-
-Reactor Core
-
-Recirculation
-
-Pump
-
-Throttle
-
-Valve
-
-Electrical
-Generator
-
 Turbine
-
+Reactor Core
 Condenser
-
-Pump
-
-Containment Suppression Chamber
-
-Turbine Building
-
+Jet Pump
 To/From
-
 River
-
-Containment/Drywell
-
+Recirculation
+Pump
+Pump
+Containment Suppression Chamber
 There are two basic types of reactor plants being used in the United States to produce electricity, the
 boiling water reactor (BWR) and the pressurized water reactor (PWR).  The boiling water reactor
 operates in essentially the same way as a fossil-fueled generating plant.  Inside the reactor vessel, a
@@ -443,99 +254,60 @@ it to turn the turbine and the attached electrical generator.  The unused steam 
 condenser where it is condensed into water.  The resulting water (condensate) is pumped out of the
 condenser with a series of pumps and back to the reactor vessel.  The recirculation pumps and the jet
 pumps allow the operator to vary coolant flow through the core and to change reactor power.
-
 Boiling water reactors are manufactured in the United States by the General Electric Company, San Jose,
 California.  Boiling water reactors comprise about one-third of the power reactors in the United States.
 
 
 ==============================================================================
-PAGE 14  |  chars 9979-10954 (975 chars)  |  612x792 pt
+PAGE 14  |  chars 8485-9338 (853 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-14
-0703
-
-Core
-
+Containment
+Throttle
+Valve
+S/G
 P
 Z
 R
-
-S/G
-
-RCP
-
-Reactor Coolant
-
-System
-
-Containment
-
-Throttle
-
-Valve
-
 Electric
 Generator
 Main
 Turbine
-
 Main
 Condenser
-
+Core
+RCP
+Reactor Coolant
 Feedwater
-
+System
 Pump
-
 The pressurized water reactor (PWR) differs from the boiling water reactor in that steam is produced in
 the steam generator rather than in the reactor vessel.  The pressurizer keeps the water that is flowing
 through the reactor vessel under very high pressure (more than 2,200 pounds per square inch) to prevent
 it from boiling, even at operating temperatures of more than 600EF.  Pressurized water reactors make
 up about two-thirds of the power reactors in the United States.
-
 Pressurized water reactors were manufactured in the United States by Westinghouse Electric Corporation
 (Pittsburgh, Pennsylvania), Babcock and Wilcox Company (Lynchburg, Virginia), and the Combustion
 Engineering Company (Windsor, Connecticut).
 
 
 ==============================================================================
-PAGE 15  |  chars 10954-11603 (649 chars)  |  612x792 pt
+PAGE 15  |  chars 9338-9869 (531 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-15
-0703
-
-Helium
-Circulator
-
-Main
-Condenser
-
-Main
-Turbine
-
-Electric
-Generator
-
 Throttle
-
 Valve
-
-Feedwater Pump
-
-Core
-
 Steam
 Generator
-
+Electric
+Generator
+Main
+Turbine
+Core
+Main
+Condenser
+Helium
+Circulator
+Feedwater Pump
 High Temperature Gas-Cooled Reactor (HTGR)
-
 Another type of reactor uses helium gas instead of water as its media for removing heat from the core.
 The only high temperature gas-cooled reactor (HTGR) in the United States was the Fort St. Vrain plant
 in Colorado.  The plant was manufactured by General Atomic Company of La Jolla, California.  High
@@ -543,145 +315,64 @@ temperature gas-cooled reactors are widely used in other countries.
 
 
 ==============================================================================
-PAGE 16  |  chars 11603-12571 (968 chars)  |  612x792 pt
+PAGE 16  |  chars 9869-10715 (846 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-16
-0703
-
-Coal
-(55%)
-
-Nuclear
-
-(22%)
-
-Gas
-(10%)
-
-Hydroelectric
-
-(10%)
-
-Petroleum
-
-(2%)
-
 Other
 (biomass fuels, wood, wind,
-
+Petroleum
 photovoltaic, and solar)
-
+(2%)
 (<1%)
-
+Gas
+(10%)
+Nuclear
+(22%)
+Coal
+(55%)
+Hydroelectric
+(10%)
 Electrical Production by Type
-
 Commercial nuclear power plants generate approximately 22% of the electricity produced in the United
 States.  The total generation is approximately 3,800 thousand gigawatt-hours.
-
 For comparison purposes, nuclear generation accounts for the following of the total electrical production
 in some other countries:   75% in France, 46% in Sweden, 43% in Ukraine, 39% in south Korea, 30%
 in Germany, and 30% in Japan.
-
 The electricity produced in the United States from nuclear power is equivalent to 31% of the world’s
 total nuclear generated electrical power.  This compares with 16% for France, 13% for Japan, 7% for
 Germany, 5% for Russia, and 4% for South Korea and United Kingdom.
 
 
 ==============================================================================
-PAGE 17  |  chars 12571-13170 (599 chars)  |  612x792 pt
+PAGE 17  |  chars 10715-11148 (433 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-17
-0703
-
-Westinghouse
-
-General Electric
-
-Combustion Engineering
-
-Babcock & Wilcox
-
-1
-
-4
-
-11
-
-13
-
-7
-
-1
-
-20
-
-9
-
-2
-
-1
-
-1
-
-3
-
-8
-8
-
-4
-
-11
-
 Region I
 Region II
-
 Region III
 Region IV
-
+Westinghouse
+General Electric
+Combustion Engineering
+Babcock & Wilcox
 There are currently 104 licensed commercial nuclear power plants in the United States.  Of the 104
 plants, 48 were built by Westinghouse, 35 by General Electric, 14 by Combustion Engineering, and 7
 by Babcock & Wilcox.
-
 The illustration above shows the breakdown of the plants, by vendor, assigned to the four NRC Regions.
 
 
 ==============================================================================
-PAGE 18  |  chars 13170-14216 (1046 chars)  |  612x792 pt
+PAGE 18  |  chars 11148-12078 (930 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-18
-0703
-
-MAIN
-TURBINE
-
+STEAM
 ELECTRIC
 GENERATOR
-
-CONDENSATE
-
-PUMP
-
-STEAM
-
+MAIN
+TURBINE
 MAIN
 CONDENSER
-
+CONDENSATE
+PUMP
 CIRCULATING
-
 WATER PUMP
-
 To operate properly, all steam plants, whether nuclear or fossil-fueled, need a circulating water system
 to remove excess heat from the steam system in order to condense the steam, and transfer that heat to
 the environment.  The circulating water system pumps water from the environment (river, lake, ocean)
@@ -694,37 +385,21 @@ to the environment.
 
 
 ==============================================================================
-PAGE 19  |  chars 14216-14926 (710 chars)  |  612x792 pt
+PAGE 19  |  chars 12078-12671 (593 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-19
-0703
-
-MAIN
-TURBINE
-
 ELECTRIC
 GENERATOR
-
+MAIN
+TURBINE
+DISCHARGE
 MAIN
 CONDENSER
-
-CIRCULATING
-
-WATER PUMP
-
-INTAKE
-
-DISCHARGE
-
 Large Body
-
 of Water
 (ocean, lake, etc.)
-
+INTAKE
+CIRCULATING
+WATER PUMP
 Power plants located on the ocean (or other large bodies of water) will often discharge their circulating
 water directly back to the ocean under strict environmental protection regulations.  Water is taken from
 the ocean, pumped through the thousands of small tubes in the condenser to remove the excess heat, and
@@ -733,33 +408,19 @@ to outlet is about 5 to 10 degrees Fahrenheit.
 
 
 ==============================================================================
-PAGE 20  |  chars 14926-15648 (722 chars)  |  612x792 pt
+PAGE 20  |  chars 12671-13278 (607 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-20
-0703
-
-FORCED DRAFT
-COOLING TOWER
-
-FANS
-
-MAIN
-TURBINE
-
 ELECTRIC
 GENERATOR
-
+MAIN
+TURBINE
+FANS
 MAIN
 CONDENSER
-
+FORCED DRAFT
+COOLING TOWER
 CIRCULATING
-
 WATER PUMP
-
 Most nuclear power plants not located on the ocean need cooling towers to remove the excess heat from
 the circulating water system.  One type of cooling tower is the forced draft cooling tower.  The
 circulating water is pumped into the tower, after passing through the condenser, and allowed to splash
@@ -768,32 +429,18 @@ located at the top of the cooling tower, provide forced air circulation for more
 
 
 ==============================================================================
-PAGE 21  |  chars 15648-16200 (552 chars)  |  612x792 pt
+PAGE 21  |  chars 13278-13715 (437 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-21
-0703
-
-MAIN
-TURBINE
-
 ELECTRIC
 GENERATOR
-
+MAIN
+TURBINE
+COOLING
+TOWER
 MAIN
 CONDENSER
-
 CIRCULATING
-
 WATER PUMP
-
-COOLING
-
-TOWER
-
 The taller hourglass shaped, natural convection cooling towers do not require fans to transfer the excess
 heat from the circulating water system into the air.  Rather, the natural tendency of hot air to rise
 removes the excess heat as the circulating water splashes down inside the cooling tower.  These towers
@@ -801,53 +448,19 @@ are typically several hundred feet tall.
 
 
 ==============================================================================
-PAGE 22  |  chars 16200-16994 (794 chars)  |  612x792 pt
+PAGE 22  |  chars 13715-14353 (638 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-22
-0703
-
-30
-50
-70
-90
-
-EF
-
-5
-
-10
-
-15
-
-20
-
-25
-
-30
-
-35
-
-100% RELATIVE HUMIDITY
-
+Cold Dry Air
+Warm
 Grams of
 Water per
-
+Wet
+100% RELATIVE HUMIDITY
+Air
 Cubic
 Meter
 of Air
-
-Warm
-
-Wet
-
-Air
-
-Cold Dry Air
-
+EF
 The “steam” vented from the top of a cooling tower is really lukewarm water vapor.  IT IS NOT
 RADIOACTIVE.  As the warm, wet air from inside the cooling tower contacts the cooler, dryer air
 above the cooling tower, the water vapor which cannot be held by the cooler air forms a visible cloud.
@@ -857,79 +470,45 @@ water as air temperature increases.
 
 
 ==============================================================================
-PAGE 23  |  chars 16994-18067 (1073 chars)  |  612x792 pt
+PAGE 23  |  chars 14353-15290 (937 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-23
-0703
-
-CO R E
-
-S/G
-
-RCP
-
-AUXILIARY BUILDING
-
-RHR
-
-HX
-
-CONTAINMENT
-
-SUMP
-
+PRESSURIZED WATER REACTOR PLANT LAYOUT
 CONTAINMENT BUILDING
-
+REACTOR
+COOLANT SYSTEM
+MSR
+S/G
+ELECTRIC
+GENERATOR
+HP
+LP
 P
 Z
 R
-
-REACTOR
-COOLANT SYSTEM
-
-TURBINE BUILDING
-
-FW
-HTR
-
-MSR
-
-HP
-LP
-
-MAIN
-CONDENSER
-
-ELECTRIC
-GENERATOR
-
 COOLING TOWER
-
-CIRC. WATER
-
-PUMP
-
-RHR
-PUMP
-
 MAIN
 TURBINE
-
+MAIN
+CONDENSER
+CO R E
+RHR
+HX
+RCP
+FW
+HTR
+RHR
+PUMP
 CONDENSATE
-
+PUMP
 PUMP
 MAIN FEED
-
+CIRC. WATER
 PUMP
-
-PRESSURIZED WATER REACTOR PLANT LAYOUT
-
+CONTAINMENT
+SUMP
+TURBINE BUILDING
+AUXILIARY BUILDING
 The major structures at a pressurized water reactor plant are:
-
 •
 The containment building, which houses the reactor and its high pressure steam
 generating equipment;
@@ -940,68 +519,38 @@ generator; and
 The auxiliary building, which houses normal and emergency support systems (such as
 the residual heat removal (RHR) system, fuel handling and storage equipment,
 laboratories, maintenance areas, and the control room).
-
 Depending upon the plant location and environmental regulations, there may or may not be a cooling
 tower to remove the excess heat from the facility.
 
 
 ==============================================================================
-PAGE 24  |  chars 18067-18938 (871 chars)  |  612x792 pt
+PAGE 24  |  chars 15290-16030 (740 chars)  |  612x792 pt
 ==============================================================================
-Reactor Concepts Manual
-Nuclear Power for Electrical Generation
-
-USNRC Technical Training Center
-1-24
-0703
-
-Jet Pump
-
+Containment/Drywell
 Reactor
-
 Vessel
-
 Steam
-
+Turbine Building
 Line
-
+Throttle
+Electrical
+Generator
+Valve
 Steam Dryer
-
 &
 Moisture
 Separator
-
-Reactor Core
-
-Recirculation
-
-Pump
-
-Throttle
-
-Valve
-
-Electrical
-Generator
-
 Turbine
-
+Reactor Core
 Condenser
-
-Pump
-
-Containment Suppression Chamber
-
-Turbine Building
-
+Jet Pump
 To/From
-
 River
-
-Containment/Drywell
-
+Recirculation
+Pump
+Pump
+Containment Suppression Chamber
 The major structures at a boiling water reactor plant are:
-
 •
 The primary containment, which includes the suppression chamber, and houses the
 reactor and recirculation pumps;
@@ -1011,7 +560,6 @@ and serves many of the same functions as a pressurized water reactor’s auxilia
 and
 •
 The turbine building.
-
 Depending upon the plant location, there may or may not be a cooling tower to remove excess heat from
 the facility.
 

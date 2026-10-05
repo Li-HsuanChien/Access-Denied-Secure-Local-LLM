@@ -1,34 +1,22 @@
 {
   "schema_version": "1.0.0",
-  "chunk_id": "chk_442eb6c07358e762846a8fde",
+  "chunk_id": "chk_4fefcb5dcc8f3f48cc8a1519",
   "document_id": "doc_72f2433a1e2f2e6340f14040",
   "ordinal": 0,
-  "text": "Reactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-1\n0703\n\nNuclear\n\nPower\n\n for\nElectrical\nGeneration\n\nThe purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a\nnuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant\nhas many similarities to other electrical generating facilities.  It should also be obvious that nuclear\npower plants have some significant differences from other plants.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-2\n0703\n\nFlange\n\nStationary Coil\n\nRotor\n\nElectrical\n\nOutput\n\nGenerator Housing\n\nDrive Shaft\n\nELECTRICAL GENERATOR\n\nOf the several known methods to produce electricity, by far the most practical for large scale production\nand distribution involves the use of an “electrical generator.”  In an electrical generator, a magnet (rotor)\nrevolves inside a coil of wire (stator), creating a flow of electrons inside the wire.  This flow of electrons\nis called electricity.  Some mechanical device (wind turbine, water turbine, steam turbine, diesel engine,\netc.) must be ",
-  "text_checksum_sha256": "2b0cba105cc74022a76a7cd9b82af2332beed5da1d0ea75cff093f7fa272eb24",
+  "text": "Nuclear\nPower\n for\nElectrical\nGeneration\nThe purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a\nnuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant\nhas many similarities to other electrical generating facilities.  It should also be obvious that nuclear\npower plants have some significant differences from other plants.\n\nStationary Coil\nDrive Shaft\nRotor\nElectrical\nOutput\nFlange\nGenerator Housing\nELECTRICAL GENERATOR\nOf the several known methods to produce electricity, by far the most practical for large scale production\nand distribution involves the use of an “electrical generator.”  In an electrical generator, a magnet (rotor)\nrevolves inside a coil of wire (stator), creating a flow of electrons inside the wire.  This flow of electrons\nis called electricity.  Some mechanical device (wind turbine, water turbine, steam turbine, diesel engine,\netc.) must be available to provide the motive force for the rotor.\n\n",
+  "text_checksum_sha256": "c4b66f2b0e6f6a3064c06118fb739f7128b18d2cda928f743d233be37fd7f6a8",
   "char_start": 0,
-  "char_end": 1195,
+  "char_end": 1024,
   "page_start": 1,
   "page_end": 2,
   "page_spans": [
     {
       "page_number": 1,
       "char_start": 0,
-      "char_end": 534,
+      "char_end": 424,
       "page_char_start": 0,
-      "page_char_end": 534,
+      "page_char_end": 424,
       "highlight_rects": [
-        [
-          72.0,
-          36.74,
-          184.65,
-          47.9
-        ],
-        [
-          383.03,
-          36.74,
-          558.08,
-          47.9
-        ],
         [
           220.08,
           135.0,
@@ -82,24 +70,6 @@
           605.45,
           386.48,
           618.73
-        ],
-        [
-          72.0,
-          744.86,
-          224.04,
-          756.02
-        ],
-        [
-          308.3,
-          744.86,
-          321.74,
-          756.02
-        ],
-        [
-          537.86,
-          744.86,
-          558.02,
-          756.02
         ]
       ],
       "coordinates_reliable": true,
@@ -108,23 +78,11 @@
     },
     {
       "page_number": 2,
-      "char_start": 534,
-      "char_end": 1195,
+      "char_start": 424,
+      "char_end": 1024,
       "page_char_start": 0,
-      "page_char_end": 661,
+      "page_char_end": 600,
       "highlight_rects": [
-        [
-          54.0,
-          36.74,
-          166.65,
-          47.9
-        ],
-        [
-          365.03,
-          36.74,
-          540.08,
-          47.9
-        ],
         [
           379.62,
           69.34,
@@ -202,24 +160,6 @@
           701.21,
           360.02,
           714.49
-        ],
-        [
-          54.0,
-          744.86,
-          206.04,
-          756.02
-        ],
-        [
-          290.3,
-          744.86,
-          303.74,
-          756.02
-        ],
-        [
-          519.86,
-          744.86,
-          540.02,
-          756.02
         ]
       ],
       "coordinates_reliable": true,
@@ -227,7 +167,7 @@
       "page_height": 792.0
     }
   ],
-  "token_estimate": 298,
-  "chunker_config_id": "cfg_eacf62fb2b8c",
-  "chunker_version": "refchunk-1.0.0"
+  "token_estimate": 256,
+  "chunker_config_id": "cfg_491d3b9c4d21",
+  "chunker_version": "refchunk-2.0.1"
 }

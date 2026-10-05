@@ -58,7 +58,6 @@ material, and is divided into modules so that content and order may be modified 
 DOE contractors to suit their specific training needs. Each handbook is supported by a separate
 examination bank with an answer key.
 The DOE Fundamentals Handbooks have been prepared for the Assistant Secretary for
-
 NP-01  Page ii  Rev. 0   DOE-HDBK-1019/1-93
 
 Nuclear Energy, Office of Nuclear Safety Policy and Standards, by the DOE Training
@@ -121,7 +120,6 @@ LIST OF TABLES . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 REFERENCES . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 . . . . . . vi
 OBJECTIVES . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
-
 NP-01  Page ii (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 . . . . . . . vii
@@ -184,7 +182,6 @@ Gamma Emission (γ) . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 Internal Conversion . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 . . 26
 Isomers and Isomeric Transition . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 26
-
 NP-01  Page ii (cont. 3)  Rev. 0   DOE-HDBK-1019/1-93
 
 Decay Chains . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
@@ -226,7 +223,6 @@ Fission . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 . . . . . 46
 Summary . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 . . . 47
-
 NP-01  Page ii (cont. 4)  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 TABLE OF CONTENTS
@@ -289,7 +285,6 @@ Figure 8 Orbital Electron Capture . . . . . . . . . . . . . . . . . . . . . . . 
 Figure 9 Types of Radioactive Decay Relative to the Line of Stability . . . . . . . . . . . . . . 28
 Figure 10 Radioactive Decay as a Function of Time in Units of Half-Life . . . . . . . . . . . 33
 Figure 11 Linear and Semi-Log Plots of Nitrogen-16 Decay . . . . . . . . . . . . . . . . . . . . . 37
-
 NP-01  Page iv  Rev. 0   DOE-HDBK-1019/1-93
 
 Figure 12 Combined Decay of Iron-56, Manganese-54, and Cobalt-60 . . . . . . . . . . . . . . 38
@@ -306,7 +301,6 @@ Figure 19 Conversion of Fertile Nuclides to Fissile Nuclides . . . . . . . . . .
 Figure 20 Binding Energy per Nucleon vs. Mass Number . . . . . . . . . . . . . . . . . . . . . . . 53
 Figure 21 Uranium-235 Fission Yield vs. Mass Number . . . . . . . . . . . . . . . . . . . . . . . . 57
 Figure 22 Change in Binding Energy for Typical Fission . . . . . . . . . . . . . . . . . . . . . . . 58
-
 NP-01  Page iv (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 LIST OF TABLES
@@ -344,7 +338,6 @@ Glasstone, Samuel, Sourcebook on Atomic Energy, Robert F. Krieger Publishing
 Company, Inc., 1979.
 Glasstone, Samuel and Sesonske, Alexander, Nuclear Reactor Engineering, 3rd Edition,
 Van Nostrand Reinhold Company, 1981.
-
 NP-01  Page vi  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 OBJECTIVES
@@ -403,7 +396,6 @@ curve for a nuclide on either linear or semi-log coordinates.
 2.10 DEFINE the following terms:
 a. Radioactive equilibrium
 b. Transient radioactive equilibrium
-
 NP-01  Page viii  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 OBJECTIVES
@@ -442,7 +434,6 @@ with fast neutrons.
 fission.
 4.10 Given the curve of Binding Energy per Nucleon versus mass number, CALCULATE the
 energy released from fission.
-
 NP-01  Page x  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 OBJECTIVES
@@ -459,7 +450,6 @@ c. Pair production
 Rev. 0 Page xi NP-01
 OBJECTIVES DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
 Intentionally Left Blank
-
 NP-01  Page xii  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 ATOMIC NATURE OF MATTER
@@ -523,10 +513,7 @@ large particles that have almost the same mass as a hydrogen atom and a positive
 in magnitude (but opposite in sign) to that of the electron. The third subatomic particle to be
 discovered, the neutron, was not found until 1932. The neutron has almost the same mass as the
 
-NP-01  Page 2  Rev. 0   DOE-HDBK-1019/1-93
-
 proton, but it is electrically neutral.
-
 NP-01  Page 2 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 ATOMIC NATURE OF MATTER
@@ -576,8 +563,6 @@ A and can be found by the equation Z + N = A.
 Each of the chemical elements has a unique atomic number because the atoms of different
 elements contain a different number of protons. The atomic number of an atom identifies the
 particular element.
-
-NP-01  Page 4  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 ATOMIC NATURE OF MATTER
 Each type of atom that contains a unique combination of
@@ -640,8 +625,6 @@ Nuclide Element Protons Electrons Neutrons
 9
 4Pu plutonium 94 94 145
 
-NP-01  Page 6  Rev. 0   DOE-HDBK-1019/1-93
-
 Isotopes
 Isotopes are nuclides that have the same atomic number and are therefore the same element, but
 differ in the number of neutrons. Most elements have a few stable isotopes and several unstable,
@@ -666,7 +649,6 @@ Like the atom the nucleus does not have a sharp outer boundary. Experiments have
 the nucleus is shaped like a sphere with a radius that depends on the atomic mass number of the
 atom. The relationship between the atomic mass number and the radius of the nucleus is shown
 in the following equation.
-
 NP-01  Page 6 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 ATOMIC NATURE OF MATTER
@@ -722,8 +704,6 @@ K Q1 Q2
 r
 2
 ATOMIC NATURE OF MATTER DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
-NP-01  Page 8  Rev. 0   DOE-HDBK-1019/1-93
 
 Newton stated that the gravitational force between two bodies is directly proportional to the
 masses of the two bodies and inversely proportional to the square of the distance between the
@@ -786,8 +766,6 @@ Summary
 The important information in this chapter is summarized on the following page.
 Rev. 0 Page 9 NP-01
 
-NP-01  Page 10  Rev. 0   DOE-HDBK-1019/1-93
-
 ATOMIC NATURE OF MATTER DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
 Atomic Nature of Matter Summary
 Atoms consist of three basic subatomic particles. These particles are the proton, the
@@ -822,7 +800,6 @@ acts between the positively charged protons. The nuclear force is a relatively
 short-range attractive force between all nucleons. The gravitational force the
 long range, relatively weak attraction between masses, is negligible compared to
 the other forces.
-
 NP-01  Page 10 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 CHART OF THE NUCLIDES
@@ -850,8 +827,6 @@ atomic number Z but different mass number A) of each element are listed to the r
 Rev. 0 Page 11 NP-01
 CHART OF THE NUCLIDES DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
 Figure 3 Nuclide Chart for Atomic Numbers 1 to 6
-
-NP-01  Page 12  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 CHART OF THE NUCLIDES
 Information for Stable Nuclides
@@ -883,8 +858,6 @@ neutron-to-proton ratio places the fragments below and to the right of the stabi
 displayed by Figure 6. The instability caused by this excess of neutrons is generally rectified
 by successive beta emissions, each of which converts a neutron to a proton and moves the
 nucleus toward a more stable neutron-to-proton ratio.
-
-NP-01  Page 14  Rev. 0   DOE-HDBK-1019/1-93
 
  I
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 CHART OF THE NUCLIDES
@@ -935,8 +908,6 @@ Enriched uranium is uranium in which the isotope uranium-235 has a
 concentration greater than its natural value of 0.7%.
 Depleted uranium is uranium in which the isotope uranium-235 has a
 concentration less than its natural value of 0.7%.
-
-NP-01  Page 16  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 MASS DEFECT AND BINDING ENERGY
 MASS DEFECT AND BINDING ENERGY
@@ -999,8 +970,6 @@ E m c 2
 1 amu
 2.998 x 108 m
 
-NP-01  Page 18  Rev. 0   DOE-HDBK-1019/1-93
-
 sec
 2
  1 N
@@ -1017,7 +986,6 @@ Conversion Factors:
 1 newton = 1 kg-m/sec2
 1 joule = 1 newton-meter
 1 MeV = 1.6022 x 10-13 joules
-
 NP-01  Page 18 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 MASS DEFECT AND BINDING ENERGY
@@ -1081,8 +1049,6 @@ energy-level diagram. The nuclear
 energy-level diagram consists of a stack of
 horizontal bars, one bar for each of the
 
-NP-01  Page 20  Rev. 0   DOE-HDBK-1019/1-93
-
 excited states of the nucleus. The vertical
 distance between the bar representing an
 excited state and the bar representing the
@@ -1096,7 +1062,6 @@ a nuclide has zero excitation energy. The
 bars for the excited states are labeled with
 their respective energy levels. Figure 7 is
 the energy level diagram for nickel-60.
-
 NP-01  Page 20 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 MASS DEFECT AND BINDING ENERGY
@@ -1142,8 +1107,6 @@ plate, and induced electrical conductivity in gases. Becquerel's discovery was f
 by the identification of two other radioactive elements, polonium and radium, by Pierre and
 Marie Curie.
 
-NP-01  Page 22  Rev. 0   DOE-HDBK-1019/1-93
-
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 MODES OF RADIOACTIVE DECAY
 Heavy elements, such as uranium or thorium, and their unstable decay chain elements emit
 radiation in their naturally occurring state. Uranium and thorium, present since their creation
@@ -1173,8 +1136,6 @@ Rev. 0 Page 23 NP-01
 I I I I I I
 I I I I I
 MODES OF RADIOACTIVE DECAY DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
-NP-01  Page 24  Rev. 0   DOE-HDBK-1019/1-93
 
 Alpha Decay (I)
 Alpha decay is the emission of alpha particles (helium nuclei) which may be represented as either
@@ -1237,8 +1198,6 @@ be characteristic x-rays given off
 when an electron from one of the
 higher energy shells moves in to fill
 
-NP-01  Page 26  Rev. 0   DOE-HDBK-1019/1-93
-
 the vacancy in the K-shell.
 Electron capture is shown
 graphically in Figure 8.
@@ -1256,7 +1215,6 @@ I
 I I I I
 I I
 MODES OF RADIOACTIVE DECAY DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
 NP-01  Page 26 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Gamma Emission (I)
@@ -1320,8 +1278,6 @@ line of stability. Due to this, it is possible to predict the type of decay that
 based on its location relative to the line of stability on the Chart of the Nuclides.
 Figure 9 illustrates the type of decay nuclides in different regions of the chart will typically undergo.
 
-NP-01  Page 28  Rev. 0   DOE-HDBK-1019/1-93
-
 Nuclides that are below and to the right of the line of stability will usually undergo I decay. -
 Nuclides that are above and to the left of the line of stability will usually undergo either I decay or +
 electron capture. Most nuclides that will undergo I decay are found in the upper right hand region
@@ -1329,7 +1285,6 @@ of the chart. These are general rules that have many exceptions, especially in t
 nuclides.
 MODES OF RADIOACTIVE DECAY DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
 Figure 9 Types of Radioactive Decay Relative to the Line of Stability
-
 NP-01  Page 28 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 MODES OF RADIOACTIVE DECAY
@@ -1393,15 +1348,12 @@ Radioactivity is the property of certain nuclides of spontaneously emitting part
 radiation. The decay of radioactive nuclides occurs in a random manner, and the precise time
 at which a single nucleus will decay cannot be determined. However, the average behavior of
 
-NP-01  Page 30  Rev. 0   DOE-HDBK-1019/1-93
-
 a very large sample can be predicted accurately by using statistical methods. These studies have
 revealed that there is a certain probability that in a given time interval a certain fraction of the
 nuclei within a sample of a particular nuclide will decay. This probability per unit time that an
 atom of a nuclide will decay is known as the radioactive decay constant, λ. The units for the
 decay constant are inverse time such as 1/second, 1/minute, 1/hour, or 1/year. These decay
 constant units can also be expressed as second-1, minute-1, hour-1, and year-1.
-
 NP-01  Page 30 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
  II
@@ -1465,11 +1417,8 @@ ln
 t
 1/2
 
-NP-01  Page 32  Rev. 0   DOE-HDBK-1019/1-93
-
 ln 2 0.693
 RADIOACTIVITY DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
 NP-01  Page 32 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Since the activity and the number of atoms are always proportional, they may be used
@@ -1508,8 +1457,6 @@ Rev. 0 Page 33 NP-01
 I
  I
 RADIOACTIVITY DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
-NP-01  Page 34  Rev. 0   DOE-HDBK-1019/1-93
 
 Example:
 A sample of material contains 20 micrograms of californium-252.
@@ -1572,11 +1519,8 @@ t
 0.0972 second 1
 A Aoe
 
-NP-01  Page 36  Rev. 0   DOE-HDBK-1019/1-93
-
 t
 RADIOACTIVITY DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
 NP-01  Page 36 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Example:
@@ -1611,8 +1555,6 @@ x 10 atoms of cobalt-60 that has a half-life of 1925 days (I = 4.17 x 10 sec ). 
 The initial activity of each of the nuclides would be the product of the number of atoms and the
 decay constant.
 RADIOACTIVITY DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
-NP-01  Page 38  Rev. 0   DOE-HDBK-1019/1-93
 
 Figure 12 Combined Decay of Iron-56, Manganese-54, and Cobalt-60
 Plotting the manner in which the activities of each of the three nuclides decay over time
@@ -1658,8 +1600,6 @@ I
 I
 RADIOACTIVITY DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
 
-NP-01  Page 40  Rev. 0   DOE-HDBK-1019/1-93
-
 Figure 14 Approach of Sodium-24 to Equilibrium
 The development of the equation to calculate how the amount of sodium-24 changes over time
 as it approaches the equilibrium value is beyond the scope of this handbook. However, the
@@ -1696,8 +1636,6 @@ The important information in this chapter is summarized on the following page.
  II
  I
 RADIOACTIVITY DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
-NP-01  Page 42  Rev. 0   DOE-HDBK-1019/1-93
 
 Radioactivity Summary
 & Radioactivity is the decay of unstable atoms by the emission of particles and
@@ -1760,8 +1698,6 @@ m v
 2
 mn
 
-NP-01  Page 44  Rev. 0   DOE-HDBK-1019/1-93
-
 v
 2
 n,i
@@ -1784,7 +1720,6 @@ v
 2
 T,f
 NEUTRON INTERACTIONS DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
 NP-01  Page 44 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Figure 16 Elastic Scattering
@@ -1848,15 +1783,12 @@ B
 5
 B
 
-NP-01  Page 46  Rev. 0   DOE-HDBK-1019/1-93
-
 7
 3
 Li
 4
 2
 NEUTRON INTERACTIONS DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
 NP-01  Page 46 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Absorption Reactions
@@ -1916,8 +1848,6 @@ Rb 3
 0
 n
 NUCLEAR FISSION DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
-NP-01  Page 48  Rev. 0   DOE-HDBK-1019/1-93
 
 NUCLEAR FISSION
 Nuclear fission is a process in which an atom splits and releases energy, fission
@@ -1980,8 +1910,6 @@ NUCLEAR FISSION DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
 Figure 18 Liquid Drop Model of Fission
 Critical Energy
 
-NP-01  Page 50  Rev. 0   DOE-HDBK-1019/1-93
-
 The measure of how far the energy level of a nucleus is above its ground state is called the
 excitation energy (Eexc). For fission to occur, the excitation energy must be above a particular
 value for that nuclide. The critical energy (Ecrit) is the minimum excitation energy required for
@@ -1997,7 +1925,6 @@ no kinetic energy to the reaction. Fission is possible in these materials with t
 since the change in binding energy supplied by the neutron addition alone is high enough to
 exceed the critical energy. Some examples of fissile nuclides are uranium-235, uranium-233, and
 plutonium-239.
-
 NP-01  Page 50 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 NUCLEAR FISSION
@@ -2061,8 +1988,6 @@ produced by this process are referred to as transmutation products. Because seve
 nuclides do not exist in nature, they can only be produced by nuclear reactions (transmutation).
 The target nuclei for such reactions are said to be fertile. Fertile materials are materials that can
 
-NP-01  Page 52  Rev. 0   DOE-HDBK-1019/1-93
-
 undergo transmutation to become fissile materials. Figure 19 traces the transmutation mechanism
 by which two fertile nuclides, thorium-232 and uranium-238, produce uranium-233 and
 plutonium-239, respectively.
@@ -2072,7 +1997,6 @@ as the original fuel is burned up. This is called conversion. Reactors that are 
 designed to produce fissionable fuel are called "breeder" reactors. In such reactors, the amount
 of fissionable fuel produced is greater than the amount of fuel burnup. If less fuel is produced
 than used, the process is called conversion, and the reactor is termed a "converter."
-
 NP-01  Page 52 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 NUCLEAR FISSION
@@ -2110,8 +2034,6 @@ the attractive nuclear forces holding the two halves together. Consequently, the
 are easily fissionable compared to lighter nuclei.
 Summary
 The important information in this chapter is summarized on the following page.
-
-NP-01  Page 54  Rev. 0   DOE-HDBK-1019/1-93
 
 Atomic and Nuclear Physics DOE-HDBK-1019/1-93 NUCLEAR FISSION
 Nuclear Fission Summary
@@ -2166,8 +2088,6 @@ Rb 3
 0
 n
 ENERGY RELEASE FROM FISSION DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
-NP-01  Page 56  Rev. 0   DOE-HDBK-1019/1-93
 
 ENERGY RELEASE FROM FISSION
 Fission of heavy nuclides converts a small amount of mass into an enormous
@@ -2230,13 +2150,10 @@ Binding Energy
 0
 5Cs 8.4 MeV 140 1176 MeV
 
-NP-01  Page 58  Rev. 0   DOE-HDBK-1019/1-93
-
 23
 9
 5
 2U 7.6 MeV 235 1786 MeV
-
 NP-01  Page 58 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 BE BEproducts BEreactants
@@ -2300,8 +2217,6 @@ Rb
 93
 38
 
-NP-01  Page 60  Rev. 0   DOE-HDBK-1019/1-93
-
 Sr
 93
 39
@@ -2335,7 +2250,6 @@ amu
 amu
 7.84 MeV
 ENERGY RELEASE FROM FISSION DOE-HDBK-1019/1-93 Atomic and Nuclear Physics
-
 NP-01  Page 60 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 The total energy released per fission will vary from the fission to the next depending on what
@@ -2399,8 +2313,6 @@ atoms. In this ionization process, kinetic energy is transferred to the surround
 fuel material, resulting in an increase in temperature. The beta particles and gamma rays also
 give up their energy through ionization, and the fission neutrons interact and lose their energy
 
-NP-01  Page 62  Rev. 0   DOE-HDBK-1019/1-93
-
 through elastic scattering. Of the 200 MeV released per fission, about seven percent (13 MeV)
 is released at some time after the instant of fission. When a reactor is shut down, fissions
 essentially cease, but energy is still being released from the decay of fission products. The heat
@@ -2421,7 +2333,6 @@ fission neutrons after fission.
 Another method to determine the energy released by fission is based on the
 change in binding energy per nucleon between the fissile nuclide and the fission
 products.
-
 NP-01  Page 62 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 DOE-HDBK-1019/1-93
@@ -2459,8 +2370,6 @@ m z
 K.E.
 DOE-HDBK-1019/1-93
 INTERACTION OF RADIATION WITH MATTER Atomic and Nuclear Physics
-
-NP-01  Page 64  Rev. 0   DOE-HDBK-1019/1-93
 
 Because ionizing radiation creates ions in pairs, the intensity of ionization or the specific
 ionization is defined as the number of ion-pairs formed per centimeter of travel in a given
@@ -2523,8 +2432,6 @@ scatter, inelastic scatter, and absorption. In elastic scatter, a neutron collid
 bounces off. This reaction transmits some of the kinetic energy of the neutron to the nucleus
 of the atom, resulting in the neutron being slowed, and the atom receives some kinetic energy
 
-NP-01  Page 66  Rev. 0   DOE-HDBK-1019/1-93
-
 (motion). This process is sometimes referred to as "the billiard ball effect."
 As the mass of the nucleus approaches the mass of the neutron, this reaction becomes more
 effective in slowing the neutron. Hydrogenous material attenuates neutrons most effectively.
@@ -2566,7 +2473,6 @@ completely disappears, and an electron and a positron are formed. For this react
 the original gamma must have at least 1.02 MeV energy. Any energy greater than 1.02 MeV
 becomes kinetic energy shared between the electron and positron. The probability of pairIproduction
 increases significantly for higher energy gammas.
-
 NP-01  Page 66 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 DOE-HDBK-1019/1-93
@@ -2600,8 +2506,6 @@ The important information in this chapter is summarized below.
 DOE-HDBK-1019/1-93
 INTERACTION OF RADIATION WITH MATTER Atomic and Nuclear Physics
 Intentionally Left Blank
-
-NP-01  Page 68  Rev. 0   DOE-HDBK-1019/1-93
 
 Department of Energy
 Fundamentals Handbook
@@ -2663,14 +2567,12 @@ Summary . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 
 . 31
 NEUTRON FLUX SPECTRUM . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
 Prompt Neutron Energies . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 33
-
 NP-02  Page ii  Rev. 0   DOE-HDBK-1019/1-93
 
 Thermal and Fast Breeder Reactor Neutron Spectra . . . . . . . . . . . . . . . . . . . . . 34
 Most Probable Neutron Velocities . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . 35
 Summary . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 . 37
-
 NP-02  Page ii (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Reactor Theory (Neutron Characteristics) DOE-HDBK-1019/1-93 LIST OF FIGURES
@@ -2687,7 +2589,6 @@ Table 1 Neutron Production by Spontaneous Fission ......................... 2
 Table 2 Moderating Properties of Materials . . . . . . . . . . . . . . . . . . . . . . . . . . . . . . .
 27
 Table 3 Delayed Neutron Precursor Groups for Thermal Fission in Uranium-235 . . . . . 30
-
 NP-02  Page iv  Rev. 0   DOE-HDBK-1019/1-93
 
 Reactor Theory (Neutron Characteristics) DOE-HDBK-1019/1-93 REFERENCES
@@ -2720,7 +2621,6 @@ a. Intrinsic neutron source
 b. Installed neutron source
 1.2 LIST three examples of reactions that produce neutrons in intrinsic neutron sources.
 1.3 LIST three examples of reactions that produce neutrons in installed neutron sources.
-
 NP-02  Page vi  Rev. 0   DOE-HDBK-1019/1-93
 
 Reactor Theory (Neutron Characteristics) DOE-HDBK-1019/1-93 OBJECTIVES
@@ -2756,7 +2656,6 @@ c. Moderating ratio
 2.13 LIST three desirable characteristics of a moderator.
 2.14 Given an average fractional energy loss per collision, CALCULATE the energy loss after
 a specified number of collisions.
-
 NP-02  Page viii  Rev. 0   DOE-HDBK-1019/1-93
 
 Reactor Theory (Neutron Characteristics) DOE-HDBK-1019/1-93 OBJECTIVES
@@ -2786,7 +2685,6 @@ a. Fast reactor
 b. Thermal reactor
 4.3 EXPLAIN the reason for the particular shape of the fast, intermediate, and slow energy
 regions of the neutron flux spectrum for a thermal reactor.
-
 NP-02  Page x  Rev. 0   DOE-HDBK-1019/1-93
 
 Reactor Theory (Neutron Characteristics) DOE-HDBK-1019/1-93 NEUTRON SOURCES
@@ -2821,8 +2719,6 @@ I I I I
 I I I
 I I
 NEUTRON SOURCES DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
-
-NP-02  Page 2  Rev. 0   DOE-HDBK-1019/1-93
 
 A limited number of neutrons will always be present, even in a reactor core that has never been
 operated, due to spontaneous fission of some heavy nuclides that are present in the fuel. UraniumI238,
@@ -2885,8 +2781,6 @@ instruments at all times. This provides a true picture of reactor conditions and
 these conditions. An installed neutron source is an assembly placed in or near the reactor for
 the sole purpose of producing source neutrons.
 
-NP-02  Page 4  Rev. 0   DOE-HDBK-1019/1-93
-
 One strong source of neutrons is the artificial nuclide californium-252, which emits neutrons at
 the rate of about 2 x 10 neutrons per second per gram as the result of spontaneous fission. 12
 Important drawbacks for some applications may be its high cost and its short half-life (2.65
@@ -2903,7 +2797,6 @@ its stable isotope beryllium-9 has a weakly attached last neutron with a binding
 1.66 MeV. Thus, a gamma ray with greater energy than 1.66 MeV can cause neutrons to be
 ejected by the (I,n) reaction as shown below.
 NEUTRON SOURCES DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
-
 NP-02  Page 4 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Neutron Sources Summary
@@ -2964,8 +2857,6 @@ EO 2.9 EXPLAIN neutron shadowing or self-shielding.
  '
 DOE-HDBK-1019/1-93
 NUCLEAR CROSS SECTIONS AND NEUTRON FLUX Reactor Theory (Neutron Characteristics)
-
-NP-02  Page 6  Rev. 0   DOE-HDBK-1019/1-93
 
 Introduction
 Fission neutrons are born with an average energy of about 2 MeV. These fast neutrons interact
@@ -3028,11 +2919,8 @@ between barns and cm is shown below. 2
 1 barn = 10-24 cm2
 N
 
-NP-02  Page 8  Rev. 0   DOE-HDBK-1019/1-93
-
 DOE-HDBK-1019/1-93
 NUCLEAR CROSS SECTIONS AND NEUTRON FLUX Reactor Theory (Neutron Characteristics)
-
 NP-02  Page 8 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Whether a neutron will interact with a certain volume of material depends not only on the
@@ -3096,13 +2984,10 @@ That is, when the binding energy of a neutron plus the kinetic energy of the neu
 equal to the amount required to raise a compound nucleus from its ground state to a quantum
 level, resonance absorption occurs. The following example problem further illustrates this point.
 
-NP-02  Page 10  Rev. 0   DOE-HDBK-1019/1-93
-
 I
  (
 DOE-HDBK-1019/1-93
 NUCLEAR CROSS SECTIONS AND NEUTRON FLUX Reactor Theory (Neutron Characteristics)
-
 NP-02  Page 10 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Assuming that uranium-236 has a nuclear quantum energy level at 6.8 MeV above its ground
@@ -3166,14 +3051,11 @@ Solution:
 Step 1: Using Equation (2-1), calculate the atom density of iron.
 Step 2: Use this atom density in Equation (2-2) to calculate the macroscopic
 
-NP-02  Page 12  Rev. 0   DOE-HDBK-1019/1-93
-
 cross section.
  '
  '
 DOE-HDBK-1019/1-93
 NUCLEAR CROSS SECTIONS AND NEUTRON FLUX Reactor Theory (Neutron Characteristics)
-
 NP-02  Page 12 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Example 2:
@@ -3233,8 +3115,6 @@ must travel only 11.1 cm to interact by scattering.
 DOE-HDBK-1019/1-93
 NUCLEAR CROSS SECTIONS AND NEUTRON FLUX Reactor Theory (Neutron Characteristics)
 
-NP-02  Page 14  Rev. 0   DOE-HDBK-1019/1-93
-
 Effects of Temperature on Cross Section
 As discussed, the microscopic absorption cross section varies significantly as neutron energy
 varies. The microscopic cross sections provided on most charts and tables are measured for a
@@ -3292,8 +3172,6 @@ given point within a reactor, neutrons will be traveling in all directions.
 DOE-HDBK-1019/1-93
 NUCLEAR CROSS SECTIONS AND NEUTRON FLUX Reactor Theory (Neutron Characteristics)
 
-NP-02  Page 16  Rev. 0   DOE-HDBK-1019/1-93
-
 Self-Shielding
 In some locations within the reactor, the flux level may be significantly lower than in other areas
 due to a phenomenon referred to as neutron shadowing or self-shielding. For example, the
@@ -3338,8 +3216,6 @@ the equation below.
 neutron absorption near the surface of the material.
  1 )
 REACTION RATES DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
-
-NP-02  Page 18  Rev. 0   DOE-HDBK-1019/1-93
 
 REACTION RATES
 It is possible to determine the rate at which a nuclear reaction will take place
@@ -3402,8 +3278,6 @@ uranium-235 per cm . The reaction rate is 1.29 x 10 fission/cm . Calculate and .
 3 12 3
 f f
 
-NP-02  Page 20  Rev. 0   DOE-HDBK-1019/1-93
-
 Solution:
 Step 1: The macroscopic cross section can be determined by solving
 Equation (2-6) for and substituting the appropriate values. f
@@ -3432,7 +3306,6 @@ erg
 3.12 x 1010 fissions
 second
 REACTION RATES DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
-
 NP-02  Page 20 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Step 2: To find the microscopic cross section, replace f with (N x f) and solve
@@ -3479,8 +3352,6 @@ This is true for day-to-day operation. The neutron flux for a given power level 
 slowly over a period of months due to the burnup of the fuel and resulting decrease in atom
 density and macroscopic cross section.
 REACTION RATES DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
-
-NP-02  Page 22  Rev. 0   DOE-HDBK-1019/1-93
 
 Reaction Rates Summary
 & The reaction rate is the number of interactions of a particular type occurring in a
@@ -3532,8 +3403,6 @@ A
 2
 3
 NEUTRON MODERATION DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
-
-NP-02  Page 24  Rev. 0   DOE-HDBK-1019/1-93
 
 The ideal moderating material (moderator) should have the following nuclear properties.
 large scattering cross section
@@ -3589,8 +3458,6 @@ for a given number of collisions may be computed using the following formula.
  ! (
 NEUTRON MODERATION DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
 
-NP-02  Page 26  Rev. 0   DOE-HDBK-1019/1-93
-
 (2-9)
 where:
 E = initial neutron energy o
@@ -3643,8 +3510,6 @@ Boron 0.171 105 0.092 0.00086
 Carbon 0.158 114 0.083 216
 NEUTRON MODERATION DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
 
-NP-02  Page 28  Rev. 0   DOE-HDBK-1019/1-93
-
 Summary
 The important information in this chapter is summarized below.
 Neutron Moderation Summary
@@ -3696,8 +3561,6 @@ taken place. The delayed neutrons are emitted immediately following the first be
 fission fragment known as a delayed neutron precursor. An example of a delayed neutron
 precursor is bromine-87, shown below.
 PROMPT AND DELAYED NEUTRONS DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
-
-NP-02  Page 30  Rev. 0   DOE-HDBK-1019/1-93
 
 For most applications, it is convenient to combine the known precursors into groups with
 appropriately averaged properties. These groups vary somewhat depending on the fissile
@@ -3760,8 +3623,6 @@ Solution:
 This example demonstrates the effect delayed neutrons have on the neutron generation time and
 thus reactor control. If a reactor were to be operated in a sustained chain reaction using only
 
-NP-02  Page 32  Rev. 0   DOE-HDBK-1019/1-93
-
 prompt neutrons (I = 0), the generation time from the previous example would be about
 5 x 10 seconds. However, by operating the reactor such that a 0.0065 fraction of neutrons are -5
 delayed, the generation life time is extended to 0.0813 seconds, providing time for adequate
@@ -3772,7 +3633,6 @@ Summary
 The important information in this chapter is summarized on the following page.
  I I I I
 PROMPT AND DELAYED NEUTRONS DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
-
 NP-02  Page 32 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Prompt and Delayed Neutrons Summary
@@ -3836,8 +3696,6 @@ function of neutron energy, as
 shown in Figure 2. From this
 figure it can be seen that the most
 
-NP-02  Page 34  Rev. 0   DOE-HDBK-1019/1-93
-
 probable neutron energy is about
 0.7 MeV. Also, from this data it
 can be shown that the average
@@ -3848,7 +3706,6 @@ fission in uranium-235. The values
 will vary slightly for other
 nuclides.
 NEUTRON FLUX SPECTRUM DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
-
 NP-02  Page 34 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 Figure 3 Comparison of Neutron Flux Spectra for
@@ -3912,8 +3769,6 @@ a) Calculate the most probable velocity for 20 C using Equation (2-13).
 vp
 2 k T
 
-NP-02  Page 36  Rev. 0   DOE-HDBK-1019/1-93
-
 m
 2 1.38 x 10 16 erg
 K
@@ -3926,7 +3781,6 @@ sec
 2977 m
 sec
 NEUTRON FLUX SPECTRUM DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
-
 NP-02  Page 36 (cont. 2)  Rev. 0   DOE-HDBK-1019/1-93
 
 b) Calculate the most probable velocity for 260 C using Equation (2-13).
@@ -3960,9 +3814,6 @@ Summary
 The important information in this chapter is summarized below.
 NEUTRON FLUX SPECTRUM DOE-HDBK-1019/1-93 Reactor Theory (Neutron Characteristics)
 
-NP-02  Page 38  Rev. 0   DOE-HDBK-1019/1-93
-
 Intentionally Left Blank
-
 FRONT  Page end  Rev. 0   DOE-HDBK-1019/1-93
 

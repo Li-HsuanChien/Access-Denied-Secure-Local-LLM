@@ -10,7 +10,7 @@ python3 tools/build_walkthrough.py
 
 **Sample document:** `normal_nrc_reactor_concepts_ch01.pdf`
 NRC Reactor Concepts Manual, Chapter 1. 24 pages,
-1,291,325 bytes, 18,938 characters of extractable text.
+1,291,325 bytes, 16,030 characters of extractable text.
 
 ---
 
@@ -69,11 +69,11 @@ coordinates afterwards, is where highlight drift comes from.
 Page boundaries are recorded as offsets into that one stream:
 
 ```
-page  1  →  chars      0–534   
-page  2  →  chars    534–1249  
-page  3  →  chars   1249–1652  
+page  1  →  chars      0–424   
+page  2  →  chars    424–1024  
+page  3  →  chars   1024–1320  
 ...
-page 24  →  chars  18067–18938 
+page 24  →  chars  15290–16030 
 ```
 
 ---
@@ -88,46 +88,37 @@ Chunker configuration, whose hash participates in every chunk ID:
   "overlap_chars": 200,
   "min_chunk_chars": 100,
   "split_on_word_boundary": true,
-  "chunker_version": "refchunk-1.0.0",
-  "config_id": "cfg_eacf62fb2b8c"
+  "sorted_reading_order": true,
+  "strip_running_headers": true,
+  "respect_sentence_boundaries": true,
+  "chunker_version": "refchunk-2.0.1",
+  "config_id": "cfg_491d3b9c4d21"
 }
 ```
 
-This produced **19 chunks**. Here is chunk 0 in full, which is exactly what a
+This produced **21 chunks**. Here is chunk 0 in full, which is exactly what a
 `Chunk` object must contain:
 
 ```json
 {
   "schema_version": "1.0.0",
-  "chunk_id": "chk_442eb6c07358e762846a8fde",
+  "chunk_id": "chk_4fefcb5dcc8f3f48cc8a1519",
   "document_id": "doc_72f2433a1e2f2e6340f14040",
   "ordinal": 0,
-  "text": "Reactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-1\n0703\n\nNuclear\n\nPower\n\n for\nElectrical\nGeneration\n\nThe purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a\nnuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant\nhas many similarities to other electrical generating facilities.  It should also be obvious that nuclear\npower plants have some significant differences from other plants.\n\nReactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-2\n0703\n\nFlange\n\nStationary Coil\n\nRotor\n\nElectrical\n\nOutput\n\nGenerator Housing\n\nDrive Shaft\n\nELECTRICAL GENERATOR\n\nOf the several known methods to produce electricity, by far the most practical for large scale production\nand distribution involves the use of an “electrical generator.”  In an electrical generator, a magnet (rotor)\nrevolves inside a coil of wire (stator), creating a flow of electrons inside the wire.  This flow of electrons\nis called electricity.  Some mechanical device (wind turbine, water turbine, steam turbine, diesel engine,\netc.) must be ",
-  "text_checksum_sha256": "2b0cba105cc74022a76a7cd9b82af2332beed5da1d0ea75cff093f7fa272eb24",
+  "text": "Nuclear\nPower\n for\nElectrical\nGeneration\nThe purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a\nnuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant\nhas many similarities to other electrical generating facilities.  It should also be obvious that nuclear\npower plants have some significant differences from other plants.\n\nStationary Coil\nDrive Shaft\nRotor\nElectrical\nOutput\nFlange\nGenerator Housing\nELECTRICAL GENERATOR\nOf the several known methods to produce electricity, by far the most practical for large scale production\nand distribution involves the use of an “electrical generator.”  In an electrical generator, a magnet (rotor)\nrevolves inside a coil of wire (stator), creating a flow of electrons inside the wire.  This flow of electrons\nis called electricity.  Some mechanical device (wind turbine, water turbine, steam turbine, diesel engine,\netc.) must be available to provide the motive force for the rotor.\n\n",
+  "text_checksum_sha256": "c4b66f2b0e6f6a3064c06118fb739f7128b18d2cda928f743d233be37fd7f6a8",
   "char_start": 0,
-  "char_end": 1195,
+  "char_end": 1024,
   "page_start": 1,
   "page_end": 2,
   "page_spans": [
     {
       "page_number": 1,
       "char_start": 0,
-      "char_end": 534,
+      "char_end": 424,
       "page_char_start": 0,
-      "page_char_end": 534,
+      "page_char_end": 424,
       "highlight_rects": [
-        [
-          72.0,
-          36.74,
-          184.65,
-          47.9
-        ],
-        [
-          383.03,
-          36.74,
-          558.08,
-          47.9
-        ],
         [
           220.08,
           135.0,
@@ -181,24 +172,6 @@ This produced **19 chunks**. Here is chunk 0 in full, which is exactly what a
           605.45,
           386.48,
           618.73
-        ],
-        [
-          72.0,
-          744.86,
-          224.04,
-          756.02
-        ],
-        [
-          308.3,
-          744.86,
-          321.74,
-          756.02
-        ],
-        [
-          537.86,
-          744.86,
-          558.02,
-          756.02
         ]
       ],
       "coordinates_reliable": true,
@@ -207,23 +180,11 @@ This produced **19 chunks**. Here is chunk 0 in full, which is exactly what a
     },
     {
       "page_number": 2,
-      "char_start": 534,
-      "char_end": 1195,
+      "char_start": 424,
+      "char_end": 1024,
       "page_char_start": 0,
-      "page_char_end": 661,
+      "page_char_end": 600,
       "highlight_rects": [
-        [
-          54.0,
-          36.74,
-          166.65,
-          47.9
-        ],
-        [
-          365.03,
-          36.74,
-          540.08,
-          47.9
-        ],
         [
           379.62,
           69.34,
@@ -301,24 +262,6 @@ This produced **19 chunks**. Here is chunk 0 in full, which is exactly what a
           701.21,
           360.02,
           714.49
-        ],
-        [
-          54.0,
-          744.86,
-          206.04,
-          756.02
-        ],
-        [
-          290.3,
-          744.86,
-          303.74,
-          756.02
-        ],
-        [
-          519.86,
-          744.86,
-          540.02,
-          756.02
         ]
       ],
       "coordinates_reliable": true,
@@ -326,9 +269,9 @@ This produced **19 chunks**. Here is chunk 0 in full, which is exactly what a
       "page_height": 792.0
     }
   ],
-  "token_estimate": 298,
-  "chunker_config_id": "cfg_eacf62fb2b8c",
-  "chunker_version": "refchunk-1.0.0"
+  "token_estimate": 256,
+  "chunker_config_id": "cfg_491d3b9c4d21",
+  "chunker_version": "refchunk-2.0.1"
 }
 ```
 
@@ -353,30 +296,30 @@ This produced **19 chunks**. Here is chunk 0 in full, which is exactly what a
 ## 4. Chunks span pages, so `page` cannot be one number
 
 **SDD 5.1 specifies a Chunk as carrying a single page number. On this document
-that is wrong for 18 of 19 chunks.**
+that is wrong for 18 of 21 chunks.**
 
 The NRC manual is slide-style, averaging about
-789 characters per page, so a
+668 characters per page, so a
 1200-character chunk covers two to four pages. A single `page`
 field would make citations point at whichever page happened to be chosen, and
 roughly half of them would point at the wrong one.
 
 | document | pages | chars/page | chunks | chunks spanning pages | share | max pages in one chunk |
 |---|---|---|---|---|---|---|
-| NRC training manual (baseline) | 24 | 789 | 19 | 18 | 95% | 4 |
-| DOE handbook (dense prose) | 96 | 2097 | 202 | 93 | 46% | 3 |
-| arXiv paper (two column) | 13 | 3332 | 44 | 14 | 32% | 3 |
+| NRC training manual (baseline) | 24 | 668 | 21 | 18 | 86% | 4 |
+| DOE handbook (dense prose) | 96 | 2072 | 233 | 95 | 41% | 3 |
+| arXiv paper (two column) | 13 | 3313 | 54 | 17 | 31% | 3 |
 
 It is not an NRC quirk. It shows up on dense prose too, because a chunk boundary
 has no reason to coincide with a page boundary.
 
 The fix is `page_spans`: one entry per page the chunk touches. Chunk
-`chk_442eb6c07358e762846a8fde` spans pages 1–2:
+`chk_4fefcb5dcc8f3f48cc8a1519` spans pages 1–2:
 
 | page | document offsets | page-local offsets | highlight rects | coords reliable |
 |---|---|---|---|---|
-| 1 | `0`–`534` | `0`–`534` | 14 | True |
-| 2 | `534`–`1195` | `0`–`661` | 18 | True |
+| 1 | `0`–`424` | `0`–`424` | 9 | True |
+| 2 | `424`–`1024` | `0`–`600` | 13 | True |
 
 Page-local offsets are included so E4 can render one page in isolation without
 re-deriving where that page started in the stream.
@@ -399,28 +342,16 @@ One chunk spanning 2 pages expands into 2 citation targets:
 
 | page | rects | first rect (PDF points) | quoted text |
 |---|---|---|---|
-| 1 | 14 | `[72.0, 36.74, 184.65, 47.9]` | Reactor Concepts Manual Nuclear Power for Electr… |
-| 2 | 18 | `[54.0, 36.74, 166.65, 47.9]` | Reactor Concepts Manual Nuclear Power for Electr… |
+| 1 | 9 | `[220.08, 135.0, 410.02, 201.42]` | Nuclear Power  for Electrical Generation The pur… |
+| 2 | 13 | `[379.62, 69.34, 438.49, 80.1]` | Stationary Coil Drive Shaft Rotor Electrical Out… |
 
 ```json
 {
   "schema_version": "1.0.0",
   "document_id": "doc_72f2433a1e2f2e6340f14040",
-  "chunk_id": "chk_442eb6c07358e762846a8fde",
+  "chunk_id": "chk_4fefcb5dcc8f3f48cc8a1519",
   "page_number": 1,
   "highlight_rects": [
-    [
-      72.0,
-      36.74,
-      184.65,
-      47.9
-    ],
-    [
-      383.03,
-      36.74,
-      558.08,
-      47.9
-    ],
     [
       220.08,
       135.0,
@@ -474,30 +405,12 @@ One chunk spanning 2 pages expands into 2 citation targets:
       605.45,
       386.48,
       618.73
-    ],
-    [
-      72.0,
-      744.86,
-      224.04,
-      756.02
-    ],
-    [
-      308.3,
-      744.86,
-      321.74,
-      756.02
-    ],
-    [
-      537.86,
-      744.86,
-      558.02,
-      756.02
     ]
   ],
   "coordinates_reliable": true,
   "page_width": 612.0,
   "page_height": 792.0,
-  "quoted_text": "Reactor Concepts Manual\nNuclear Power for Electrical Generation\n\nUSNRC Technical Training Center\n1-1\n0703\n\nNuclear\n\nPower\n\n for\nElectrical\nGeneration\n\nThe purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a\nnuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant\nhas many similarities to other electrical generating facilities.  It should also be obvious that nuclear\npower plants have some significant differences from other plants."
+  "quoted_text": "Nuclear\nPower\n for\nElectrical\nGeneration\nThe purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a\nnuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant\nhas many similarities to other electrical generating facilities.  It should also be obvious that nuclear\npower plants have some significant differences from other plants."
 }
 ```
 
@@ -526,7 +439,7 @@ Proven in `tests/test_contracts.py`:
 
 ```
 test_same_file_and_config_yield_same_ids   chunk IDs reproduce exactly across runs
-test_reindex_preserves_ids                 19 chunk IDs survive re-import under a different filename
+test_reindex_preserves_ids                 21 chunk IDs survive re-import under a different filename
 test_config_change_changes_every_id        no ID collisions across configs
 test_offsets_reconstruct_chunk_text        offsets reproduce chunk text on every chunk
 test_page_spans_tile_the_chunk             page spans tile every chunk contiguously
@@ -541,5 +454,5 @@ test_page_spans_tile_the_chunk             page spans tile every chunk contiguou
 | `walkthrough/validation_result.json` | full ValidationResult for the sample |
 | `walkthrough/document.json` | the Document object |
 | `walkthrough/chunk_000.json` | one Chunk in full |
-| `walkthrough/all_chunks.json` | all 19 chunks |
+| `walkthrough/all_chunks.json` | all 21 chunks |
 | `walkthrough/citation_targets.json` | citation targets from one page-spanning chunk |

@@ -42,7 +42,7 @@
     "magic_ok": false,
     "opens": false,
     "error_type": "EmptyFileError",
-    "error": "Cannot open empty file: filename='/home/claude/e2-fixtures/fixtures/corrupt/corrupt_empty.pdf'."
+    "error": "Cannot open empty file: filename='/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/corrupt/corrupt_empty.pdf'."
   },
   {
     "file": "corrupt/corrupt_header_only.pdf",
@@ -51,7 +51,7 @@
     "magic_ok": true,
     "opens": false,
     "error_type": "FileDataError",
-    "error": "Failed to open file '/home/claude/e2-fixtures/fixtures/corrupt/corrupt_header_only.pdf' as type pdf."
+    "error": "Failed to open file '/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/corrupt/corrupt_header_only.pdf' as type pdf."
   },
   {
     "file": "corrupt/corrupt_truncated_50pct.pdf",
@@ -114,7 +114,7 @@
     "magic_ok": false,
     "opens": false,
     "error_type": "FileDataError",
-    "error": "Failed to open file '/home/claude/e2-fixtures/fixtures/nonpdf/nonpdf_plaintext_renamed.pdf' as type pdf."
+    "error": "Failed to open file '/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/nonpdf/nonpdf_plaintext_renamed.pdf' as type pdf."
   },
   {
     "file": "nonpdf/nonpdf_zip_container_renamed.pdf",
@@ -123,7 +123,7 @@
     "magic_ok": false,
     "opens": false,
     "error_type": "FileDataError",
-    "error": "Failed to open file '/home/claude/e2-fixtures/fixtures/nonpdf/nonpdf_zip_container_renamed.pdf' as type pdf."
+    "error": "Failed to open file '/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/nonpdf/nonpdf_zip_container_renamed.pdf' as type pdf."
   },
   {
     "file": "normal/normal_nrc_reactor_concepts_ch01.pdf",

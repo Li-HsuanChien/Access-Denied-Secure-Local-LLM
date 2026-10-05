@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated": "2026-09-19",
+  "generated": "2026-10-06",
   "workstream": "E2 - Ingestion / Chunking",
   "purpose": "Representative document fixture set for the Secure Local Document-QA System. Reject categories follow SDD 6.1: password-protected, corrupt, scanned-only, oversized, and non-PDF.",
   "measured_with": "PyMuPDF 1.28.2 (the extraction library named in SDD 11)",
@@ -198,7 +198,7 @@
         "pages_with_text": null,
         "pages_without_text": null,
         "extract_allowed": null,
-        "open_error": "Failed to open file '/home/claude/e2-fixtures/fixtures/corrupt/corrupt_header_only.pdf' as type pdf."
+        "open_error": "Failed to open file '/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/corrupt/corrupt_header_only.pdf' as type pdf."
       },
       "detection_signal": "open raises; magic bytes alone are not sufficient validation",
       "notes": "Passes an extension check and a magic-byte check, then fails to parse. Proves validation must attempt a real open, not just sniff the header."
@@ -229,7 +229,7 @@
         "pages_with_text": null,
         "pages_without_text": null,
         "extract_allowed": null,
-        "open_error": "Cannot open empty file: filename='/home/claude/e2-fixtures/fixtures/corrupt/corrupt_empty.pdf'."
+        "open_error": "Cannot open empty file: filename='/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/corrupt/corrupt_empty.pdf'."
       },
       "detection_signal": "file size is 0",
       "notes": "Trivial, and the case most often left unhandled until it reaches production."
@@ -384,7 +384,7 @@
         "pages_with_text": null,
         "pages_without_text": null,
         "extract_allowed": null,
-        "open_error": "Failed to open file '/home/claude/e2-fixtures/fixtures/nonpdf/nonpdf_zip_container_renamed.pdf' as type pdf."
+        "open_error": "Failed to open file '/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/nonpdf/nonpdf_zip_container_renamed.pdf' as type pdf."
       },
       "detection_signal": "magic bytes are PK\\x03\\x04, not %PDF-",
       "notes": "Extension-based validation accepts it; content sniffing rejects it."
@@ -415,7 +415,7 @@
         "pages_with_text": null,
         "pages_without_text": null,
         "extract_allowed": null,
-        "open_error": "Failed to open file '/home/claude/e2-fixtures/fixtures/nonpdf/nonpdf_plaintext_renamed.pdf' as type pdf."
+        "open_error": "Failed to open file '/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/nonpdf/nonpdf_plaintext_renamed.pdf' as type pdf."
       },
       "detection_signal": "magic bytes are not %PDF-",
       "notes": "Rejection message must name the real type, not just say \"invalid\"."
