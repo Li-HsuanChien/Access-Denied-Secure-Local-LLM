@@ -1,0 +1,3 @@
+# Application layout
+
+This is a documentation scaffold for one desktop product. It groups the [Tauri shell](desktop/README.md), the [frontend and Python workflows](document-qa/README.md), and [release assembly](release/README.md). The four workflow modules live under `document-qa/backend/secure_qa/`; the frontend lives under `document-qa/frontend/src/`. The `document-qa` directory groups the product interface and workflow host by responsibility; Open WebUI is the selected implementation. The [PRD](../docs/product/PRD.md) and [SDD](../docs/architecture/SDD.md) define product behavior and architecture.
