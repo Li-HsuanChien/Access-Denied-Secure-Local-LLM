@@ -12,20 +12,43 @@ from .embedding import Embedder
 HNSW_CONFIG = {"space": "cosine", "max_neighbors": 16, "ef_construction": 100, "ef_search": 100}
 
 
+def open_client(path: str | Path):
+    """An embedded, on-disk Chroma client with telemetry off. No server, no port."""
+    import chromadb
+    from chromadb.config import Settings
+
+    return chromadb.PersistentClient(path=str(path), settings=Settings(anonymized_telemetry=False, allow_reset=True))
+
+
 class ChromaStore(DocumentStore):
+    """One Chroma collection.
+
+    `create=False` opens an existing collection read-only for searching: if it is
+    missing, `search` raises `RetrievalError` instead of creating an empty one and
+    returning no results. `CollectionVersions` opens published versions this way.
+    """
+
     name = "chroma"
 
-    def __init__(self, embedder: Embedder, path: str | Path, collection: str = "chunks") -> None:
+    def __init__(
+        self,
+        embedder: Embedder,
+        path: str | Path,
+        collection: str = "chunks",
+        *,
+        client=None,
+        create: bool = True,
+        version_id: str | None = None,
+        documents: dict[str, dict] | None = None,
+    ) -> None:
         super().__init__(embedder)
-        import chromadb
-        from chromadb.config import Settings
-
         self.path = Path(path)
         self._collection_name = collection
-        self._client = chromadb.PersistentClient(
-            path=str(self.path),
-            settings=Settings(anonymized_telemetry=False, allow_reset=True),
-        )
+        self._owns_client = client is None
+        self._client = client if client is not None else open_client(self.path)
+        self._create = create
+        self._version_id = version_id
+        self._documents = documents or {}
         self._collection = None
 
     @property
@@ -33,7 +56,16 @@ class ChromaStore(DocumentStore):
         return self._collection_name
 
     @property
+    def collection_version(self) -> str:
+        return self._version_id or self._collection_name
+
+    def document(self, document_id: str) -> dict | None:
+        return self._documents.get(document_id)
+
+    @property
     def collection(self):
+        if self._collection is None and not self._create:
+            self.load()
         if self._collection is None:
             collection = self._client.get_or_create_collection(
                 name=self._collection_name,
@@ -103,5 +135,6 @@ class ChromaStore(DocumentStore):
         self._collection = None
 
     def close(self) -> None:
-        self._client.close()
+        if self._owns_client:
+            self._client.close()
         self._collection = None

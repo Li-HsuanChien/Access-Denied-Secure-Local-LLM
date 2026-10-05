@@ -10,7 +10,9 @@ import re
 
 import numpy as np
 
-DEFAULT_MODEL_PATH = Path(__file__).resolve().parent.parent / "models" / "all-MiniLM-L6-v2"
+from ..paths import MODELS_DIR
+
+DEFAULT_MODEL_PATH = MODELS_DIR / "all-MiniLM-L6-v2"
 
 
 class Embedder:

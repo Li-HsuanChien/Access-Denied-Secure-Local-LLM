@@ -14,6 +14,13 @@ class EmbeddingMismatchError(RuntimeError):
     """The collection was built with a different embedding model than the one in use."""
 
 
+class RetrievalError(RuntimeError):
+    """Search could not run. Never reported as an empty result (SDD §9: retrieval failure).
+
+    The message names the failure type only, never the query text (SDD §15).
+    """
+
+
 class DocumentStore(ABC):
     """Contract other workstreams build against.
 
@@ -22,7 +29,11 @@ class DocumentStore(ABC):
       Chunks whose text doesn't match `text_checksum_sha256`, and duplicate ids
       within one call, are rejected before anything is written.
     - `search` returns at most `top_k` results ordered best first. `score` is
-      cosine similarity, and each result carries the full Chunk as indexed.
+      cosine similarity in [-1, 1] (not Open WebUI's `(1 + cos) / 2`), and each
+      result carries the full Chunk as indexed. With `min_score`, results scoring
+      below it are dropped (SDD §7.1 relevance threshold), so the list may be
+      empty. A store that cannot search raises `RetrievalError`; an empty list
+      always means "nothing relevant", never "something broke".
     - A collection records the embedding model that built it; opening or
       searching it with a different model raises `EmbeddingMismatchError`.
     - `load` attaches to an existing collection (for example after a restart)
@@ -54,10 +65,27 @@ class DocumentStore(ABC):
             chunk_ids=[c.chunk_id for c in chunks],
         )
 
-    def search(self, query: str, top_k: int = 5) -> list[SearchResult]:
+    def search(self, query: str, top_k: int = 5, min_score: float | None = None) -> list[SearchResult]:
         if top_k < 1:
             raise ValueError("top_k must be >= 1")
-        return self._query(self.embedder.embed_query(query), top_k)
+        try:
+            results = self._query(self.embedder.embed_query(query), top_k)
+        except EmbeddingMismatchError:
+            raise
+        except Exception as exc:
+            raise RetrievalError(f"Search of collection '{self.collection_name}' failed: {type(exc).__name__}") from exc
+        if min_score is not None:
+            results = [r for r in results if r.score >= min_score]  # ranks stay 1..n: results are sorted
+        return results
+
+    @property
+    def collection_version(self) -> str:
+        """The collection version answers record (SDD §4.2). Unversioned stores use the collection name."""
+        return self.collection_name
+
+    def document(self, document_id: str) -> dict | None:
+        """The Library's document record (E2 Document fields) for citations, if this store has one."""
+        return None
 
     @property
     @abstractmethod

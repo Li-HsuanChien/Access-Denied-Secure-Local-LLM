@@ -1,8 +1,8 @@
 """Week 2 demo: index a small synthetic set into Chroma, then show top-k results with source metadata.
 
-    .venv/bin/python -m scripts.demo_index_search                 # index, then search in a fresh process
-    .venv/bin/python -m scripts.demo_index_search --e2-chunks tests/fixtures/e2/nrc_all_chunks.json
-    .venv/bin/python -m scripts.demo_index_search search "What is the annual dose limit?"
+    python -m secure_qa.library.scripts.demo_index_search                 # index, then search in a fresh process
+    python -m secure_qa.library.scripts.demo_index_search --e2-chunks secure_qa/library/tests/fixtures/e2/nrc_all_chunks.json
+    python -m secure_qa.library.scripts.demo_index_search search "What is the annual dose limit?"
 
 `index` embeds the chunks and writes them to an on-disk Chroma collection, plus a
 documents.json manifest (standing in for the Library's document records) so a
@@ -27,8 +27,8 @@ import textwrap  # noqa: E402
 import time  # noqa: E402
 from pathlib import Path  # noqa: E402
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
-DEFAULT_STORE = REPO_ROOT / ".bench_data" / "demo_store"
+from secure_qa.paths import BACKEND_ROOT, DATA_DIR  # noqa: E402
+DEFAULT_STORE = DATA_DIR / "demo_store"
 DEMO_QUERIES = [
     "How much RAM does the offline reference laptop have?",
     "What pressure is the primary coolant kept at?",
@@ -51,8 +51,8 @@ def parse_args() -> argparse.Namespace:
 
 
 def load_chunks(args):
-    from docstore import Chunk
-    from docstore.synthetic import synthetic_corpus
+    from secure_qa.library import Chunk
+    from secure_qa.library.synthetic import synthetic_corpus
 
     if args.e2_chunks is None:
         docs, chunks = synthetic_corpus()
@@ -69,7 +69,7 @@ def load_chunks(args):
 
 
 def cmd_index(args) -> None:
-    from docstore import ChromaStore, Embedder
+    from secure_qa.library import ChromaStore, Embedder
 
     chunks, documents, description = load_chunks(args)
     print("Loading embedding model (offline) ...")
@@ -92,7 +92,7 @@ def cmd_index(args) -> None:
 
 
 def cmd_search(args) -> None:
-    from docstore import ChromaStore, Embedder
+    from secure_qa.library import ChromaStore, Embedder
 
     queries = args.queries or (E2_DEMO_QUERIES if args.e2_chunks else DEMO_QUERIES)
     documents = json.loads((args.store / "documents.json").read_text())
@@ -129,11 +129,11 @@ def main() -> None:
         cmd_search(args)
     if args.command == "all":
         # Search from a brand-new process so the results come from what was persisted to disk.
-        cmd = [sys.executable, "-m", "scripts.demo_index_search", "search", "--store", str(args.store), "--top-k", str(args.top_k)]
+        cmd = [sys.executable, "-m", "secure_qa.library.scripts.demo_index_search", "search", "--store", str(args.store), "--top-k", str(args.top_k)]
         if args.e2_chunks:
             cmd += ["--e2-chunks", str(args.e2_chunks)]
         sys.stdout.flush()
-        subprocess.run(cmd + args.queries, cwd=REPO_ROOT, check=True)
+        subprocess.run(cmd + args.queries, cwd=BACKEND_ROOT, check=True)
 
 
 if __name__ == "__main__":

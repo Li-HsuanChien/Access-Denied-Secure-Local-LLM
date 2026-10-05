@@ -21,12 +21,12 @@ from pathlib import Path
 os.environ.setdefault("HF_HUB_OFFLINE", "1")
 os.environ.setdefault("ANONYMIZED_TELEMETRY", "False")
 
-from docstore import Chunk, ChromaStore, EmbeddingMismatchError, FakeEmbedder  # noqa: E402
-from docstore.chunk import text_checksum  # noqa: E402
-from docstore.embedding import DEFAULT_MODEL_PATH  # noqa: E402
-from docstore.synthetic import PLACEHOLDER_QUERIES, synthetic_corpus  # noqa: E402
+from secure_qa.library import Chunk, ChromaStore, EmbeddingMismatchError, FakeEmbedder, RetrievalError  # noqa: E402
+from secure_qa.library.chunk import text_checksum  # noqa: E402
+from secure_qa.library.embedding import DEFAULT_MODEL_PATH  # noqa: E402
+from secure_qa.library.synthetic import PLACEHOLDER_QUERIES, synthetic_corpus  # noqa: E402
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
+from secure_qa.paths import BACKEND_ROOT  # noqa: E402
 E2_DIR = Path(__file__).resolve().parent / "fixtures" / "e2"
 
 
@@ -39,7 +39,7 @@ class StoreTestCase(unittest.TestCase):
     embedder = FakeEmbedder()
 
     def setUp(self) -> None:
-        self.dir = Path(tempfile.mkdtemp(prefix="docstore-test-"))
+        self.dir = Path(tempfile.mkdtemp(prefix="library-test-"))
         self.store = ChromaStore(self.embedder, self.dir)
 
     def tearDown(self) -> None:
@@ -120,13 +120,38 @@ class IndexSearchTest(StoreTestCase):
         expected = [r.chunk.chunk_id for r in self.store.search(PLACEHOLDER_QUERIES[0], top_k=3)]
         self.store.close()
         script = (
-            "import json, sys; from docstore import ChromaStore, FakeEmbedder\n"
+            "import json, sys; from secure_qa.library import ChromaStore, FakeEmbedder\n"
             "s = ChromaStore(FakeEmbedder(), sys.argv[1]); n = s.load()\n"
             f"print(json.dumps([n, [r.chunk.chunk_id for r in s.search({PLACEHOLDER_QUERIES[0]!r}, top_k=3)]]))"
         )
-        out = subprocess.run([sys.executable, "-c", script, str(self.dir)], cwd=REPO_ROOT,
+        out = subprocess.run([sys.executable, "-c", script, str(self.dir)], cwd=BACKEND_ROOT,
                              capture_output=True, text=True, check=True).stdout
         self.assertEqual(json.loads(out.strip().splitlines()[-1]), [len(chunks), expected])
+
+    def test_min_score_drops_weak_results_and_keeps_ranks(self):
+        self.store.index(e2_chunks())
+        everything = self.store.search("steam turbine generator", top_k=10)
+        cutoff = everything[2].score
+        kept = self.store.search("steam turbine generator", top_k=10, min_score=cutoff)
+        self.assertEqual([r.chunk.chunk_id for r in kept], [r.chunk.chunk_id for r in everything if r.score >= cutoff])
+        self.assertEqual([r.rank for r in kept], list(range(1, len(kept) + 1)))
+        self.assertEqual(self.store.search("steam turbine generator", top_k=10, min_score=1.01), [])
+
+    def test_search_failure_raises_instead_of_returning_nothing(self):
+        self.store.index(e2_chunks()[:3])
+        self.store._client.delete_collection(self.store.collection_name)  # the store disappears underneath us
+        with self.assertRaises(RetrievalError) as ctx:
+            self.store.search("reactor")
+        self.assertNotIn("reactor", str(ctx.exception))  # sanitized: no query text (SDD §15)
+
+    def test_read_only_store_does_not_create_a_missing_collection(self):
+        reader = ChromaStore(self.embedder, self.dir, "never_published", create=False)
+        try:
+            with self.assertRaises(RetrievalError):
+                reader.search("reactor")
+            self.assertNotIn("never_published", [c.name for c in self.store._client.list_collections()])
+        finally:
+            reader.close()
 
     def test_load_missing_collection(self):
         with self.assertRaises(LookupError):
@@ -147,7 +172,7 @@ class IndexSearchTest(StoreTestCase):
 class RealModelTest(StoreTestCase):
     @classmethod
     def setUpClass(cls):
-        from docstore import Embedder
+        from secure_qa.library import Embedder
 
         cls.embedder = Embedder()
 

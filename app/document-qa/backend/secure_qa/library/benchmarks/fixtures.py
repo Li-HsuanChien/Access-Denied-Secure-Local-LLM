@@ -2,7 +2,7 @@
 
 Resolution order:
   1. an explicit --fixtures directory of E2 chunk output
-  2. the synthetic placeholder corpus from `docstore.synthetic`
+  2. the synthetic placeholder corpus from `secure_qa.library.synthetic`
 
 A fixture directory may contain `*.jsonl` files (one E2 chunk dict per line) and/or
 `*.json` files holding E2's `all_chunks.json` shape (`{"chunks": [...]}`) or a
@@ -17,10 +17,9 @@ import json
 from dataclasses import dataclass
 from pathlib import Path
 
-from docstore import Chunk
-from docstore.synthetic import PLACEHOLDER_PAGES, PLACEHOLDER_QUERIES, chunk_document, filler_documents, synthetic_corpus
+from secure_qa.library import Chunk
+from secure_qa.library.synthetic import PLACEHOLDER_PAGES, PLACEHOLDER_QUERIES, chunk_document, filler_documents, synthetic_corpus
 
-REPO_ROOT = Path(__file__).resolve().parent.parent
 
 
 @dataclass

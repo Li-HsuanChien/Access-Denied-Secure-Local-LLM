@@ -20,9 +20,9 @@ from pathlib import Path  # noqa: E402
 
 import numpy as np  # noqa: E402
 
-from benchmarks.fixtures import load_fixture_set  # noqa: E402
-from benchmarks.measure import measure, peak_rss_mb, rss_mb  # noqa: E402
-from docstore import ChromaStore, Embedder  # noqa: E402
+from secure_qa.library.benchmarks.fixtures import load_fixture_set  # noqa: E402
+from secure_qa.library.benchmarks.measure import measure, peak_rss_mb, rss_mb  # noqa: E402
+from secure_qa.library import ChromaStore, Embedder  # noqa: E402
 
 
 def open_store(embedder: Embedder, cfg: dict) -> ChromaStore:

@@ -1,9 +1,9 @@
 """Benchmark the Chroma document store on fixture chunks with the local embedding model.
 
 Examples:
-    python -m benchmarks.run_benchmark                     # synthetic placeholder corpus
-    python -m benchmarks.run_benchmark --synthetic 10000   # pad to 10,000 chunks to see scaling
-    python -m benchmarks.run_benchmark --fixtures tests/fixtures/e2
+    python -m secure_qa.library.benchmarks.run_benchmark                     # synthetic placeholder corpus
+    python -m secure_qa.library.benchmarks.run_benchmark --synthetic 10000   # pad to 10,000 chunks to see scaling
+    python -m secure_qa.library.benchmarks.run_benchmark --fixtures secure_qa/library/tests/fixtures/e2
 
 Each phase (embedding baseline, index, reload) runs in a separate Python process
 so memory figures are isolated and the reload is a true process restart.
@@ -25,8 +25,9 @@ from pathlib import Path
 
 import psutil
 
-from benchmarks.fixtures import REPO_ROOT, load_fixture_set
-from docstore.embedding import DEFAULT_MODEL_PATH
+from secure_qa.library.benchmarks.fixtures import load_fixture_set
+from secure_qa.paths import BACKEND_ROOT, DATA_DIR
+from secure_qa.library.embedding import DEFAULT_MODEL_PATH
 
 OFFLINE_ENV = {
     "HF_HUB_OFFLINE": "1",
@@ -42,7 +43,7 @@ def parse_args() -> argparse.Namespace:
     p.add_argument("--synthetic", type=int, default=0, metavar="N", help="pad the fixture set with synthetic chunks up to N total")
     p.add_argument("--top-k", type=int, default=5)
     p.add_argument("--repeats", type=int, default=20, help="passes over the query set for latency stats")
-    p.add_argument("--data-dir", default=str(REPO_ROOT / ".bench_data"))
+    p.add_argument("--data-dir", default=str(DATA_DIR))
     p.add_argument("--model-path", default=str(DEFAULT_MODEL_PATH))
     return p.parse_args()
 
@@ -50,9 +51,9 @@ def parse_args() -> argparse.Namespace:
 def run_worker(phase: str, config_path: Path, data_dir: Path) -> dict | None:
     out = data_dir / f"{phase}.json"
     out.unlink(missing_ok=True)
-    cmd = [sys.executable, "-m", "benchmarks.worker", "--phase", phase, "--config", str(config_path), "--out", str(out)]
+    cmd = [sys.executable, "-m", "secure_qa.library.benchmarks.worker", "--phase", phase, "--config", str(config_path), "--out", str(out)]
     print(f"\n--- {phase} (new process) ---", flush=True)
-    proc = subprocess.run(cmd, cwd=REPO_ROOT, env={**os.environ, **OFFLINE_ENV})
+    proc = subprocess.run(cmd, cwd=BACKEND_ROOT, env={**os.environ, **OFFLINE_ENV})
     if proc.returncode != 0 or not out.exists():
         print(f"!! {phase} phase failed (exit code {proc.returncode}); see output above", flush=True)
         return None

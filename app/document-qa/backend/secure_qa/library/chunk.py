@@ -3,7 +3,7 @@
 E2 owns the Chunk schema (`ingestion/src/schema.py` and
 `ingestion/schemas/chunk.schema.json` on branch `E2-Chunking`). The dataclasses
 here copy its field names and meanings exactly, so `Chunk.from_dict` accepts
-E2's `Chunk.to_dict()` output unchanged, and `tests/test_docstore.py`
+E2's `Chunk.to_dict()` output unchanged, and `tests/test_store.py`
 validates `Chunk.to_dict()` against a vendored copy of E2's JSON Schema.
 Replace this mirror with an import once E2's package is merged.
 
