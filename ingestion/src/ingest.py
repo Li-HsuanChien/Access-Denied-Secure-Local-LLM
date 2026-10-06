@@ -62,6 +62,18 @@ _DIGITS = re.compile(r'\d+')
 _WS = re.compile(r'\s+')
 
 
+@dataclass
+class _Line:
+    """One layout line, positioned in its own reading frame."""
+    text: str
+    pieces: list[tuple[str, tuple]]   # (span text, span box on the page as displayed)
+    frame: int | None                 # writing direction: 0 right, 1 down, 2 left, 3 up; None if skewed
+    top: float                        # distance from the page edge the text's top faces
+    bottom: float
+    extent: float                     # page size along that axis
+    size: float                       # largest font size on the line
+
+
 def _running_key(text: str) -> str:
     """
     Normalize a line so the same running header matches across pages.
@@ -71,6 +83,136 @@ def _running_key(text: str) -> str:
     reduce to one key.
     """
     return _DIGITS.sub('#', _WS.sub(' ', text.strip()).lower())
+
+
+# ---- reading order ---------------------------------------------------------
+def _gutters(blocks: list[dict], min_lines: int = 5) -> list[tuple[float, float]]:
+    """
+    The vertical strips that separate text columns, or [] on a one-column page.
+
+    A gutter is a strip almost no line crosses with a real column on each side:
+    at least min_lines lines, each at least 22% of the text width. That bar is
+    what keeps table cells, list markers and scattered figure labels from being
+    read as columns. Lines that run most of the width (a title, an abstract)
+    are ignored here; they separate bands and are placed by _by_columns.
+    """
+    boxes = [line['bbox'] for block in blocks for line in block['lines']
+             if line['entry'].frame == 0]
+    if len(boxes) < 2 * min_lines:
+        return []
+    left = min(b[0] for b in boxes)
+    width = max(b[2] for b in boxes) - left
+    if width <= 0:
+        return []
+    narrow = [b for b in boxes if b[2] - b[0] < 0.6 * width]
+    if len(narrow) < 2 * min_lines:
+        return []
+    bins = int(width) + 1
+    cover = [0] * bins
+    for x0, _, x1, _ in narrow:
+        for i in range(max(0, int(x0 - left)), min(bins, int(x1 - left) + 1)):
+            cover[i] += 1
+    crossing = max(2, len(narrow) // 20)        # a centred heading or byline may cross
+    found = []
+    i, stop = int(0.15 * bins), int(0.85 * bins)
+    while i < stop:
+        if cover[i] > crossing:
+            i += 1
+            continue
+        j = i
+        while j < stop and cover[j] <= crossing:
+            j += 1
+        g0, g1 = left + i, left + j
+        if g1 - g0 >= 6:
+            wide = 0.22 * width
+            before = sum(1 for b in narrow if b[2] <= g0 + 1 and b[2] - b[0] >= wide)
+            after = sum(1 for b in narrow if b[0] >= g1 - 1 and b[2] - b[0] >= wide)
+            if before >= min_lines and after >= min_lines:
+                found.append((g0, g1))
+        i = j
+    return found
+
+
+def _by_columns(blocks: list[dict], gutters: list[tuple[float, float]]) -> list[dict]:
+    """Bands separated by blocks that span the columns; inside a band, column by column."""
+    def column(block):
+        centre = (block['bbox'][0] + block['bbox'][2]) / 2
+        return sum(1 for g0, g1 in gutters if centre > (g0 + g1) / 2)
+
+    def spanning(block):
+        return any(block['bbox'][0] < g0 - 1 and block['bbox'][2] > g1 + 1 for g0, g1 in gutters)
+
+    ordered: list[dict] = []
+    band: list[dict] = []
+
+    def flush():
+        band.sort(key=lambda b: (column(b), round(b['bbox'][1], 1), b['bbox'][0]))
+        ordered.extend(band)
+        band.clear()
+
+    for block in sorted(blocks, key=lambda b: (round(b['bbox'][1], 1), b['bbox'][0])):
+        if spanning(block):
+            flush()
+            ordered.append(block)
+        else:
+            band.append(block)
+    flush()
+    return ordered
+
+
+def _reading_order(blocks: list[dict], used: list | None = None) -> list[dict]:
+    """
+    Reorder a page's text blocks when part of it is set in columns. `used`, if
+    given, receives the gutters the page was split on.
+
+    Sorting by vertical position, which is what sort=True does, reads straight
+    across a two-column page and interleaves the columns line by line. Columns
+    often begin below a full-width title and abstract, so when the page as a
+    whole has no gutter the largest lower part that has one is used, then the
+    largest upper part, cutting only at a clean horizontal gap. A page with no
+    columns comes back untouched: the same list object.
+    """
+    def note(gutters):
+        if used is not None:
+            used.append(tuple(gutters))
+        return gutters
+
+    gutters = _gutters(blocks)
+    if gutters:
+        return _by_columns(blocks, note(gutters))
+    by_top = sorted(blocks, key=lambda b: (b['bbox'][1], b['bbox'][0]))
+    for cut in range(1, len(by_top)):
+        upper, lower = by_top[:cut], by_top[cut:]
+        if max(b['bbox'][3] for b in upper) <= min(b['bbox'][1] for b in lower) + 1:
+            gutters = _gutters(lower)
+            if gutters:
+                return _reading_order(upper) + _by_columns(lower, note(gutters))
+    for cut in range(len(by_top) - 1, 0, -1):
+        upper, lower = by_top[:cut], by_top[cut:]
+        if max(b['bbox'][3] for b in upper) <= min(b['bbox'][1] for b in lower) + 1:
+            gutters = _gutters(upper)
+            if gutters:
+                return _by_columns(upper, note(gutters)) + lower
+    return blocks
+
+
+def _set_on(blocks: list[dict], gutter: tuple[float, float]) -> bool:
+    """
+    True when a page too sparse to prove a gutter by itself is laid out on one
+    the rest of the document uses: a wide line ends at the strip, another
+    starts at it, and no more lines cross it than _gutters tolerates. A page of
+    figures with a caption or two in each column is the case.
+    """
+    g0, g1 = gutter
+    boxes = [line['bbox'] for block in blocks for line in block['lines']
+             if line['entry'].frame == 0]
+    if not boxes:
+        return False
+    wide = 0.22 * (max(b[2] for b in boxes) - min(b[0] for b in boxes))
+    crossing = sum(1 for b in boxes if b[0] < g0 - 1 and b[2] > g1 + 1)
+    ends = any(0 <= g0 + 1 - b[2] <= 4 and b[2] - b[0] >= wide for b in boxes)
+    starts = any(0 <= b[0] - (g1 - 1) <= 4 and b[2] - b[0] >= wide for b in boxes)
+    return ends and starts and crossing <= max(2, len(boxes) // 20)
 
 
 def _page_lines(page, sort: bool) -> list[tuple[str, list[tuple]]]:
