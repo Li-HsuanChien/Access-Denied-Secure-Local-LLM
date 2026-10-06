@@ -11,7 +11,7 @@ requires-python = ">=3.11"
 dependencies = ["psutil>=5.9"]
 
 [project.optional-dependencies]
-dev = ["pytest>=8", "pyinstaller>=6"]
+dev = ["pytest>=8", "pyinstaller>=6", "jsonschema>=4.18"]
 
 [project.scripts]
 docqa-runtime = "docqa_runtime.cli:main"

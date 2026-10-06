@@ -52,6 +52,8 @@ class RuntimeState:
         self.lock = threading.Lock()
         self.requests_total = 0
         self.requests_failed = 0
+        from .release import release_info
+        self.release = release_info(cfg, model)
 
     def set(self, status: str, error: dict | None = None) -> None:
         with self.lock:
@@ -80,6 +82,7 @@ class RuntimeState:
                 },
                 "security": {"bind": self.cfg.host, "loopback_only": is_loopback(self.cfg.host),
                              "offline_mode": self.cfg.offline},
+                "release": dict(self.release),
                 "uptime_s": round(time.time() - self.started_wall, 1),
                 "startup_s": round(self.startup_s, 3) if self.startup_s is not None else None,
                 "requests": {"total": self.requests_total, "failed": self.requests_failed},
@@ -91,6 +94,61 @@ def error_body(status: int, code: str, message: str, hint: str = "", etype: str 
     etype = etype or {400: "invalid_request_error", 404: "not_found_error", 405: "invalid_request_error",
                       413: "invalid_request_error", 403: "permission_error", 503: "unavailable_error"}.get(status, "server_error")
     return {"error": {"message": message, "type": etype, "code": code, "hint": hint, "status": status}}
+
+
+# ------------------------------------------------------- response shaping --
+# llama-server's responses carry many build-specific fields (and they change between releases). The gateway re-emits
+# only the documented v1 shape (docs/api.md, contract/*.schema.json), so clients never depend on llama.cpp internals.
+
+_USAGE_KEYS = ("prompt_tokens", "completion_tokens", "total_tokens")
+_TIMING_KEYS = ("prompt_n", "prompt_ms", "prompt_per_second", "predicted_n", "predicted_ms", "predicted_per_second")
+
+
+def _pick(d, keys) -> dict:
+    return {k: d[k] for k in keys if isinstance(d, dict) and k in d}
+
+
+def _envelope(obj: dict, kind: str, model_id: str) -> dict:
+    out = {"id": str(obj.get("id") or ""), "object": kind, "created": int(obj.get("created") or time.time()),
+           "model": model_id}
+    if obj.get("system_fingerprint"):
+        out["system_fingerprint"] = obj["system_fingerprint"]
+    return out
+
+
+def shape_completion(obj: dict, model_id: str) -> dict:
+    """Non-streaming chat.completion in the v1 contract shape."""
+    out = _envelope(obj, "chat.completion", model_id)
+    out["choices"] = []
+    for i, ch in enumerate(obj.get("choices") or []):
+        msg = ch.get("message") or {}
+        choice = {"index": ch.get("index", i), "finish_reason": ch.get("finish_reason"),
+                  "message": {"role": msg.get("role") or "assistant", "content": msg.get("content") or ""}}
+        if ch.get("logprobs") is not None:
+            choice["logprobs"] = ch["logprobs"]
+        out["choices"].append(choice)
+    if obj.get("usage"):
+        out["usage"] = _pick(obj["usage"], _USAGE_KEYS)
+    if obj.get("timings"):
+        out["timings"] = _pick(obj["timings"], _TIMING_KEYS)
+    return out
+
+
+def shape_chunk(obj: dict, model_id: str) -> dict:
+    """Streaming chat.completion.chunk in the v1 contract shape."""
+    out = _envelope(obj, "chat.completion.chunk", model_id)
+    out["choices"] = []
+    for i, ch in enumerate(obj.get("choices") or []):
+        delta = _pick(ch.get("delta") or {}, ("role", "content"))
+        choice = {"index": ch.get("index", i), "delta": delta, "finish_reason": ch.get("finish_reason")}
+        if ch.get("logprobs") is not None:
+            choice["logprobs"] = ch["logprobs"]
+        out["choices"].append(choice)
+    if obj.get("usage"):
+        out["usage"] = _pick(obj["usage"], _USAGE_KEYS)
+    if obj.get("timings"):
+        out["timings"] = _pick(obj["timings"], _TIMING_KEYS)
+    return out
 
 
 # Backend (llama-server) error type -> hint for the user
@@ -303,7 +361,11 @@ class Handler(BaseHTTPRequestHandler):
                 return self._backend_error(resp.status, raw)
             if req.get("stream"):
                 return self._pipe_stream(resp)
-            raw = resp.read()
+            try:
+                raw = json.dumps(shape_completion(json.loads(resp.read()), st.model.id), ensure_ascii=False).encode("utf-8")
+            except (json.JSONDecodeError, UnicodeDecodeError, AttributeError) as e:
+                return self._error(502, "backend_bad_response", f"llama-server returned an unreadable answer: {e}",
+                                   "Check the runtime log; this usually means a llama.cpp build mismatch (run `docqa-runtime verify`).")
             self.send_response(200)
             self.send_header("Content-Type", "application/json; charset=utf-8")
             self.send_header("Content-Length", str(len(raw)))
@@ -343,10 +405,23 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("X-DocQA-API-Version", API_VERSION)
         self._cors_headers()
         self.end_headers()
+        model_id = self.state.model.id
         while True:
-            line = resp.readline()        # SSE is line-oriented; forward each line as it arrives
+            line = resp.readline()        # SSE is line-oriented; forward each event as it arrives
             if not line:
                 break
+            stripped = line.strip()
+            if stripped.startswith(b"data:") and stripped[5:].strip() != b"[DONE]":
+                try:
+                    obj = json.loads(stripped[5:])
+                    if "error" in obj:        # llama-server reports mid-stream failures as an error event
+                        body = error_body(502, "backend_error", str((obj["error"] or {}).get("message", obj["error"])),
+                                          "See the runtime console / log for details.")
+                    else:
+                        body = shape_chunk(obj, model_id)
+                    line = b"data: " + json.dumps(body, ensure_ascii=False).encode("utf-8") + b"\n"
+                except (json.JSONDecodeError, UnicodeDecodeError, AttributeError, TypeError):
+                    pass                      # forward unparseable lines untouched rather than dropping text
             self.wfile.write(f"{len(line):X}\r\n".encode() + line + b"\r\n")
             self.wfile.flush()
         self.wfile.write(b"0\r\n\r\n")

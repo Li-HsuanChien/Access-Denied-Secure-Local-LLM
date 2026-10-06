@@ -1,0 +1,59 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docqa.local/contract/2026-09-v1/error.schema.json",
+  "title": "Error envelope (every non-2xx response)",
+  "type": "object",
+  "properties": {
+    "error": {
+      "type": "object",
+      "properties": {
+        "message": {
+          "type": "string"
+        },
+        "type": {
+          "type": "string"
+        },
+        "hint": {
+          "type": "string"
+        },
+        "status": {
+          "type": "integer"
+        },
+        "code": {
+          "type": "string",
+          "enum": [
+            "invalid_json",
+            "invalid_request",
+            "context_length_exceeded",
+            "host_not_allowed",
+            "origin_not_allowed",
+            "model_not_found",
+            "not_found",
+            "method_not_allowed",
+            "length_required",
+            "request_too_large",
+            "unsupported_media_type",
+            "backend_disconnected",
+            "backend_bad_response",
+            "backend_error",
+            "model_loading",
+            "backend_unavailable",
+            "backend_timeout"
+          ]
+        }
+      },
+      "required": [
+        "message",
+        "type",
+        "hint",
+        "status",
+        "code"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "error"
+  ],
+  "additionalProperties": false
+}

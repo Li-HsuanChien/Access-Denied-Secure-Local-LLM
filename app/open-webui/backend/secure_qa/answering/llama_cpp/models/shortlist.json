@@ -1,5 +1,5 @@
 {
-  "_note": "Week 1 candidate shortlist for the reference laptop (Windows, 8-16 GB RAM, CPU only). Sizes are approximate unless size_bytes is given. Files with a sha256 were downloaded and checked against the Hugging Face checksum on 2026-09-28; fetch_models.ps1 refuses a download that does not match. Verify links and licences of the others before first download.",
+  "_note": "Week 1 candidate shortlist for the reference laptop (Windows, 8-16 GB RAM, CPU only). Sizes are approximate unless size_bytes is given. Files with a sha256 are pinned to the checksum Hugging Face publishes (Qwen3-4B Q4_K_M/Q8_0 checked 2026-09-28, the week3 set 2026-10-05); fetch_models.ps1 refuses a download that does not match. Verify links and licences of the others before first download.",
   "llama_cpp": {
     "_note": "Pinned llama.cpp build used for the Week 1/2 runs. fetch_runtime.ps1 downloads this tag by default; pass -Tag latest to try a newer build.",
     "tag": "b11242",
@@ -19,7 +19,8 @@
       "files": {
         "Q4_K_M": {"file": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf", "approx_gb": 2.5, "size_bytes": 2497280736,
                    "sha256": "2fde00ce69dd4899c70d020845e2638353015bba0fdf161b3eb965f2bca4464e"},
-        "Q5_K_M": {"file": "Qwen_Qwen3-4B-Instruct-2507-Q5_K_M.gguf", "approx_gb": 2.9},
+        "Q5_K_M": {"file": "Qwen_Qwen3-4B-Instruct-2507-Q5_K_M.gguf", "approx_gb": 2.9, "size_bytes": 2889513696,
+                   "sha256": "66713ce35a58a82fe87642d4ec13425bf9b9a46800fff5c49a665ef5701439dc"},
         "Q8_0":   {"file": "Qwen_Qwen3-4B-Instruct-2507-Q8_0.gguf",   "approx_gb": 4.3, "size_bytes": 4280405216,
                    "sha256": "260b5b5b6ad73e44df81a43ea1f5c11c37007b6bac18eb3cd2016e8667c19662"}
       }
@@ -33,7 +34,8 @@
       "why": "Well-known baseline with broad tooling support; good fallback if Qwen licence or quality is a concern.",
       "repo": "bartowski/Llama-3.2-3B-Instruct-GGUF",
       "files": {
-        "Q4_K_M": {"file": "Llama-3.2-3B-Instruct-Q4_K_M.gguf", "approx_gb": 2.0},
+        "Q4_K_M": {"file": "Llama-3.2-3B-Instruct-Q4_K_M.gguf", "approx_gb": 2.0, "size_bytes": 2019377696,
+                   "sha256": "6c1a2b41161032677be168d354123594c0e6e67d2b9227c84f296ad037c728ff"},
         "Q8_0":   {"file": "Llama-3.2-3B-Instruct-Q8_0.gguf",   "approx_gb": 3.4}
       }
     },
@@ -46,7 +48,8 @@
       "why": "MIT licence, long context, strong on reading-comprehension style tasks.",
       "repo": "bartowski/Phi-3.5-mini-instruct-GGUF",
       "files": {
-        "Q4_K_M": {"file": "Phi-3.5-mini-instruct-Q4_K_M.gguf", "approx_gb": 2.4}
+        "Q4_K_M": {"file": "Phi-3.5-mini-instruct-Q4_K_M.gguf", "approx_gb": 2.4, "size_bytes": 2393232672,
+                   "sha256": "e4165e3a71af97f1b4820da61079826d8752a2088e313af0c7d346796c38eff5"}
       }
     },
     {
@@ -58,7 +61,8 @@
       "why": "Low-spec fallback for 8 GB machines under memory pressure; fast download for smoke tests.",
       "repo": "bartowski/Qwen2.5-1.5B-Instruct-GGUF",
       "files": {
-        "Q4_K_M": {"file": "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf", "approx_gb": 1.0},
+        "Q4_K_M": {"file": "Qwen2.5-1.5B-Instruct-Q4_K_M.gguf", "approx_gb": 1.0, "size_bytes": 986048768,
+                   "sha256": "1adf0b11065d8ad2e8123ea110d1ec956dab4ab038eab665614adba04b6c3370"},
         "Q8_0":   {"file": "Qwen2.5-1.5B-Instruct-Q8_0.gguf",   "approx_gb": 1.6}
       }
     },
@@ -71,13 +75,16 @@
       "why": "Very fast, permissive; context is short (8k) so only for small documents.",
       "repo": "bartowski/SmolLM2-1.7B-Instruct-GGUF",
       "files": {
-        "Q4_K_M": {"file": "SmolLM2-1.7B-Instruct-Q4_K_M.gguf", "approx_gb": 1.1}
+        "Q4_K_M": {"file": "SmolLM2-1.7B-Instruct-Q4_K_M.gguf", "approx_gb": 1.1, "size_bytes": 1055609824,
+                   "sha256": "77665ea4815999596525c636fbeb56ba8b080b46ae85efef4f0d986a139834d7"}
       }
     }
   ],
   "sets": {
     "week2": [["qwen3-4b-2507", "Q4_K_M"], ["qwen3-4b-2507", "Q8_0"]],
     "week2-small": [["qwen2.5-1.5b", "Q4_K_M"], ["qwen2.5-1.5b", "Q8_0"]],
-    "shortlist": [["qwen3-4b-2507", "Q4_K_M"], ["llama-3.2-3b", "Q4_K_M"], ["phi-3.5-mini", "Q4_K_M"], ["qwen2.5-1.5b", "Q4_K_M"]]
+    "shortlist": [["qwen3-4b-2507", "Q4_K_M"], ["llama-3.2-3b", "Q4_K_M"], ["phi-3.5-mini", "Q4_K_M"], ["qwen2.5-1.5b", "Q4_K_M"]],
+    "week3": [["qwen3-4b-2507", "Q4_K_M"], ["qwen3-4b-2507", "Q5_K_M"], ["qwen3-4b-2507", "Q8_0"], ["llama-3.2-3b", "Q4_K_M"],
+              ["phi-3.5-mini", "Q4_K_M"], ["qwen2.5-1.5b", "Q4_K_M"], ["smollm2-1.7b", "Q4_K_M"]]
   }
 }

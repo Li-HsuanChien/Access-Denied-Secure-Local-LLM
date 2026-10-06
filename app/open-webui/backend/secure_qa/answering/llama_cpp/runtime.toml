@@ -17,6 +17,8 @@ threads = 0               # 0 = number of physical cores
 n_gpu_layers = 0          # reference laptop is CPU-only
 mmap = true
 mlock = false
+parallel = 1              # llama-server slots; the product answers one question at a time (llama.cpp default: 4)
+cache_ram_mib = 0         # RAM prompt cache; 0 = off (llama.cpp default 8192 MiB is too much for an 8 GB laptop)
 extra_args = []           # passed straight to llama-server, e.g. ["--flash-attn", "on"]
 startup_timeout_s = 180.0
 request_timeout_s = 600.0

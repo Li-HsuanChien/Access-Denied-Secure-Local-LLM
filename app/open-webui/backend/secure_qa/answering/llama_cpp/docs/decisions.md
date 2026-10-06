@@ -73,6 +73,45 @@ memory-bandwidth bound. Every stub output is labelled (`system_fingerprint: docq
 report banners), so simulated numbers can't be mistaken for real ones. It also has fault injection
 (`DOCQA_STUB_FAIL=load|hang_load|crash_after_first`) for tests.
 
+## 8. Week 3: selecting and freezing the model
+
+**Quality is measured, not assumed.** Until Week 2, the recommendation used bits-per-weight as a stand-in for
+quality. `bench --quality` now runs a fixed eval set (`evals.py`, version-stamped like the prompt set) of 23
+questions over the benchmark passages:
+15 answerable (the right fact *and* the right citation are required), 5 with no answer in the passages (the model
+must say so), and 3 where a planted passage tries to hijack the assistant. Scoring is regex-based and
+deterministic (temperature 0, fixed seed), so it is repeatable and needs no second model as a judge. It is a
+selection screen; E5's grounding and citation set is the acceptance test.
+
+**Selection rule** (`bench.analyse`):
+1. Drop anything that misses a threshold: peak RAM ≤ 6 GB (8 GB laptop, minus OS, app and vector store),
+   ≥ 8 tok/s generation, ≤ 15 s to first token and ≤ 30 s total on the 1.3k-token RAG prompt (codebase design),
+   ≥ 80% of eval items, ≥ 80% correct refusals, 100% injection resistance.
+2. Of the rest, take the highest eval score.
+3. Ties go to the more capable model (weight size, with precision above Q6_K discounted), because every
+   remaining candidate already fits the budget. Then lower RAM.
+
+**Pinned engine settings.** This llama.cpp build defaults to 4 parallel slots and an 8 GiB RAM prompt cache
+(`--cache-ram 8192`). Both were invisible in Week 2 and would make RAM use on an 8 GB machine depend on how long
+the app had been running. `runtime.toml` now sets `parallel = 1` (the product answers one question at a time)
+and `cache_ram_mib = 0`. The single slot's own KV cache still reuses the shared system-prompt prefix.
+
+**Prompt hardening.** The first real eval showed the old prompt's `[doc:page]` example and "say you could not
+find it" being copied literally, and a planted instruction being obeyed in 2 of 3 cases. Passages are now
+wrapped in `<passages>` and declared untrusted data (codebase design 4.2), and the citation format is shown with
+a real tag. The prompt set version moved to `2026-10-05.1`, so Week 2-format numbers are not directly comparable.
+
+**Freezing.** `docqa-runtime freeze` writes `release-manifest.json`. It records the model file's SHA-256 and
+size, the llama.cpp tag and commit, the settings that affect output or exposure (context, threads, slots, cache,
+mmap, offline, bind) and the benchmark evidence. `docqa-runtime verify` re-checks all of these (`doctor` does the
+quick version), and `/health.release` reports whether the loaded model is the frozen one. Ports, paths and
+timeouts are deliberately not frozen; they are per-machine deployment details.
+
+**Contract hardening.** The gateway used to pass llama-server's chat responses through unchanged, which left E3
+and E4 exposed to whatever fields a llama.cpp build adds or renames. It now re-emits the documented v1 shape for
+both normal and streamed responses. JSON Schemas in `contract/` plus `tests/test_contract.py` pin every
+response type and error code.
+
 ## Verification done in this workspace
 
 * 56 automated tests (unit, HTTP integration, failure modes, CLI exit codes, security): 55 run against the stub, plus one opt-in test against a real llama-server.

@@ -1,0 +1,63 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docqa.local/contract/2026-09-v1/chat-request.schema.json",
+  "title": "POST /v1/chat/completions request (validated fields; other llama.cpp sampling fields pass through)",
+  "type": "object",
+  "required": [
+    "messages"
+  ],
+  "properties": {
+    "model": {
+      "type": [
+        "string",
+        "null"
+      ]
+    },
+    "messages": {
+      "type": "array",
+      "minItems": 1,
+      "items": {
+        "type": "object",
+        "required": [
+          "role"
+        ],
+        "properties": {
+          "role": {
+            "enum": [
+              "system",
+              "user",
+              "assistant",
+              "tool",
+              "developer"
+            ]
+          },
+          "content": {
+            "type": [
+              "string",
+              "array",
+              "null"
+            ]
+          }
+        }
+      }
+    },
+    "max_tokens": {
+      "type": "integer",
+      "minimum": 1,
+      "maximum": 32768
+    },
+    "temperature": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 5
+    },
+    "top_p": {
+      "type": "number",
+      "minimum": 0,
+      "maximum": 1
+    },
+    "stream": {
+      "type": "boolean"
+    }
+  }
+}

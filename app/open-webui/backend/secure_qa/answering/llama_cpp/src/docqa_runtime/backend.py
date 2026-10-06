@@ -131,6 +131,12 @@ class BackendProcess:
             args.append("--no-mmap")
         if cfg.mlock:
             args.append("--mlock")
+        # Pin these instead of inheriting llama.cpp's defaults (4 slots, an 8 GiB RAM prompt cache), which change
+        # between builds and would make RAM use on the 8 GB laptop unpredictable. Older builds lack the flags.
+        if "--parallel" in help_text:
+            args += ["--parallel", str(cfg.parallel)]
+        if "--cache-ram" in help_text:
+            args += ["--cache-ram", str(cfg.cache_ram_mib)]
         for flag, token in _OPTIONAL_FLAGS.items():
             if flag == "--offline" and not cfg.offline:
                 continue

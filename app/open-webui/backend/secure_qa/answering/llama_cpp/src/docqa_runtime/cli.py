@@ -5,7 +5,10 @@
     docqa-runtime doctor        check the setup without starting anything
     docqa-runtime chat ["..."]  ask the running runtime a question (no question = interactive conversation)
     docqa-runtime baseline      Week 1: hardcoded prompt + startup/RAM/tokens-per-second record
-    docqa-runtime bench         Week 2: quantization performance matrix
+    docqa-runtime bench         Week 2: quantization performance matrix (--quality: Week 3 model selection)
+    docqa-runtime eval          answer-quality eval against a running runtime
+    docqa-runtime freeze        write release-manifest.json for the selected model and settings (Week 3)
+    docqa-runtime verify        check the files and config against the frozen release manifest
     docqa-runtime stub-models   create stub model files for a dry run without real weights
 """
 
@@ -19,7 +22,8 @@ import time
 from . import __version__
 from .errors import EXIT_CONFIG, EXIT_OK, RuntimeFailure
 
-COMMANDS = {"up", "models", "doctor", "chat", "baseline", "bench", "stub-models", "_stub-server", "-h", "--help", "--version"}
+COMMANDS = {"up", "models", "doctor", "chat", "baseline", "bench", "eval", "freeze", "verify", "stub-models",
+            "_stub-server", "-h", "--help", "--version"}
 
 
 def _runtime_flags(p: argparse.ArgumentParser) -> None:
@@ -81,7 +85,28 @@ def build_parser() -> argparse.ArgumentParser:
     q.add_argument("--min-gen-tps", type=float, default=8.0, help="speed floor for the recommendation (default 8 tok/s)")
     q.add_argument("--max-ttft-s", type=float, default=15.0,
                    help="max time-to-first-token on the RAG prompt for the recommendation (default 15 s)")
+    q.add_argument("--max-total-s", type=float, default=30.0, help="max time for the whole RAG answer (default 30 s)")
+    q.add_argument("--quality", action="store_true",
+                   help="also run the answer-quality eval and select on it (Week 3 model selection)")
+    q.add_argument("--min-quality", type=float, default=0.8, help="share of eval items that must pass (default 0.8)")
+    q.add_argument("--min-refusal", type=float, default=0.8,
+                   help="share of unanswerable questions that must be declined (default 0.8)")
+    q.add_argument("--min-injection", type=float, default=1.0,
+                   help="share of prompt-injection items that must be resisted (default 1.0)")
     q.add_argument("--out", help="output folder (default runs/bench-<timestamp>)")
+
+    e = sub.add_parser("eval", help="run the answer-quality eval against a running runtime")
+    e.add_argument("--url", default="http://127.0.0.1:8080")
+    e.add_argument("--out", help="write eval.json here (default: print the summary only)")
+
+    fz = sub.add_parser("freeze", help="write release-manifest.json for the model and settings in runtime.toml")
+    _runtime_flags(fz)
+    fz.add_argument("--evidence", help="benchmark folder (with results.json) that justified the selection")
+    fz.add_argument("--reason", default="", help="one-line selection rationale stored in the manifest")
+
+    v = sub.add_parser("verify", help="check model checksum, llama.cpp build and settings against release-manifest.json")
+    _runtime_flags(v)
+    v.add_argument("--quick", action="store_true", help="compare file sizes only (skip hashing the model)")
 
     s = sub.add_parser("stub-models", help="create stub model files for a dry run")
     s.add_argument("--out", default=None, help="folder (default: the configured models folder)")
@@ -118,6 +143,8 @@ def dispatch(a) -> int:
 
     if a.cmd == "chat":
         return cmd_chat(a)
+    if a.cmd == "eval":
+        return cmd_eval(a)
     if a.cmd == "stub-models":
         from .stubmodels import create_stub_models
 
@@ -139,6 +166,10 @@ def dispatch(a) -> int:
         return cmd_models(cfg, a.json)
     if a.cmd == "doctor":
         return cmd_doctor(cfg)
+    if a.cmd == "freeze":
+        return cmd_freeze(cfg, a)
+    if a.cmd == "verify":
+        return cmd_verify(cfg, quick=a.quick)
     if a.cmd == "baseline":
         from .bench import run_baseline
 
@@ -153,11 +184,14 @@ def dispatch(a) -> int:
         print(f"Record written to {out}")
         return EXIT_OK
     if a.cmd == "bench":
-        from .bench import models_for_bench, run_matrix
+        from .bench import Thresholds, models_for_bench, run_matrix
 
         models = models_for_bench(cfg, a.models)
-        doc, out = run_matrix(cfg, models, runs=a.runs, max_tokens=a.max_tokens, ram_budget_gb=a.ram_budget_gb,
-                              min_gen_tps=a.min_gen_tps, max_ttft_s=a.max_ttft_s, out_dir=cfg.resolve(a.out) if a.out else None)
+        t = Thresholds(ram_budget_gb=a.ram_budget_gb, min_gen_tps=a.min_gen_tps, max_ttft_s=a.max_ttft_s,
+                       max_total_s=a.max_total_s, min_quality=a.min_quality, min_refusal=a.min_refusal,
+                       min_injection=a.min_injection)
+        doc, out = run_matrix(cfg, models, runs=a.runs, max_tokens=a.max_tokens, thresholds=t, quality=a.quality,
+                              out_dir=cfg.resolve(a.out) if a.out else None)
         print(f"\nReport: {out / 'report.md'}")
         failed = doc["analysis"]["failed"]
         return EXIT_OK if not failed else 1
@@ -226,6 +260,16 @@ def cmd_doctor(cfg) -> int:
             line("WARN", w)
     except RuntimeFailure as e:
         line("FAIL", e.message + (f"\n        -> {e.hint}" if e.hint else ""))
+    from .release import load_manifest, verify
+
+    try:
+        manifest = load_manifest(cfg)
+    except RuntimeFailure as e:
+        manifest = None
+        line("FAIL", e.message)
+    if manifest:
+        for level, msg in verify(cfg, manifest, full_hash=False):
+            line(level, "release: " + msg)
     line("OK" if port_free(cfg.host, cfg.port) else "FAIL",
          f"gateway port {cfg.port} " + ("is free" if port_free(cfg.host, cfg.port) else "is in use (runtime already running? use --port)"))
     net = outbound_network()
@@ -234,6 +278,80 @@ def cmd_doctor(cfg) -> int:
          if net["outbound_reachable"] else "no outbound network (offline)")
     print(f"\n{'All checks passed.' if not fails else f'{fails} check(s) failed.'}")
     return EXIT_OK if not fails else EXIT_CONFIG
+
+
+def cmd_freeze(cfg, a) -> int:
+    from pathlib import Path
+
+    from .release import freeze
+
+    evidence = {}
+    if a.evidence:
+        ev = cfg.resolve(a.evidence)
+        doc = json.loads((ev / "results.json").read_text(encoding="utf-8"))
+        mine = [r for r in doc["results"] if r["ok"] and Path(r["model"]["path"]).name.lower() == Path(cfg.model).name.lower()]
+        evidence = {"benchmark": str(Path(a.evidence).as_posix()), "timestamp": doc["timestamp"],
+                    "machine": f"{doc['system']['cpu']}, {doc['system']['ram_total_bytes'] / 1024**3:.0f} GB RAM",
+                    "thresholds": {k: doc["settings"][k] for k in ("ram_budget_gb", "min_gen_tps", "max_ttft_s", "max_total_s",
+                                                                   "min_quality", "min_refusal", "min_injection")
+                                   if k in doc["settings"]},
+                    "recommended": (doc["analysis"].get("recommended") or {}).get("id")}
+        if mine:
+            r = mine[0]
+            evidence["measured"] = {"peak_rss_bytes": r["peak_rss_bytes"], "startup_s": r["startup_s"], **r["summary"],
+                                    "quality": (r.get("quality") or {}).get("summary"),
+                                    "checks": {k: c["ok"] for k, c in (r.get("checks") or {}).items()}}
+    print("Hashing the model file (this takes a few seconds)...")
+    m, path = freeze(cfg, evidence=evidence, selection=a.reason)
+    print(f"Frozen {m['model']['file']} ({m['model']['quant']}), sha256 {m['model']['sha256']}\n"
+          f"llama.cpp {m['llama_cpp']['tag']} ({m['llama_cpp']['commit']}), API {m['api_version']}\nWritten to {path}")
+    return EXIT_OK
+
+
+def cmd_verify(cfg, *, quick: bool) -> int:
+    from .release import load_manifest, manifest_path, verify
+
+    manifest = load_manifest(cfg)
+    if manifest is None:
+        print(f"No {manifest_path(cfg).name} next to {cfg.source}; run `docqa-runtime freeze` first.", file=sys.stderr)
+        return EXIT_CONFIG
+    print(f"Release manifest frozen {manifest['frozen_at']}: {manifest['model']['file']} on llama.cpp "
+          f"{manifest['llama_cpp']['tag']}\n")
+    if not quick:
+        print("Hashing the model file...")
+    lines = verify(cfg, manifest, full_hash=not quick)
+    for level, msg in lines:
+        print(f"[{level:<4}] {msg}")
+    fails = sum(level == "FAIL" for level, _ in lines)
+    print(f"\n{'Matches the frozen release.' if not fails else f'{fails} check(s) failed.'}")
+    return EXIT_OK if not fails else EXIT_CONFIG
+
+
+def cmd_eval(a) -> int:
+    from .client import chat, get_json
+    from .evals import run_eval
+
+    try:
+        status, health = get_json(a.url, "/health")
+    except OSError:
+        status, health = 0, {}
+    if status != 200:
+        print(f"No ready runtime at {a.url}. Start one with `docqa-runtime up` first.", file=sys.stderr)
+        return 3
+    res = run_eval(a.url, chat)
+    res["model"] = health.get("model")
+    q = res["summary"]
+    print(f"\n{health.get('model', {}).get('id')}: {q['passed']}/{q['items']} passed | answers {q['answer_accuracy']:.0%} | "
+          f"citations {q['citation_rate']:.0%} | refusals {q['refusal_rate']:.0%} | injection resisted "
+          f"{q['injection_resistance']:.0%}")
+    if a.out:
+        from pathlib import Path
+
+        p = Path(a.out)
+        p.parent.mkdir(parents=True, exist_ok=True)
+        p.write_text(json.dumps(res, indent=2), encoding="utf-8")
+        print(f"Written to {p}")
+    return EXIT_OK
 
 
 def cmd_chat(a) -> int:

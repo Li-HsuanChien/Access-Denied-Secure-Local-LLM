@@ -42,6 +42,8 @@ class Config:
     n_gpu_layers: int = 0               # CPU-only by default (reference laptop)
     mmap: bool = True
     mlock: bool = False
+    parallel: int = 1                   # llama-server slots; one answer job at a time (design 4.2). llama.cpp's own default is 4
+    cache_ram_mib: int = 0              # host-RAM prompt cache; llama.cpp defaults to 8192 MiB, too much for an 8 GB laptop
     extra_args: list[str] = field(default_factory=list)
     startup_timeout_s: float = 180.0
     request_timeout_s: float = 600.0
@@ -83,7 +85,8 @@ class Config:
 _SECTIONS = {
     "server": {"host", "port", "allow_remote"},
     "backend": {"server_bin", "backend_port", "models_dir", "model", "ctx_size", "threads", "n_gpu_layers",
-                "mmap", "mlock", "extra_args", "startup_timeout_s", "request_timeout_s", "quant_preference"},
+                "mmap", "mlock", "parallel", "cache_ram_mib", "extra_args", "startup_timeout_s", "request_timeout_s",
+                "quant_preference"},
     "security": {"offline"},
     "output": {"runs_dir"},
 }
@@ -154,3 +157,9 @@ def validate(cfg: Config) -> None:
         raise ConfigError("config_ctx", f"ctx_size = {cfg.ctx_size} is too small", "Use at least 2048 for document Q&A.")
     if cfg.threads < 0:
         raise ConfigError("config_threads", "threads cannot be negative", "Use 0 for automatic.")
+    if cfg.parallel < 1:
+        raise ConfigError("config_parallel", f"parallel = {cfg.parallel} must be at least 1",
+                          "Use 1: the product answers one question at a time.")
+    if cfg.cache_ram_mib < -1:
+        raise ConfigError("config_cache_ram", f"cache_ram_mib = {cfg.cache_ram_mib} is not valid",
+                          "Use 0 to disable the prompt cache, a size in MiB, or -1 for no limit.")
