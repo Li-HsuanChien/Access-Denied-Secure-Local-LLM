@@ -105,7 +105,7 @@ A collection is a complete searchable snapshot of approved PDFs and their derive
 - **Chunk:** Stable ID, document ID, page number, chunk order, extracted text, text coordinates when reliable, and embedding.
 - **Conversation:** Conversation ID, title, creation and update times, collection version, and persistence setting.
 - **Message:** Question or answer, timestamp, model version, latency, evidence mode, and warnings.
-- **Citation:** Document ID, page number, supporting chunk IDs, and text or visual evidence classification.
+- **Citation:** Document ID, page number, supporting chunk IDs, and text or visual evidence classification.  Note that citation payload carries page range plus per-page spans. Allow page ranges and add hyperlink to first page of page range
 - **Operational event:** Event type, timestamp, duration, version identifiers, evidence IDs, and sanitized error details.
 
 Stable identifiers make benchmark results and citations reproducible. Historical conversations retain their original collection version even after a new collection is published.
