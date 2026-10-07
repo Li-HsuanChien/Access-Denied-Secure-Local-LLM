@@ -59,7 +59,8 @@ def main():
     density = []
     for label, path in [
         ('NRC training manual (baseline)', SAMPLE),
-        ('DOE handbook (dense prose)', ROOT / 'fixtures/large/large_doe_nuclear_physics_v1.pdf'),
+        ('DOE handbook (text reflow)', ROOT / 'fixtures/large/large_doe_nuclear_physics_v1.pdf'),
+        ('DOE handbook (original typesetting)', ROOT / 'fixtures/large/large_doe_nuclear_physics_v1_original.pdf'),
         ('arXiv paper (two column)', ROOT / 'fixtures/layout/layout_arxiv_two_column_2112.11583.pdf'),
     ]:
         t, pg, h = extract(path)
