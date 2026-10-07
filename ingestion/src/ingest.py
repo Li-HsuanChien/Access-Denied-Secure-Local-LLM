@@ -41,7 +41,7 @@ PDF_MAGIC = b'%PDF-'
 class _Span:
     start: int
     end: int
-    bbox: tuple[float, float, float, float]
+    bbox: tuple[float, float, float, float]      # on the page as displayed
 
 
 @dataclass
@@ -49,9 +49,12 @@ class _Page:
     number: int          # 1-based
     char_start: int      # offset into the document stream
     char_end: int
-    width: float
+    width: float         # as displayed, i.e. after any page rotation
     height: float
     spans: list[_Span]
+    images: int = 0      # image blocks drawn on the page
+    undecoded: int = 0   # lines left out because no glyph on them could be named
+    damaged: bool = False    # the parser reported damage while reading the page
 
     @property
     def has_text(self) -> bool:
@@ -60,6 +63,11 @@ class _Page:
 
 _DIGITS = re.compile(r'\d+')
 _WS = re.compile(r'\s+')
+# C0 and C1 control codes. A PDF font with no Unicode map hands back the raw
+# glyph code, so a Greek letter or an operator set in a symbol font arrives as
+# U+0005 or, worse, as a literal newline in the middle of a line.
+_CONTROL = re.compile(r'[\x00-\x1f\x7f-\x9f]')
+_UNMAPPED = '\ufffd'                         # U+FFFD REPLACEMENT CHARACTER, one code point
 
 
 @dataclass
@@ -83,6 +91,27 @@ def _running_key(text: str) -> str:
     reduce to one key.
     """
     return _DIGITS.sub('#', _WS.sub(' ', text.strip()).lower())
+
+
+def _reading_frame(bbox, direction, width: float, height: float):
+    """
+    Where a line sits relative to the edge its own top faces.
+
+    "Top of the page" for a header means the top as the header's reader holds
+    the page, which is neither the stored nor the displayed orientation in
+    general: the DOE handbook has a page typeset upright and then rotated a
+    quarter turn for display, whose header runs down the right-hand edge of the
+    screen. Measuring from the edge the text's top faces is the same number in
+    stored and in displayed coordinates, provided the box, the direction and
+    the page size are all given in one of them.
+    """
+    x0, y0, x1, y1 = bbox
+    dx, dy = direction
+    if abs(dx) >= 0.97:
+        return (0, y0, y1, height) if dx > 0 else (2, height - y1, height - y0, height)
+    if abs(dy) >= 0.97:
+        return (1, width - x1, width - x0, width) if dy > 0 else (3, x0, x1, width)
+    return None, 0.0, 0.0, 0.0
 
 
 # ---- reading order ---------------------------------------------------------
@@ -213,6 +242,71 @@ def _set_on(blocks: list[dict], gutter: tuple[float, float]) -> bool:
     ends = any(0 <= g0 + 1 - b[2] <= 4 and b[2] - b[0] >= wide for b in boxes)
     starts = any(0 <= b[0] - (g1 - 1) <= 4 and b[2] - b[0] >= wide for b in boxes)
     return ends and starts and crossing <= max(2, len(boxes) // 20)
+
+
+# Text only: by default the 'dict' output carries every image's bytes, which
+# nothing here reads. The images are counted instead.
+_TEXT_FLAGS = pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES
+
+
+def _page_blocks(page, sort: bool) -> tuple[list[dict], int, int]:
+    """
+    A page's text blocks, holding the lines that carry ink; how many images the
+    page draws; and how many lines were left out as unreadable glyphs.
+
+    PyMuPDF reports boxes in the page as stored, before any /Rotate. That frame
+    is the right one for reading order and for finding margins, because it is
+    the one the text is written in. Highlight boxes are drawn over the page as
+    displayed, so each span's box is turned to match.
+
+    Two repairs happen here, one length-preserving and one whole-line, so the
+    offsets assigned afterwards are never disturbed:
+
+    - control codes inside a span become U+FFFD. They are glyphs the font could
+      not name, not whitespace, and left alone a stray '\n' forges a line break
+      in the middle of an equation;
+    - a line with nothing on it but whitespace and unnamed glyphs is not
+      emitted. It has no text to retrieve or cite. It is counted, because a
+      page made only of such lines is not blank to the person reading it.
+    """
+    box = page.cropbox                    # get_text() coordinates are in the unrotated page
+    turn = page.rotation_matrix if page.rotation else None
+    blocks, images, undecoded = [], len(page.get_image_info()), 0
+    for block in page.get_text('dict', sort=sort, flags=_TEXT_FLAGS)['blocks']:
+        if block.get('type') != 0:            # 0 = text block
+            continue
+        lines = []
+        for line in block['lines']:
+            spans = [s for s in line['spans'] if s['text']]
+            stored = [(_CONTROL.sub(_UNMAPPED, s['text']), tuple(s['bbox'])) for s in spans]
+            text = ''.join(t for t, _ in stored)
+            if not text.replace(_UNMAPPED, '').strip():
+                undecoded += _UNMAPPED in text
+                continue
+            bbox = (min(b[0] for _, b in stored), min(b[1] for _, b in stored),
+                    max(b[2] for _, b in stored), max(b[3] for _, b in stored))
+            frame, top, bottom, extent = _reading_frame(bbox, line['dir'], box.width, box.height)
+            pieces = stored if turn is None else [
+                (t, tuple((pymupdf.Rect(b) * turn).normalize())) for t, b in stored]
+            lines.append({'bbox': bbox, 'entry': _Line(text, pieces, frame, top, bottom, extent,
+                                                       max(s['size'] for s in spans))})
+        if lines:
+            blocks.append({'bbox': tuple(block['bbox']), 'lines': lines})
+    return blocks, images, undecoded
+
+
+def _in_order(blocks: list[dict]) -> list[_Line]:
+    """The lines of a page's blocks, with text set at an angle moved to the end."""
+    flat = [line['entry'] for block in blocks for line in block['lines']]
+    weight: dict = {}
+    for line in flat:
+        weight[line.frame] = weight.get(line.frame, 0) + len(line.text)
+    main = max(weight, key=weight.get) if weight else 0
+    # Text set at an angle to the rest of the page (a stamp up the margin, a
+    # diagonal figure label) has no place in the reading order; after the
+    # page's own text it cannot split a sentence.
+    return ([line for line in flat if line.frame == main]
+            + [line for line in flat if line.frame != main])
 
 
 def _page_lines(page, sort: bool) -> list[tuple[str, list[tuple]]]:
