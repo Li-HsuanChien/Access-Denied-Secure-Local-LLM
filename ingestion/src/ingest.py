@@ -70,6 +70,31 @@ _CONTROL = re.compile(r'[\x00-\x1f\x7f-\x9f]')
 _UNMAPPED = '\ufffd'                         # U+FFFD REPLACEMENT CHARACTER, one code point
 
 
+@dataclass(frozen=True)
+class _HeaderRules:
+    """
+    Every threshold the running-header detector uses, in one place.
+
+    All are set on the cautious side: wrongly dropping body text is far worse
+    than keeping a header. Changing any of them changes the text stream, so it
+    needs a chunker_version bump and the over-stripping tests rerun.
+    """
+    zone: float = 0.12            # outer fraction of the page a header may sit in
+    max_band_rows: int = 3        # a header band is at most this many stacked rows
+    row_tolerance: float = 2.0    # pt; lines this close in top AND bottom share a row
+    chain_gap: float = 0.3        # a further row joins the band only if it starts within
+                                  # this many row-heights of the row outside it
+    min_run: int = 3              # pages a line must recur on, close together
+    max_run_gap: int = 2          # page distance a run tolerates (blank verso, alternating text)
+    min_purity: float = 0.5       # share of pages whose outermost row must be running text
+    slot_tolerance: float = 1.5   # pt; how exactly a row must sit on a confirmed header position
+                                  # (negative turns the slot rule off)
+    max_size_ratio: float = 1.2   # a header is not set larger than this multiple of body text
+
+
+_RULES = _HeaderRules()
+
+
 @dataclass
 class _Line:
     """One layout line, positioned in its own reading frame."""
@@ -307,6 +332,231 @@ def _in_order(blocks: list[dict]) -> list[_Line]:
     # page's own text it cannot split a sentence.
     return ([line for line in flat if line.frame == main]
             + [line for line in flat if line.frame != main])
+
+
+def _body_size(page_lines: list[list[_Line]]) -> float:
+    """The font size most of the document's characters are set in."""
+    weight: dict[float, int] = {}
+    for lines in page_lines:
+        for line in lines:
+            weight[line.size] = weight.get(line.size, 0) + len(line.text)
+    half, seen = sum(weight.values()) / 2, 0
+    for size in sorted(weight):
+        seen += weight[size]
+        if seen >= half:
+            return size
+    return 0.0
+
+
+def _edge_band(lines: list[_Line], indexes: list[int], edge: str,
+               rules: _HeaderRules) -> tuple[list[tuple[float, float, list[int]]], bool]:
+    """
+    The rows a header or footer could occupy at one edge of one page,
+    outermost first, as (near, far, line indexes) with distances measured from
+    that edge; and whether the band stands clear of what follows it.
+
+    The band starts at the line nearest the edge and continues only through
+    rows stacked tightly beneath it, so a two-line header is one band and the
+    heading or paragraph that follows after a gap is not in it. A band that
+    ends at such a gap is 'clear'. One that was cut off by the row limit or the
+    edge of the zone is the top of a paragraph, not a header block.
+    """
+    def span(i):
+        line = lines[i]
+        return ((line.top, line.bottom) if edge == 'top'
+                else (line.extent - line.bottom, line.extent - line.top))
+
+    band: list[tuple[float, float, list[int]]] = []
+    for i in sorted(indexes, key=span):
+        near, far = span(i)
+        for row in band:
+            if (abs(near - row[0]) <= rules.row_tolerance
+                    and abs(far - row[1]) <= rules.row_tolerance):
+                row[2].append(i)
+                break
+        else:
+            in_zone = near < rules.zone * lines[i].extent
+            if not band:
+                if not in_zone:
+                    return [], True
+            else:
+                outer = band[-1]
+                if near - outer[1] > rules.chain_gap * (outer[1] - outer[0]):
+                    return band, True         # a gap: the band is complete
+                if len(band) == rules.max_band_rows or not in_zone:
+                    return band, False        # still stacked tight: this is body text
+            band.append((near, far, [i]))
+    return band, True
+
+
+def _running_lines(page_lines: list[list[_Line]], rules: _HeaderRules = _RULES,
+                   trace: dict | None = None) -> dict[tuple[int, int], str]:
+    """
+    Find running headers and footers. Returns {(page index, line index): why}
+    for exactly the lines to leave out of the stream.
+
+    This is text the reader never reads twice but a naive extractor repeats on
+    every page, where it lands mid-chunk - often mid-sentence, at a page break -
+    pollutes the embedding and burns context budget.
+
+    A line is dropped only where a header actually sits, never by its text
+    alone. All of the following must hold, because wrongly dropping body text
+    is far worse than keeping a header:
+
+    1. Band. The line is in the outer 12% of the page AND in the band at that
+       edge: the row nearest the edge plus rows stacked tightly under it. The
+       zone alone is weak evidence - body text starts inside it on most pages.
+       A line whose text also appears further into the same page is a row of a
+       table or listing, not a header, and is not counted on that page.
+    2. Run. Its text (digits collapsed) recurs in that band on at least three
+       pages no more than two apart. A section's header lasts a handful of
+       pages, so the bar is a run, not a share of the document; a heading that
+       happens to top three scattered pages is not a run. In a row that is not
+       the outermost one the text must be header text on further evidence too.
+    3. Size. It is not set larger than body text. Headings are; headers are not.
+    4. Purity. At that edge, the outermost row is running text on at least half
+       of the pages that have one. This is what separates a header position
+       from the first line of the body in a document with no header at all.
+
+    Two extensions follow from position, not text, and apply only at an edge
+    that passed all four:
+
+    - Row. Whatever shares a row with a running line is part of the same
+      header: the section name beside the document number, 'Page xii' beside
+      'Rev. 0'.
+    - Slot. A row sitting exactly where running rows sit on three or more
+      pages, and standing clear of the text behind it, is the same template
+      element whatever it says.
+
+    Rows are taken from the edge inward and the walk stops at the first row
+    that qualifies under neither, so nothing is ever removed from behind text
+    that stays.
+    """
+    if len(page_lines) < rules.min_run:
+        return {}
+    body = _body_size(page_lines)
+
+    bands = []                                # (page, frame, edge, rows, clear)
+    for page, lines in enumerate(page_lines):
+        frames: dict[int, list[int]] = {}
+        for i, line in enumerate(lines):
+            if line.frame is not None:
+                frames.setdefault(line.frame, []).append(i)
+        for frame, indexes in frames.items():
+            for edge in ('top', 'bottom'):
+                rows, clear = _edge_band(lines, indexes, edge, rules)
+                if rows:
+                    bands.append((page, frame, edge, rows, clear))
+
+    def key(page: int, i: int) -> str:
+        line = page_lines[page][i]
+        return '' if line.size > rules.max_size_ratio * body else _running_key(line.text)
+
+    # Where each key occurs, pooled across frames: a rotated page is still part
+    # of the run its neighbours belong to. Occurrences in the outermost row are
+    # also kept apart, because that position is the stronger evidence.
+    seen: dict[str, dict[str, set[int]]] = {'top': {}, 'bottom': {}}
+    seen_outer: dict[str, dict[str, set[int]]] = {'top': {}, 'bottom': {}}
+    banded = {'top': set(), 'bottom': set()}  # pages with any band at that edge
+    # A header's text does not also fill the page behind it. The rows of a
+    # table, a log or a listing all reduce to one key, and without this the
+    # first three of every page would pass for a header that recurs.
+    in_band: dict[int, set[int]] = {}
+    for page, _, _, rows, _ in bands:
+        in_band.setdefault(page, set()).update(i for _, _, members in rows for i in members)
+    listed: set[tuple[int, str, str]] = set()
+    for page, frame, edge, rows, _ in bands:
+        behind = {key(page, i) for i, line in enumerate(page_lines[page])
+                  if i not in in_band[page] and line.frame == frame}
+        listed.update((page, edge, key(page, i)) for _, _, members in rows for i in members
+                      if key(page, i) in behind)
+    for page, _, edge, rows, _ in bands:
+        banded[edge].add(page)
+        for depth, (_, _, members) in enumerate(rows):
+            for i in members:
+                k = key(page, i)
+                if k and (page, edge, k) not in listed:
+                    seen[edge].setdefault(k, set()).add(page)
+                    if depth == 0:
+                        seen_outer[edge].setdefault(k, set()).add(page)
+
+    def runs(pages: set[int]) -> set[int]:
+        """The pages that belong to a run of min_run or more, at most max_run_gap apart."""
+        kept: set[int] = set()
+        run: list[int] = []
+        for page in sorted(pages) + [None]:
+            if run and (page is None or page - run[-1] > rules.max_run_gap):
+                if len(run) >= rules.min_run:
+                    kept.update(run)
+                run = []
+            if page is not None:
+                run.append(page)
+        return kept
+
+    running = {edge: {k: r for k, pages in keys.items() if (r := runs(pages))}
+               for edge, keys in seen.items()}
+    # Text that may be believed in a row that is NOT the outermost one. Such a
+    # row touches the body, so repeating three times is not enough ("Example:"
+    # opens three consecutive pages often enough). It must also be header text
+    # on other evidence: it runs in the outermost row somewhere, or it is there
+    # on at least as many pages as the purity gate asks of the edge.
+    trusted = {edge: {k for k, pages in seen[edge].items()
+                      if runs(seen_outer[edge].get(k, set()))
+                      or len(pages) >= rules.min_purity * len(banded[edge])}
+               for edge in seen}
+
+    def runs_here(page: int, edge: str, i: int, depth: int = 0) -> bool:
+        k = key(page, i)
+        return page in running[edge].get(k, ()) and (depth == 0 or k in trusted[edge])
+
+    def confirmed(page: int, edge: str, members: list[int], depth: int = 0) -> bool:
+        return any(runs_here(page, edge, i, depth) for i in members)
+
+    # Purity gate, per frame and edge.
+    total: dict[tuple, int] = {}
+    pure: dict[tuple, int] = {}
+    for page, frame, edge, rows, _ in bands:
+        total[frame, edge] = total.get((frame, edge), 0) + 1
+        pure[frame, edge] = pure.get((frame, edge), 0) + confirmed(page, edge, rows[0][2])
+    is_open = {m for m in total if pure[m] and pure[m] >= rules.min_purity * total[m]}
+
+    # Positions that running rows occupy, for the slot rule.
+    slots: dict[tuple, dict[tuple[float, float], set[int]]] = {}
+    for page, frame, edge, rows, _ in bands:
+        if (frame, edge) not in is_open:
+            continue
+        for depth, (near, far, members) in enumerate(rows):
+            if not confirmed(page, edge, members, depth):
+                break
+            at = (round(near * 2) / 2, round(far * 2) / 2)
+            slots.setdefault((frame, edge), {}).setdefault(at, set()).add(page)
+
+    def on_slot(margin: tuple, near: float, far: float) -> bool:
+        pages: set[int] = set()
+        for (n, f), where in slots.get(margin, {}).items():
+            if abs(n - near) <= rules.slot_tolerance and abs(f - far) <= rules.slot_tolerance:
+                pages |= where
+        return len(pages) >= rules.min_run
+
+    drop: dict[tuple[int, int], str] = {}
+    for page, frame, edge, rows, clear in bands:
+        if (frame, edge) not in is_open:
+            continue
+        for depth, (near, far, members) in enumerate(rows):
+            if confirmed(page, edge, members, depth):
+                for i in members:
+                    drop[page, i] = (f'{edge}:run' if runs_here(page, edge, i, depth)
+                                     else f'{edge}:row')
+            elif (clear and members is rows[-1][2] and rules.slot_tolerance >= 0
+                    and on_slot((frame, edge), near, far)):
+                for i in members:
+                    drop[page, i] = f'{edge}:slot'
+            else:
+                break
+    if trace is not None:                     # for tests and diagnostics only
+        trace.update(body_size=body, bands=total, pure=pure, open=is_open,
+                     running=running, slots=slots)
+    return drop
 
 
 def _page_lines(page, sort: bool) -> list[tuple[str, list[tuple]]]:
