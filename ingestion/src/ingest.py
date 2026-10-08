@@ -68,6 +68,12 @@ _WS = re.compile(r'\s+')
 # U+0005 or, worse, as a literal newline in the middle of a line.
 _CONTROL = re.compile(r'[\x00-\x1f\x7f-\x9f]')
 _UNMAPPED = '\ufffd'                         # U+FFFD REPLACEMENT CHARACTER, one code point
+# What MuPDF prints when content is lost, as opposed to its remarks on fonts
+# and encodings, which a healthy file draws too.
+_DAMAGE = re.compile(r'premature end|syntax error|zlib error|page may not be correct|format error'
+                     r'|ignoring rest|non-page object|cannot (?:find|load|read)', re.I)
+# The parser's page index and the document disagree: the page count is a guess.
+_PAGE_TREE = re.compile(r'page tree|claims to have \d+ pages', re.I)
 
 
 @dataclass(frozen=True)
@@ -334,6 +340,12 @@ def _in_order(blocks: list[dict]) -> list[_Line]:
             + [line for line in flat if line.frame != main])
 
 
+def _page_lines(page, sort: bool) -> tuple[list[_Line], int]:
+    """One page read by itself: its lines in reading order and its image count."""
+    blocks, images, _ = _page_blocks(page, sort)
+    return _in_order(_reading_order(blocks) if sort else blocks), images
+
+
 def _body_size(page_lines: list[list[_Line]]) -> float:
     """The font size most of the document's characters are set in."""
     weight: dict[float, int] = {}
@@ -559,49 +571,6 @@ def _running_lines(page_lines: list[list[_Line]], rules: _HeaderRules = _RULES,
     return drop
 
 
-def _page_lines(page, sort: bool) -> list[tuple[str, list[tuple]]]:
-    """One entry per layout line: its text and its spans, in reading order."""
-    out = []
-    for block in page.get_text('dict', sort=sort)['blocks']:
-        if block.get('type') != 0:            # 0 = text block; 1 = image
-            continue
-        for line in block['lines']:
-            pieces = [(s['text'], tuple(s['bbox'])) for s in line['spans'] if s['text']]
-            if pieces:
-                out.append((''.join(t for t, _ in pieces), pieces))
-    return out
-
-
-def _boilerplate_keys(doc, sort: bool) -> set[str]:
-    """
-    Find running headers and footers: lines that repeat in the top or bottom
-    margin across most pages.
-
-    This is text the reader never reads twice but a naive extractor repeats on
-    every page, where it lands mid-chunk, pollutes the embedding and burns
-    context budget. On the NRC manual it is 13% of the stream.
-
-    The bar is deliberately high - margin zone, and present on at least half of
-    at least three pages - because wrongly dropping body text is far worse than
-    keeping a header.
-    """
-    if doc.page_count < 3:
-        return set()
-    counts: dict[str, set[int]] = {}
-    for index, page in enumerate(doc):
-        height = page.rect.height or 1.0
-        for text, pieces in _page_lines(page, sort):
-            key = _running_key(text)
-            if not key:
-                continue
-            top = min(b[1] for _, b in pieces)
-            bottom = max(b[3] for _, b in pieces)
-            if top < 0.12 * height or bottom > 0.88 * height:
-                counts.setdefault(key, set()).add(index)
-    threshold = max(3, doc.page_count // 2)
-    return {k for k, pages in counts.items() if len(pages) >= threshold}
-
-
 def extract(path: Path, *, sort: bool = True,
             strip_boilerplate: bool = True) -> tuple[str, list[_Page], pymupdf.Document]:
     """
@@ -611,21 +580,71 @@ def extract(path: Path, *, sort: bool = True,
     box by construction. Dropping a line therefore drops its spans too, and the
     offsets that remain stay consistent with the rectangles that remain - there
     is no second pass that could disagree.
+
+    Running headers are identified by (page, line), not by text, so a body line
+    that reads the same as a header is never taken with it.
     """
     doc = pymupdf.open(path)
-    skip = _boilerplate_keys(doc, sort) if strip_boilerplate else set()
+    try:
+        text, pages = extract_document(doc, sort=sort, strip_boilerplate=strip_boilerplate)
+    except BaseException:
+        _close(doc)
+        raise
+    return text, pages, doc
+
+
+def extract_document(doc, *, sort: bool = True, strip_boilerplate: bool = True,
+                     on_page=None, said: list | None = None) -> tuple[str, list[_Page]]:
+    """
+    extract() on a document that is already open, reading each page once.
+
+    on_page(done, total), if given, is called after each page is read, so a
+    caller can report progress or stop a long import by raising. `said`, if
+    given, receives every line the parser printed while the pages were read.
+
+    Every page the document declares is loaded by number, so a page that is
+    not there raises instead of quietly ending the loop.
+    """
+    total = doc.page_count
+    pymupdf.TOOLS.mupdf_warnings()            # start clean: what follows is about these pages
+    read = []
+    for index in range(total):
+        page = doc.load_page(index)
+        blocks, images, undecoded = _page_blocks(page, sort)
+        printed = pymupdf.TOOLS.mupdf_warnings()
+        if said is not None:
+            said.extend(printed.splitlines())
+        read.append((blocks, images, undecoded, bool(_DAMAGE.search(printed)),
+                     page.rect.width, page.rect.height))
+        if on_page is not None:
+            on_page(index + 1, total)
+
+    # Reading order. A page decides for itself where it can; one too sparse to
+    # prove its own columns borrows the two-column layout the document uses.
+    ordered, found = [], []
+    for blocks, *_ in read:
+        used: list = []
+        ordered.append(_reading_order(blocks, used) if sort else blocks)
+        found += [tuple((round(a), round(b)) for a, b in g) for g in used]
+    shared = max(sorted(set(found)), key=found.count) if found else ()
+    if len(shared) == 1:
+        for index, (blocks, *_) in enumerate(read):
+            if ordered[index] is blocks and _set_on(blocks, shared[0]):
+                ordered[index] = _by_columns(blocks, list(shared))
+    layout = [(_in_order(blocks), *rest) for blocks, (_, *rest) in zip(ordered, read)]
+    drop = _running_lines([lines for lines, *_ in layout]) if strip_boilerplate else {}
 
     parts: list[str] = []
     pages: list[_Page] = []
     cursor = 0
 
-    for index, page in enumerate(doc):
+    for index, (lines, images, undecoded, damaged, width, height) in enumerate(layout):
         page_start = cursor
         spans: list[_Span] = []
-        for text, pieces in _page_lines(page, sort):
-            if skip and _running_key(text) in skip:
+        for number, line in enumerate(lines):
+            if (index, number) in drop:
                 continue
-            for piece_text, bbox in pieces:
+            for piece_text, bbox in line.pieces:
                 parts.append(piece_text)
                 spans.append(_Span(cursor, cursor + len(piece_text), bbox))
                 cursor += len(piece_text)
@@ -638,9 +657,9 @@ def extract(path: Path, *, sort: bool = True,
         if cursor > page_start:
             parts.append('\n')
             cursor += 1
-        pages.append(_Page(index + 1, page_start, cursor, page.rect.width,
-                           page.rect.height, spans))
-    return ''.join(parts), pages, doc
+        pages.append(_Page(index + 1, page_start, cursor, width, height, spans, images,
+                           undecoded, damaged))
+    return ''.join(parts), pages
 
 
 # ---------------------------------------------------------------------------
