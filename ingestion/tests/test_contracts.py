@@ -16,11 +16,13 @@ import json
 import shutil
 import sys
 import tempfile
+import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+import pymupdf
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
@@ -31,8 +33,9 @@ from src.validation import CheckStatus, IngestionPolicy, Outcome, RejectReason
 FIX = ROOT / 'fixtures'
 NORMAL = FIX / 'normal' / 'normal_nrc_reactor_concepts_ch01.pdf'
 LARGE = FIX / 'large' / 'large_doe_nuclear_physics_v1.pdf'
+ORIGINAL = FIX / 'large' / 'large_doe_nuclear_physics_v1_original.pdf'
 ARXIV = FIX / 'layout' / 'layout_arxiv_two_column_2112.11583.pdf'
-ACCEPTING = [NORMAL, LARGE, ARXIV]
+ACCEPTING = [NORMAL, LARGE, ORIGINAL, ARXIV]
 
 
 def _registry():
@@ -49,6 +52,104 @@ REGISTRY = _registry()
 def validator_for(name):
     schema = json.loads((ROOT / 'schemas' / f'{name}.schema.json').read_text())
     return Draft202012Validator(schema, registry=REGISTRY)
+
+
+# MuPDF prints its diagnostics straight to the terminal. The damaged files
+# below draw plenty; the tests read them through the library instead.
+pymupdf.TOOLS.mupdf_display_errors(False)
+pymupdf.TOOLS.mupdf_display_warnings(False)
+
+
+# ---------------------------------------------------------------------------
+# hand-built PDFs, for damage no fixture file carries
+# ---------------------------------------------------------------------------
+def _raw_pdf(objects: list[bytes]) -> bytes:
+    """A PDF with a correct xref table from object bodies numbered 1, 2, 3..."""
+    out, offsets = bytearray(b'%PDF-1.4\n'), []
+    for number, body in enumerate(objects, 1):
+        offsets.append(len(out))
+        out += b'%d 0 obj\n' % number + body + b'\nendobj\n'
+    xref = len(out)
+    out += b'xref\n0 %d\n0000000000 65535 f \n' % (len(objects) + 1)
+    for offset in offsets:
+        out += b'%010d 00000 n \n' % offset
+    out += b'trailer\n<< /Size %d /Root 1 0 R >>\nstartxref\n%d\n%%%%EOF\n' % (len(objects) + 1, xref)
+    return bytes(out)
+
+
+def _pdf_stream(data: bytes) -> bytes:
+    return b'<< /Length %d >>\nstream\n' % len(data) + data + b'\nendstream'
+
+
+_HELVETICA = b'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>'
+
+
+def _prose(page: int) -> bytes:
+    lines = b''.join(b'(Page %d line %d. The primary loop carries heat to the steam generator.) Tj T* '
+                     % (page, n) for n in range(1, 13))
+    return b'BT /F1 11 Tf 72 720 Td 14 TL ' + lines + b'ET'
+
+
+def _pdf_claiming(real: int, claimed: int) -> bytes:
+    """`real` pages of text under a page tree whose /Count says `claimed`."""
+    kids = b' '.join(b'%d 0 R' % (4 + 2 * i) for i in range(real))
+    objects = [b'<< /Type /Catalog /Pages 2 0 R >>',
+               b'<< /Type /Pages /Kids [' + kids + b'] /Count %d >>' % claimed, _HELVETICA]
+    for i in range(real):
+        objects.append(b'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources '
+                       b'<< /Font << /F1 3 0 R >> >> /Contents %d 0 R >>' % (5 + 2 * i))
+        objects.append(_pdf_stream(_prose(i + 1)))
+    return _raw_pdf(objects)
+
+
+def _pdf_with_special_page(pages: int, special: int | None, content: bytes) -> bytes:
+    """`pages` pages of prose; page `special` (1-based) has `content` instead. A
+    Type3 font with made-up glyph names and no ToUnicode map is on hand as /T3."""
+    def glyph(width: int) -> bytes:
+        return _pdf_stream(b'600 0 50 0 550 700 d1 50 0 %d 700 re f' % width)
+    type3 = (b'<< /Type /Font /Subtype /Type3 /FontBBox [0 0 600 700] '
+             b'/FontMatrix [0.001 0 0 0.001 0 0] '
+             b'/CharProcs << /glyphA 7 0 R /glyphB 8 0 R /glyphC 9 0 R >> '
+             b'/Encoding << /Type /Encoding /Differences [1 /glyphA /glyphB /glyphC] >> '
+             b'/FirstChar 1 /LastChar 3 /Widths [600 600 600] /Resources << >> >>')
+    kids = b' '.join(b'%d 0 R' % (10 + i) for i in range(pages))
+    objects = [b'<< /Type /Catalog /Pages 2 0 R >>',
+               b'<< /Type /Pages /Kids [' + kids + b'] /Count %d >>' % pages,
+               _HELVETICA, type3, _pdf_stream(_prose(0)), _pdf_stream(content),
+               glyph(500), glyph(300), glyph(150)]
+    for i in range(pages):
+        objects.append(b'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources '
+                       b'<< /Font << /F1 3 0 R /T3 4 0 R >> >> /Contents %d 0 R >>'
+                       % (6 if i + 1 == special else 5))
+    return _raw_pdf(objects)
+
+
+_UNNAMED_GLYPHS = (b'BT /T3 16 Tf 72 720 Td 22 TL '
+                   + b'<01020301020302010302010302010203> Tj T* ' * 20 + b'ET')
+
+
+def _listing_pdf(path: Path, pages: int, header: str | None = None, rows: int = 46) -> list[str]:
+    """Pages of same-shaped rows from the top margin down, optionally under a
+    running header set at the same leading. Returns the rows written."""
+    doc, written = pymupdf.open(), []
+    for p in range(pages):
+        page, y = doc.new_page(), 72
+        if header is not None:
+            page.insert_text((72, y), f'{header}   Page {p + 1}', fontsize=10)
+            y += 14
+        for r in range(rows):
+            n = p * rows + r
+            written.append(f'Run {6300 + n} completed in {(n * 37 % 990) / 10 + 1:4.1f} s '
+                           f'with {n % 4} errors.')
+            page.insert_text((72, y + 14 * r), written[-1], fontsize=10)
+    doc.save(path)
+    doc.close()
+    return written
+
+
+def _failing(result):
+    """The check a rejection rests on."""
+    return [c for c in result.checks if c.status is CheckStatus.FAIL][-1]
 
 
 # ---------------------------------------------------------------------------
@@ -340,20 +441,23 @@ def test_chunker_progresses_when_overlap_exceeds_chunk_size():
 # ---------------------------------------------------------------------------
 def test_normal_pdfs_extract_page_text():
     """
-    Every page of an accepted document contributes text, and the per-page
-    offsets tile the canonical stream exactly. A page that silently extracts to
-    nothing is the failure mode behind the truncated fixture, so absence of text
-    is never allowed to pass unnoticed on a document we accept.
+    Every page of an accepted document that has something on it contributes
+    text, and the per-page offsets tile the canonical stream exactly. A page
+    that silently extracts to nothing is the failure mode behind the truncated
+    fixture, so a page without text must be blank in the PDF itself: no image
+    on it either. The original DOE handbook has six such pages.
     """
-    total_pages = 0
+    total_pages = blank_pages = 0
     for path in ACCEPTING:
         text, pages, doc = extract(path)
         page_count = doc.page_count
         doc.close()
         assert len(pages) == page_count, (
             f'{path.name}: extracted {len(pages)} pages, PDF reports {page_count}')
+        lost = [p.number for p in pages if not p.has_text and p.images]
+        assert not lost, f'{path.name}: pages that draw an image but yielded no text: {lost}'
+        assert validate(path).warnings == [], f'{path.name}: accepted with warnings'
         blank = [p.number for p in pages if not p.has_text]
-        assert not blank, f'{path.name}: pages with no extracted text: {blank}'
         assert pages[0].char_start == 0, f'{path.name}: stream does not start at page one'
         assert pages[-1].char_end == len(text), f'{path.name}: stream ends before the last page'
         for a, b in zip(pages, pages[1:]):
@@ -503,6 +607,85 @@ def test_reading_order_follows_the_page():
     footer = page1.index('USNRC Technical Training Center')
     assert body < footer, 'footer still precedes the body text on page 1'
     return 'body text precedes the page footer in the extracted stream'
+
+
+def test_rows_of_a_listing_are_not_stripped_as_headers():
+    """
+    Digits collapse to '#' when lines are compared across pages, so every row
+    of a log or a numeric table has one key, and the first three rows of each
+    page of a header-less listing used to be removed as a "running header".
+    A header's text does not also fill the page behind it.
+    """
+    work = Path(tempfile.mkdtemp(prefix='e2-listing-'))
+    try:
+        bare = work / 'listing.pdf'
+        rows = _listing_pdf(bare, 5)
+        text, _, doc = extract(bare)
+        doc.close()
+        kept = [line for line in text.split('\n') if line.strip()]
+        assert kept == rows, f'{len(rows) - len(kept)} of {len(rows)} listing rows were stripped'
+
+        # A real running header set at the same leading as the rows under it:
+        # the header goes, and takes no row with it.
+        headed = work / 'headed_listing.pdf'
+        rows = _listing_pdf(headed, 5, header='Facility Operations Log')
+        text, _, doc = extract(headed)
+        doc.close()
+        kept = [line for line in text.split('\n') if line.strip()]
+        assert kept == rows, (f'{len(rows) - len([r for r in rows if r in kept])} rows lost, '
+                              f'{sum("Facility" in k for k in kept)} header lines kept')
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    return '230 rows of a header-less listing all survive; under a real header only the 5 header lines go'
+
+
+def test_highlights_cover_every_span_of_the_chunk():
+    """
+    A highlight has to cover the text it cites. Merging span boxes into one box
+    per line used to drop whatever lay to the left when two spans of a line
+    differed in height by a fraction of a point: 25 spans on the NRC fixture,
+    including the first 309 points of a body line.
+    """
+    assert _merge_rects([[54.0, 587.9, 363.1, 601.2], [363.1, 587.8, 380.0, 601.2]]) == [
+        [54.0, 587.8, 380.0, 601.2]], 'two spans of one line did not merge into one box'
+    assert len(_merge_rects([[82.1, 162.8, 107.8, 170.3], [347.1, 161.5, 372.7, 170.5]])) == 2, (
+        'two labels across a figure were bridged into one box')
+    spans_seen = boxes = 0
+    for path in ACCEPTING:
+        _, pages, doc = extract(path)
+        doc.close()
+        by_number = {p.number: p for p in pages}
+        for c in chunks(path):
+            for ps in c.page_spans:
+                boxes += len(ps.highlight_rects)
+                for span in by_number[ps.page_number].spans:
+                    if span.start < ps.char_end and span.end > ps.char_start:
+                        spans_seen += 1
+                        assert any(r[0] - .02 <= span.bbox[0] and r[1] - .02 <= span.bbox[1]
+                                   and r[2] + .02 >= span.bbox[2] and r[3] + .02 >= span.bbox[3]
+                                   for r in ps.highlight_rects), (
+                            f'{path.name} chunk {c.ordinal} page {ps.page_number}: '
+                            f'a span at {span.bbox} is outside every highlight box')
+    return f'{spans_seen} spans across {len(ACCEPTING)} documents each lie inside one of {boxes} highlight boxes'
+
+
+def test_a_sparse_page_follows_the_columns_of_its_document():
+    """
+    Page 5 of the two-column paper is mostly figures: four lines of text in its
+    left column, too few to prove a gutter by themselves. Read top to bottom,
+    the sentence that runs over from page 4 came out with its end before its
+    middle. Such a page borrows the gutter the rest of the document uses.
+    """
+    text, pages, doc = extract(ARXIV)
+    doc.close()
+    page5 = text[pages[4].char_start:pages[4].char_end]
+    middle, end = page5.find('Szilard in real-'), page5.find('izing 2n neutron production')
+    assert 0 <= middle < end, f'page 5 is still read across its columns ({middle}, {end})'
+    # A one-column document has no gutter to lend, and is left exactly as sorted.
+    plain, _, doc = extract(NORMAL)
+    doc.close()
+    assert plain.index('The purpose of a nuclear power plant') < plain.index('HYDROELECTRIC PLANT')
+    return 'on the figure page the carried-over sentence reads middle, then end'
 
 
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith('test_')]
