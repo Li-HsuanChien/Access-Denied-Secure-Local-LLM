@@ -98,6 +98,20 @@ class IngestionPolicy:
     max_pages: int = 2000
     max_bytes: int = 200 * 1024 * 1024
 
+    def __post_init__(self) -> None:
+        # A misspelt setting must not quietly select the permissive branch.
+        if self.repaired_document not in ('accept_with_warning', 'reject'):
+            raise ValueError(f'repaired_document: unknown setting {self.repaired_document!r}')
+        if self.extraction_restricted not in ('reject', 'accept_with_warning', 'ignore'):
+            raise ValueError(f'extraction_restricted: unknown setting {self.extraction_restricted!r}')
+        for name in ('min_pages_with_text_ratio_reject', 'min_pages_with_text_ratio_warn'):
+            if not 0 <= getattr(self, name) <= 1:
+                raise ValueError(f'{name} must be between 0 and 1')
+        for name in ('min_chars_per_page_when_repaired', 'max_pages', 'max_bytes'):
+            if isinstance(getattr(self, name), bool) or not isinstance(getattr(self, name), int) \
+                    or getattr(self, name) < 0:
+                raise ValueError(f'{name} must be a non-negative whole number')
+
     def to_dict(self) -> dict:
         return asdict(self)
 
