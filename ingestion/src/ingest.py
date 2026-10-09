@@ -29,7 +29,8 @@ from .schema import (SCHEMA_VERSION, Chunk, ChunkerConfig, Document, PageSpan,
 from .validation import (Check, CheckStatus, IngestionPolicy, Outcome,
                          RejectReason, ValidationResult)
 
-VALIDATOR_VERSION = 'e2-validate-1.0.0'
+# Bump when a verdict rule or the shape of a check's `observed` changes.
+VALIDATOR_VERSION = 'e2-validate-2.0.0'
 EXTRACTOR = f'pymupdf/{getattr(pymupdf, "__version__", "unknown")}'
 PDF_MAGIC = b'%PDF-'
 
@@ -665,30 +666,172 @@ def extract_document(doc, *, sort: bool = True, strip_boilerplate: bool = True,
 # ---------------------------------------------------------------------------
 # validation
 # ---------------------------------------------------------------------------
-def validate(path: str | Path, policy: IngestionPolicy | None = None) -> ValidationResult:
-    """Validate one candidate file. Never raises on bad input; returns a result."""
+_TEXT_MARKS = frozenset({'fill-text', 'stroke-text', 'clip-text', 'clip-stroke-text', 'ignore-text'})
+
+
+def _why_no_text(doc, index: int, undecoded: bool = False) -> str:
+    """
+    Classify a page that contributed no text to the stream.
+
+      'blank'      nothing is drawn on it (or nothing but the running header and
+                   footer that extraction strips), and the parser read it without
+                   complaint. Not a loss, so never a warning.
+      'image'      an image is drawn but there is no text: a scan, or a figure.
+      'drawing'    vector artwork is visibly drawn but there is no text.
+      'unreadable' the emptiness is damage, not design: the parser complained
+                   while reading the page, or the page box is one no content
+                   can land on, or text is drawn where the page is not, or the
+                   page shows text none of whose glyphs could be named
+                   (`undecoded`).
+
+    Only called on pages without text, so its cost is bounded by how many of
+    those there are: one display-list pass per page, plus one thumbnail render
+    for the rare page that has vector marks but no image.
+    """
+    try:
+        # mupdf_warnings() flushes MuPDF's pending "... repeated N times..."
+        # line before clearing; reset_mupdf_warnings() does not, and that line
+        # would then be blamed on this page.
+        pymupdf.TOOLS.mupdf_warnings()
+        page = doc[index]
+        marks = page.get_bboxlog()
+        if pymupdf.TOOLS.mupdf_warnings():
+            return 'unreadable'
+        box = page.rect
+        if not (3 <= box.width <= 14400 and 3 <= box.height <= 14400):
+            return 'unreadable'             # outside the page sizes the format allows
+
+        def on_page(b) -> bool:
+            return b[2] >= box.x0 and b[0] <= box.x1 and b[3] >= box.y0 and b[1] <= box.y1
+
+        if any(kind in _TEXT_MARKS and not on_page(b) for kind, b in marks):
+            return 'unreadable'             # text exists but is drawn off the page
+        drawn = [kind for kind, b in marks if kind not in _TEXT_MARKS and on_page(b)]
+        if not drawn and not undecoded:
+            return 'blank'
+        if any('image' in kind for kind in drawn):
+            return 'image'
+        # Vector marks or unnamed glyphs only. The innocent cases are a
+        # page-sized white background rectangle and invisible text, which only
+        # rendering can tell from something a reader sees.
+        zoom = min(0.25, 256 / max(box.width, box.height))
+        pix = page.get_pixmap(matrix=pymupdf.Matrix(zoom, zoom),
+                              colorspace=pymupdf.csGRAY, alpha=False)
+        if pix.is_unicolor:
+            return 'blank'
+        return 'unreadable' if undecoded else 'drawing'
+    except Exception:
+        return 'unreadable'
+
+
+def validate(path: str | Path, policy: IngestionPolicy | None = None, *,
+             source_filename: str | None = None) -> ValidationResult:
+    """
+    Validate one candidate file and return a verdict.
+
+    Nothing the PDF parser raises escapes: every parser call is guarded and
+    mapped to a failed check, and a backstop catches anything nobody predicted.
+    Bad content is a result, never an exception.
+
+    The one thing that does raise is OSError from reading the path itself
+    (missing, a directory, no permission). There is no file to give a verdict
+    on: no bytes to checksum, and none of the SDD 6.1 reasons would be true of
+    it. That is a caller error, not a property of the file.
+
+    source_filename is the name to report when the file is being read from
+    somewhere other than where the user put it, such as a staging copy.
+    """
+    return _validate(path, policy, source_filename=source_filename)
+
+
+def _validate(path: str | Path, policy: IngestionPolicy | None = None, *,
+              source_filename: str | None = None, checksum_sha256: str | None = None,
+              byte_size: int | None = None, sort: bool = True, strip_boilerplate: bool = True,
+              on_page=None, keep: list | None = None,
+              notes: dict | None = None) -> ValidationResult:
+    """
+    validate() with the seams the import flow needs: a checksum and size already
+    computed while the file was copied, the chunker's extraction settings, a
+    per-page callback, `keep`, a list that receives (text, pages) when the
+    file is accepted so it can be chunked without being read again, and
+    `notes`, a dict that receives 'parser_messages': how many lines the parser
+    printed about this file.
+    """
     policy = policy or IngestionPolicy()
     path = Path(path)
-    raw = path.read_bytes()
-    checks: list[Check] = []
-    warnings: list[dict] = []
-
+    if checksum_sha256 is None or byte_size is None:
+        raw = path.read_bytes()
+        byte_size, checksum_sha256, head = len(raw), hashlib.sha256(raw).hexdigest(), raw[:8]
+        del raw
+    else:
+        with open(path, 'rb') as handle:
+            head = handle.read(8)
     result = ValidationResult(
         schema_version=SCHEMA_VERSION,
         validated_at=datetime.now(timezone.utc).isoformat(timespec='seconds'),
         validator_version=VALIDATOR_VERSION,
         extractor=EXTRACTOR,
         source_path=str(path),
-        source_filename=path.name,
-        byte_size=len(raw),
-        checksum_sha256=hashlib.sha256(raw).hexdigest(),
+        source_filename=source_filename or path.name,
+        byte_size=byte_size,
+        checksum_sha256=checksum_sha256,
         outcome=Outcome.ACCEPTED,
         reject_reason=None,
         reject_detail=None,
-        checks=checks,
-        warnings=warnings,
+        checks=[],
+        warnings=[],
         policy=policy.to_dict(),
     )
+    # An exception out of the caller's own on_page (a request to cancel, say) is
+    # not a property of the file. It is noted here so no guard below mistakes it
+    # for damage, and passed on unchanged.
+    stopped: list[BaseException] = []
+
+    def page_hook(done: int, total: int) -> None:
+        try:
+            on_page(done, total)
+        except BaseException as e:
+            stopped.append(e)
+            raise
+
+    said: list[str] = []                      # every line the parser printed about this file
+    try:
+        return _checked(path, head, policy, result, sort, strip_boilerplate,
+                        page_hook if on_page is not None else None, keep, stopped, said)
+    except MemoryError:
+        raise                                 # the machine's condition, not the file's
+    except Exception as e:
+        if stopped:
+            raise
+        # Backstop: a parser failure outside every guard below is still a
+        # verdict. 'unguarded' marks it, so a test can tell this path from a
+        # check that decided, and a bug in this module from a damaged file.
+        result.checks[:] = [c for c in result.checks if c.check_id != 'structural_integrity']
+        result.checks.append(Check('structural_integrity', CheckStatus.FAIL,
+                                   'The PDF parser failed while reading the document.',
+                                   observed={'error': type(e).__name__, 'unguarded': True},
+                                   expected='parses without error',
+                                   reject_reason=RejectReason.CORRUPT))
+        result.warnings.clear()
+        result.document = None
+        result.outcome = Outcome.REJECTED
+        result.reject_reason = RejectReason.CORRUPT
+        result.reject_detail = 'The file is damaged and could not be read.'
+        return result
+    finally:
+        try:
+            said += pymupdf.TOOLS.mupdf_warnings().splitlines()
+        except Exception:
+            pass
+        if notes is not None:
+            notes['parser_messages'] = len(said)
+
+
+def _checked(path: Path, head: bytes, policy: IngestionPolicy, result: ValidationResult,
+             sort: bool, strip_boilerplate: bool, on_page, keep: list | None,
+             stopped: list, said: list) -> ValidationResult:
+    checks, warnings = result.checks, result.warnings
+    byte_size = result.byte_size
 
     def reject(reason: RejectReason, detail: str) -> ValidationResult:
         result.outcome = Outcome.REJECTED
@@ -697,41 +840,73 @@ def validate(path: str | Path, policy: IngestionPolicy | None = None) -> Validat
         return result
 
     # 1. non-empty -------------------------------------------------------
-    ok = len(raw) > 0
+    ok = byte_size > 0
     checks.append(Check('file_nonempty',
                         CheckStatus.PASS if ok else CheckStatus.FAIL,
                         'File has content.' if ok else 'File is zero bytes.',
-                        observed=len(raw), expected='> 0',
+                        observed=byte_size, expected='> 0',
                         reject_reason=None if ok else RejectReason.CORRUPT))
     if not ok:
         return reject(RejectReason.CORRUPT, 'The file is empty.')
 
     # 2. magic bytes -----------------------------------------------------
-    ok = raw[:5] == PDF_MAGIC
+    ok = head[:5] == PDF_MAGIC
     checks.append(Check('magic_bytes',
                         CheckStatus.PASS if ok else CheckStatus.FAIL,
                         'File begins with a PDF header.' if ok else
                         'File is not a PDF regardless of its extension.',
-                        observed=raw[:5].decode('latin-1'), expected='%PDF-',
+                        observed=head[:5].decode('latin-1'), expected='%PDF-',
                         reject_reason=None if ok else RejectReason.NON_PDF))
     if not ok:
-        kind = 'a zip container' if raw[:4] == b'PK\x03\x04' else 'not a PDF'
+        kind = 'a zip container' if head[:4] == b'PK\x03\x04' else 'not a PDF'
         return reject(RejectReason.NON_PDF, f'The file is {kind}.')
 
     # 3. parser opens ----------------------------------------------------
+    # "Opens" means the parser can read the document's structure, not only its
+    # first bytes. A badly truncated file opens and then fails the moment its
+    # page tree is touched, so everything needed below is read here, guarded.
+    doc = None
     try:
+        pymupdf.TOOLS.mupdf_warnings()        # whatever an earlier document left in the buffer
         doc = pymupdf.open(path)
+        needs_pass = bool(doc.needs_pass)
+        page_count = 0 if needs_pass else doc.page_count
+        permissions = 0 if needs_pass else doc.permissions
+        if not needs_pass and page_count < 1:
+            raise ValueError('the file contains no pages')
     except Exception as e:
+        _close(doc)
         checks.append(Check('parser_opens', CheckStatus.FAIL,
                             'The PDF parser could not open the file.',
                             observed=type(e).__name__, expected='opens',
                             reject_reason=RejectReason.CORRUPT))
-        return reject(RejectReason.CORRUPT, f'The file could not be parsed: {e}')
+        return reject(RejectReason.CORRUPT, 'The file could not be parsed as a PDF.')
     checks.append(Check('parser_opens', CheckStatus.PASS, 'The PDF parser opened the file.',
                         observed='opens', expected='opens'))
+    try:
+        return _examined(doc, needs_pass, page_count, permissions, policy, result, sort,
+                         strip_boilerplate, on_page, keep, stopped, said)
+    finally:
+        _close(doc)                           # on every way out, a cancelled import included
+
+
+def _examined(doc, needs_pass: bool, page_count: int, permissions: int,
+              policy: IngestionPolicy, result: ValidationResult, sort: bool,
+              strip_boilerplate: bool, on_page, keep: list | None, stopped: list,
+              said: list) -> ValidationResult:
+    """Checks 4 to 8, on a document that opened. The caller closes it."""
+    checks, warnings = result.checks, result.warnings
+    byte_size = result.byte_size
+
+    def reject(reason: RejectReason, detail: str) -> ValidationResult:
+        result.outcome = Outcome.REJECTED
+        result.reject_reason = reason
+        result.reject_detail = detail
+        return result
+
+    said += pymupdf.TOOLS.mupdf_warnings().splitlines()     # what opening the file drew
 
     # 4. password --------------------------------------------------------
-    needs_pass = bool(doc.needs_pass)
     checks.append(Check('no_open_password',
                         CheckStatus.FAIL if needs_pass else CheckStatus.PASS,
                         'The file requires a password to open.' if needs_pass else
@@ -739,40 +914,39 @@ def validate(path: str | Path, policy: IngestionPolicy | None = None) -> Validat
                         observed=needs_pass, expected=False,
                         reject_reason=RejectReason.PASSWORD_PROTECTED if needs_pass else None))
     if needs_pass:
-        doc.close()
         return reject(RejectReason.PASSWORD_PROTECTED,
                       'The file is password-protected and cannot be read.')
 
-    page_count = doc.page_count
-
     # 5. size ------------------------------------------------------------
-    too_big = page_count > policy.max_pages or len(raw) > policy.max_bytes
+    too_many, too_heavy = page_count > policy.max_pages, byte_size > policy.max_bytes
+    too_big = too_many or too_heavy
     checks.append(Check('within_size_limits',
                         CheckStatus.FAIL if too_big else CheckStatus.PASS,
                         'The file exceeds the configured size limit.' if too_big else
                         'Within size limits.',
-                        observed={'pages': page_count, 'bytes': len(raw)},
+                        observed={'pages': page_count, 'bytes': byte_size},
                         expected={'max_pages': policy.max_pages, 'max_bytes': policy.max_bytes},
                         reject_reason=RejectReason.OVERSIZED if too_big else None))
     if too_big:
-        doc.close()
-        return reject(RejectReason.OVERSIZED,
-                      f'The file has {page_count:,} pages, above the {policy.max_pages:,}-page limit.')
+        over = ([f'has {page_count:,} pages, above the {policy.max_pages:,}-page limit']
+                if too_many else [])
+        over += ([f'is {byte_size:,} bytes, above the {policy.max_bytes:,}-byte limit']
+                 if too_heavy else [])
+        return reject(RejectReason.OVERSIZED, f'The file {" and ".join(over)}.')
 
     # 6. extraction permission ------------------------------------------
     # Note: is_encrypted and needs_pass are both False for an owner-password
     # file, so the permission bitfield is the only signal available here.
-    extract_allowed = bool(doc.permissions & pymupdf.PDF_PERM_COPY)
+    extract_allowed = bool(permissions & pymupdf.PDF_PERM_COPY)
     if extract_allowed:
         checks.append(Check('extraction_permitted', CheckStatus.PASS,
                             'The document permits text extraction.',
-                            observed=doc.permissions, expected='PDF_PERM_COPY set'))
+                            observed=permissions, expected='PDF_PERM_COPY set'))
     elif policy.extraction_restricted == 'reject':
         checks.append(Check('extraction_permitted', CheckStatus.FAIL,
                             'The document forbids text extraction, and policy honors that restriction.',
-                            observed=doc.permissions, expected='PDF_PERM_COPY set',
+                            observed=permissions, expected='PDF_PERM_COPY set',
                             reject_reason=RejectReason.PASSWORD_PROTECTED))
-        doc.close()
         return reject(RejectReason.PASSWORD_PROTECTED,
                       'The document forbids text extraction.')
     else:
@@ -780,99 +954,201 @@ def validate(path: str | Path, policy: IngestionPolicy | None = None) -> Validat
                             CheckStatus.SKIPPED if policy.extraction_restricted == 'ignore'
                             else CheckStatus.WARN,
                             'The document forbids text extraction; policy proceeds anyway.',
-                            observed=doc.permissions, expected='PDF_PERM_COPY set'))
+                            observed=permissions, expected='PDF_PERM_COPY set'))
         if policy.extraction_restricted != 'ignore':
             warnings.append({'code': 'extraction_restricted',
                              'message': 'The document forbids text extraction; it was extracted anyway.'})
 
-    doc.close()
-    text, pages, doc = extract(path)
     try:
-        repaired = bool(getattr(doc, 'is_repaired', False))
-        pages_with_text = sum(1 for p in pages if p.has_text)
-        empty_pages = [p.number for p in pages if not p.has_text]
-        ratio = pages_with_text / page_count if page_count else 0.0
-        chars_per_page = len(text) / page_count if page_count else 0.0
+        text, pages = extract_document(doc, sort=sort, strip_boilerplate=strip_boilerplate,
+                                       on_page=on_page, said=said)
+    except MemoryError:
+        raise
+    except Exception as e:
+        if stopped:
+            raise
+        # The structure was readable but a page was not. Same verdict as any
+        # other damage: the file is rejected, with what failed on record.
+        checks.append(Check('structural_integrity', CheckStatus.FAIL,
+                            'The document opened but its pages could not be read.',
+                            observed={'error': type(e).__name__},
+                            expected='every page readable',
+                            reject_reason=RejectReason.CORRUPT))
+        return reject(RejectReason.CORRUPT,
+                      f'The file is damaged: its pages could not be read ({type(e).__name__}).')
 
-        # 7. structural integrity ---------------------------------------
-        if not repaired:
-            checks.append(Check('structural_integrity', CheckStatus.PASS,
-                                'The document structure is intact.',
-                                observed=False, expected=False))
-        else:
-            # A repaired document that also lost most of its text is a truncation,
-            # not a recoverable defect. Page count alone does not distinguish the
-            # two: both report the full count.
-            starved = chars_per_page < policy.min_chars_per_page_when_repaired
-            if starved:
-                checks.append(Check('structural_integrity', CheckStatus.FAIL,
-                                    'The document was rebuilt by the parser and most of its text is '
-                                    'missing, which indicates truncation rather than a recoverable defect.',
-                                    observed={'repaired': True, 'chars_per_page': round(chars_per_page, 1)},
-                                    expected={'chars_per_page': f'>= {policy.min_chars_per_page_when_repaired}'},
-                                    reject_reason=RejectReason.CORRUPT))
-                return reject(RejectReason.CORRUPT,
-                              f'The file is damaged: only {len(text):,} characters were recovered '
-                              f'across {page_count} pages.')
-            if policy.repaired_document == 'reject':
-                checks.append(Check('structural_integrity', CheckStatus.FAIL,
-                                    'The document structure was rebuilt by the parser, and policy '
-                                    'rejects repaired documents.',
-                                    observed={'repaired': True, 'chars_per_page': round(chars_per_page, 1)},
-                                    expected={'repaired': False},
-                                    reject_reason=RejectReason.CORRUPT))
-                return reject(RejectReason.CORRUPT, 'The file structure is damaged.')
-            checks.append(Check('structural_integrity', CheckStatus.WARN,
-                                'The document structure was rebuilt by the parser; text recovery '
-                                'looks complete.',
-                                observed={'repaired': True, 'chars_per_page': round(chars_per_page, 1)},
-                                expected={'repaired': False}))
-            warnings.append({'code': 'structure_repaired',
-                             'message': 'The document structure was damaged and rebuilt during import.'})
+    repaired = bool(getattr(doc, 'is_repaired', False))
+    # Which pages have text is judged on the stream chunks() will index: after
+    # running headers are stripped.
+    empty_pages = [p.number for p in pages if not p.has_text]
+    pages_with_text = len(pages) - len(empty_pages)
+    chars_per_page = len(text) / pages_with_text if pages_with_text else 0.0
+    # A page without text is only believed to be blank in a document the parser
+    # did not have to rebuild. After a repair, "nothing there" is exactly what
+    # a lost page looks like.
+    kinds = {n: 'unreadable' if repaired or pages[n - 1].damaged
+             else _why_no_text(doc, n - 1, bool(pages[n - 1].undecoded)) for n in empty_pages}
+    blank_pages = [n for n in empty_pages if kinds[n] == 'blank']
+    unreadable_pages = [n for n in empty_pages if kinds[n] == 'unreadable']
+    pages_without_text = [n for n in empty_pages if kinds[n] != 'blank']
+    # Pages that kept some text although the parser reported damage on them.
+    damaged_pages = [p.number for p in pages if p.damaged and p.has_text]
+    content_pages = page_count - len(blank_pages)
+    ratio = pages_with_text / content_pages if content_pages else 0.0
 
-        # 8. text yield --------------------------------------------------
-        if ratio <= policy.min_pages_with_text_ratio_reject:
-            checks.append(Check('text_yield', CheckStatus.FAIL,
-                                'The document has no extractable text layer and would need OCR, '
-                                'which is out of scope.',
-                                observed={'pages_with_text': pages_with_text, 'pages': page_count},
-                                expected=f'> {policy.min_pages_with_text_ratio_reject:.0%} of pages',
-                                reject_reason=RejectReason.SCANNED_ONLY))
-            return reject(RejectReason.SCANNED_ONLY,
-                          f'Only {pages_with_text} of {page_count} pages contain extractable text.')
-        if ratio < policy.min_pages_with_text_ratio_warn:
-            checks.append(Check('text_yield', CheckStatus.WARN,
-                                'Some pages contain no extractable text and will not be searchable.',
-                                observed={'pages_with_text': pages_with_text, 'pages': page_count,
-                                          'empty_pages': empty_pages},
-                                expected=f'>= {policy.min_pages_with_text_ratio_warn:.0%} of pages'))
+    # 7. structural integrity -------------------------------------------
+    # Nothing below may call a document complete on the strength of its page
+    # count: a truncated file reports the full count, and a damaged page index
+    # reports whatever it says.
+    def damaged_structure(message: str, observed: dict, expected, detail: str) -> ValidationResult:
+        checks.append(Check('structural_integrity', CheckStatus.FAIL, message, observed=observed,
+                            expected=expected, reject_reason=RejectReason.CORRUPT))
+        return reject(RejectReason.CORRUPT, detail)
+
+    try:
+        counted = doc.page_count              # the parser revises this once it walks the pages
+    except Exception:
+        counted = -1
+    if len(pages) != page_count or counted != page_count:
+        return damaged_structure(
+            'The number of pages the document declares is not the number that could be read.',
+            {'declared': page_count, 'read': len(pages), 'after_reading': counted},
+            'the declared page count',
+            f'The file is damaged: it declares {page_count:,} pages but {len(pages):,} could be read.')
+    recovery = {'repaired': repaired, 'chars_per_page': round(chars_per_page, 1),
+                'pages': page_count, 'pages_with_text': pages_with_text,
+                'unreadable_pages': unreadable_pages}
+    if repaired and unreadable_pages:
+        # A rebuilt document with pages that came back empty is a truncation,
+        # however dense the pages that survived are.
+        return damaged_structure(
+            'The document was rebuilt by the parser and some of its pages came back empty, '
+            'which indicates truncation rather than a recoverable defect.',
+            recovery, {'unreadable_pages': []},
+            f'The file is damaged: text was recovered from only {pages_with_text:,} of '
+            f'{page_count:,} pages.')
+    if repaired and chars_per_page < policy.min_chars_per_page_when_repaired:
+        return damaged_structure(
+            'The document was rebuilt by the parser and most of its text is missing, which '
+            'indicates truncation rather than a recoverable defect.',
+            recovery, {'chars_per_page': f'>= {policy.min_chars_per_page_when_repaired}'},
+            f'The file is damaged: only {len(text):,} characters were recovered '
+            f'across {page_count:,} pages.')
+    if any(_PAGE_TREE.search(line) for line in said):
+        # The page index is inconsistent, so pages may be missing that no
+        # count can reveal (an index that lists 3 of 12 pages reads as a
+        # complete 3-page document).
+        return damaged_structure(
+            'The document\'s page index is damaged, so pages may be missing.',
+            {**recovery, 'page_index': 'inconsistent'}, {'page_index': 'consistent'},
+            'The file is damaged: its page index is inconsistent, so pages may be missing.')
+    if not repaired:
+        checks.append(Check('structural_integrity', CheckStatus.PASS,
+                            'The document structure is intact.',
+                            observed=False, expected=False))
+    elif policy.repaired_document == 'reject':
+        return damaged_structure(
+            'The document structure was rebuilt by the parser, and policy rejects repaired '
+            'documents.', recovery, {'repaired': False}, 'The file structure is damaged.')
+    else:
+        checks.append(Check('structural_integrity', CheckStatus.WARN,
+                            'The document structure was rebuilt by the parser; every page '
+                            'came back with text.',
+                            observed=recovery, expected={'repaired': False}))
+        warnings.append({'code': 'structure_repaired',
+                         'message': 'The document structure was damaged and rebuilt during import.'})
+
+    # 8. text yield --------------------------------------------------
+    # Every page without text is put on record, whatever the verdict.
+    # empty_pages is all of them; the four lists after it partition it.
+    # The ratio is taken over pages that are not blank, so a blank page
+    # neither counts against a document nor hides a scanned one. A page
+    # that has something on it and yields no text is there for a reader and
+    # invisible to search, so it always warns and is always named. So does a
+    # page that kept some text although the parser reported damage on it.
+    seen = {'pages': page_count, 'pages_with_text': pages_with_text,
+            'empty_pages': empty_pages, 'blank_pages': blank_pages,
+            'image_only_pages': [n for n in empty_pages if kinds[n] == 'image'],
+            'drawing_only_pages': [n for n in empty_pages if kinds[n] == 'drawing'],
+            'unreadable_pages': unreadable_pages,
+            'damaged_pages': damaged_pages}
+    floor, bar = policy.min_pages_with_text_ratio_reject, policy.min_pages_with_text_ratio_warn
+    if ratio <= floor:
+        all_blank = content_pages == 0
+        checks.append(Check('text_yield', CheckStatus.FAIL,
+                            'Every page is blank; there is no text to import.' if all_blank else
+                            'The document has no extractable text layer and would need OCR, '
+                            'which is out of scope.' if not pages_with_text else
+                            'Too few of the document\'s pages have extractable text; the rest '
+                            'would need OCR, which is out of scope.',
+                            observed=seen,
+                            expected=f'> {floor:.0%} of non-blank pages',
+                            reject_reason=RejectReason.SCANNED_ONLY))
+        return reject(RejectReason.SCANNED_ONLY,
+                      f'All {page_count} pages are blank.' if all_blank else
+                      f'Only {pages_with_text} of {content_pages} non-blank pages contain '
+                      f'extractable text.')
+    # Blank pages are normal one at a time. When more than the policy allows
+    # of a document is blank, that is worth a look too: it is also what a
+    # file that lost its page contents looks like.
+    thin = pages_with_text / page_count < bar
+    if pages_without_text or thin or damaged_pages:
+        named = empty_pages if thin else pages_without_text
+        checks.append(Check('text_yield', CheckStatus.WARN,
+                            'Some pages contain no extractable text and will not be searchable.'
+                            if named else
+                            'Some pages were damaged and may be missing part of their text.',
+                            observed=seen,
+                            expected=f'text on every non-blank page, and on >= {bar:.0%} of all pages'))
+        if named:
             warnings.append({'code': 'pages_without_text',
-                             'message': f'{len(empty_pages)} page(s) contain no extractable text '
-                                        f'and will not be searchable.',
-                             'pages': empty_pages})
-        else:
-            checks.append(Check('text_yield', CheckStatus.PASS,
-                                'All pages contain extractable text.',
-                                observed={'pages_with_text': pages_with_text, 'pages': page_count},
-                                expected=f'>= {policy.min_pages_with_text_ratio_warn:.0%} of pages'))
+                             'message': f'{len(named)} page(s) contain no extractable '
+                                        f'text and will not be searchable.',
+                             'pages': named})
+        if damaged_pages:
+            warnings.append({'code': 'pages_damaged',
+                             'message': f'{len(damaged_pages)} page(s) were damaged in the file '
+                                        f'and may be missing part of their text.',
+                             'pages': damaged_pages})
+    elif blank_pages:
+        checks.append(Check('text_yield', CheckStatus.PASS,
+                            f'All {content_pages} non-blank pages contain extractable text; '
+                            f'{len(blank_pages)} page(s) are blank.',
+                            observed=seen,
+                            expected=f'text on every non-blank page, and on >= {bar:.0%} of all pages'))
+    else:
+        checks.append(Check('text_yield', CheckStatus.PASS,
+                            'All pages contain extractable text.',
+                            observed=seen,
+                            expected=f'text on every non-blank page, and on >= {bar:.0%} of all pages'))
 
-        meta = doc.metadata or {}
-        document = Document(
-            document_id=Document.make_id(raw),
-            checksum_sha256=result.checksum_sha256,
-            source_filename=path.name,
-            display_title=(meta.get('title') or path.stem).strip(),
-            page_count=page_count,
-            byte_size=len(raw),
-            pdf_version=meta.get('format'),
-            extractor=EXTRACTOR,
-            import_warnings=warnings,
-        )
-        result.document = document.to_dict()
-        result.outcome = Outcome.ACCEPTED_WITH_WARNINGS if warnings else Outcome.ACCEPTED
-        return result
-    finally:
-        doc.close()
+    meta = doc.metadata or {}
+    document = Document(
+        document_id=Document.id_from_checksum(result.checksum_sha256),
+        checksum_sha256=result.checksum_sha256,
+        source_filename=result.source_filename,
+        display_title=(str(meta.get('title') or '').strip()
+                       or Path(result.source_filename).stem),
+        page_count=page_count,
+        byte_size=byte_size,
+        pdf_version=meta.get('format'),
+        extractor=EXTRACTOR,
+        import_warnings=warnings,
+    )
+    result.document = document.to_dict()
+    result.outcome = Outcome.ACCEPTED_WITH_WARNINGS if warnings else Outcome.ACCEPTED
+    if keep is not None:
+        keep.append((text, pages))
+    return result
+
+
+def _close(doc) -> None:
+    """Close a document that may be half-open or already broken."""
+    try:
+        if doc is not None:
+            doc.close()
+    except Exception:
+        pass
 
 
 # ---------------------------------------------------------------------------
