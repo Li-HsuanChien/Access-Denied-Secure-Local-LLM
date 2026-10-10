@@ -168,10 +168,16 @@ def test_validation_results_conform_to_schema():
     v = validator_for('validation_result')
     n = 0
     for path in sorted(FIX.rglob('*.pdf')):
-        errors = sorted(v.iter_errors(validate(path).to_dict()), key=lambda e: e.path)
+        result = validate(path)
+        errors = sorted(v.iter_errors(result.to_dict()), key=lambda e: e.path)
         assert not errors, f'{path.name}: {errors[0].message}'
+        # A verdict on a labelled fixture has to come from a check that
+        # decided, never from the catch-all that turns a crash into "corrupt".
+        crashed = [c.check_id for c in result.checks
+                   if isinstance(c.observed, dict) and c.observed.get('unguarded')]
+        assert not crashed, f'{path.name}: verdict came from the backstop, not from a check'
         n += 1
-    return f'{n} validation results conform'
+    return f'{n} validation results conform, none decided by the catch-all'
 
 
 def test_same_file_and_config_yield_same_ids():
@@ -310,10 +316,179 @@ def test_truncation_is_caught_despite_correct_page_count():
     assert healthy.document['page_count'] == 24
     assert broken.outcome == Outcome.REJECTED
     assert broken.reject_reason.value == 'corrupt'
+    # Rejected by the check that looks for truncation, for the reason it gives,
+    # and not by anything that merely happened to fail.
+    check = _failing(broken)
+    assert check.check_id == 'structural_integrity', check.check_id
+    assert check.observed['repaired'] and check.observed['unreadable_pages'], check.observed
+    assert check.observed['pages_with_text'] == 3 and check.observed['pages'] == 24, check.observed
     # And confirm the page count really was identical, which is the trap.
-    import pymupdf
-    assert pymupdf.open(truncated).page_count == 24
-    return 'truncated file rejected despite reporting a full 24-page count'
+    reopened = pymupdf.open(truncated)
+    count = reopened.page_count
+    reopened.close()
+    assert count == 24
+    return ('truncated file rejected despite reporting a full 24-page count: '
+            '3 of 24 pages came back with text')
+
+
+def test_a_truncated_document_is_rejected_however_dense_it_is():
+    """
+    Average characters per page cannot be the truncation test. A text-dense
+    document keeps a healthy average after losing most of its pages: the first
+    30% of the DOE reflow is 20 pages of 96 and still 490 characters per page
+    overall. It used to be accepted with the message "text recovery looks
+    complete". A rebuilt document with pages that came back empty is rejected,
+    and the recoverable kind of damage (every page still has its text) is not.
+    """
+    work = Path(tempfile.mkdtemp(prefix='e2-truncated-'))
+    try:
+        raw, seen = LARGE.read_bytes(), []
+        for share in (30, 50, 80, 97):
+            cut = work / f'dense_{share}.pdf'
+            cut.write_bytes(raw[:len(raw) * share // 100])
+            result = validate(cut)
+            assert result.outcome is Outcome.REJECTED and result.reject_reason is RejectReason.CORRUPT, (
+                f'first {share}% of the DOE reflow: {result.outcome.value}')
+            check = _failing(result)
+            assert check.check_id == 'structural_integrity' and check.observed['unreadable_pages'], (
+                f'{share}%: rejected by {check.check_id} {check.observed}')
+            assert result.document is None and process(cut).chunks is None
+            seen.append(f'{share}%: {check.observed["pages_with_text"]} of 96 pages')
+        nearly = work / 'dense_99.pdf'
+        nearly.write_bytes(raw[:len(raw) * 99 // 100])       # only the xref table is gone
+        kept = validate(nearly)
+        assert kept.outcome is Outcome.ACCEPTED_WITH_WARNINGS, kept.outcome.value
+        assert [w['code'] for w in kept.warnings] == ['structure_repaired']
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    return f'rejected at {"; ".join(seen)}. With only the xref lost, accepted with a warning'
+
+
+def test_declared_page_count_must_match_the_pages_read():
+    """
+    The page count is read before any page is. A file whose page index says 20
+    over 12 real pages used to be accepted as a clean 20-page document, and one
+    whose index says 3 as a clean 3-page document with nine pages of text
+    silently dropped. Neither file is "repaired" as far as the parser is
+    concerned, so nothing else catches them.
+    """
+    work = Path(tempfile.mkdtemp(prefix='e2-count-'))
+    try:
+        for claimed in (20, 3):
+            path = work / f'claims_{claimed}.pdf'
+            path.write_bytes(_pdf_claiming(12, claimed))
+            result = validate(path)
+            assert result.outcome is Outcome.REJECTED and result.reject_reason is RejectReason.CORRUPT, (
+                f'12 pages under /Count {claimed}: {result.outcome.value}')
+            assert _failing(result).check_id == 'structural_integrity'
+            assert 'unguarded' not in _failing(result).observed
+        honest = work / 'claims_12.pdf'
+        honest.write_bytes(_pdf_claiming(12, 12))
+        result = validate(honest)
+        assert result.outcome is Outcome.ACCEPTED and result.document['page_count'] == 12
+        text, pages, doc = extract(honest)
+        doc.close()
+        assert len(pages) == 12 and 'Page 12 line 12.' in text
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    return 'a page index that overstates or understates the pages is rejected as corrupt; an honest one is accepted'
+
+
+def test_a_page_of_unnamed_glyphs_is_not_called_blank():
+    """
+    A page set in a font with no Unicode map yields lines of U+FFFD, which the
+    stream leaves out. The page is visible to a reader and invisible to search,
+    so it must be named, not counted among the blank pages.
+    """
+    work = Path(tempfile.mkdtemp(prefix='e2-glyphs-'))
+    try:
+        mixed = work / 'page_15_unnamed.pdf'
+        mixed.write_bytes(_pdf_with_special_page(30, 15, _UNNAMED_GLYPHS))
+        result = validate(mixed)
+        observed = next(c for c in result.checks if c.check_id == 'text_yield').observed
+        assert result.outcome is Outcome.ACCEPTED_WITH_WARNINGS, result.outcome.value
+        assert observed['unreadable_pages'] == [15] and observed['blank_pages'] == [], observed
+        assert result.warnings[0]['code'] == 'pages_without_text' and result.warnings[0]['pages'] == [15]
+
+        alone = work / 'only_unnamed.pdf'
+        alone.write_bytes(_pdf_with_special_page(1, 1, _UNNAMED_GLYPHS))
+        result = validate(alone)
+        assert result.outcome is Outcome.REJECTED and 'are blank' not in result.reject_detail, (
+            result.reject_detail)
+
+        empty = work / 'page_15_empty.pdf'
+        empty.write_bytes(_pdf_with_special_page(30, 15, b''))
+        result = validate(empty)
+        observed = next(c for c in result.checks if c.check_id == 'text_yield').observed
+        assert result.outcome is Outcome.ACCEPTED and observed['blank_pages'] == [15], observed
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    return 'a page of glyphs with no names warns as unreadable; a page with nothing on it is still blank'
+
+
+def test_a_damaged_page_that_kept_some_text_is_named():
+    """
+    A page whose content stream ends half way yields some text, so it counts as
+    a page with text, and the file is not "repaired": its xref is fine. What
+    the parser said about that page is the only evidence, and it used to be
+    read only for pages that came back empty.
+    """
+    work = Path(tempfile.mkdtemp(prefix='e2-damaged-'))
+    try:
+        def build(path: Path, damage: int | None) -> None:
+            doc = pymupdf.open()
+            for p in range(1, 9):
+                page = doc.new_page()
+                for n in range(1, 41):
+                    page.insert_text((54, 56 + 16 * n), f'The reactor coolant pump {p} line {n} '
+                                     f'maintains flow through the core.', fontsize=8)
+            for page in doc:
+                page.clean_contents()
+            if damage is not None:
+                xref = doc[damage - 1].get_contents()[0]
+                packed = zlib.compress(doc.xref_stream(xref))
+                doc.update_stream(xref, packed[:len(packed) // 2], compress=False)
+                doc.xref_set_key(xref, 'Filter', '/FlateDecode')
+            doc.save(path, garbage=0, deflate=False)
+            doc.close()
+
+        build(work / 'intact.pdf', None)
+        build(work / 'page_5_cut.pdf', 5)
+        intact, cut = validate(work / 'intact.pdf'), validate(work / 'page_5_cut.pdf')
+        assert intact.outcome is Outcome.ACCEPTED and intact.warnings == []
+        assert cut.outcome is Outcome.ACCEPTED_WITH_WARNINGS, cut.outcome.value
+        assert [(w['code'], w['pages']) for w in cut.warnings] == [('pages_damaged', [5])], cut.warnings
+        observed = next(c for c in cut.checks if c.check_id == 'text_yield').observed
+        assert observed['damaged_pages'] == [5] and observed['empty_pages'] == []
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    return 'a page cut off part-way is accepted with a pages_damaged warning naming it; its intact twin is clean'
+
+
+def test_settings_are_checked_when_they_are_made():
+    """
+    A misspelt policy value used to select the permissive branch without a
+    word, and a chunk size of zero produced almost no chunks without an error.
+    """
+    refused = 0
+    for make in (lambda: IngestionPolicy(repaired_document='rejcet'),
+                 lambda: IngestionPolicy(extraction_restricted='deny'),
+                 lambda: IngestionPolicy(min_pages_with_text_ratio_warn=95),
+                 lambda: IngestionPolicy(max_pages=-1),
+                 lambda: ChunkerConfig(target_chars=0),
+                 lambda: ChunkerConfig(target_chars=-5),
+                 lambda: ChunkerConfig(overlap_chars=-1),
+                 lambda: ChunkerConfig(min_chunk_chars=1.5)):
+        try:
+            make()
+        except ValueError:
+            refused += 1
+    assert refused == 8, f'{8 - refused} nonsense settings were accepted'
+    # A file refused for its size in bytes says so, and does not quote the page limit.
+    result = validate(NORMAL, IngestionPolicy(max_bytes=1000))
+    assert result.reject_reason is RejectReason.OVERSIZED
+    assert 'bytes' in result.reject_detail and 'page' not in result.reject_detail, result.reject_detail
+    return '8 nonsense settings raise ValueError; a byte-size rejection names the byte limit'
 
 
 # ---------------------------------------------------------------------------
@@ -464,7 +639,60 @@ def test_normal_pdfs_extract_page_text():
             assert b.char_start == a.char_end, (
                 f'{path.name}: page offsets leave a gap at page {b.number}')
         total_pages += len(pages)
-    return f'{total_pages} pages across {len(ACCEPTING)} documents all yield text'
+        blank_pages += len(blank)
+    return (f'{total_pages - blank_pages} of {total_pages} pages across {len(ACCEPTING)} documents '
+            f'yield text; the other {blank_pages} are blank in the PDF')
+
+
+def test_pages_without_text_are_always_on_record():
+    """
+    Nothing is lost silently. The text_yield check lists every page without
+    text whatever its verdict, says so in its message, and warns whenever such
+    a page draws an image, because that page exists for a reader and not for
+    search.
+    """
+    result = validate(ORIGINAL)
+    check = next(c for c in result.checks if c.check_id == 'text_yield')
+    assert check.observed['empty_pages'] == [4, 6, 8, 10, 12, 94], check.observed
+    assert check.observed['blank_pages'] == [4, 6, 8, 10, 12, 94], check.observed
+    assert check.observed['image_only_pages'] == check.observed['unreadable_pages'] == []
+    assert check.status is CheckStatus.PASS and 'blank' in check.message, check.message
+    assert 'All pages' not in check.message, 'blank pages reported as having text'
+    assert result.outcome is Outcome.ACCEPTED
+
+    # The same six blank pages are a warning once they are more of the document
+    # than the policy tolerates.
+    strict = validate(ORIGINAL, IngestionPolicy(min_pages_with_text_ratio_warn=0.99))
+    assert strict.outcome is Outcome.ACCEPTED_WITH_WARNINGS
+    assert strict.warnings[0]['pages'] == [4, 6, 8, 10, 12, 94]
+
+    mixed = validate(FIX / 'scanned' / 'scanned_mixed_text_and_image_pages.pdf')
+    check = next(c for c in mixed.checks if c.check_id == 'text_yield')
+    assert check.status is CheckStatus.WARN
+    assert check.observed['image_only_pages'] == check.observed['empty_pages'] == [2, 6, 10, 14, 18, 22]
+    assert check.observed['blank_pages'] == []
+    assert mixed.warnings[0]['pages'] == [2, 6, 10, 14, 18, 22]
+
+    # One scanned page in a long document is under any ratio threshold, and
+    # still has to be named.
+    import pymupdf
+    with tempfile.TemporaryDirectory() as td:
+        src = pymupdf.open(ORIGINAL)
+        scan = src[24].get_pixmap(dpi=50)
+        page = src[24]
+        page.clean_contents()
+        for xref in page.get_contents():
+            src.update_stream(xref, b'')
+        page.insert_image(page.rect, pixmap=scan)
+        one = Path(td) / 'one_scanned_page.pdf'
+        src.save(one)
+        src.close()
+        result = validate(one)
+    check = next(c for c in result.checks if c.check_id == 'text_yield')
+    assert check.observed['image_only_pages'] == [25], check.observed
+    assert check.status is CheckStatus.WARN and result.outcome is Outcome.ACCEPTED_WITH_WARNINGS
+    assert 25 in result.warnings[0]['pages']
+    return 'blank pages are counted, image-only pages always warn, both are listed'
 
 
 def test_rejections_carry_an_explicit_reason_and_detail():
@@ -478,7 +706,10 @@ def test_rejections_carry_an_explicit_reason_and_detail():
     data, not an exception.
     """
     manifest = json.loads((ROOT / 'manifest.json').read_text())
-    vocabulary = {r.value for r in RejectReason}
+    # The vocabulary E4 renders from is the one in the published schema.
+    schema = json.loads((ROOT / 'schemas' / 'validation_result.schema.json').read_text())
+    vocabulary = {r for r in schema['properties']['reject_reason']['enum'] if r}
+    assert vocabulary == {r.value for r in RejectReason}, 'schema and RejectReason disagree'
     rejected = 0
     for f in manifest['fixtures']:
         result = validate(ROOT / f['path'])
