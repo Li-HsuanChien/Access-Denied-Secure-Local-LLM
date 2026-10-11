@@ -26,6 +26,7 @@ import pymupdf
 
 from .schema import (SCHEMA_VERSION, Chunk, ChunkerConfig, Document, PageSpan,
                      text_checksum)
+from .sentences import line_starts, sentence_starts
 from .validation import (Check, CheckStatus, IngestionPolicy, Outcome,
                          RejectReason, ValidationResult)
 
@@ -1154,33 +1155,109 @@ def _close(doc) -> None:
 # ---------------------------------------------------------------------------
 # chunking
 # ---------------------------------------------------------------------------
-_PARA_BREAK = re.compile(r'\n\s*\n')
-_SENTENCE_END = re.compile(r'[.!?]["\'”’)\]]*\s+')
+def _last(points: list[int], above: int, upto: int) -> int | None:
+    """The largest point with above < point <= upto."""
+    i = bisect.bisect_right(points, upto) - 1
+    return points[i] if i >= 0 and points[i] > above else None
 
 
-def _boundary(text: str, position: int, limit: int) -> int:
-    """Move a split point back to the nearest word boundary, within reason."""
-    if position >= limit:
-        return limit
-    window = text.rfind(' ', max(0, position - 120), position)
-    return window + 1 if window != -1 else position
+def _first(points: list[int], frm: int, below: int) -> int | None:
+    """The smallest point with frm <= point < below."""
+    i = bisect.bisect_left(points, frm)
+    return points[i] if i < len(points) and points[i] < below else None
 
 
-def _boundaries(text: str) -> list[int]:
+def plan_cuts(text: str, config: ChunkerConfig) -> list[tuple[int, int, str]]:
     """
-    Offsets where a chunk may begin or end.
+    Decide where every chunk starts and ends: (char_start, char_end, end_kind).
 
-    Paragraph breaks and sentence ends only. Line breaks are deliberately not
-    boundaries: PDF text wraps mid-sentence, so splitting on a newline is how a
-    chunk ends up starting with 'nuclear power plant is to produce electricity'
-    and no subject.
+    A pure function of the text and the config, so the boundary policy can be
+    tested on a string without a PDF.
+
+    Where a chunk ENDS, in order of preference, never past cursor + target_chars:
+      'sentence'   the last sentence end in the budget. An early one is kept:
+                   a short chunk of whole sentences beats a full one that
+                   stops inside a table.
+      'line'       no sentence end in reach (a table, a contents page, a column
+                   of labels): the last line end that does not split a unit.
+      'weak-line'  the last line end of any kind.
+      'word'       one line is longer than the budget: the last word gap.
+                   Before that, the chunk gives up its overlap and starts where
+                   the last one ended, which makes room for a line that fits
+                   in target_chars but not in what the overlap left of it.
+      'hard'       one word is longer than the budget.
+      'document'   the end of the text, including a folded-in runt tail.
+
+    Where the NEXT chunk starts: at the earliest sentence start within
+    overlap_chars of the end, so the shared text is whole sentences and at most
+    overlap_chars long. If the last sentence alone is longer than that, exactly
+    that one sentence is shared, provided it is no more than half the chunk.
+    A chunk that ended on a line end shares whole lines instead.
     """
-    points = {0, len(text)}
-    for match in _PARA_BREAK.finditer(text):
-        points.add(match.end())
-    for match in _SENTENCE_END.finditer(text):
-        points.add(match.end())
-    return sorted(points)
+    n = len(text)
+    if not text.strip():
+        return []
+    target, overlap, minimum = config.target_chars, config.overlap_chars, config.min_chunk_chars
+    sent = sentence_starts(text) if config.respect_sentence_boundaries else [0, n]
+    lines, good = line_starts(text)
+    good_set = set(good)
+
+    out: list[tuple[int, int, str]] = []
+    cursor = prev_end = 0
+    while cursor < n:
+        budget = min(cursor + target, n)
+        progress = max(cursor, prev_end)            # a chunk must add text
+        above = max(progress, min(progress + minimum, budget) - 1)  # ... preferably `minimum` of it
+        if budget >= n:
+            end, kind = n, 'document'
+        else:
+            end, kind = _last(sent, above, budget), 'sentence'
+            if end is None:
+                g, a = _last(good, above, budget), _last(lines, above, budget)
+                if g is not None and (g - cursor) * 4 >= target:
+                    end, kind = g, 'line'           # a clean line end is worth a shorter chunk
+                elif a is not None:
+                    end, kind = a, ('line' if a == g else 'weak-line')
+            if end is None:
+                end, kind = _last(sent, progress, budget), 'sentence'
+            if end is None:
+                a = _last(lines, progress, budget)
+                if a is not None:
+                    end, kind = a, ('line' if a in good_set else 'weak-line')
+            if end is None and cursor < progress:
+                cursor = progress               # no overlap this once, then look again
+                continue
+            if end is None:
+                gap = text.rfind(' ', progress + 1, budget)
+                end, kind = (gap + 1, 'word') if gap != -1 else (budget, 'hard')
+        if n - end < minimum:
+            end, kind = n, 'document'               # fold a runt tail into the last chunk
+        out.append((cursor, end, kind))
+        if end >= n:
+            break
+
+        size = end - cursor
+        back = min(overlap, size // 2)              # never give back more than half the chunk
+        lo = end - back
+        if back <= 0:
+            nxt = end
+        else:
+            nxt = _first(sent, lo, end)
+            if nxt is None and kind == 'sentence':
+                last = _last(sent, cursor, lo)      # the chunk's final sentence starts before the window
+                nxt = last if last is not None and end - last <= size // 2 else end
+            elif nxt is None:
+                nxt = _first(good, lo, end)
+                if nxt is None:
+                    nxt = _first(lines, lo, end)
+                if nxt is None and kind in ('word', 'hard'):
+                    gap = text.find(' ', lo, end)
+                    nxt = gap + 1 if gap != -1 else None
+                if nxt is None:
+                    nxt = end
+        prev_end = end
+        cursor = max(cursor + 1, min(nxt, end))
+    return out
 
 
 def chunks(path: str | Path, config: ChunkerConfig | None = None,
@@ -1191,97 +1268,97 @@ def chunks(path: str | Path, config: ChunkerConfig | None = None,
     Callers validate first. Running this on a rejected file is a caller bug, not
     something this function silently absorbs.
 
-    Boundaries land on sentence and paragraph ends, so a chunk reads as prose
-    rather than starting and stopping mid-clause. target_chars stays a budget:
-    the chunk runs to the last sentence that fits. Where a single sentence is
-    longer than the budget - a run of figure labels, a table - it falls back to
-    the word boundary so one pathological block cannot produce a giant chunk.
+    Every chunk begins and ends on a complete sentence wherever the text has
+    sentences, so a cited chunk reads as a self-contained passage. target_chars
+    is a hard upper bound, not a goal. See plan_cuts() for the policy.
     """
     config = config or ChunkerConfig()
     path = Path(path)
-    raw = path.read_bytes()
-    document_id = document_id or Document.make_id(raw)
+    document_id = document_id or Document.make_id(path.read_bytes())
 
     text, pages, doc = extract(path, sort=config.sorted_reading_order,
                                strip_boilerplate=config.strip_running_headers)
     doc.close()
-    if not text.strip():
-        return []
+    return chunk_stream(text, pages, config, document_id)
 
-    length = len(text)
-    stops = _boundaries(text) if config.respect_sentence_boundaries else []
 
-    def snap(target: int, floor: int) -> int | None:
-        """The last boundary at or before target that still moves past floor."""
-        if not stops or target <= floor:
-            return None
-        index = bisect.bisect_right(stops, target) - 1
-        if index >= 0 and stops[index] > floor:
-            return stops[index]
-        return None
-
+def chunk_stream(text: str, pages: list[_Page], config: ChunkerConfig,
+                 document_id: str) -> list[Chunk]:
+    """chunks() on an extraction already in hand. No file access."""
     out: list[Chunk] = []
-    cursor = ordinal = 0
-
-    while cursor < length:
-        budget = min(cursor + config.target_chars, length)
-        end = snap(budget, cursor)
-        # A boundary that barely clears the cursor means the sentence ends are
-        # sparse here - a run of figure labels, a table, a column of headings -
-        # so honouring it would spend a whole chunk on a fragment. Below half
-        # the budget, cut at the word boundary instead: in a block with no
-        # sentence structure there is no sentence to preserve.
-        if end is None or (end - cursor) * 2 < config.target_chars:
-            end = _boundary(text, budget, length)
-        if end <= cursor:
-            end = budget
-        # A tail too short to stand alone is folded in rather than left a runt.
-        if length - end < config.min_chunk_chars:
-            end = length
-
-        body = text[cursor:end]
-        if body.strip():
-            spans = _page_spans(cursor, end, pages)
-            out.append(Chunk(
-                chunk_id=Chunk.make_id(document_id, config.config_id, cursor, end),
-                document_id=document_id,
-                ordinal=ordinal,
-                text=body,
-                text_checksum_sha256=text_checksum(body),
-                char_start=cursor,
-                char_end=end,
-                page_start=spans[0].page_number,
-                page_end=spans[-1].page_number,
-                page_spans=spans,
-                token_estimate=max(1, len(body) // 4),
-                chunker_config_id=config.config_id,
-                chunker_version=config.chunker_version,
-            ))
-            ordinal += 1
-
-        if end >= length:
-            break
-        # Step back by the overlap window, landing on a sentence start so the
-        # shared region is readable too, then clamp so the cursor always moves.
-        # Never step back by more than half the chunk, or a chunk shorter than
-        # the overlap window would cancel its own forward progress and the
-        # cursor would crawl one character at a time.
-        step_back = min(config.overlap_chars, (end - cursor) // 2)
-        nxt = snap(end - step_back, cursor)
-        if nxt is None or nxt <= cursor:
-            # No sentence start to land on, so at least land between words: a
-            # chunk beginning mid-word is unreadable to a person and unhelpful
-            # to an embedding.
-            nxt = _boundary(text, end - step_back, length)
-        cursor = max(cursor + 1, min(nxt, end))
-
+    page_ends = [page.char_end for page in pages]
+    for start, end, _kind in plan_cuts(text, config):
+        body = text[start:end]
+        if not body.strip():
+            continue                    # nothing a reader could cite (unchanged behaviour)
+        spans = _page_spans(start, end, pages, page_ends)
+        out.append(Chunk(
+            chunk_id=Chunk.make_id(document_id, config.config_id, start, end),
+            document_id=document_id,
+            ordinal=len(out),
+            text=body,
+            text_checksum_sha256=text_checksum(body),
+            char_start=start,
+            char_end=end,
+            page_start=spans[0].page_number,
+            page_end=spans[-1].page_number,
+            page_spans=spans,
+            token_estimate=max(1, len(body) // 4),
+            chunker_config_id=config.config_id,
+            chunker_version=config.chunker_version,
+        ))
     return out
 
 
-def _page_spans(start: int, end: int, pages: list[_Page]) -> list[PageSpan]:
-    """Map a chunk's character range onto the pages and rectangles it covers."""
+@dataclass
+class Processed:
+    """One candidate, validated and (if accepted) chunked from a single extraction."""
+    result: ValidationResult
+    chunks: list[Chunk] | None          # None when the file was rejected
+    text: str | None
+    pages: list[_Page] | None
+    parser_messages: int = 0            # lines the parser printed about the file; a count, never the text
+
+
+def process(path: str | Path, policy: IngestionPolicy | None = None,
+            config: ChunkerConfig | None = None, *, source_filename: str | None = None,
+            checksum_sha256: str | None = None, byte_size: int | None = None,
+            on_page=None) -> Processed:
+    """
+    validate() then chunks(), from one reading of the file.
+
+    A rejected file yields no chunks, by construction: the only chunks this
+    returns are cut from the extraction validate() accepted. That is what
+    "invalid files fail before indexing" rests on.
+    """
+    config = config or ChunkerConfig()
+    keep: list = []
+    notes: dict = {}
+    result = _validate(path, policy, source_filename=source_filename,
+                       checksum_sha256=checksum_sha256, byte_size=byte_size,
+                       sort=config.sorted_reading_order,
+                       strip_boilerplate=config.strip_running_headers,
+                       on_page=on_page, keep=keep, notes=notes)
+    said = notes.get('parser_messages', 0)
+    if result.outcome is Outcome.REJECTED or not keep:
+        return Processed(result, None, None, None, said)
+    text, pages = keep[0]
+    return Processed(result, chunk_stream(text, pages, config, result.document['document_id']),
+                     text, pages, said)
+
+
+def _page_spans(start: int, end: int, pages: list[_Page],
+                page_ends: list[int] | None = None) -> list[PageSpan]:
+    """
+    Map a chunk's character range onto the pages and rectangles it covers.
+    Pages are contiguous and in order, so with their end offsets in hand the
+    first page is found by bisection instead of walking the document per chunk.
+    """
     spans: list[PageSpan] = []
-    for page in pages:
+    first = bisect.bisect_right(page_ends, start) if page_ends is not None else 0
+    for page in pages[first:]:
+        if page.char_start >= end:
+            break
         lo, hi = max(start, page.char_start), min(end, page.char_end)
         if lo >= hi:
             continue
@@ -1306,19 +1383,35 @@ def _page_spans(start: int, end: int, pages: list[_Page]) -> list[PageSpan]:
     return spans
 
 
-def _merge_rects(rects: list[list[float]], tolerance: float = 2.0) -> list[list[float]]:
-    """Merge span rectangles that sit on the same text line, so the UI draws one box per line."""
-    if not rects:
-        return []
-    rects = sorted(rects, key=lambda r: (round(r[1], 1), r[0]))
-    merged = [list(rects[0])]
-    for r in rects[1:]:
-        last = merged[-1]
-        same_line = abs(r[1] - last[1]) <= tolerance and abs(r[3] - last[3]) <= tolerance
-        if same_line and r[0] - last[2] <= 12.0:
-            last[2] = max(last[2], r[2])
-            last[1] = min(last[1], r[1])
-            last[3] = max(last[3], r[3])
+def _merge_rects(rects: list[list[float]], tolerance: float = 2.0,
+                 gap: float = 12.0) -> list[list[float]]:
+    """
+    Merge span rectangles that sit on the same text line, so the UI draws one
+    box per line. Every input rectangle lies inside one of the boxes returned.
+
+    Spans of one line can differ in height by a fraction of a point (a bold
+    word, a symbol font), so rows are formed by tolerance first and only then
+    read left to right. Boxes on a row that are more than `gap` apart stay
+    separate: two labels across a figure, or the two columns of a page.
+    """
+    rows: list[list[list[float]]] = []
+    for r in sorted(rects, key=lambda r: (r[1], r[0])):
+        for row in rows:
+            if abs(r[1] - row[0][1]) <= tolerance and abs(r[3] - row[0][3]) <= tolerance:
+                row.append(r)
+                break
         else:
-            merged.append(list(r))
+            rows.append([r])
+    merged: list[list[float]] = []
+    for row in rows:
+        row.sort(key=lambda r: r[0])
+        current = list(row[0])
+        for r in row[1:]:
+            if r[0] - current[2] <= gap:
+                current = [min(current[0], r[0]), min(current[1], r[1]),
+                           max(current[2], r[2]), max(current[3], r[3])]
+            else:
+                merged.append(current)
+                current = list(r)
+        merged.append(current)
     return [[round(v, 2) for v in r] for r in merged]

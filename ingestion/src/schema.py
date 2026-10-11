@@ -55,16 +55,27 @@ class ChunkerConfig:
     would silently resolve to the wrong passage. Changing any field below
     changes every ID, which is the honest outcome.
     """
+    # Chunk size and overlap. target_chars is a hard upper bound, not a goal:
+    # a chunk stops at the last complete sentence that fits. overlap_chars is
+    # the most text adjacent chunks share, in whole sentences (one sentence is
+    # always shared when it is no more than half the chunk). min_chunk_chars is
+    # the least new text a chunk adds, and the size below which a final tail is
+    # folded into the chunk before it.
     target_chars: int = 1200
     overlap_chars: int = 200
     min_chunk_chars: int = 100
-    split_on_word_boundary: bool = True
     # Extraction profile.
     sorted_reading_order: bool = True
     strip_running_headers: bool = True
-    # Chunk boundary policy.
+    # Chunk boundary policy. False cuts on whole lines instead of sentences.
     respect_sentence_boundaries: bool = True
-    chunker_version: str = 'refchunk-2.0.1'
+    chunker_version: str = 'refchunk-3.0.0'
+
+    def __post_init__(self) -> None:
+        for name, least in (('target_chars', 1), ('overlap_chars', 0), ('min_chunk_chars', 0)):
+            value = getattr(self, name)
+            if isinstance(value, bool) or not isinstance(value, int) or value < least:
+                raise ValueError(f'{name} must be a whole number >= {least}, not {value!r}')
 
     @property
     def config_id(self) -> str:
