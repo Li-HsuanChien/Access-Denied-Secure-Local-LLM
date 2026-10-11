@@ -3,7 +3,7 @@ E2 ingestion schemas, version 1.0.0.
 
 These dataclasses are the source of truth. The JSON Schema files in schemas/
 describe the same objects for consumers outside Python (E3's index adapter, E4's
-mock contracts); tests/test_conformance.py asserts the two cannot drift.
+mock contracts); tests/test_contracts.py asserts the two cannot drift.
 
 Identity rules, which the Week 3 criterion "same file/config yields same IDs"
 depends on:
@@ -77,10 +77,15 @@ class ChunkerConfig:
             if isinstance(value, bool) or not isinstance(value, int) or value < least:
                 raise ValueError(f'{name} must be a whole number >= {least}, not {value!r}')
 
+    @staticmethod
+    def id_of(settings: dict) -> str:
+        """The config_id of a set of settings as stored, without building a ChunkerConfig."""
+        canonical = json.dumps(settings, sort_keys=True, separators=(',', ':'))
+        return _sid(canonical, prefix='cfg', length=12)
+
     @property
     def config_id(self) -> str:
-        canonical = json.dumps(asdict(self), sort_keys=True, separators=(',', ':'))
-        return _sid(canonical, prefix='cfg', length=12)
+        return ChunkerConfig.id_of(asdict(self))
 
     def to_dict(self) -> dict:
         d = asdict(self)
@@ -106,7 +111,12 @@ class Document:
 
     @staticmethod
     def make_id(file_bytes: bytes) -> str:
-        return _sid(_sha256(file_bytes), prefix='doc')
+        return Document.id_from_checksum(_sha256(file_bytes))
+
+    @staticmethod
+    def id_from_checksum(checksum_sha256: str) -> str:
+        """The same ID from a SHA-256 already computed, e.g. while copying the file."""
+        return _sid(checksum_sha256, prefix='doc')
 
     def to_dict(self) -> dict:
         return {'schema_version': SCHEMA_VERSION, **asdict(self)}
@@ -122,9 +132,9 @@ class PageSpan:
 
     A chunk is NOT confined to a single page, so provenance is a list of these
     rather than one page number. See WALKTHROUGH.md: on the NRC baseline
-    fixture, which averages 775 characters per page, a 1,200-character chunk
-    spans two to three pages, and a single page_number field would make its
-    citation point at the wrong page.
+    fixture, which averages about 670 characters per page, a 1,200-character
+    chunk spans two to three pages, and a single page_number field would make
+    its citation point at the wrong page.
     """
     page_number: int                 # 1-based, as a reader would cite it
     char_start: int                  # offset into the document text stream
