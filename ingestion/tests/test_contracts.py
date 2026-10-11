@@ -26,7 +26,7 @@ import pymupdf
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
-from src.ingest import _boundaries, chunks, extract, validate
+from src.ingest import _merge_rects, chunks, extract, process, validate
 from src.schema import ChunkerConfig, Document, citation_targets
 from src.validation import CheckStatus, IngestionPolicy, Outcome, RejectReason
 
@@ -494,10 +494,9 @@ def test_settings_are_checked_when_they_are_made():
 # ---------------------------------------------------------------------------
 # Week 2  "chunk size/overlap behavior is testable"
 #
-# The chunker is naive on purpose, but naive is not the same as unspecified.
-# These pin the two knobs E3 will tune against, so replacing the chunker with a
-# sentence-aware one cannot quietly change what target_chars and overlap_chars
-# mean.
+# These pin what target_chars, overlap_chars and min_chunk_chars mean, so a
+# change to how boundaries are chosen cannot quietly change the knobs E3 tunes
+# against. Where the boundaries fall is tested in test_chunking.py.
 # ---------------------------------------------------------------------------
 SIZE_CONFIGS = [
     ChunkerConfig(),
@@ -534,34 +533,33 @@ def test_chunk_size_respects_the_target():
     return f'{checked} chunks stay within target across {len(SIZE_CONFIGS)} configs'
 
 
-def test_overlap_covers_the_configured_window():
+def test_overlap_is_bounded_and_shared_verbatim():
     """
-    Overlap is now sentence-aligned, so it is a floor rather than an exact
-    figure: the chunk starts at the sentence boundary at or before
-    (previous_end - overlap_chars), which can only reach further back, never
-    less far. The shared region is still the same characters in both - the tail
-    of one, the head of the next - because retrieval dedupes against it.
-
-    The window is also capped at half the previous chunk. Without that, a chunk
-    shorter than overlap_chars would step back as far as it stepped forward and
-    the cursor would crawl one character at a time.
+    overlap_chars is the most text adjacent chunks share, in whole sentences.
+    When the last sentence is itself longer than that window, that one sentence
+    is shared rather than nothing, so the overlap can exceed overlap_chars; it
+    never exceeds half the chunk. Whatever is shared is the same characters in
+    both chunks - the tail of one, the head of the next - because retrieval
+    dedupes against it.
     """
     text = _stream(NORMAL)
-    pairs = 0
+    pairs = shared = 0
     for cfg in SIZE_CONFIGS:
         cs = chunks(NORMAL, cfg)
         for a, b in zip(cs, cs[1:]):
             overlap = a.char_end - b.char_start
-            floor = min(cfg.overlap_chars, (a.char_end - a.char_start) // 2)
-            assert overlap >= floor, (
-                f'chunks {a.ordinal}->{b.ordinal} overlap {overlap}, floor {floor}')
-            assert b.char_start > a.char_start, 'chunker failed to advance'
+            assert 0 <= overlap <= (a.char_end - a.char_start) // 2, (
+                f'chunks {a.ordinal}->{b.ordinal} overlap {overlap} of a '
+                f'{a.char_end - a.char_start}-char chunk')
+            assert b.char_start > a.char_start and b.char_end > a.char_end, 'chunker failed to advance'
+            assert cfg.overlap_chars or overlap == 0, 'overlap with overlap_chars=0'
             if overlap:
-                shared = text[b.char_start:a.char_end]
-                assert a.text.endswith(shared), 'overlap is not the tail of the earlier chunk'
-                assert b.text.startswith(shared), 'overlap is not the head of the later chunk'
+                piece = text[b.char_start:a.char_end]
+                assert a.text.endswith(piece), 'overlap is not the tail of the earlier chunk'
+                assert b.text.startswith(piece), 'overlap is not the head of the later chunk'
+                shared += 1
             pairs += 1
-    return f'{pairs} adjacent pairs overlap by at least the configured window'
+    return f'{pairs} adjacent pairs, {shared} share text, none more than half a chunk'
 
 
 def test_zero_overlap_produces_a_clean_partition():
@@ -783,23 +781,6 @@ def test_chunks_never_split_a_word():
                 assert not (text[c.char_end - 1].isalnum() and text[c.char_end].isalnum()), \
                     f'{path.name} chunk {c.ordinal} ends mid-word'
     return 'no chunk begins or ends inside a word, across all three documents'
-
-
-def test_chunks_begin_on_sentence_boundaries():
-    """
-    Chunk starts land on a sentence or paragraph boundary wherever the text has
-    one. Blocks with no sentence structure at all - a column of figure labels,
-    a table - fall back to the word boundary, so this is a strong majority
-    rather than an absolute.
-    """
-    for path in ACCEPTING:
-        text = _stream(path)
-        allowed = set(_boundaries(text))
-        cs = chunks(path)
-        on = sum(1 for c in cs if c.char_start in allowed)
-        assert on / len(cs) >= 0.9, (
-            f'{path.name}: only {on}/{len(cs)} chunks start on a sentence boundary')
-    return 'at least 90% of chunks start on a sentence or paragraph boundary'
 
 
 def test_running_headers_are_stripped():
