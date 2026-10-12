@@ -1,0 +1,161 @@
+{
+  "chunk_id": "chk_4fefcb5dcc8f3f48cc8a1519",
+  "targets": [
+    {
+      "schema_version": "1.0.0",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "chunk_id": "chk_4fefcb5dcc8f3f48cc8a1519",
+      "page_number": 1,
+      "highlight_rects": [
+        [
+          220.08,
+          135.0,
+          410.02,
+          201.42
+        ],
+        [
+          238.38,
+          204.0,
+          391.66,
+          270.42
+        ],
+        [
+          272.52,
+          273.0,
+          357.48,
+          339.42
+        ],
+        [
+          200.04,
+          342.0,
+          430.07,
+          408.42
+        ],
+        [
+          181.74,
+          411.0,
+          448.37,
+          477.42
+        ],
+        [
+          72.0,
+          562.97,
+          557.97,
+          576.25
+        ],
+        [
+          72.0,
+          577.13,
+          558.0,
+          590.41
+        ],
+        [
+          72.0,
+          591.29,
+          558.0,
+          604.57
+        ],
+        [
+          72.0,
+          605.45,
+          386.48,
+          618.73
+        ]
+      ],
+      "coordinates_reliable": true,
+      "page_width": 612.0,
+      "page_height": 792.0,
+      "quoted_text": "Nuclear\nPower\n for\nElectrical\nGeneration\nThe purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a\nnuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant\nhas many similarities to other electrical generating facilities.  It should also be obvious that nuclear\npower plants have some significant differences from other plants."
+    },
+    {
+      "schema_version": "1.0.0",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "chunk_id": "chk_4fefcb5dcc8f3f48cc8a1519",
+      "page_number": 2,
+      "highlight_rects": [
+        [
+          379.62,
+          69.34,
+          438.49,
+          80.1
+        ],
+        [
+          134.94,
+          119.5,
+          179.82,
+          130.26
+        ],
+        [
+          403.2,
+          121.0,
+          425.34,
+          131.76
+        ],
+        [
+          420.42,
+          183.88,
+          457.51,
+          194.64
+        ],
+        [
+          425.52,
+          195.04,
+          452.4,
+          205.8
+        ],
+        [
+          152.88,
+          211.96,
+          179.22,
+          222.72
+        ],
+        [
+          365.58,
+          248.92,
+          439.74,
+          259.68
+        ],
+        [
+          234.06,
+          301.95,
+          440.07,
+          320.55
+        ],
+        [
+          54.0,
+          644.57,
+          540.07,
+          657.85
+        ],
+        [
+          54.0,
+          658.73,
+          539.99,
+          672.01
+        ],
+        [
+          54.0,
+          672.89,
+          540.0,
+          686.17
+        ],
+        [
+          54.0,
+          687.05,
+          540.07,
+          700.33
+        ],
+        [
+          54.0,
+          701.21,
+          360.02,
+          714.49
+        ]
+      ],
+      "coordinates_reliable": true,
+      "page_width": 612.0,
+      "page_height": 792.0,
+      "quoted_text": "Stationary Coil\nDrive Shaft\nRotor\nElectrical\nOutput\nFlange\nGenerator Housing\nELECTRICAL GENERATOR\nOf the several known methods to produce electricity, by far the most practical for large scale production\nand distribution involves the use of an “electrical generator.”  In an electrical generator, a magnet (rotor)\nrevolves inside a coil of wire (stator), creating a flow of electrons inside the wire.  This flow of electrons\nis called electricity.  Some mechanical device (wind turbine, water turbine, steam turbine, diesel engine,\netc.) must be available to provide the motive force for the rotor."
+    }
+  ]
+}
