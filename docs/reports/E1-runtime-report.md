@@ -1,6 +1,6 @@
 # E1 LLM runtime: Weeks 1–2 report (Otto Slade)
 
-**Deliverable:** the `docqa-runtime` project at [`app/open-webui/backend/secure_qa/answering/llama_cpp/`](../../app/open-webui/backend/secure_qa/answering/llama_cpp/README.md). Start with its README; the `docs/` paths below are relative to that folder.
+**Deliverable:** the `docqa-runtime` project at [`app/document-qa/backend/secure_qa/answering/llama_cpp/`](../../app/document-qa/backend/secure_qa/answering/llama_cpp/README.md). Start with its README; the `docs/` paths below are relative to that folder.
 
 **Status:** Built from scratch and tested on Linux against a stub backend **and a real llama.cpp `llama-server`**.
 It has **not yet been run on the Windows reference laptop or with real model weights**; that's the remaining step
