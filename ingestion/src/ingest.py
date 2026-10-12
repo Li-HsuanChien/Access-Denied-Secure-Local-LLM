@@ -1,9 +1,7 @@
 """
-Reference implementation of the E2 ingestion seam: validate() and chunks().
-
-This is the Week 1 walking skeleton, not the Week 4 production pipeline. It
-exists to prove the schemas are implementable and to give E3 and E4 something
-real to code against instead of a document describing objects nobody has built.
+The single-document half of E2 ingestion: validate(), extract() and chunks(),
+and process(), which does all three from one reading of the file. The import
+flow across a batch of files is src/pipeline.py.
 
 The canonical text stream
 -------------------------
