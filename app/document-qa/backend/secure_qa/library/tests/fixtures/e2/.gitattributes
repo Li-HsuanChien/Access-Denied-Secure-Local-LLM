@@ -1,0 +1,2 @@
+# Offsets index into these exact bytes; never convert line endings.
+nrc_text.txt -text -diff
