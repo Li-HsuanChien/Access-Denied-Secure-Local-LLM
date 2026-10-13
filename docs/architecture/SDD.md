@@ -39,15 +39,15 @@ The operating system provides full-disk encryption through BitLocker, FileVault,
 
 ### 4. System Architecture and Interfaces
 
-A pinned Open WebUI fork supplies the SvelteKit interface and Python/FastAPI host inside a custom Tauri desktop shell. Tauri starts and stops the Python host and llama.cpp runtime. The host and model runtime bind only to 127.0.0.1; the UI uses the host through same-origin loopback HTTP. This local transport is not a standalone browser workflow and is not externally reachable. Four dedicated Python workflow modules own product behavior behind the interfaces in this SDD. PyMuPDF, Chroma, llama.cpp, SQLite, Tauri, and operating-system details remain inside implementations or adapters.
+A pinned Open WebUI fork supplies the SvelteKit interface and Python/FastAPI host inside a custom Tauri desktop shell. Tauri starts and stops the Python host and llama.cpp runtime. The host and model runtime bind only to 127.0.0.1; the UI uses the host through local loopback HTTP. This local transport is not a standalone browser workflow and is not externally reachable. Five dedicated Python workflow modules own product behavior behind the interfaces in this SDD. PyMuPDF, Chroma, llama.cpp, SQLite, Tauri, and operating-system details remain inside implementations or adapters.
 
 *Figure 1. Workflow-centered architecture and external seams.*
 
 #### 4.1 Collection Library
 
-**Interface:** Publish a candidate collection, list available versions, return the active version, and roll back to the previous version.
+**Interface:** Review selected PDFs and return accepted files, every rejection reason, warnings, and a review ID; publish only after explicit confirmation when any file is rejected; report publication status and accept cancellation; list available versions, return the active version, and roll back to the previous version.
 
-The module hides PDF validation, extraction, chunking, embedding, indexing, staging, manifest creation, integrity checks, atomic activation, rollback, and cleanup.
+The module hides PDF validation, extraction, chunking, embedding, indexing, staging, manifest creation, integrity checks, atomic activation, rollback, and cleanup. Indexing checks cancellation between bounded chunk batches. Source PDFs are staged into the candidate version before the active catalog pointer changes, so an activated collection always has its source files and a failed build leaves the active version untouched. The local host exposes versioned `library.review`, `library.publish`, `library.status`, `library.cancel`, `library.versions`, and `library.rollback` operations. Review state is local and temporary; rejected files remain visible until the user confirms the accepted remainder or starts another review. Progress and cancellation are associated with the publication request ID.
 
 **Invariants:**
 
@@ -69,20 +69,26 @@ The module hides retrieval, relevance filtering, visual-evidence selection, page
 
 #### 4.3 Conversation History
 
-**Interface:** Save, list, load, delete, clear, and disable conversation persistence. The module hides the SQLite schema and migrations.
+**Interface:** Save, list, load, delete, clear, and disable conversation persistence. The module hides the SQLite schema and migrations. The local host exposes versioned `history.save`, `history.list`, `history.open`, `history.delete`, `history.clear`, `history.enabled`, and `history.set_enabled` operations. Each saved answer stores its model ID and collection version alongside the answer payload. A save error is reported separately and does not remove the answer already shown in Chat.
 
 **Invariants:**
 
 - Disabling persistence prevents new conversations from being written.
 - Each saved answer records the collection version and model version that produced it.
 
-#### 4.4 Release Verification
+#### 4.4 Local Settings
+
+**Interface:** Read and update the default general-knowledge preference, control history persistence through the Conversation History interface, and read live readiness from the host health operation. The general-knowledge preference is stored in local SQLite and defaults to enabled. Readiness is derived from the current model and active collection; it is not a persisted user preference. Settings do not add remote models, web search, plugins, downloads, or autonomous tools.
+
+The host exposes `settings.get` and `settings.update`. The frontend uses the History interface to change persistence so there is one owner for that preference. SQLite files rely on operating-system full-disk encryption as specified in §3; the application does not claim database-level encryption.
+
+#### 4.5 Release Verification
 
 **Interface:** Verify a release bundle and return verified release metadata or a rejection. The module hides checksum calculation, signature validation, platform matching, and verification logging.
 
 **Invariant:** An unsigned, modified, corrupt, or wrong-platform bundle cannot be installed.
 
-#### 4.5 External Seams and Adapters
+#### 4.6 External Seams and Adapters
 
 - **Document-store seam:** Chroma is the selected production document-store adapter for the single-worker MVP; workflow tests use a deterministic fake adapter. Revisit this choice through an SDD update or ADR if it fails qualification.
 - **Model-runtime seam:** llama.cpp is the production adapter; tests use a deterministic fake that returns controlled outputs.
@@ -90,15 +96,15 @@ The module hides retrieval, relevance filtering, visual-evidence selection, page
 - PDF processing remains inside the Collection Library and Question Answering implementations unless a second genuine implementation requires a new seam.
 - LangChain Core may be used internally when it reduces orchestration code, but LangChain objects must not appear in workflow interfaces or persistent records.
 
-#### 4.6 Frontend-to-Host HTTP Contract
+#### 4.7 Frontend-to-Host HTTP Contract
 
-The Svelte frontend sends versioned same-origin HTTP requests to the Python host, with a request ID, operation name, and validated payload. The host returns progress events followed by one result or error associated with that request ID; cancellation targets the request ID. Schemas reject unknown operations or fields. The Python host and llama.cpp listener bind only to 127.0.0.1, and the Tauri shell manages their lifecycle. No listener binds to a non-loopback address, and the application does not support a standalone browser workflow.
+The Svelte frontend sends versioned local HTTP requests to the Python host, with a request ID, operation name, and validated payload. Each request returns one result or error associated with that request ID. Long library publication requests are accompanied by `library.status` polling, and cancellation targets the publication request ID. Schemas reject unknown operations or fields. The Python host and llama.cpp listener bind only to 127.0.0.1, and the Tauri shell manages their lifecycle. No listener binds to a non-loopback address, and the application does not support a standalone browser workflow.
 
-#### 4.7 Answering UI QA Harness
+#### 4.8 Feature UI QA Harness
 
-The pinned Open WebUI v0.11.4 SvelteKit source is vendored under `app/document-qa/frontend/`. The first product-owned view is the `answering` feature. Its `AnsweringView` depends on the narrow `AnsweringClient` interface (`health()` and `ask(question, generalKnowledge)`). The loopback HTTP adapter validates the destination and request/response envelope; a deterministic fixture adapter supplies repeatable states through the same interface. Workflow classification, evidence selection, and citation validation remain in the Python Question Answering module.
+The pinned Open WebUI v0.11.4 SvelteKit source is vendored under `app/document-qa/frontend/`. Product-owned views live in `lib/features/<feature>/` and depend on narrow feature clients. The Library view owns file selection and review confirmation, History owns browsing and deletion controls, and Settings owns approved preferences and a live readiness display. The loopback adapter validates the request envelope; workflow decisions remain in Python feature modules. Chat saves each returned answer best-effort, so a persistence failure never clears or hides that answer.
 
-For developer QA only, `npm run dev:qa` serves the `/qa` route on `127.0.0.1:5173`, and `python app/document-qa/backend/dev_host.py` serves the deterministic fake model, fake embedder, and seeded collection on `127.0.0.1:8765`. It needs the pinned Python dependencies and Chroma storage package, but no model weights. The QA route bypasses Open WebUI session, API, and websocket initialization and sends only the documented `GET /health` and `POST /v1/requests` calls to the loopback host. The browser route is not a supported standalone product workflow; the released application continues to run within Tauri. The current development host returns one result rather than progress events and does not support cancellation; the view disables a second submission while a question is in flight.
+For developer QA only, `npm run dev:qa` serves the `/qa`, `/library`, `/history`, and `/settings` routes on `127.0.0.1:5173`, and `python app/document-qa/backend/dev_host.py` serves the deterministic fake model, fake embedder, and seeded collection on `127.0.0.1:8765`. It needs the pinned Python dependencies, PyMuPDF, and Chroma storage package, but no model weights. The QA routes bypass Open WebUI session, API, and websocket initialization and call only versioned operations on the loopback host. The browser routes are not a supported standalone product workflow; the released application continues to run within Tauri. Library publication status can be polled by request ID and cancellation is checked before atomic activation.
 
 ### 5. Data Design
 

@@ -1,9 +1,7 @@
-"""Development stand-in for the Open WebUI host: a loopback-only test endpoint for the RAG answer path.
+"""Loopback-only development host for frontend and workflow contract testing.
 
-Until the pinned Open WebUI fork is in `app/document-qa/`, this gives the frontend
-(E4) a live backend to call. It stays a thin adapter (backend/AGENTS.md): it
-validates the SDD §4.6 request envelope and dispatches to the Question Answering
-workflow; all behavior lives in `secure_qa`.
+It stays a thin adapter (backend/AGENTS.md): it validates the versioned request
+envelope and dispatches to workflow modules; behavior lives in `secure_qa`.
 
     python dev_host.py                                    # deterministic test model, seeded golden collection
     python dev_host.py --runtime http://127.0.0.1:8080    # E1's runtime (`docqa-runtime up`)
@@ -13,10 +11,12 @@ workflow; all behavior lives in `secure_qa`.
                          "payload": {"question": "...", "general_knowledge": true}}
                         -> {"request_id": "...", "operation": "answering.ask", "result": <Answer, wire/answer.schema.json>}
 
+    Other operations manage PDF review/publication, local history and approved settings.
+
 A workflow outcome, including `status: "failed"`, is a 200 with `result`.
 Transport problems (bad JSON, unknown operation or field) are 4xx with
-`{"request_id", "error": {"code", "message", "hint"}}`. Progress events and
-cancellation (SDD §4.6) are not implemented yet; the answer arrives in one response.
+`{"request_id", "error": {"code", "message", "hint"}}`. Library progress is
+polled by request ID; cancellation checks leave the active collection unchanged.
 """
 
 from __future__ import annotations
@@ -37,8 +37,17 @@ from secure_qa.answering import AnswerService, ModelRuntimeError  # noqa: E402
 from secure_qa.answering.model_runtime import is_loopback  # noqa: E402
 
 API_VERSION = "secure-qa-dev/1"
-MAX_BODY = 64 * 1024
-OPERATIONS = {"answering.ask": {"question": str, "general_knowledge": bool}}
+MAX_BODY = 150 * 1024 * 1024
+OPERATIONS = {
+    "answering.ask": {"question": str, "general_knowledge": bool},
+    "library.review": {"files": list}, "library.publish": {"review_id": str, "confirmed": bool},
+    "library.cancel": {"target_request_id": str}, "library.status": {"target_request_id": str},
+    "library.versions": {}, "library.rollback": {},
+    "history.save": {"conversation_id": str, "title": str, "answer": dict},
+    "history.list": {}, "history.open": {"conversation_id": str}, "history.delete": {"conversation_id": str},
+    "history.clear": {}, "history.enabled": {}, "history.set_enabled": {"enabled": bool},
+    "settings.get": {}, "settings.update": {"general_knowledge": bool},
+}
 ENVELOPE = {"request_id", "operation", "payload"}
 _LOCAL_ORIGIN_SCHEMES = ("tauri://", "app://")
 
@@ -46,10 +55,20 @@ _LOCAL_ORIGIN_SCHEMES = ("tauri://", "app://")
 class DevHost(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, port: int, service: AnswerService, versions) -> None:
+    def __init__(self, port: int, service: AnswerService, versions, library=None, history=None, settings=None) -> None:
         super().__init__(("127.0.0.1", port), Handler)  # loopback only, never configurable (SDD §4.6, §10)
         self.service = service
         self.versions = versions
+        if history is None:
+            from secure_qa.history import ConversationHistory
+            history = ConversationHistory(versions.root / "history.sqlite3")
+        if settings is None:
+            from secure_qa.settings import Settings
+            settings = Settings(versions.root / "settings.sqlite3")
+        if library is None:
+            from secure_qa.library.workflow import CollectionLibrary
+            library = CollectionLibrary(versions)
+        self.library, self.history, self.settings = library, history, settings
 
     def health(self) -> dict:
         try:
@@ -66,7 +85,8 @@ class DevHost(ThreadingHTTPServer):
                    "embedding_model": active.embedding_model if active else None}
         ready = model["ready"] and library["ready"]
         return {"status": "ok" if ready else "degraded", "ready": ready, "api_version": API_VERSION,
-                "answering": model, "library": library}
+                "answering": model, "library": library,
+                "preferences": self.settings.read() | {"history_enabled": self.history.enabled()}}
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -140,7 +160,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._error(404, None, "not_found", "Unknown path", "Use POST /v1/requests.")
         length = int(self.headers.get("Content-Length") or 0)
         if length <= 0 or length > MAX_BODY:
-            return self._error(413 if length > MAX_BODY else 411, None, "invalid_request", "Missing or oversized body", "Send a JSON body under 64 KiB.")
+            return self._error(413 if length > MAX_BODY else 411, None, "invalid_request", "Missing or oversized body", "Send a JSON body under 150 MiB.")
         try:
             body = json.loads(self.rfile.read(length))
         except (json.JSONDecodeError, UnicodeDecodeError):
@@ -150,12 +170,38 @@ class Handler(BaseHTTPRequestHandler):
             return self._error(400, request_id, "invalid_request", problem, "See the request envelope in dev_host.py.")
         payload = body["payload"]
         try:
-            collection = self.server.versions.open_active()
-        except LookupError:
-            return self._error(409, request_id, "no_active_collection", "No collection is published yet", "Publish a collection, then ask again.")
-        answer = self.server.service.answer(payload["question"], collection, request_id=request_id,
-                                            general_knowledge=payload.get("general_knowledge"))
-        self._send(200, {"request_id": request_id, "operation": body["operation"], "result": answer.to_dict()})
+            operation = body["operation"]
+            if operation == "answering.ask":
+                try:
+                    collection = self.server.versions.open_active()
+                except LookupError:
+                    return self._error(409, request_id, "no_active_collection", "No collection is published yet", "Publish a collection, then ask again.")
+                general = payload.get("general_knowledge", self.server.settings.read()["general_knowledge"])
+                result = self.server.service.answer(payload["question"], collection, request_id=request_id,
+                                                    general_knowledge=general).to_dict()
+            elif operation == "library.review": result = self.server.library.review(payload["files"])
+            elif operation == "library.publish": result = self.server.library.publish(payload["review_id"], confirmed=payload["confirmed"], request_id=request_id)
+            elif operation == "library.cancel": result = {"cancelled": self.server.library.cancel(payload["target_request_id"])}
+            elif operation == "library.status": result = self.server.library.status(payload["target_request_id"])
+            elif operation == "library.versions": result = self.server.library.versions_list()
+            elif operation == "library.rollback": result = self.server.library.rollback()
+            elif operation == "history.save": result = {"saved": self.server.history.save(payload["conversation_id"], payload["title"], payload["answer"])}
+            elif operation == "history.list": result = {"conversations": self.server.history.list()}
+            elif operation == "history.open": result = {"conversation": self.server.history.open(payload["conversation_id"])}
+            elif operation == "history.delete": result = {"deleted": self.server.history.delete(payload["conversation_id"])}
+            elif operation == "history.clear": self.server.history.clear(); result = {"cleared": True}
+            elif operation == "history.enabled": result = {"enabled": self.server.history.enabled()}
+            elif operation == "history.set_enabled": self.server.history.set_enabled(payload["enabled"]); result = {"enabled": self.server.history.enabled()}
+            elif operation == "settings.get": result = self.server.settings.read()
+            elif operation == "settings.update": result = self.server.settings.update(general_knowledge=payload["general_knowledge"])
+            else: return self._error(400, request_id, "invalid_request", "Unknown operation", "Choose a supported local workflow operation.")
+        except LookupError as exc:
+            return self._error(404, request_id, "not_found", str(exc), "Refresh the local workflow and try again.")
+        except ValueError as exc:
+            return self._error(400, request_id, "invalid_request", str(exc), "Review the selected files and options.")
+        except Exception:
+            return self._error(500, request_id, "workflow_failed", "The local workflow could not finish.", "The current answer and active collection are preserved; retry after reviewing local storage.")
+        self._send(200, {"request_id": request_id, "operation": operation, "result": result})
 
 
 def validate(body) -> tuple[str | None, str | None]:
@@ -178,8 +224,13 @@ def validate(body) -> tuple[str | None, str | None]:
     for name, kind in fields.items():
         if name in payload and not isinstance(payload[name], kind):
             return request_id, f"payload.{name} must be {kind.__name__}"
-    if "question" not in payload:
-        return request_id, "payload.question is required"
+    if body["operation"] == "library.review":
+        for index, item in enumerate(payload["files"]):
+            if not isinstance(item, dict) or set(item) != {"name", "data"} or not isinstance(item["name"], str) or not isinstance(item["data"], str):
+                return request_id, f"payload.files[{index}] must contain only string name and data fields"
+    missing = fields.keys() - payload.keys()
+    if missing:
+        return request_id, f"payload.{sorted(missing)[0]} is required"
     return request_id, None
 
 
@@ -187,6 +238,9 @@ def main() -> None:
     from secure_qa.answering import FakeModelRuntime, LlamaCppGatewayRuntime
     from secure_qa.answering.benchmarks.golden import golden_collection
     from secure_qa.library import CollectionVersions, FakeEmbedder
+    from secure_qa.library.workflow import CollectionLibrary
+    from secure_qa.history import ConversationHistory
+    from secure_qa.settings import Settings
     from secure_qa.paths import DATA_DIR
 
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
@@ -203,7 +257,10 @@ def main() -> None:
         chunks, documents, _ = golden_collection()
         version = versions.publish(chunks, documents)
         print(f"dev_host: published the golden test collection as {version.version_id}", flush=True)
-    server = DevHost(args.port, AnswerService(runtime), versions)
+    history = ConversationHistory(DATA_DIR / "history.sqlite3")
+    settings = Settings(DATA_DIR / "settings.sqlite3")
+    library = CollectionLibrary(versions)
+    server = DevHost(args.port, AnswerService(runtime), versions, library, history, settings)
     print(f"dev_host: ready on http://127.0.0.1:{args.port}  (GET /health, POST /v1/requests)  "
           f"runtime={args.runtime} collection={versions.active().version_id}", flush=True)
     try:
@@ -213,6 +270,7 @@ def main() -> None:
     finally:
         server.server_close()
         versions.close()
+        history.close()
 
 
 if __name__ == "__main__":

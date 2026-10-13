@@ -1,12 +1,14 @@
 # Secure QA backend features
 
-This Python package holds the four SDD workflow modules and supporting diagnostics behind their public interfaces. The Open WebUI Python host dispatches versioned loopback HTTP requests to these workflows and does not bind to a non-loopback interface. See the [SDD](../../../../docs/architecture/SDD.md).
+This Python package holds the five SDD workflow modules and supporting diagnostics behind their public interfaces. The Open WebUI Python host dispatches versioned loopback HTTP requests to these workflows and does not bind to a non-loopback interface. See the [SDD](../../../../docs/architecture/SDD.md).
 
 | Module | State |
 |---|---|
-| `library/` | Document store adapter (Chroma) and versioned collections with an atomic active pointer and rollback. PDF validation and review are not built yet. |
+| `library/` | PDF review, validation, extraction, cancellable publication, source retention, and versioned Chroma collections. |
 | `answering/` | Text answer path: retrieval, context assembly, model runtime seam (E1 gateway and fake), citation validation, and the answer payload. Visual evidence is not built yet. |
-| `history/`, `release_verification/`, `diagnostics/` | Scaffold only |
+| `history/` | Local SQLite conversation storage and persistence controls. |
+| `settings/` | Persisted general-knowledge preference and live readiness contract. |
+| `release_verification/`, `diagnostics/` | Release verification and local diagnostics workflows. |
 
 Run from `app/document-qa/backend` with the repository's virtualenv:
 
@@ -14,4 +16,4 @@ Run from `app/document-qa/backend` with the repository's virtualenv:
 ../../../.venv/bin/python -m unittest discover -s secure_qa -t .
 ```
 
-`dev_host.py`, next to this package, is a development stand-in for the host that serves the answer path on `127.0.0.1` for frontend work.
+`dev_host.py`, next to this package, is a loopback-only development host that dispatches all current feature operations.
