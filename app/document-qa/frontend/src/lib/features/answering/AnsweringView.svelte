@@ -1,6 +1,7 @@
 <script lang="ts">
 	import { onMount, tick } from 'svelte';
 	import type { Answer, AnsweringClient, HealthStatus } from './types';
+	import { workspaceVoice } from '$lib/features/personality/presentation';
 
 	export let client: AnsweringClient;
 
@@ -14,7 +15,7 @@
 	let questionInput: HTMLTextAreaElement;
 
 	function errorMessage(cause: unknown): string {
-		if (!(cause instanceof Error)) return 'The local service is unavailable. Start it and try again.';
+		if (!(cause instanceof Error)) return workspaceVoice.serviceUnavailable;
 		const hint = 'hint' in cause && typeof cause.hint === 'string' ? cause.hint : '';
 		return `${cause.message} ${hint}`.trim();
 	}
@@ -56,7 +57,7 @@
 </script>
 
 <svelte:head>
-	<title>Chat · Access Denied</title>
+	<title>{workspaceVoice.chatTitle}</title>
 	<meta name="description" content="Ask questions about your local document collection." />
 </svelte:head>
 
@@ -67,7 +68,7 @@
 		<span class="local-tag"><span></span> LOCAL WORKSPACE</span>
 	</header>
 
-	<main>
+		<main>
 		<p class="sr-only" role="status" aria-live="polite" aria-atomic="true">{busy ? 'Preparing your answer.' : error ? 'The question could not be answered.' : answer?.status === 'answered' ? 'Answer ready.' : answer?.status === 'insufficient_evidence' ? 'The library has insufficient evidence.' : answer?.status === 'failed' ? 'The answer could not be completed.' : ''}</p>
 		<section class="intro" aria-labelledby="page-title">
 			<p class="eyebrow">PRIVATE DOCUMENT ASSISTANT</p>
@@ -87,15 +88,15 @@
 
 		<section class="conversation" aria-label="Question and answer">
 			{#if !answer && !error && !busy}
-				<div class="empty-state"><div class="spark" aria-hidden="true">✳</div><h2>Start with a question</h2><p>Ask about the documents in your local library.</p></div>
+				<div class="empty-state"><div class="spark" aria-hidden="true">✳</div><h2>{workspaceVoice.emptyTitle}</h2><p>{workspaceVoice.emptyDescription}</p></div>
 			{/if}
 
 			{#if busy}
-				<div class="progress" role="status" aria-live="polite"><span class="spinner" aria-hidden="true"></span><span>Searching your library and preparing an answer…</span></div>
+				<div class="progress" role="status" aria-live="polite"><span class="spinner" aria-hidden="true"></span><span>{workspaceVoice.loading}</span></div>
 			{/if}
 
 			{#if error}
-				<div class="message error" role="alert"><strong>We couldn’t answer that yet.</strong><p>{error}</p><p>Your question is still here. Check the local service and try again.</p></div>
+				<div class="message error" role="alert"><strong>We couldn’t answer that yet.</strong><p>{error}</p><p>{workspaceVoice.answerFailed}</p></div>
 			{/if}
 
 			{#if answer}
@@ -104,7 +105,7 @@
 					{#if answer.status === 'failed'}
 						<div class="message error" role="alert"><strong>{answer.error?.code === 'busy' ? 'Another question is running.' : 'The answer could not be completed.'}</strong><p>{answer.error?.message || 'The local workflow did not return a usable answer.'}</p>{#if answer.error?.hint}<p>{answer.error.hint}</p>{/if}</div>
 					{:else if answer.status === 'insufficient_evidence'}
-						<div class="message insufficient" role="status"><strong>There isn’t enough evidence in this library.</strong><p>{answer.limitations?.[0] || 'Try a more specific question or add a document that covers this topic.'}</p></div>
+						<div class="message insufficient" data-evidence-kind="uncertain" role="status"><strong>{workspaceVoice.insufficientEvidence}</strong><p>{answer.limitations?.[0] || 'Try a more specific question or add a document that covers this topic.'}</p></div>
 					{/if}
 					{#if answer.documents?.length}
 						<section class="answer-section"><h2><span class="section-dot document-dot"></span>From your documents</h2>
@@ -120,10 +121,10 @@
 						</section>
 					{/if}
 					{#if answer.general_knowledge}
-						<section class="answer-section general"><h2><span class="section-dot general-dot"></span>General model knowledge</h2><p>{answer.general_knowledge}</p><p class="disclaimer">Not verified against your documents.</p></section>
+						<section class="answer-section general" data-evidence-kind="general"><h2><span class="section-dot general-dot"></span>{workspaceVoice.generalKnowledgeLabel}</h2><p>{answer.general_knowledge}</p><p class="disclaimer">{workspaceVoice.generalKnowledgeNotice}</p></section>
 					{/if}
 					{#if answer.limitations?.length}
-						<section class="answer-section limitations"><h2>Limitations</h2><ul>{#each answer.limitations as item}<li>{item}</li>{/each}</ul></section>
+						<section class="answer-section limitations" data-evidence-kind="uncertain"><h2>{workspaceVoice.uncertaintyLabel}</h2><ul>{#each answer.limitations as item}<li>{item}</li>{/each}</ul></section>
 					{/if}
 					{#if answer.warnings.length}<ul class="warning" role="alert">{#each answer.warnings as warning}<li>{warning.message}</li>{/each}</ul>{/if}
 				</article>
@@ -132,7 +133,7 @@
 
 		<form class="composer" on:submit|preventDefault={submit}>
 			<label class="sr-only" for="question">Ask a question about your documents</label>
-			<textarea id="question" bind:this={questionInput} bind:value={question} rows="2" maxlength="4000" placeholder="Ask a question about your documents…" disabled={busy || !health?.ready} on:keydown={(event) => { if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); submit(); } }}></textarea>
+			<textarea id="question" bind:this={questionInput} bind:value={question} rows="2" maxlength="4000" placeholder={workspaceVoice.askPlaceholder} disabled={busy || !health?.ready} on:keydown={(event) => { if (event.key === 'Enter' && !event.shiftKey && !event.isComposing) { event.preventDefault(); submit(); } }}></textarea>
 			<div class="composer-footer">
 				<label class="toggle"><input type="checkbox" bind:checked={generalKnowledge} disabled={busy} /><span class="toggle-ui" aria-hidden="true"></span><span>Include general knowledge</span></label>
 				<div class="send-group"><span class="hint">Enter to send · Shift + Enter for a new line</span><button class="send-button" type="submit" disabled={busy || !health?.ready || !question.trim()}><span>{busy ? 'Working…' : 'Ask'}</span><span aria-hidden="true">↑</span></button></div>
@@ -143,12 +144,12 @@
 </div>
 
 <style>
-	:global(body) { margin: 0; background: #f6f7f7; color: #1e2825; font-family: Inter, ui-sans-serif, system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif; }
+	:global(body) { margin: 0; background: var(--workspace-paper); color: var(--workspace-ink); font-family: var(--workspace-font-ui); }
 	:global(*) { box-sizing: border-box; }
-	.app-frame { min-height: 100vh; background: radial-gradient(ellipse at 50% -25%, #e2eee8 0, transparent 58%), #f6f7f7; }
-	.topbar { height: 70px; padding: 0 clamp(22px, 5vw, 76px); border-bottom: 1px solid #e1e7e3; background: rgba(250,252,250,.88); display: flex; align-items: center; gap: 42px; }
-	.brand { display:flex; align-items:center; gap:11px; color:#1e2825; font-weight:700; font-size:15px; text-decoration:none; white-space:nowrap; }
-	.brand-mark { display:grid; place-items:center; width:31px; height:31px; border-radius:10px; background:#167355; color:white; font-family:Georgia,serif; font-size:18px; }
+	.app-frame { min-height: 100vh; background: var(--workspace-paper); }
+	.topbar { height: 70px; padding: 0 clamp(22px, 5vw, 76px); border-bottom: 1px solid var(--workspace-line); background: var(--workspace-surface); display: flex; align-items: center; gap: 42px; }
+	.brand { display:flex; align-items:center; gap:11px; color:var(--workspace-ink); font-weight:700; font-size:15px; text-decoration:none; white-space:nowrap; }
+	.brand-mark { display:grid; place-items:center; width:31px; height:31px; border-radius:var(--workspace-radius-control); background:var(--workspace-accent); color:white; font-family:var(--workspace-font-ui); font-size:16px; }
 	nav { display:flex; align-items:center; gap:29px; height:100%; color:#83908a; font-size:13px; }
 	nav a, nav span { text-decoration:none; height:100%; display:grid; align-items:center; color:inherit; }
 	nav .active { color:#176b50; border-bottom:2px solid #248467; font-weight:650; }
@@ -186,7 +187,8 @@
 	.toggle input:focus-visible + .toggle-ui { outline:3px solid #9acbb7; outline-offset:2px; }
 	.send-group { display:flex; gap:12px; align-items:center; }
 	.hint { color:#62736a; font-size:10px; }
-	.send-button { display:flex; align-items:center; gap:15px; border:0; border-radius:9px; padding:9px 12px; background:#176b50; color:white; font:inherit; font-size:11px; font-weight:650; cursor:pointer; }
+	.send-button { display:flex; align-items:center; gap:15px; border:0; border-radius:var(--workspace-radius-control); padding:9px 12px; background:var(--workspace-accent); color:white; font:inherit; font-size:11px; font-weight:650; cursor:pointer; transition:background-color var(--workspace-motion-fast) ease; }
+	.send-button:hover:not(:disabled) { background:var(--workspace-accent-hover); }
 	.send-button span:last-child { font-size:15px; line-height:10px; }
 	.send-button:disabled { background:#b7c6be; cursor:not-allowed; }
 	.privacy-note { color:#62736a; font-size:10px; text-align:center; margin:13px 0; }
@@ -197,7 +199,7 @@
 	.answer-section { border-top:1px solid #e3e9e5; padding:18px 0 16px; }
 	.answer-section h2 { display:flex; align-items:center; gap:9px; margin:0 0 12px; color:#3d4a44; font-size:12px; font-weight:700; }
 	.section-dot { width:8px; height:8px; border-radius:50%; background:#438b6e; }
-	.general-dot { background:#7989af; }
+	.general-dot { background:var(--workspace-general); }
 	.claim,.answer-section.general > p:first-of-type { font-size:13px; line-height:1.7; color:#35413b; margin:0 0 10px; }
 	.citations { display:flex; flex-wrap:wrap; gap:8px; margin:9px 0 16px; }
 	.citation { border:1px solid #d9e5de; border-radius:8px; background:#f8fbf9; color:#32694f; font-size:11px; }
@@ -208,14 +210,14 @@
 	.citation-body { padding:12px; border-top:1px solid #e2ebe5; max-width:560px; }
 	.citation-body blockquote { border-left:2px solid #69a88b; margin:8px 0; padding:2px 0 2px 10px; color:#38453e; font-size:12px; line-height:1.65; }
 	.source-name { color:#60736a; font-size:10px; }
-	.disclaimer { color:#5e6e83!important; font-size:10px!important; margin-top:-3px!important; }
+	.disclaimer { color:var(--workspace-general)!important; font-size:10px!important; margin-top:-3px!important; }
 	.limitations { color:#707c75; font-size:12px; line-height:1.6; }
 	.limitations ul { padding-left:18px; }
-	.warning { color:#936a2d; font-size:11px; }
+	.warning { color:var(--workspace-warning); font-size:11px; }
 	.message { border-radius:10px; padding:13px 15px; margin:0 0 18px; font-size:12px; line-height:1.55; }
 	.message p { margin:5px 0 0; }
-	.error { border:1px solid #efcfca; color:#7a3f37; background:#fff8f6; }
-	.insufficient { border:1px solid #eadfc8; color:#705a35; background:#fffbf3; }
+	.error { border:1px solid var(--workspace-error-line); color:var(--workspace-error); background:var(--workspace-error-surface); }
+	.insufficient { border:1px solid var(--workspace-uncertain-line); color:var(--workspace-uncertain); background:var(--workspace-uncertain-surface); }
 	.progress { display:flex; align-items:center; gap:11px; padding:24px 6px; color:#527461; font-size:12px; }
 	.spinner { width:15px; height:15px; border:2px solid #d2e4d8; border-top-color:#348262; border-radius:50%; animation:spin .8s linear infinite; }
 	.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }

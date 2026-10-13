@@ -3,6 +3,7 @@ Upstream commit: 8bd8b4fac5e059578ac0c74b3c18d11139f88b7d
 
 Local product changes:
 - `src/lib/features/answering/` contains the product-owned view, loopback client, fixture adapter, and tests.
+- `src/lib/features/personality/` supplies local shared design tokens and concise answer-state copy. It is a styling/voice seam for the restored Open WebUI chat, not a replacement chat implementation.
 - `src/routes/qa/+page.svelte` is the thin QA route.
 - `src/routes/+layout.svelte` is a product-owned shell that imports the pinned frontend's global styles without starting unrelated backend/session/websocket behavior.
 - `src/app.html` replaces the upstream splash screen and branding markup with a minimal local document shell.

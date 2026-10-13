@@ -170,6 +170,8 @@ After generation, the application verifies that document citations refer to evid
 
 The Tauri application has persistent navigation for Library, Chat, History, and Settings. Library moves through PDF selection, validation review, publication progress, and completion. Chat shows the answer first and keeps citations compact until the user expands one into a source-page panel. History supports open, delete, clear-all, and persistence settings.
 
+The interface uses a restrained, evidence-led visual voice: locally bundled typography, warm neutral surfaces, evergreen primary actions, and a compact spacing scale. Document-backed claims, general model knowledge, uncertainty, warnings, and errors have distinct semantic labels and visual treatments; color never carries meaning alone. Shared tokens and presentation copy live in the frontend `personality` feature so the integrated Open WebUI chat can consume them without replacing its chat implementation. See [ADR 0003](decisions/0003-research-workspace-personality.md). The current QA slice imports the tokens; the actual chat shell applies them as part of issue #4 integration.
+
 - Show one primary action per workflow step and use plain-language labels rather than implementation terms.
 - During publication, show the current phase, completed files or pages, warnings, elapsed time, and a cancel action.
 - Keep the current answer visible if saving fails, and pair each error with an actionable next step.
