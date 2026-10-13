@@ -40,6 +40,21 @@ class PublishError(RuntimeError):
 
 
 @dataclass
+class IntegrityReport:
+    """What `CollectionVersions.check_integrity` found when it re-read a published version from the store."""
+
+    version_id: str
+    ok: bool
+    expected_chunks: int
+    stored_chunks: int
+    expected_documents: int
+    stored_documents: int
+    expected_integrity_sha256: str
+    stored_integrity_sha256: str
+    problems: list[str] = field(default_factory=list)
+
+
+@dataclass
 class CollectionVersion:
     """SDD §5.1 'Collection version'."""
 
@@ -57,6 +72,24 @@ class CollectionVersion:
     @property
     def collection_name(self) -> str:
         return COLLECTION_PREFIX + self.version_id
+
+    def summary(self) -> dict:
+        """The wire form of this record: everything the Library screen shows, without chunk text or highlight data."""
+        return {
+            "version_id": self.version_id,
+            "status": self.status,
+            "created_at": self.created_at,
+            "activated_at": self.activated_at,
+            "chunk_count": self.chunk_count,
+            "embedding_model": self.embedding_model,
+            "chunker_config_ids": self.chunker_config_ids,
+            "integrity_sha256": self.integrity_sha256,
+            "documents": [
+                {"document_id": d["document_id"], "display_title": d.get("display_title"),
+                 "source_filename": d.get("source_filename"), "page_count": d.get("page_count")}
+                for d in self.documents.values()
+            ],
+        }
 
 
 class CollectionVersions:
@@ -107,6 +140,54 @@ class CollectionVersions:
             create=False,
             version_id=version.version_id,
             documents=version.documents,
+        )
+
+    def check_integrity(self, version: CollectionVersion | None = None) -> IntegrityReport:
+        """Re-read a published version (the active one by default) and compare it with its catalog record.
+
+        Checks that the stored chunk count and document set match the manifest,
+        that the chunk ids and checksums reproduce the recorded integrity
+        checksum, that each stored text still matches its checksum, and that
+        every chunk's pages sit inside its document. It never writes.
+        """
+        version = version or self.active()
+        if version is None:
+            raise LookupError(f"No active collection at {self.root}; publish one first")
+        store = self.open(version)
+        problems: list[str] = []
+        pairs: list[tuple[str, str]] = []
+        doc_ids: set[str] = set()
+        batch = 500
+        total = store.count()
+        for offset in range(0, total, batch):
+            got = store.collection.get(include=["metadatas", "documents"], limit=batch, offset=offset)
+            for cid, meta, text in zip(got["ids"], got["metadatas"], got["documents"]):
+                pairs.append((cid, meta["text_checksum_sha256"]))
+                doc_ids.add(meta["document_id"])
+                if hashlib.sha256(text.encode("utf-8")).hexdigest() != meta["text_checksum_sha256"]:
+                    problems.append(f"chunk {cid}: stored text doesn't match its checksum")
+                record = version.documents.get(meta["document_id"])
+                if record is None:
+                    problems.append(f"chunk {cid}: document {meta['document_id']} is not in the manifest")
+                elif not 1 <= meta["page_start"] <= meta["page_end"] <= record["page_count"]:
+                    problems.append(f"chunk {cid}: pages {meta['page_start']}-{meta['page_end']} outside {record['page_count']}-page document")
+        stored = _integrity(pairs)
+        if total != version.chunk_count:
+            problems.append(f"store holds {total} chunks, manifest says {version.chunk_count}")
+        if doc_ids != set(version.documents):
+            problems.append(f"store holds chunks from {len(doc_ids)} documents, manifest lists {len(version.documents)}")
+        if stored != version.integrity_sha256:
+            problems.append("chunk ids and checksums don't reproduce the recorded integrity checksum")
+        return IntegrityReport(
+            version_id=version.version_id,
+            ok=not problems,
+            expected_chunks=version.chunk_count,
+            stored_chunks=total,
+            expected_documents=len(version.documents),
+            stored_documents=len(doc_ids),
+            expected_integrity_sha256=version.integrity_sha256,
+            stored_integrity_sha256=stored,
+            problems=problems[:50],
         )
 
     # --- publication -------------------------------------------------------------------

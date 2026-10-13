@@ -13,6 +13,14 @@ workflow; all behavior lives in `secure_qa`.
                          "payload": {"question": "...", "general_knowledge": true}}
                         -> {"request_id": "...", "operation": "answering.ask", "result": <Answer, wire/answer.schema.json>}
 
+Collection Library operations (the corpus is the PDFs under `--corpus`; payloads name files by file name only):
+
+    library.status     {}                                       -> {"active", "previous", "versions": [...]}
+    library.review     {"files": ["a.pdf"]}                     -> import review, nothing changes
+    library.publish    {"files": [...], "confirm_rejects": bool} -> status published | needs_confirmation | nothing_to_publish | busy | failed
+    library.rollback   {}                                       -> {"active", "previous", "versions": [...]}
+    library.integrity  {}                                       -> stored counts and checksums against the manifest
+
 A workflow outcome, including `status: "failed"`, is a 200 with `result`.
 Transport problems (bad JSON, unknown operation or field) are 4xx with
 `{"request_id", "error": {"code", "message", "hint"}}`. Progress events and
@@ -30,15 +38,26 @@ os.environ.setdefault("TOKENIZERS_PARALLELISM", "false")
 
 import argparse  # noqa: E402
 import json  # noqa: E402
+from dataclasses import asdict  # noqa: E402
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer  # noqa: E402
+from pathlib import Path  # noqa: E402
 from urllib.parse import urlsplit  # noqa: E402
 
 from secure_qa.answering import AnswerService, ModelRuntimeError  # noqa: E402
 from secure_qa.answering.model_runtime import is_loopback  # noqa: E402
+from secure_qa.library.corpus import pdfs_in  # noqa: E402
+from secure_qa.library.publication import Publisher  # noqa: E402
 
 API_VERSION = "secure-qa-dev/1"
 MAX_BODY = 64 * 1024
-OPERATIONS = {"answering.ask": {"question": str, "general_knowledge": bool}}
+OPERATIONS = {
+    "answering.ask": ({"question": str, "general_knowledge": bool}, ("question",)),
+    "library.status": ({}, ()),
+    "library.review": ({"files": list}, ()),
+    "library.publish": ({"files": list, "confirm_rejects": bool}, ()),
+    "library.rollback": ({}, ()),
+    "library.integrity": ({}, ()),
+}
 ENVELOPE = {"request_id", "operation", "payload"}
 _LOCAL_ORIGIN_SCHEMES = ("tauri://", "app://")
 
@@ -46,10 +65,31 @@ _LOCAL_ORIGIN_SCHEMES = ("tauri://", "app://")
 class DevHost(ThreadingHTTPServer):
     daemon_threads = True
 
-    def __init__(self, port: int, service: AnswerService, versions) -> None:
+    def __init__(self, port: int, service: AnswerService, versions, corpus: Path | None = None) -> None:
         super().__init__(("127.0.0.1", port), Handler)  # loopback only, never configurable (SDD §4.6, §10)
         self.service = service
         self.versions = versions
+        self.corpus = corpus
+        self.publisher = Publisher(versions)
+
+    def corpus_files(self, names: list | None) -> list[Path]:
+        """The PDFs a library request names, or all of them. Names must be files in the corpus folder."""
+        if self.corpus is None:
+            raise LibraryRequestError("no_corpus", "No document folder is configured", "Start the host with --corpus <folder of PDFs>.")
+        available = {p.name: p for p in pdfs_in(self.corpus)}
+        if names is None:
+            return list(available.values())
+        unknown = [n for n in names if not isinstance(n, str) or n not in available]
+        if unknown:
+            raise LibraryRequestError("unknown_file", f"{len(unknown)} file(s) aren't in the document folder",
+                                      "Name files exactly as listed by library.review.")
+        return [available[n] for n in names]
+
+    def library_state(self) -> dict:
+        found = self.versions.versions()
+        return {"active": found[0].version_id if found else None,
+                "previous": found[1].version_id if len(found) > 1 else None,
+                "versions": [v.summary() for v in found]}
 
     def health(self) -> dict:
         try:
@@ -67,6 +107,12 @@ class DevHost(ThreadingHTTPServer):
         ready = model["ready"] and library["ready"]
         return {"status": "ok" if ready else "degraded", "ready": ready, "api_version": API_VERSION,
                 "answering": model, "library": library}
+
+
+class LibraryRequestError(Exception):
+    def __init__(self, code: str, message: str, hint: str, status: int = 409) -> None:
+        super().__init__(message)
+        self.code, self.message, self.hint, self.status = code, message, hint, status
 
 
 class Handler(BaseHTTPRequestHandler):
@@ -149,6 +195,8 @@ class Handler(BaseHTTPRequestHandler):
         if problem:
             return self._error(400, request_id, "invalid_request", problem, "See the request envelope in dev_host.py.")
         payload = body["payload"]
+        if body["operation"].startswith("library."):
+            return self._library(request_id, body["operation"], payload)
         try:
             collection = self.server.versions.open_active()
         except LookupError:
@@ -156,6 +204,35 @@ class Handler(BaseHTTPRequestHandler):
         answer = self.server.service.answer(payload["question"], collection, request_id=request_id,
                                             general_knowledge=payload.get("general_knowledge"))
         self._send(200, {"request_id": request_id, "operation": body["operation"], "result": answer.to_dict()})
+
+
+    def _library(self, request_id: str, operation: str, payload: dict) -> None:
+        host = self.server
+        try:
+            if operation == "library.status":
+                result = host.library_state()
+            elif operation == "library.review":
+                result = host.publisher.review(host.corpus_files(payload.get("files"))).to_dict()
+            elif operation == "library.publish":
+                outcome = host.publisher.publish(host.corpus_files(payload.get("files")),
+                                                 confirm_rejects=payload.get("confirm_rejects", False))
+                result = outcome.to_dict() | {"library": host.library_state()}
+            elif operation == "library.rollback":
+                try:
+                    host.publisher.rollback()
+                except LookupError:
+                    raise LibraryRequestError("no_previous_version", "There is no previous version to roll back to",
+                                              "Publish a second version first.") from None
+                result = host.library_state()
+            else:  # library.integrity
+                try:
+                    result = asdict(host.versions.check_integrity())
+                except LookupError:
+                    raise LibraryRequestError("no_active_collection", "No collection is published yet",
+                                              "Publish a collection first.") from None
+        except LibraryRequestError as exc:
+            return self._error(exc.status, request_id, exc.code, exc.message, exc.hint)
+        self._send(200, {"request_id": request_id, "operation": operation, "result": result})
 
 
 def validate(body) -> tuple[str | None, str | None]:
@@ -167,9 +244,10 @@ def validate(body) -> tuple[str | None, str | None]:
         return request_id, f"Unknown field(s): {', '.join(sorted(extra))}"
     if not request_id or len(request_id) > 128:
         return None, "request_id must be a non-empty string of at most 128 characters"
-    fields = OPERATIONS.get(body.get("operation"))
-    if fields is None:
+    spec = OPERATIONS.get(body.get("operation"))
+    if spec is None:
         return request_id, f"Unknown operation {body.get('operation')!r}; supported: {', '.join(OPERATIONS)}"
+    fields, required = spec
     payload = body.get("payload")
     if not isinstance(payload, dict):
         return request_id, "payload must be an object"
@@ -178,8 +256,9 @@ def validate(body) -> tuple[str | None, str | None]:
     for name, kind in fields.items():
         if name in payload and not isinstance(payload[name], kind):
             return request_id, f"payload.{name} must be {kind.__name__}"
-    if "question" not in payload:
-        return request_id, "payload.question is required"
+    for name in required:
+        if name not in payload:
+            return request_id, f"payload.{name} is required"
     return request_id, None
 
 
@@ -193,6 +272,7 @@ def main() -> None:
     p.add_argument("--port", type=int, default=8765)
     p.add_argument("--runtime", default="fake", help="'fake' (deterministic test model) or E1's gateway URL")
     p.add_argument("--store", default=str(DATA_DIR / "dev_host_store"), help="collection root (catalog + Chroma directory)")
+    p.add_argument("--corpus", type=Path, help="folder of PDFs the library.* operations review and publish (e.g. ingestion/fixtures)")
     args = p.parse_args()
 
     runtime = FakeModelRuntime() if args.runtime == "fake" else LlamaCppGatewayRuntime(args.runtime)
@@ -202,7 +282,7 @@ def main() -> None:
         chunks, documents, _ = golden_collection()
         version = versions.publish(chunks, documents)
         print(f"dev_host: published the golden test collection as {version.version_id}", flush=True)
-    server = DevHost(args.port, AnswerService(runtime), versions)
+    server = DevHost(args.port, AnswerService(runtime), versions, args.corpus)
     print(f"dev_host: ready on http://127.0.0.1:{args.port}  (GET /health, POST /v1/requests)  "
           f"runtime={args.runtime} collection={versions.active().version_id}", flush=True)
     try:

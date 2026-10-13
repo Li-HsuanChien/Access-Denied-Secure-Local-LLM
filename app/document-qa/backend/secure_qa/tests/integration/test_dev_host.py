@@ -14,6 +14,7 @@ from dev_host import DevHost
 from secure_qa.answering import AnswerService, AnswerSettings, FakeModelRuntime, ModelRuntimeError
 from secure_qa.library import CollectionVersions, FakeEmbedder
 from secure_qa.library.synthetic import synthetic_corpus
+from secure_qa.paths import REPO_ROOT
 
 WIRE_SCHEMA = Path(__file__).resolve().parents[2] / "answering" / "wire" / "answer.schema.json"
 
@@ -113,6 +114,123 @@ class DevHostTest(unittest.TestCase):
 
     def test_binds_loopback_only(self):
         self.assertEqual(self.server.server_address[0], "127.0.0.1")
+
+
+FIXTURES = REPO_ROOT / "ingestion" / "fixtures"
+CORPUS_FILES = [FIXTURES / "normal" / "normal_nrc_reactor_concepts_ch01.pdf",
+                FIXTURES / "adversarial" / "adversarial_prompt_injection.pdf",
+                FIXTURES / "corrupt" / "corrupt_empty.pdf"]
+
+
+class _Base:
+    def call(self, body):
+        conn = http.client.HTTPConnection("127.0.0.1", self.port, timeout=120)
+        conn.request("POST", "/v1/requests", body=json.dumps(body).encode(), headers={"Content-Type": "application/json"})
+        resp = conn.getresponse()
+        data = json.loads(resp.read())
+        conn.close()
+        return resp.status, data
+
+    def op(self, operation, payload=None, request_id="r1"):
+        return self.call({"request_id": request_id, "operation": operation, "payload": payload or {}})
+
+
+@unittest.skipUnless(CORPUS_FILES[0].exists(), "needs E2's fixture PDFs")
+class DevHostLibraryTest(_Base, unittest.TestCase):
+    """What E4's Library screen calls: review, publish with confirmation, rollback, integrity."""
+
+    @classmethod
+    def setUpClass(cls):
+        try:
+            import pymupdf  # noqa: F401
+        except ModuleNotFoundError:
+            raise unittest.SkipTest("needs PyMuPDF")
+        cls.dir = Path(tempfile.mkdtemp(prefix="dev-host-library-"))
+        cls.corpus = cls.dir / "pdfs"
+        cls.corpus.mkdir()
+        for f in CORPUS_FILES:
+            shutil.copy(f, cls.corpus / f.name)
+        cls.versions = CollectionVersions(FakeEmbedder(), cls.dir / "store")
+        cls.server = DevHost(0, AnswerService(FakeModelRuntime(), AnswerSettings(min_score=0.2), on_event=lambda e: None),
+                             cls.versions, cls.corpus)
+        threading.Thread(target=cls.server.serve_forever, daemon=True).start()
+        cls.port = cls.server.server_port
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+        cls.server.server_close()
+        cls.versions.close()
+        shutil.rmtree(cls.dir, ignore_errors=True)
+
+    def test_publish_rollback_republish_through_the_envelope(self):
+        status, body = self.op("library.status")
+        self.assertEqual((status, body["result"]["active"]), (200, None))
+
+        # The review lists every file with its reason; nothing is published yet.
+        status, body = self.op("library.review")
+        review = body["result"]
+        self.assertEqual((review["summary"]["accepted"], review["summary"]["rejected"]), (2, 1))
+        self.assertEqual({f["filename"]: f["reject_reason"] for f in review["files"] if f["reject_reason"]}, {"corrupt_empty.pdf": "corrupt"})
+        self.assertEqual(self.op("library.status")[1]["result"]["active"], None)
+
+        # A rejected file needs explicit confirmation (SDD §6.1).
+        status, body = self.op("library.publish", {"files": ["normal_nrc_reactor_concepts_ch01.pdf", "corrupt_empty.pdf"]})
+        self.assertEqual((status, body["result"]["status"], body["result"]["version"]), (200, "needs_confirmation", None))
+        status, body = self.op("library.publish", {"files": ["normal_nrc_reactor_concepts_ch01.pdf", "corrupt_empty.pdf"], "confirm_rejects": True})
+        first = body["result"]
+        self.assertEqual((first["status"], first["version"]["version_id"], first["integrity"]["ok"]), ("published", "v0001", True))
+        self.assertEqual(first["library"]["active"], "v0001")
+        self.assertNotIn("text", json.dumps(first["version"]))
+
+        # Ask against v0001, publish a second version, and the first becomes the rollback version.
+        self.assertEqual(self.op("answering.ask", {"question": "How long are the fuel rods?"})[1]["result"]["collection_version"], "v0001")
+        status, body = self.op("library.publish", {"files": ["normal_nrc_reactor_concepts_ch01.pdf", "adversarial_prompt_injection.pdf"]})
+        self.assertEqual((body["result"]["status"], body["result"]["library"]["previous"]), ("published", "v0001"))
+        self.assertEqual(self.op("answering.ask", {"question": "What is the design pressure of the reactor coolant system?"})[1]["result"]["collection_version"], "v0002")
+
+        status, body = self.op("library.rollback")
+        self.assertEqual((status, body["result"]["active"], body["result"]["previous"]), (200, "v0001", "v0002"))
+        status, body = self.op("library.integrity")
+        self.assertEqual((body["result"]["version_id"], body["result"]["ok"]), ("v0001", True))
+
+    def test_files_must_be_in_the_document_folder(self):
+        status, body = self.op("library.publish", {"files": ["../../etc/passwd"]})
+        self.assertEqual((status, body["error"]["code"]), (409, "unknown_file"))
+        status, body = self.op("library.review", {"files": [5]})
+        self.assertEqual((status, body["error"]["code"]), (409, "unknown_file"))
+
+    def test_library_payloads_are_validated(self):
+        status, body = self.op("library.publish", {"confirm_rejects": "yes"})
+        self.assertEqual((status, body["error"]["code"]), (400, "invalid_request"))
+        status, body = self.op("library.rollback", {"version": "v0001"})
+        self.assertEqual((status, body["error"]["code"]), (400, "invalid_request"))
+
+
+class DevHostNoCorpusTest(_Base, unittest.TestCase):
+    @classmethod
+    def setUpClass(cls):
+        cls.dir = Path(tempfile.mkdtemp(prefix="dev-host-nocorpus-"))
+        cls.versions = CollectionVersions(FakeEmbedder(), cls.dir)
+        cls.server = DevHost(0, AnswerService(FakeModelRuntime(), on_event=lambda e: None), cls.versions)
+        threading.Thread(target=cls.server.serve_forever, daemon=True).start()
+        cls.port = cls.server.server_port
+
+    @classmethod
+    def tearDownClass(cls):
+        cls.server.shutdown()
+        cls.server.server_close()
+        cls.versions.close()
+        shutil.rmtree(cls.dir, ignore_errors=True)
+
+    def test_publish_without_a_corpus_folder_is_an_actionable_error(self):
+        status, body = self.op("library.publish")
+        self.assertEqual((status, body["error"]["code"]), (409, "no_corpus"))
+        self.assertIn("--corpus", body["error"]["hint"])
+
+    def test_rollback_and_integrity_with_nothing_published_are_actionable_errors(self):
+        self.assertEqual(self.op("library.rollback")[1]["error"]["code"], "no_previous_version")
+        self.assertEqual(self.op("library.integrity")[1]["error"]["code"], "no_active_collection")
 
 
 if __name__ == "__main__":

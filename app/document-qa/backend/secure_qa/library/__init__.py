@@ -18,10 +18,16 @@ __all__ = [
     "EmbeddingMismatchError",
     "FakeEmbedder",
     "IndexResult",
+    "IntegrityReport",
     "PageSpan",
+    "PublicationOutcome",
     "PublishError",
+    "Publisher",
     "RetrievalError",
     "SearchResult",
+    "SearchTrace",
+    "ingest_corpus",
+    "trace_search",
 ]
 
 
@@ -30,8 +36,20 @@ def __getattr__(name: str):
         from .chroma_store import ChromaStore
 
         return ChromaStore
-    if name in ("CollectionVersion", "CollectionVersions", "PublishError"):
+    if name in ("CollectionVersion", "CollectionVersions", "IntegrityReport", "PublishError"):
         from . import versions
 
         return getattr(versions, name)
+    if name in ("PublicationOutcome", "Publisher"):
+        from . import publication
+
+        return getattr(publication, name)
+    if name == "ingest_corpus":
+        from .corpus import ingest_corpus
+
+        return ingest_corpus
+    if name in ("SearchTrace", "trace_search"):
+        from . import search_trace
+
+        return getattr(search_trace, name)
     raise AttributeError(name)

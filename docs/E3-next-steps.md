@@ -1,6 +1,6 @@
 # E3 next steps: Open WebUI, Chroma and Ollama
 
-**Written:** 2026-09-29 · **Updated:** 2026-10-05 (E3 items 3–5 done; `main` renamed `app/open-webui/` to `app/document-qa/`) · **Owner:** E3 (Conrad Brady) · **Branch:** `E3-Rag/Document-Store`
+**Written:** 2026-09-29 · **Updated:** 2026-10-12 (week 4: real corpus, real model, publication workflow; E1, E2 and E4 merged via `codex/integrate-workstreams`) · **Owner:** E3 (Conrad Brady) · **Branch:** `E3-Rag/Document-Store`
 
 Working notes from reviewing Open WebUI's built-in Chroma and Ollama support against our design. The running status is in [`E3-rag-document-store-status.md`](E3-rag-document-store-status.md).
 
@@ -84,11 +84,11 @@ Add one paragraph to ADR 0001, or a short ADR 0003: "Ollama allowed for developm
 - [x] Update the paths in the library READMEs and the status doc.
 - [x] Re-run the tests, from `app/document-qa/backend`: `../../../.venv/bin/python -m unittest discover -s secure_qa -t .`.
 
-### 4. First end-to-end path (E3 + E1 + Question Answering owner) · done 2026-10-05, pending E1's frozen model
+### 4. First end-to-end path (E3 + E1 + Question Answering owner) · done 2026-10-05; first real-model run 2026-10-12
 
 Question → our `search()` → E1's gateway (`docs/api.md` on `E1-LLM/Runtime`) → answer with E2 page citations. This proves the parts fit together before any UI work. Start as a script, like `scripts/demo_index_search.py`.
 
-**Built as:** `secure_qa/answering/`, with the golden runner `python -m secure_qa.answering.benchmarks.golden` and `dev_host.py` for E4. It ran against E1's runtime on the stub backend; a real-model run waits on E1's frozen model. See the status doc.
+**Built as:** `secure_qa/answering/`, with the golden runner `python -m secure_qa.answering.benchmarks.golden` and `dev_host.py` for E4. On 2026-10-12 it ran against E1's runtime with the real Qwen3-4B Q4_K_M model on E2's real PDFs. See the status doc for results.
 
 ### 5. Adapter follow-ups (E3) · done 2026-10-05
 
@@ -97,8 +97,17 @@ Question → our `search()` → E1's gateway (`docs/api.md` on `E1-LLM/Runtime`)
 - [x] Add versioned collections, a durable active-version pointer and rollback (SDD §4.1, §6.3). Open WebUI can't provide these.
 - [x] Make sure retrieval failures raise errors, never an empty result (`RetrievalError`, unlike Open WebUI's `search`).
 
-### Still open from the status doc
+### 6. Real corpus and publication workflow (E3) · done 2026-10-12
 
-- Run the demo, tests and benchmark on the **8 GB reference laptop**. This is the week 2 acceptance gap.
-- SDD §5.1 update for page-spanning chunks (E2 / SDD owner).
+- [x] Ingest E2's fixture PDFs through E2's `validate()` and `chunks()` (`library/corpus.py`): review with reject reasons, deterministic manifest checksum.
+- [x] Review, confirm, publish, verify, activate workflow with one job at a time (`library/publication.py`), the import report, and a re-read integrity check (`CollectionVersions.check_integrity`).
+- [x] Search diagnostics (`library/search_trace.py`).
+- [x] Library operations on the dev host for E4 (`library.status|review|publish|rollback|integrity`; contract in `library/wire/README.md`).
+- [x] Real-corpus golden queries, and the end-to-end demo with rollback and republish evidence.
+
+### Still open
+
+- Run the demo, tests and benchmark on the **8 GB reference laptop**. This is the week 2 acceptance gap, and now the week 4 latency gap too.
+- Team decision on retrieval quality for noisy text (BM25 fusion, or a different embedding model). See the status doc's findings.
+- E1's `release-manifest.json` isn't committed, so `/health.release.manifest` is `false`.
 - Network capture during index and search, as evidence for SDD §14.

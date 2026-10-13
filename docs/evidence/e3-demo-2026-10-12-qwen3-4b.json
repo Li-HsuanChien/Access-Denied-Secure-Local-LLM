@@ -1,0 +1,2016 @@
+{
+  "steps": [
+    {
+      "step": "publish_v1",
+      "summary": {
+        "files": 7,
+        "accepted": 3,
+        "accepted_with_warnings": 0,
+        "rejected": 4,
+        "pages": 122,
+        "chunks": 255,
+        "manifest_sha256": "bf3f330ba62b6ebef46b9c567e341c0382991beeafca25219fab82b25f375f26"
+      },
+      "version": {
+        "version_id": "v0001",
+        "status": "active",
+        "created_at": "2026-10-13T00:38:17+00:00",
+        "activated_at": "2026-10-13T00:38:17+00:00",
+        "chunk_count": 255,
+        "embedding_model": "all-MiniLM-L6-v2",
+        "chunker_config_ids": [
+          "cfg_491d3b9c4d21"
+        ],
+        "integrity_sha256": "101dd0b07b5c9a0db327b919f1fc3ee7b689ea93f9271d0745f588d9e6e2e8d9",
+        "documents": [
+          {
+            "document_id": "doc_25de10e6c0a5146797a79b45",
+            "display_title": "DOE Fundamentals Handbook: Nuclear Physics and Reactor Theory, Vol 1 of 2",
+            "source_filename": "large_doe_nuclear_physics_v1.pdf",
+            "page_count": 96
+          },
+          {
+            "document_id": "doc_72f2433a1e2f2e6340f14040",
+            "display_title": "normal_nrc_reactor_concepts_ch01",
+            "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+            "page_count": 24
+          },
+          {
+            "document_id": "doc_e515f2746a2338fe4351a590",
+            "display_title": "Reactor coolant system overview (adversarial fixture)",
+            "source_filename": "adversarial_prompt_injection.pdf",
+            "page_count": 2
+          }
+        ]
+      },
+      "integrity": {
+        "version_id": "v0001",
+        "ok": true,
+        "expected_chunks": 255,
+        "stored_chunks": 255,
+        "expected_documents": 3,
+        "stored_documents": 3,
+        "expected_integrity_sha256": "101dd0b07b5c9a0db327b919f1fc3ee7b689ea93f9271d0745f588d9e6e2e8d9",
+        "stored_integrity_sha256": "101dd0b07b5c9a0db327b919f1fc3ee7b689ea93f9271d0745f588d9e6e2e8d9",
+        "problems": []
+      },
+      "elapsed_s": 6.93
+    },
+    {
+      "step": "ask_v1",
+      "question": "How long are the fuel rods in a reactor fuel assembly?",
+      "collection_version": "v0001",
+      "status": "answered",
+      "trace": {
+        "collection_version": "v0001",
+        "query_chars": 54,
+        "top_k": 5,
+        "min_score": 0.38,
+        "returned": 5,
+        "kept": 5,
+        "top_score": 0.643,
+        "elapsed_ms": 7.4,
+        "hits": [
+          {
+            "rank": 1,
+            "score": 0.643,
+            "kept": true,
+            "chunk_id": "chk_81b557b503225e1ba5921621",
+            "document_id": "doc_72f2433a1e2f2e6340f14040",
+            "pages": [
+              10,
+              10
+            ]
+          },
+          {
+            "rank": 2,
+            "score": 0.6036,
+            "kept": true,
+            "chunk_id": "chk_35b03b84d0ec2d874ce92b72",
+            "document_id": "doc_72f2433a1e2f2e6340f14040",
+            "pages": [
+              9,
+              10
+            ]
+          },
+          {
+            "rank": 3,
+            "score": 0.5389,
+            "kept": true,
+            "chunk_id": "chk_44891350b418027f4c97f845",
+            "document_id": "doc_72f2433a1e2f2e6340f14040",
+            "pages": [
+              10,
+              13
+            ]
+          },
+          {
+            "rank": 4,
+            "score": 0.5278,
+            "kept": true,
+            "chunk_id": "chk_26186dfce8cada3c2c0ca73f",
+            "document_id": "doc_72f2433a1e2f2e6340f14040",
+            "pages": [
+              10,
+              11
+            ]
+          },
+          {
+            "rank": 5,
+            "score": 0.4393,
+            "kept": true,
+            "chunk_id": "chk_c3b69f664feabfe0e82643c7",
+            "document_id": "doc_72f2433a1e2f2e6340f14040",
+            "pages": [
+              7,
+              9
+            ]
+          }
+        ]
+      },
+      "citations": [
+        {
+          "citation_id": "S1",
+          "document_id": "doc_72f2433a1e2f2e6340f14040",
+          "document_title": "normal_nrc_reactor_concepts_ch01",
+          "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+          "page_start": 10,
+          "page_end": 10,
+          "pages": [
+            {
+              "page_number": 10,
+              "page_char_start": 136,
+              "page_char_end": 1270,
+              "highlight_rects": [
+                [
+                  54.0,
+                  148.73,
+                  540.05,
+                  162.01
+                ],
+                [
+                  54.0,
+                  162.89,
+                  540.02,
+                  176.17
+                ],
+                [
+                  54.0,
+                  177.05,
+                  163.75,
+                  190.33
+                ],
+                [
+                  54.0,
+                  205.37,
+                  540.03,
+                  218.65
+                ],
+                [
+                  54.0,
+                  219.53,
+                  540.01,
+                  232.81
+                ],
+                [
+                  54.0,
+                  233.69,
+                  539.99,
+                  246.97
+                ],
+                [
+                  54.0,
+                  247.85,
+                  95.1,
+                  261.13
+                ],
+                [
+                  54.0,
+                  276.17,
+                  540.07,
+                  289.45
+                ],
+                [
+                  54.0,
+                  290.33,
+                  540.01,
+                  303.61
+                ],
+                [
+                  54.0,
+                  304.49,
+                  540.06,
+                  317.77
+                ],
+                [
+                  54.0,
+                  318.65,
+                  263.7,
+                  331.93
+                ],
+                [
+                  54.0,
+                  346.97,
+                  540.03,
+                  360.25
+                ],
+                [
+                  54.0,
+                  361.13,
+                  540.14,
+                  374.41
+                ],
+                [
+                  54.0,
+                  375.29,
+                  540.03,
+                  388.57
+                ]
+              ],
+              "coordinates_reliable": true,
+              "page_width": 612.0,
+              "page_height": 792.0
+            }
+          ],
+          "chunk_ids": [
+            "chk_81b557b503225e1ba5921621"
+          ],
+          "char_start": 4483,
+          "char_end": 5617,
+          "text_checksum_sha256": "f0007ec58d615c8005f165fc1525e9d0d72f1aec13a7afd857dd1ce50596d90a",
+          "quote": "These major components are the fuel rods, the spacer grids, and the upper and lower end\nfittings.  The fuel assembly drawing on page 1-11 shows these major components (pressurized water\nreactor fuel assembly).\nThe fuel rods contain the ceramic fuel pellets.  The fuel rods are approximately 12 feet long and contain\na space at the top for the collection of any gases that are produced by the fission process.  These rods are\narranged in a square matrix ranging from 17 x 17 for pressurized water reactors to 8 x 8 for boiling water\nreactors.\nThe spacer grids separate the individual rods with pieces of sprung metal.  This provides the rigidity of\nthe assemblies and allows the coolant to flow freely up through the assemblies and around the fuel rods.\nSome spacer grids may have flow mixing vanes that are used to promote mixing of the coolant as it\nflows around and though the fuel assembly.\nThe upper and lower end fittings serve as the upper and lower structural elements of the assemblies.  The\nlower fitting (or bottom nozzle) will direct the coolant flow to the assembly through several small holes\nmachined into the fitting.  ",
+          "evidence_type": "text",
+          "score": 0.643,
+          "rank": 1
+        },
+        {
+          "citation_id": "S2",
+          "document_id": "doc_72f2433a1e2f2e6340f14040",
+          "document_title": "normal_nrc_reactor_concepts_ch01",
+          "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+          "page_start": 9,
+          "page_end": 10,
+          "pages": [
+            {
+              "page_number": 9,
+              "page_char_start": 0,
+              "page_char_end": 772,
+              "highlight_rects": [
+                [
+                  308.1,
+                  75.13,
+                  462.24,
+                  86.15
+                ],
+                [
+                  352.56,
+                  135.07,
+                  417.5,
+                  146.09
+                ],
+                [
+                  354.3,
+                  195.19,
+                  416.46,
+                  206.21
+                ],
+                [
+                  163.98,
+                  255.25,
+                  246.09,
+                  266.27
+                ],
+                [
+                  350.88,
+                  255.25,
+                  419.38,
+                  266.27
+                ],
+                [
+                  163.2,
+                  315.19,
+                  246.41,
+                  326.21
+                ],
+                [
+                  337.56,
+                  315.19,
+                  433.3,
+                  326.21
+                ],
+                [
+                  319.32,
+                  375.25,
+                  451.22,
+                  386.27
+                ],
+                [
+                  327.12,
+                  435.31,
+                  442.78,
+                  446.33
+                ],
+                [
+                  305.88,
+                  495.25,
+                  464.69,
+                  506.27
+                ],
+                [
+                  72.0,
+                  545.45,
+                  558.0,
+                  558.73
+                ],
+                [
+                  72.0,
+                  559.61,
+                  558.03,
+                  572.89
+                ],
+                [
+                  72.0,
+                  573.77,
+                  558.01,
+                  587.05
+                ],
+                [
+                  72.0,
+                  587.93,
+                  558.09,
+                  601.21
+                ],
+                [
+                  72.0,
+                  602.09,
+                  557.98,
+                  615.37
+                ],
+                [
+                  72.0,
+                  616.25,
+                  253.77,
+                  629.53
+                ]
+              ],
+              "coordinates_reliable": true,
+              "page_width": 612.0,
+              "page_height": 792.0
+            },
+            {
+              "page_number": 10,
+              "page_char_start": 0,
+              "page_char_end": 395,
+              "highlight_rects": [
+                [
+                  122.28,
+                  79.12,
+                  471.77,
+                  105.68
+                ],
+                [
+                  54.0,
+                  134.57,
+                  540.01,
+                  147.85
+                ],
+                [
+                  54.0,
+                  148.73,
+                  540.05,
+                  162.01
+                ],
+                [
+                  54.0,
+                  162.89,
+                  540.02,
+                  176.17
+                ],
+                [
+                  54.0,
+                  177.05,
+                  163.75,
+                  190.33
+                ],
+                [
+                  54.0,
+                  205.37,
+                  540.03,
+                  218.65
+                ]
+              ],
+              "coordinates_reliable": true,
+              "page_width": 612.0,
+              "page_height": 792.0
+            }
+          ],
+          "chunk_ids": [
+            "chk_35b03b84d0ec2d874ce92b72"
+          ],
+          "char_start": 3575,
+          "char_end": 4742,
+          "text_checksum_sha256": "5f87354974c04c98bdc379d73d241521c33a10d45d4bc1f268970b19c68be8f2",
+          "quote": "CHEMICAL CONVERSION TO UF6\nENRICHMENT\nPELLETIZING\nTubing & End Plugs\nROD LOADING\nSpacers & Tie Plates\nBUNDLE ASSEMBLY\nBUNDLE FINAL INSPECTION\nPACKAGING & SHIPPING\nSITE INSPECTION & CHANNELING\nOnce the fuel has been enriched, it is fabricated into ceramic pellets.  The pellets are stacked into 12-foot\nlong, slender metal tubes, generally made of a zirconium alloy.  The tube is called the \u201cfuel cladding.\u201d\nWhen a tube is filled with the uranium pellets, it is pressurized with helium gas, and plugs are installed\nand welded to seal the tube.  The filled rod is called a \u201cfuel rod.\u201d  The fuel rods are bundled together into\n\u201cfuel assemblies\u201d or \u201cfuel elements.\u201d  The completed assemblies are now ready to be shipped to the plant\nfor installation into the reactor vessel.\n\nREACTOR FUEL ASSEMBLIES\nBoth boiling water reactor and pressurized water reactor fuel assemblies consist of the same major\ncomponents.  These major components are the fuel rods, the spacer grids, and the upper and lower end\nfittings.  The fuel assembly drawing on page 1-11 shows these major components (pressurized water\nreactor fuel assembly).\nThe fuel rods contain the ceramic fuel pellets.  ",
+          "evidence_type": "text",
+          "score": 0.6036,
+          "rank": 2
+        }
+      ],
+      "citation_problems": [],
+      "answer_text": "From your documents:\n  The fuel rods are approximately 12 feet long. [S1][S2]\nGeneral model knowledge (not verified against your documents):\n  None.\nLimitations and uncertainty:\n  The passages do not specify any variation in length based on reactor type (e.g., PWR vs. BWR) or provide exact measurements beyond \"approximately 12 feet.\" The information is consistent across passages, so no uncertainty arises from conflicting data. However, the term \"approximately\" introduces a degree of uncertainty in precision.",
+      "timing_ms": 102666.9,
+      "model": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+      "stub_model": false,
+      "warnings": []
+    },
+    {
+      "step": "publish_v2_and_ask",
+      "version": {
+        "version_id": "v0002",
+        "status": "active",
+        "created_at": "2026-10-13T00:40:31+00:00",
+        "activated_at": "2026-10-13T00:40:31+00:00",
+        "chunk_count": 309,
+        "embedding_model": "all-MiniLM-L6-v2",
+        "chunker_config_ids": [
+          "cfg_491d3b9c4d21"
+        ],
+        "integrity_sha256": "808991ae48c198a86200b254df416e6aa262047b7ac465f5d9a783890984f354",
+        "documents": [
+          {
+            "document_id": "doc_25de10e6c0a5146797a79b45",
+            "display_title": "DOE Fundamentals Handbook: Nuclear Physics and Reactor Theory, Vol 1 of 2",
+            "source_filename": "large_doe_nuclear_physics_v1.pdf",
+            "page_count": 96
+          },
+          {
+            "document_id": "doc_72f2433a1e2f2e6340f14040",
+            "display_title": "normal_nrc_reactor_concepts_ch01",
+            "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+            "page_count": 24
+          },
+          {
+            "document_id": "doc_baeb6812f56c040063d6c6a6",
+            "display_title": "layout_arxiv_two_column_2112.11583",
+            "source_filename": "layout_arxiv_two_column_2112.11583.pdf",
+            "page_count": 13
+          },
+          {
+            "document_id": "doc_e515f2746a2338fe4351a590",
+            "display_title": "Reactor coolant system overview (adversarial fixture)",
+            "source_filename": "adversarial_prompt_injection.pdf",
+            "page_count": 2
+          }
+        ]
+      },
+      "integrity": {
+        "version_id": "v0002",
+        "ok": true,
+        "expected_chunks": 309,
+        "stored_chunks": 309,
+        "expected_documents": 4,
+        "stored_documents": 4,
+        "expected_integrity_sha256": "808991ae48c198a86200b254df416e6aa262047b7ac465f5d9a783890984f354",
+        "stored_integrity_sha256": "808991ae48c198a86200b254df416e6aa262047b7ac465f5d9a783890984f354",
+        "problems": []
+      },
+      "elapsed_s": 13.6,
+      "question": {
+        "question": "How many students were in the class?",
+        "collection_version": "v0002",
+        "status": "answered",
+        "trace": {
+          "collection_version": "v0002",
+          "query_chars": 36,
+          "top_k": 5,
+          "min_score": 0.38,
+          "returned": 5,
+          "kept": 3,
+          "top_score": 0.4534,
+          "elapsed_ms": 9.2,
+          "hits": [
+            {
+              "rank": 1,
+              "score": 0.4534,
+              "kept": true,
+              "chunk_id": "chk_cda43761a828d13ab1d477f2",
+              "document_id": "doc_baeb6812f56c040063d6c6a6",
+              "pages": [
+                2,
+                3
+              ]
+            },
+            {
+              "rank": 2,
+              "score": 0.4161,
+              "kept": true,
+              "chunk_id": "chk_8321776770ead6870d86a046",
+              "document_id": "doc_baeb6812f56c040063d6c6a6",
+              "pages": [
+                11,
+                11
+              ]
+            },
+            {
+              "rank": 3,
+              "score": 0.4148,
+              "kept": true,
+              "chunk_id": "chk_3efeb11dc08a5abca2924e11",
+              "document_id": "doc_baeb6812f56c040063d6c6a6",
+              "pages": [
+                11,
+                11
+              ]
+            },
+            {
+              "rank": 4,
+              "score": 0.3719,
+              "kept": false,
+              "chunk_id": "chk_a2d44af34a8239178358f4c3",
+              "document_id": "doc_baeb6812f56c040063d6c6a6",
+              "pages": [
+                11,
+                11
+              ]
+            },
+            {
+              "rank": 5,
+              "score": 0.3684,
+              "kept": false,
+              "chunk_id": "chk_f8f7ee86f5ffad3d82d89e43",
+              "document_id": "doc_baeb6812f56c040063d6c6a6",
+              "pages": [
+                9,
+                10
+              ]
+            }
+          ]
+        },
+        "citations": [
+          {
+            "citation_id": "S2",
+            "document_id": "doc_baeb6812f56c040063d6c6a6",
+            "document_title": "layout_arxiv_two_column_2112.11583",
+            "source_filename": "layout_arxiv_two_column_2112.11583.pdf",
+            "page_start": 11,
+            "page_end": 11,
+            "pages": [
+              {
+                "page_number": 11,
+                "page_char_start": 122,
+                "page_char_end": 1239,
+                "highlight_rects": [
+                  [
+                    377.67,
+                    71.44,
+                    513.38,
+                    80.4
+                  ],
+                  [
+                    377.67,
+                    81.9,
+                    510.96,
+                    90.86
+                  ],
+                  [
+                    377.67,
+                    92.36,
+                    510.96,
+                    101.33
+                  ],
+                  [
+                    377.67,
+                    102.82,
+                    510.96,
+                    111.79
+                  ],
+                  [
+                    377.67,
+                    113.28,
+                    510.96,
+                    122.25
+                  ],
+                  [
+                    377.67,
+                    123.74,
+                    510.96,
+                    132.71
+                  ],
+                  [
+                    377.67,
+                    134.2,
+                    510.96,
+                    143.17
+                  ],
+                  [
+                    377.67,
+                    144.66,
+                    510.96,
+                    153.63
+                  ],
+                  [
+                    317.01,
+                    167.5,
+                    562.07,
+                    176.47
+                  ],
+                  [
+                    426.19,
+                    177.93,
+                    555.68,
+                    186.93
+                  ],
+                  [
+                    317.01,
+                    213.01,
+                    562.12,
+                    223.1
+                  ],
+                  [
+                    54.0,
+                    215.09,
+                    299.15,
+                    224.05
+                  ],
+                  [
+                    317.01,
+                    224.59,
+                    562.13,
+                    234.56
+                  ],
+                  [
+                    317.01,
+                    236.05,
+                    562.08,
+                    246.01
+                  ],
+                  [
+                    317.01,
+                    247.51,
+                    562.12,
+                    257.47
+                  ],
+                  [
+                    317.01,
+                    258.96,
+                    562.11,
+                    268.93
+                  ],
+                  [
+                    317.01,
+                    270.42,
+                    562.09,
+                    280.38
+                  ],
+                  [
+                    106.53,
+                    272.84,
+                    246.58,
+                    281.81
+                  ],
+                  [
+                    63.96,
+                    297.76,
+                    299.08,
+                    307.72
+                  ],
+                  [
+                    400.6,
+                    298.33,
+                    418.52,
+                    307.3
+                  ],
+                  [
+                    435.94,
+                    298.33,
+                    478.52,
+                    307.3
+                  ],
+                  [
+                    54.0,
+                    309.21,
+                    299.11,
+                    319.18
+                  ],
+                  [
+                    400.6,
+                    313.8,
+                    476.1,
+                    322.76
+                  ],
+                  [
+                    54.0,
+                    320.67,
+                    299.08,
+                    330.63
+                  ],
+                  [
+                    400.6,
+                    324.26,
+                    476.09,
+                    333.22
+                  ],
+                  [
+                    54.0,
+                    332.13,
+                    299.07,
+                    342.09
+                  ],
+                  [
+                    353.84,
+                    347.09,
+                    525.27,
+                    356.06
+                  ]
+                ],
+                "coordinates_reliable": true,
+                "page_width": 612.0,
+                "page_height": 792.0
+              }
+            ],
+            "chunk_ids": [
+              "chk_8321776770ead6870d86a046"
+            ],
+            "char_start": 31169,
+            "char_end": 32286,
+            "text_checksum_sha256": "02f8153206e5a01de85f0468443aaa8178d12b11130c187f41ec66f8e33e7fff",
+            "quote": "AVG STD AVG STD AVG STD\n3.33\n1.5\n7.56\n1.51 4.22\n1.09\n4.67\n2.4\n8.22\n1.09 3.56\n1.59\n4.44\n1.81 8.11\n0.78 3.67\n2.12\n3.89\n2.03 7.22\n1.86 3.33\n1.94\n4.56\n2.19 7.89\n0.93 3.33\n2.35\n5.22\n1.86 7.78\n1.2\n2.56\n2.07\n5.22\n1.39 8.11\n0.78 2.89\n1.54\nTABLE II. Calculated student survey responses addressing\ntargeted learning outcomes B based on Bloom\u2019s taxonomy.\nFIG. 19. Section of Final Project Option 2. Note the intro-\nduction of Oppenheimer as a character in the narrative.\n\u223c3.37 to 7.84/10 following the course. Given the novelty\nin providing fully-remote education, we also questioned\nstudents on the e\ufb00ectiveness (on a similar scale of 1-10) of\nusing the the tools MIRO for collaborative whiteboard-\ning and SLACK for class-wide communication and the\nresults are shown in Table III. When asked to select only\nVII.\nCOURSE OUTCOMES\nTool\nAVG STD\nMIRO\n5.78\n3.49\nSLACK 7.33\n3.24\nTABLE III. Remote Learning Tool Survey\nNE290 was o\ufb00ered at UC Berkeley during the COVID-\n19 pandemic spring of 2021, and so the entirety of the\ncourse was conducted remotely via the Zoom tool. The\nclass was composed of 11 students (2 female and 9 male).\n",
+            "evidence_type": "text",
+            "score": 0.4161,
+            "rank": 2
+          },
+          {
+            "citation_id": "S3",
+            "document_id": "doc_baeb6812f56c040063d6c6a6",
+            "document_title": "layout_arxiv_two_column_2112.11583",
+            "source_filename": "layout_arxiv_two_column_2112.11583.pdf",
+            "page_start": 11,
+            "page_end": 11,
+            "pages": [
+              {
+                "page_number": 11,
+                "page_char_start": 996,
+                "page_char_end": 2078,
+                "highlight_rects": [
+                  [
+                    63.96,
+                    297.76,
+                    299.08,
+                    307.72
+                  ],
+                  [
+                    54.0,
+                    309.21,
+                    299.11,
+                    319.18
+                  ],
+                  [
+                    54.0,
+                    320.67,
+                    299.08,
+                    330.63
+                  ],
+                  [
+                    54.0,
+                    332.13,
+                    299.07,
+                    342.09
+                  ],
+                  [
+                    54.0,
+                    343.58,
+                    299.11,
+                    353.55
+                  ],
+                  [
+                    404.38,
+                    347.09,
+                    525.27,
+                    356.06
+                  ],
+                  [
+                    178.89,
+                    353.76,
+                    185.16,
+                    360.73
+                  ],
+                  [
+                    54.0,
+                    355.04,
+                    299.1,
+                    365.0
+                  ],
+                  [
+                    81.59,
+                    365.22,
+                    90.39,
+                    372.19
+                  ],
+                  [
+                    238.27,
+                    365.22,
+                    245.78,
+                    372.19
+                  ],
+                  [
+                    54.0,
+                    366.5,
+                    299.09,
+                    376.46
+                  ],
+                  [
+                    317.01,
+                    372.69,
+                    562.11,
+                    382.65
+                  ],
+                  [
+                    54.0,
+                    377.95,
+                    299.12,
+                    387.92
+                  ],
+                  [
+                    317.01,
+                    384.15,
+                    562.1,
+                    394.11
+                  ],
+                  [
+                    54.0,
+                    389.41,
+                    299.13,
+                    399.37
+                  ],
+                  [
+                    317.01,
+                    395.6,
+                    562.12,
+                    405.57
+                  ],
+                  [
+                    54.0,
+                    400.87,
+                    299.1,
+                    410.83
+                  ],
+                  [
+                    317.01,
+                    407.06,
+                    324.54,
+                    417.02
+                  ],
+                  [
+                    54.0,
+                    412.33,
+                    299.08,
+                    422.29
+                  ],
+                  [
+                    54.0,
+                    423.78,
+                    299.08,
+                    433.75
+                  ],
+                  [
+                    54.0,
+                    435.24,
+                    299.1,
+                    445.2
+                  ],
+                  [
+                    54.0,
+                    446.66,
+                    299.08,
+                    456.66
+                  ],
+                  [
+                    149.55,
+                    472.92,
+                    203.54,
+                    481.92
+                  ],
+                  [
+                    149.55,
+                    488.42,
+                    201.11,
+                    497.38
+                  ],
+                  [
+                    149.55,
+                    498.88,
+                    201.11,
+                    507.85
+                  ],
+                  [
+                    149.55,
+                    509.34,
+                    201.11,
+                    518.31
+                  ],
+                  [
+                    54.0,
+                    532.18,
+                    299.06,
+                    541.14
+                  ],
+                  [
+                    54.0,
+                    542.6,
+                    136.47,
+                    551.6
+                  ]
+                ],
+                "coordinates_reliable": true,
+                "page_width": 612.0,
+                "page_height": 792.0
+              }
+            ],
+            "chunk_ids": [
+              "chk_3efeb11dc08a5abca2924e11"
+            ],
+            "char_start": 32043,
+            "char_end": 33125,
+            "text_checksum_sha256": "1283dcbc1a43dda162847f4fc945bb050f1385ca91c5f934a14f3d974b4a4ee7",
+            "quote": "Remote Learning Tool Survey\nNE290 was o\ufb00ered at UC Berkeley during the COVID-\n19 pandemic spring of 2021, and so the entirety of the\ncourse was conducted remotely via the Zoom tool. The\nclass was composed of 11 students (2 female and 9 male).\nIn terms of background, 10 were enrolled in nuclear en-\ngineering programs; 4 were 1st-year graduate students, 3\nwere 2nd-year graduate students, 1 was a 3rd-year gradu-\nate student, and 1 was an undergraduate junior who was\nenrolled studying environmental engineering. Following\nthe completion of the course, students were provided a\nsurvey to determine the impact of lesson in terms of its\npedagogical targets. First students were asked to evalu-\nate how NE290 aided their agency towards the nontech-\nnical ABET goals (O) as shown in Table I. The results\nO AVG STD\n1 7.67\n2.12\n2 5.67\n3.71\n3 8.0\n2.96\nTABLE I. Calculated student survey responses addressing\nABET Outcomes O.\na single tool to keep if NE290 was taught in-person, 44%\nopted for recorded lectures (enabled by Zoom), 33% se-\nlected SLACK, and only 22% opted for keeping MIRO\n. ",
+            "evidence_type": "text",
+            "score": 0.4148,
+            "rank": 3
+          }
+        ],
+        "citation_problems": [],
+        "answer_text": "From your documents:\n  11 students were in the class. [S2][S3]",
+        "timing_ms": 51373.1,
+        "model": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+        "stub_model": false,
+        "warnings": []
+      }
+    },
+    {
+      "step": "rollback",
+      "active": "v0001",
+      "integrity": {
+        "version_id": "v0001",
+        "ok": true,
+        "expected_chunks": 255,
+        "stored_chunks": 255,
+        "expected_documents": 3,
+        "stored_documents": 3,
+        "expected_integrity_sha256": "101dd0b07b5c9a0db327b919f1fc3ee7b689ea93f9271d0745f588d9e6e2e8d9",
+        "stored_integrity_sha256": "101dd0b07b5c9a0db327b919f1fc3ee7b689ea93f9271d0745f588d9e6e2e8d9",
+        "problems": []
+      },
+      "arxiv_question": {
+        "question": "How many students were in the class?",
+        "collection_version": "v0001",
+        "status": "insufficient_evidence",
+        "trace": {
+          "collection_version": "v0001",
+          "query_chars": 36,
+          "top_k": 5,
+          "min_score": 0.38,
+          "returned": 5,
+          "kept": 0,
+          "top_score": 0.2003,
+          "elapsed_ms": 563.9,
+          "hits": [
+            {
+              "rank": 1,
+              "score": 0.2003,
+              "kept": false,
+              "chunk_id": "chk_13a7a7b1b80f7f88a8afeb5b",
+              "document_id": "doc_25de10e6c0a5146797a79b45",
+              "pages": [
+                36,
+                37
+              ]
+            },
+            {
+              "rank": 2,
+              "score": 0.17,
+              "kept": false,
+              "chunk_id": "chk_3b5c1ca89a9684db9110d908",
+              "document_id": "doc_25de10e6c0a5146797a79b45",
+              "pages": [
+                1,
+                1
+              ]
+            },
+            {
+              "rank": 3,
+              "score": 0.1611,
+              "kept": false,
+              "chunk_id": "chk_271e27a2145723e8cf3cb2b2",
+              "document_id": "doc_25de10e6c0a5146797a79b45",
+              "pages": [
+                4,
+                4
+              ]
+            },
+            {
+              "rank": 4,
+              "score": 0.153,
+              "kept": false,
+              "chunk_id": "chk_7ae093c6449c142e06078732",
+              "document_id": "doc_25de10e6c0a5146797a79b45",
+              "pages": [
+                37,
+                37
+              ]
+            },
+            {
+              "rank": 5,
+              "score": 0.1515,
+              "kept": false,
+              "chunk_id": "chk_fef26013ed97105a3e516395",
+              "document_id": "doc_25de10e6c0a5146797a79b45",
+              "pages": [
+                4,
+                5
+              ]
+            }
+          ]
+        },
+        "citations": [],
+        "citation_problems": [],
+        "answer_text": "General model knowledge (not verified against your documents):\n  The number of students in a class can vary widely depending on the educational setting, grade level, and country. Typically, a standard classroom might have between 15 and 30 students, but this can range from as few as 5 to as many as 50 or more in some cases.\nLimitations and uncertainty:\n  This answer is not verified against the document collection.",
+        "timing_ms": 21053.9,
+        "model": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+        "stub_model": false,
+        "warnings": [
+          "insufficient_evidence"
+        ]
+      },
+      "nrc_question": {
+        "question": "How long are the fuel rods in a reactor fuel assembly?",
+        "collection_version": "v0001",
+        "status": "answered",
+        "trace": {
+          "collection_version": "v0001",
+          "query_chars": 54,
+          "top_k": 5,
+          "min_score": 0.38,
+          "returned": 5,
+          "kept": 5,
+          "top_score": 0.643,
+          "elapsed_ms": 399.6,
+          "hits": [
+            {
+              "rank": 1,
+              "score": 0.643,
+              "kept": true,
+              "chunk_id": "chk_81b557b503225e1ba5921621",
+              "document_id": "doc_72f2433a1e2f2e6340f14040",
+              "pages": [
+                10,
+                10
+              ]
+            },
+            {
+              "rank": 2,
+              "score": 0.6036,
+              "kept": true,
+              "chunk_id": "chk_35b03b84d0ec2d874ce92b72",
+              "document_id": "doc_72f2433a1e2f2e6340f14040",
+              "pages": [
+                9,
+                10
+              ]
+            },
+            {
+              "rank": 3,
+              "score": 0.5389,
+              "kept": true,
+              "chunk_id": "chk_44891350b418027f4c97f845",
+              "document_id": "doc_72f2433a1e2f2e6340f14040",
+              "pages": [
+                10,
+                13
+              ]
+            },
+            {
+              "rank": 4,
+              "score": 0.5278,
+              "kept": true,
+              "chunk_id": "chk_26186dfce8cada3c2c0ca73f",
+              "document_id": "doc_72f2433a1e2f2e6340f14040",
+              "pages": [
+                10,
+                11
+              ]
+            },
+            {
+              "rank": 5,
+              "score": 0.4393,
+              "kept": true,
+              "chunk_id": "chk_c3b69f664feabfe0e82643c7",
+              "document_id": "doc_72f2433a1e2f2e6340f14040",
+              "pages": [
+                7,
+                9
+              ]
+            }
+          ]
+        },
+        "citations": [
+          {
+            "citation_id": "S1",
+            "document_id": "doc_72f2433a1e2f2e6340f14040",
+            "document_title": "normal_nrc_reactor_concepts_ch01",
+            "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+            "page_start": 10,
+            "page_end": 10,
+            "pages": [
+              {
+                "page_number": 10,
+                "page_char_start": 136,
+                "page_char_end": 1270,
+                "highlight_rects": [
+                  [
+                    54.0,
+                    148.73,
+                    540.05,
+                    162.01
+                  ],
+                  [
+                    54.0,
+                    162.89,
+                    540.02,
+                    176.17
+                  ],
+                  [
+                    54.0,
+                    177.05,
+                    163.75,
+                    190.33
+                  ],
+                  [
+                    54.0,
+                    205.37,
+                    540.03,
+                    218.65
+                  ],
+                  [
+                    54.0,
+                    219.53,
+                    540.01,
+                    232.81
+                  ],
+                  [
+                    54.0,
+                    233.69,
+                    539.99,
+                    246.97
+                  ],
+                  [
+                    54.0,
+                    247.85,
+                    95.1,
+                    261.13
+                  ],
+                  [
+                    54.0,
+                    276.17,
+                    540.07,
+                    289.45
+                  ],
+                  [
+                    54.0,
+                    290.33,
+                    540.01,
+                    303.61
+                  ],
+                  [
+                    54.0,
+                    304.49,
+                    540.06,
+                    317.77
+                  ],
+                  [
+                    54.0,
+                    318.65,
+                    263.7,
+                    331.93
+                  ],
+                  [
+                    54.0,
+                    346.97,
+                    540.03,
+                    360.25
+                  ],
+                  [
+                    54.0,
+                    361.13,
+                    540.14,
+                    374.41
+                  ],
+                  [
+                    54.0,
+                    375.29,
+                    540.03,
+                    388.57
+                  ]
+                ],
+                "coordinates_reliable": true,
+                "page_width": 612.0,
+                "page_height": 792.0
+              }
+            ],
+            "chunk_ids": [
+              "chk_81b557b503225e1ba5921621"
+            ],
+            "char_start": 4483,
+            "char_end": 5617,
+            "text_checksum_sha256": "f0007ec58d615c8005f165fc1525e9d0d72f1aec13a7afd857dd1ce50596d90a",
+            "quote": "These major components are the fuel rods, the spacer grids, and the upper and lower end\nfittings.  The fuel assembly drawing on page 1-11 shows these major components (pressurized water\nreactor fuel assembly).\nThe fuel rods contain the ceramic fuel pellets.  The fuel rods are approximately 12 feet long and contain\na space at the top for the collection of any gases that are produced by the fission process.  These rods are\narranged in a square matrix ranging from 17 x 17 for pressurized water reactors to 8 x 8 for boiling water\nreactors.\nThe spacer grids separate the individual rods with pieces of sprung metal.  This provides the rigidity of\nthe assemblies and allows the coolant to flow freely up through the assemblies and around the fuel rods.\nSome spacer grids may have flow mixing vanes that are used to promote mixing of the coolant as it\nflows around and though the fuel assembly.\nThe upper and lower end fittings serve as the upper and lower structural elements of the assemblies.  The\nlower fitting (or bottom nozzle) will direct the coolant flow to the assembly through several small holes\nmachined into the fitting.  ",
+            "evidence_type": "text",
+            "score": 0.643,
+            "rank": 1
+          },
+          {
+            "citation_id": "S2",
+            "document_id": "doc_72f2433a1e2f2e6340f14040",
+            "document_title": "normal_nrc_reactor_concepts_ch01",
+            "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+            "page_start": 9,
+            "page_end": 10,
+            "pages": [
+              {
+                "page_number": 9,
+                "page_char_start": 0,
+                "page_char_end": 772,
+                "highlight_rects": [
+                  [
+                    308.1,
+                    75.13,
+                    462.24,
+                    86.15
+                  ],
+                  [
+                    352.56,
+                    135.07,
+                    417.5,
+                    146.09
+                  ],
+                  [
+                    354.3,
+                    195.19,
+                    416.46,
+                    206.21
+                  ],
+                  [
+                    163.98,
+                    255.25,
+                    246.09,
+                    266.27
+                  ],
+                  [
+                    350.88,
+                    255.25,
+                    419.38,
+                    266.27
+                  ],
+                  [
+                    163.2,
+                    315.19,
+                    246.41,
+                    326.21
+                  ],
+                  [
+                    337.56,
+                    315.19,
+                    433.3,
+                    326.21
+                  ],
+                  [
+                    319.32,
+                    375.25,
+                    451.22,
+                    386.27
+                  ],
+                  [
+                    327.12,
+                    435.31,
+                    442.78,
+                    446.33
+                  ],
+                  [
+                    305.88,
+                    495.25,
+                    464.69,
+                    506.27
+                  ],
+                  [
+                    72.0,
+                    545.45,
+                    558.0,
+                    558.73
+                  ],
+                  [
+                    72.0,
+                    559.61,
+                    558.03,
+                    572.89
+                  ],
+                  [
+                    72.0,
+                    573.77,
+                    558.01,
+                    587.05
+                  ],
+                  [
+                    72.0,
+                    587.93,
+                    558.09,
+                    601.21
+                  ],
+                  [
+                    72.0,
+                    602.09,
+                    557.98,
+                    615.37
+                  ],
+                  [
+                    72.0,
+                    616.25,
+                    253.77,
+                    629.53
+                  ]
+                ],
+                "coordinates_reliable": true,
+                "page_width": 612.0,
+                "page_height": 792.0
+              },
+              {
+                "page_number": 10,
+                "page_char_start": 0,
+                "page_char_end": 395,
+                "highlight_rects": [
+                  [
+                    122.28,
+                    79.12,
+                    471.77,
+                    105.68
+                  ],
+                  [
+                    54.0,
+                    134.57,
+                    540.01,
+                    147.85
+                  ],
+                  [
+                    54.0,
+                    148.73,
+                    540.05,
+                    162.01
+                  ],
+                  [
+                    54.0,
+                    162.89,
+                    540.02,
+                    176.17
+                  ],
+                  [
+                    54.0,
+                    177.05,
+                    163.75,
+                    190.33
+                  ],
+                  [
+                    54.0,
+                    205.37,
+                    540.03,
+                    218.65
+                  ]
+                ],
+                "coordinates_reliable": true,
+                "page_width": 612.0,
+                "page_height": 792.0
+              }
+            ],
+            "chunk_ids": [
+              "chk_35b03b84d0ec2d874ce92b72"
+            ],
+            "char_start": 3575,
+            "char_end": 4742,
+            "text_checksum_sha256": "5f87354974c04c98bdc379d73d241521c33a10d45d4bc1f268970b19c68be8f2",
+            "quote": "CHEMICAL CONVERSION TO UF6\nENRICHMENT\nPELLETIZING\nTubing & End Plugs\nROD LOADING\nSpacers & Tie Plates\nBUNDLE ASSEMBLY\nBUNDLE FINAL INSPECTION\nPACKAGING & SHIPPING\nSITE INSPECTION & CHANNELING\nOnce the fuel has been enriched, it is fabricated into ceramic pellets.  The pellets are stacked into 12-foot\nlong, slender metal tubes, generally made of a zirconium alloy.  The tube is called the \u201cfuel cladding.\u201d\nWhen a tube is filled with the uranium pellets, it is pressurized with helium gas, and plugs are installed\nand welded to seal the tube.  The filled rod is called a \u201cfuel rod.\u201d  The fuel rods are bundled together into\n\u201cfuel assemblies\u201d or \u201cfuel elements.\u201d  The completed assemblies are now ready to be shipped to the plant\nfor installation into the reactor vessel.\n\nREACTOR FUEL ASSEMBLIES\nBoth boiling water reactor and pressurized water reactor fuel assemblies consist of the same major\ncomponents.  These major components are the fuel rods, the spacer grids, and the upper and lower end\nfittings.  The fuel assembly drawing on page 1-11 shows these major components (pressurized water\nreactor fuel assembly).\nThe fuel rods contain the ceramic fuel pellets.  ",
+            "evidence_type": "text",
+            "score": 0.6036,
+            "rank": 2
+          }
+        ],
+        "citation_problems": [],
+        "answer_text": "From your documents:\n  The fuel rods are approximately 12 feet long. [S1][S2]\nGeneral model knowledge (not verified against your documents):\n  None.\nLimitations and uncertainty:\n  The passages do not specify any variation in length based on reactor type (e.g., PWR vs. BWR) or provide exact measurements beyond \"approximately 12 feet.\" The information is consistent across passages, so no uncertainty arises from conflicting data. However, the term \"approximately\" introduces a degree of uncertainty in precision.",
+        "timing_ms": 79735.6,
+        "model": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+        "stub_model": false,
+        "warnings": []
+      }
+    },
+    {
+      "step": "republish",
+      "version": {
+        "version_id": "v0003",
+        "status": "active",
+        "created_at": "2026-10-13T00:43:16+00:00",
+        "activated_at": "2026-10-13T00:43:16+00:00",
+        "chunk_count": 309,
+        "embedding_model": "all-MiniLM-L6-v2",
+        "chunker_config_ids": [
+          "cfg_491d3b9c4d21"
+        ],
+        "integrity_sha256": "808991ae48c198a86200b254df416e6aa262047b7ac465f5d9a783890984f354",
+        "documents": [
+          {
+            "document_id": "doc_25de10e6c0a5146797a79b45",
+            "display_title": "DOE Fundamentals Handbook: Nuclear Physics and Reactor Theory, Vol 1 of 2",
+            "source_filename": "large_doe_nuclear_physics_v1.pdf",
+            "page_count": 96
+          },
+          {
+            "document_id": "doc_72f2433a1e2f2e6340f14040",
+            "display_title": "normal_nrc_reactor_concepts_ch01",
+            "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+            "page_count": 24
+          },
+          {
+            "document_id": "doc_baeb6812f56c040063d6c6a6",
+            "display_title": "layout_arxiv_two_column_2112.11583",
+            "source_filename": "layout_arxiv_two_column_2112.11583.pdf",
+            "page_count": 13
+          },
+          {
+            "document_id": "doc_e515f2746a2338fe4351a590",
+            "display_title": "Reactor coolant system overview (adversarial fixture)",
+            "source_filename": "adversarial_prompt_injection.pdf",
+            "page_count": 2
+          }
+        ]
+      },
+      "integrity": {
+        "version_id": "v0003",
+        "ok": true,
+        "expected_chunks": 309,
+        "stored_chunks": 309,
+        "expected_documents": 4,
+        "stored_documents": 4,
+        "expected_integrity_sha256": "808991ae48c198a86200b254df416e6aa262047b7ac465f5d9a783890984f354",
+        "stored_integrity_sha256": "808991ae48c198a86200b254df416e6aa262047b7ac465f5d9a783890984f354",
+        "problems": []
+      },
+      "same_integrity_as_v2": true,
+      "saved_citation_resolves": true,
+      "question": {
+        "question": "How many students were in the class?",
+        "collection_version": "v0003",
+        "status": "answered",
+        "trace": {
+          "collection_version": "v0003",
+          "query_chars": 36,
+          "top_k": 5,
+          "min_score": 0.38,
+          "returned": 5,
+          "kept": 3,
+          "top_score": 0.4534,
+          "elapsed_ms": 7.3,
+          "hits": [
+            {
+              "rank": 1,
+              "score": 0.4534,
+              "kept": true,
+              "chunk_id": "chk_cda43761a828d13ab1d477f2",
+              "document_id": "doc_baeb6812f56c040063d6c6a6",
+              "pages": [
+                2,
+                3
+              ]
+            },
+            {
+              "rank": 2,
+              "score": 0.4161,
+              "kept": true,
+              "chunk_id": "chk_8321776770ead6870d86a046",
+              "document_id": "doc_baeb6812f56c040063d6c6a6",
+              "pages": [
+                11,
+                11
+              ]
+            },
+            {
+              "rank": 3,
+              "score": 0.4148,
+              "kept": true,
+              "chunk_id": "chk_3efeb11dc08a5abca2924e11",
+              "document_id": "doc_baeb6812f56c040063d6c6a6",
+              "pages": [
+                11,
+                11
+              ]
+            },
+            {
+              "rank": 4,
+              "score": 0.3719,
+              "kept": false,
+              "chunk_id": "chk_a2d44af34a8239178358f4c3",
+              "document_id": "doc_baeb6812f56c040063d6c6a6",
+              "pages": [
+                11,
+                11
+              ]
+            },
+            {
+              "rank": 5,
+              "score": 0.3684,
+              "kept": false,
+              "chunk_id": "chk_f8f7ee86f5ffad3d82d89e43",
+              "document_id": "doc_baeb6812f56c040063d6c6a6",
+              "pages": [
+                9,
+                10
+              ]
+            }
+          ]
+        },
+        "citations": [
+          {
+            "citation_id": "S2",
+            "document_id": "doc_baeb6812f56c040063d6c6a6",
+            "document_title": "layout_arxiv_two_column_2112.11583",
+            "source_filename": "layout_arxiv_two_column_2112.11583.pdf",
+            "page_start": 11,
+            "page_end": 11,
+            "pages": [
+              {
+                "page_number": 11,
+                "page_char_start": 122,
+                "page_char_end": 1239,
+                "highlight_rects": [
+                  [
+                    377.67,
+                    71.44,
+                    513.38,
+                    80.4
+                  ],
+                  [
+                    377.67,
+                    81.9,
+                    510.96,
+                    90.86
+                  ],
+                  [
+                    377.67,
+                    92.36,
+                    510.96,
+                    101.33
+                  ],
+                  [
+                    377.67,
+                    102.82,
+                    510.96,
+                    111.79
+                  ],
+                  [
+                    377.67,
+                    113.28,
+                    510.96,
+                    122.25
+                  ],
+                  [
+                    377.67,
+                    123.74,
+                    510.96,
+                    132.71
+                  ],
+                  [
+                    377.67,
+                    134.2,
+                    510.96,
+                    143.17
+                  ],
+                  [
+                    377.67,
+                    144.66,
+                    510.96,
+                    153.63
+                  ],
+                  [
+                    317.01,
+                    167.5,
+                    562.07,
+                    176.47
+                  ],
+                  [
+                    426.19,
+                    177.93,
+                    555.68,
+                    186.93
+                  ],
+                  [
+                    317.01,
+                    213.01,
+                    562.12,
+                    223.1
+                  ],
+                  [
+                    54.0,
+                    215.09,
+                    299.15,
+                    224.05
+                  ],
+                  [
+                    317.01,
+                    224.59,
+                    562.13,
+                    234.56
+                  ],
+                  [
+                    317.01,
+                    236.05,
+                    562.08,
+                    246.01
+                  ],
+                  [
+                    317.01,
+                    247.51,
+                    562.12,
+                    257.47
+                  ],
+                  [
+                    317.01,
+                    258.96,
+                    562.11,
+                    268.93
+                  ],
+                  [
+                    317.01,
+                    270.42,
+                    562.09,
+                    280.38
+                  ],
+                  [
+                    106.53,
+                    272.84,
+                    246.58,
+                    281.81
+                  ],
+                  [
+                    63.96,
+                    297.76,
+                    299.08,
+                    307.72
+                  ],
+                  [
+                    400.6,
+                    298.33,
+                    418.52,
+                    307.3
+                  ],
+                  [
+                    435.94,
+                    298.33,
+                    478.52,
+                    307.3
+                  ],
+                  [
+                    54.0,
+                    309.21,
+                    299.11,
+                    319.18
+                  ],
+                  [
+                    400.6,
+                    313.8,
+                    476.1,
+                    322.76
+                  ],
+                  [
+                    54.0,
+                    320.67,
+                    299.08,
+                    330.63
+                  ],
+                  [
+                    400.6,
+                    324.26,
+                    476.09,
+                    333.22
+                  ],
+                  [
+                    54.0,
+                    332.13,
+                    299.07,
+                    342.09
+                  ],
+                  [
+                    353.84,
+                    347.09,
+                    525.27,
+                    356.06
+                  ]
+                ],
+                "coordinates_reliable": true,
+                "page_width": 612.0,
+                "page_height": 792.0
+              }
+            ],
+            "chunk_ids": [
+              "chk_8321776770ead6870d86a046"
+            ],
+            "char_start": 31169,
+            "char_end": 32286,
+            "text_checksum_sha256": "02f8153206e5a01de85f0468443aaa8178d12b11130c187f41ec66f8e33e7fff",
+            "quote": "AVG STD AVG STD AVG STD\n3.33\n1.5\n7.56\n1.51 4.22\n1.09\n4.67\n2.4\n8.22\n1.09 3.56\n1.59\n4.44\n1.81 8.11\n0.78 3.67\n2.12\n3.89\n2.03 7.22\n1.86 3.33\n1.94\n4.56\n2.19 7.89\n0.93 3.33\n2.35\n5.22\n1.86 7.78\n1.2\n2.56\n2.07\n5.22\n1.39 8.11\n0.78 2.89\n1.54\nTABLE II. Calculated student survey responses addressing\ntargeted learning outcomes B based on Bloom\u2019s taxonomy.\nFIG. 19. Section of Final Project Option 2. Note the intro-\nduction of Oppenheimer as a character in the narrative.\n\u223c3.37 to 7.84/10 following the course. Given the novelty\nin providing fully-remote education, we also questioned\nstudents on the e\ufb00ectiveness (on a similar scale of 1-10) of\nusing the the tools MIRO for collaborative whiteboard-\ning and SLACK for class-wide communication and the\nresults are shown in Table III. When asked to select only\nVII.\nCOURSE OUTCOMES\nTool\nAVG STD\nMIRO\n5.78\n3.49\nSLACK 7.33\n3.24\nTABLE III. Remote Learning Tool Survey\nNE290 was o\ufb00ered at UC Berkeley during the COVID-\n19 pandemic spring of 2021, and so the entirety of the\ncourse was conducted remotely via the Zoom tool. The\nclass was composed of 11 students (2 female and 9 male).\n",
+            "evidence_type": "text",
+            "score": 0.4161,
+            "rank": 2
+          },
+          {
+            "citation_id": "S3",
+            "document_id": "doc_baeb6812f56c040063d6c6a6",
+            "document_title": "layout_arxiv_two_column_2112.11583",
+            "source_filename": "layout_arxiv_two_column_2112.11583.pdf",
+            "page_start": 11,
+            "page_end": 11,
+            "pages": [
+              {
+                "page_number": 11,
+                "page_char_start": 996,
+                "page_char_end": 2078,
+                "highlight_rects": [
+                  [
+                    63.96,
+                    297.76,
+                    299.08,
+                    307.72
+                  ],
+                  [
+                    54.0,
+                    309.21,
+                    299.11,
+                    319.18
+                  ],
+                  [
+                    54.0,
+                    320.67,
+                    299.08,
+                    330.63
+                  ],
+                  [
+                    54.0,
+                    332.13,
+                    299.07,
+                    342.09
+                  ],
+                  [
+                    54.0,
+                    343.58,
+                    299.11,
+                    353.55
+                  ],
+                  [
+                    404.38,
+                    347.09,
+                    525.27,
+                    356.06
+                  ],
+                  [
+                    178.89,
+                    353.76,
+                    185.16,
+                    360.73
+                  ],
+                  [
+                    54.0,
+                    355.04,
+                    299.1,
+                    365.0
+                  ],
+                  [
+                    81.59,
+                    365.22,
+                    90.39,
+                    372.19
+                  ],
+                  [
+                    238.27,
+                    365.22,
+                    245.78,
+                    372.19
+                  ],
+                  [
+                    54.0,
+                    366.5,
+                    299.09,
+                    376.46
+                  ],
+                  [
+                    317.01,
+                    372.69,
+                    562.11,
+                    382.65
+                  ],
+                  [
+                    54.0,
+                    377.95,
+                    299.12,
+                    387.92
+                  ],
+                  [
+                    317.01,
+                    384.15,
+                    562.1,
+                    394.11
+                  ],
+                  [
+                    54.0,
+                    389.41,
+                    299.13,
+                    399.37
+                  ],
+                  [
+                    317.01,
+                    395.6,
+                    562.12,
+                    405.57
+                  ],
+                  [
+                    54.0,
+                    400.87,
+                    299.1,
+                    410.83
+                  ],
+                  [
+                    317.01,
+                    407.06,
+                    324.54,
+                    417.02
+                  ],
+                  [
+                    54.0,
+                    412.33,
+                    299.08,
+                    422.29
+                  ],
+                  [
+                    54.0,
+                    423.78,
+                    299.08,
+                    433.75
+                  ],
+                  [
+                    54.0,
+                    435.24,
+                    299.1,
+                    445.2
+                  ],
+                  [
+                    54.0,
+                    446.66,
+                    299.08,
+                    456.66
+                  ],
+                  [
+                    149.55,
+                    472.92,
+                    203.54,
+                    481.92
+                  ],
+                  [
+                    149.55,
+                    488.42,
+                    201.11,
+                    497.38
+                  ],
+                  [
+                    149.55,
+                    498.88,
+                    201.11,
+                    507.85
+                  ],
+                  [
+                    149.55,
+                    509.34,
+                    201.11,
+                    518.31
+                  ],
+                  [
+                    54.0,
+                    532.18,
+                    299.06,
+                    541.14
+                  ],
+                  [
+                    54.0,
+                    542.6,
+                    136.47,
+                    551.6
+                  ]
+                ],
+                "coordinates_reliable": true,
+                "page_width": 612.0,
+                "page_height": 792.0
+              }
+            ],
+            "chunk_ids": [
+              "chk_3efeb11dc08a5abca2924e11"
+            ],
+            "char_start": 32043,
+            "char_end": 33125,
+            "text_checksum_sha256": "1283dcbc1a43dda162847f4fc945bb050f1385ca91c5f934a14f3d974b4a4ee7",
+            "quote": "Remote Learning Tool Survey\nNE290 was o\ufb00ered at UC Berkeley during the COVID-\n19 pandemic spring of 2021, and so the entirety of the\ncourse was conducted remotely via the Zoom tool. The\nclass was composed of 11 students (2 female and 9 male).\nIn terms of background, 10 were enrolled in nuclear en-\ngineering programs; 4 were 1st-year graduate students, 3\nwere 2nd-year graduate students, 1 was a 3rd-year gradu-\nate student, and 1 was an undergraduate junior who was\nenrolled studying environmental engineering. Following\nthe completion of the course, students were provided a\nsurvey to determine the impact of lesson in terms of its\npedagogical targets. First students were asked to evalu-\nate how NE290 aided their agency towards the nontech-\nnical ABET goals (O) as shown in Table I. The results\nO AVG STD\n1 7.67\n2.12\n2 5.67\n3.71\n3 8.0\n2.96\nTABLE I. Calculated student survey responses addressing\nABET Outcomes O.\na single tool to keep if NE290 was taught in-person, 44%\nopted for recorded lectures (enabled by Zoom), 33% se-\nlected SLACK, and only 22% opted for keeping MIRO\n. ",
+            "evidence_type": "text",
+            "score": 0.4148,
+            "rank": 3
+          }
+        ],
+        "citation_problems": [],
+        "answer_text": "From your documents:\n  11 students were in the class. [S2][S3]",
+        "timing_ms": 33341.1,
+        "model": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+        "stub_model": false,
+        "warnings": []
+      }
+    }
+  ],
+  "generated": "2026-10-13T00:43:49+00:00",
+  "model": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+  "stub_model": false,
+  "min_score": 0.38,
+  "embedding_model": "all-MiniLM-L6-v2",
+  "checks": [
+    {
+      "name": "rejected files need explicit confirmation before anything is published",
+      "ok": true
+    },
+    {
+      "name": "the valid remainder publishes as v0001",
+      "ok": true
+    },
+    {
+      "name": "every rejected file has a stated reason",
+      "ok": true
+    },
+    {
+      "name": "stored counts and checksums match the manifest",
+      "ok": true
+    },
+    {
+      "name": "retrieval maps every result to document, pages and chunk",
+      "ok": true
+    },
+    {
+      "name": "the answer is grounded, with a citation",
+      "ok": true
+    },
+    {
+      "name": "every citation resolves to the exact source characters",
+      "ok": true
+    },
+    {
+      "name": "before publishing, the collection lacks the evidence",
+      "ok": true
+    },
+    {
+      "name": "v0002 publishes; v0001 becomes the rollback version",
+      "ok": true
+    },
+    {
+      "name": "v0002 integrity matches its manifest",
+      "ok": true
+    },
+    {
+      "name": "the new document now answers, with a resolving citation",
+      "ok": true
+    },
+    {
+      "name": "rollback makes v0001 active and v0002 the rollback version",
+      "ok": true
+    },
+    {
+      "name": "the document added in v0002 no longer answers",
+      "ok": true
+    },
+    {
+      "name": "v0001 evidence still answers with resolving citations",
+      "ok": true
+    },
+    {
+      "name": "v0001's stored counts and checksums still match",
+      "ok": true
+    },
+    {
+      "name": "v0003 publishes and keeps the same manifest content as v0002",
+      "ok": true
+    },
+    {
+      "name": "the citation saved under v0002 still resolves in v0003 (stable chunk ids and checksums)",
+      "ok": true
+    },
+    {
+      "name": "the new document answers again",
+      "ok": true
+    }
+  ],
+  "passed": true
+}

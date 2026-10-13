@@ -83,7 +83,9 @@ From `app/document-qa/backend`:
 ../../../.venv/bin/python -m secure_qa.answering.benchmarks.golden --show g01     # golden demo query, in full
 ../../../.venv/bin/python -m secure_qa.answering.benchmarks.golden                # all golden queries, pass/fail table
 ../../../.venv/bin/python -m secure_qa.answering.benchmarks.golden --runtime http://127.0.0.1:8080   # through E1's runtime
-../../../.venv/bin/python dev_host.py                                             # loopback test endpoint for the frontend
+../../../.venv/bin/python -m secure_qa.answering.benchmarks.golden --corpus real  # E2's real PDFs, ingested end to end
+../../../.venv/bin/python -m secure_qa.answering.benchmarks.demo_end_to_end        # ingest, ask, cite, roll back, republish
+../../../.venv/bin/python dev_host.py [--corpus ../../../ingestion/fixtures]        # loopback test endpoint for the frontend
 ```
 
 ## llama.cpp runtime adapter (E1)
