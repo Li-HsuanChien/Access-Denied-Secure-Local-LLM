@@ -9,8 +9,6 @@
 		".svelte-kit/env.d.ts",
 		".svelte-kit/types/**/$types.d.ts",
 		"src/app.d.ts",
-		"src/routes/+layout.svelte",
-		"src/routes/qa/+page.svelte",
 		"src/lib/features/answering/**/*.js",
 		"src/lib/features/answering/**/*.ts",
 		"src/lib/features/answering/**/*.svelte"
