@@ -12,8 +12,8 @@ changes only when the catalog is atomically replaced (write a temp file, fsync,
 questions are answered from. Only the active and the immediately previous
 versions are kept; anything else in the Chroma directory is removed on open.
 
-This covers the store side of the Collection Library. PDF validation, review and
-progress reporting sit above it and are not here yet.
+PDF review and extraction sit in `library.workflow`; this module owns verified,
+versioned indexing, source snapshot staging, atomic activation, and rollback.
 """
 
 from __future__ import annotations
@@ -111,7 +111,9 @@ class CollectionVersions:
 
     # --- publication -------------------------------------------------------------------
 
-    def publish(self, chunks: Sequence[Chunk], documents: Iterable[dict], *, smoke_query: str | None = None) -> CollectionVersion:
+    def publish(self, chunks: Sequence[Chunk], documents: Iterable[dict], *, smoke_query: str | None = None,
+                source_files: dict[str, bytes] | None = None,
+                cancelled=lambda: False, progress=lambda _stage, _done, _total: None) -> CollectionVersion:
         """Build, verify and atomically activate a new version. Returns it.
 
         On any failure the candidate is deleted, `PublishError` is raised and the
@@ -129,11 +131,24 @@ class CollectionVersions:
             try:
                 if not chunks:
                     raise PublishError("A collection needs at least one chunk")
+                if cancelled():
+                    raise PublishError("Publication cancelled")
                 missing = sorted({c.document_id for c in chunks} - records.keys())
                 if missing:
                     raise PublishError(f"No document record for {len(missing)} document(s), e.g. {missing[0]}")
-                store.index(chunks)
+                batch_size = 256
+                for offset in range(0, len(chunks), batch_size):
+                    if cancelled():
+                        raise PublishError("Publication cancelled")
+                    batch = chunks[offset:offset + batch_size]
+                    store.index(batch)
+                    progress("indexing", offset + len(batch), len(chunks))
+                progress("verifying", len(chunks), len(chunks))
+                if cancelled():
+                    raise PublishError("Publication cancelled")
                 integrity = self._verify(store, chunks, smoke_query)
+                if cancelled():
+                    raise PublishError("Publication cancelled")
             except Exception as exc:
                 self._drop(name)
                 if isinstance(exc, PublishError):
@@ -153,17 +168,40 @@ class CollectionVersions:
                 integrity_sha256=integrity,
                 documents={k: records[k] for k in sorted({c.document_id for c in chunks})},
             )
+            try:
+                source_dir = self._write_sources(version_id, source_files or {})
+            except Exception:
+                self._drop(name)
+                raise
+            for document_id in version.documents:
+                if document_id in (source_files or {}):
+                    version.documents[document_id]["source_file"] = f"sources/{version_id}/{document_id}.pdf"
+            progress("activating", len(chunks), len(chunks))
+            if cancelled():
+                if source_dir:
+                    import shutil
+                    shutil.rmtree(source_dir, ignore_errors=True)
+                self._drop(name)
+                raise PublishError("Publication cancelled")
             old_active = catalog["active"]
             versions = {version_id: asdict(version)}
             if old_active:
                 versions[old_active] = catalog["versions"][old_active] | {"status": "previous"}
-            self._write_catalog({
-                "schema": CATALOG_SCHEMA,
-                "active": version_id,
-                "previous": old_active,
-                "next_seq": catalog["next_seq"] + 1,
-                "versions": versions,
-            })
+            try:
+                self._write_catalog({
+                    "schema": CATALOG_SCHEMA,
+                    "active": version_id,
+                    "previous": old_active,
+                    "next_seq": catalog["next_seq"] + 1,
+                    "versions": versions,
+                })
+            except Exception:
+                if source_dir:
+                    import shutil
+                    shutil.rmtree(source_dir, ignore_errors=True)
+                self._drop(name)
+                raise
+            progress("activated", len(chunks), len(chunks))
         self.recover()  # deletes the version that just fell out of retention
         return version
 
@@ -189,8 +227,39 @@ class CollectionVersions:
             if collection.name.startswith(COLLECTION_PREFIX) and collection.name not in keep:
                 self._drop(collection.name)
                 removed.append(collection.name)
+        sources = self.root / "sources"
+        if sources.exists():
+            for path in sources.iterdir():
+                if path.name not in {v for v in (catalog["active"], catalog["previous"]) if v}:
+                    import shutil
+                    shutil.rmtree(path, ignore_errors=True)
         self.root.joinpath("catalog.json.tmp").unlink(missing_ok=True)
         return removed
+
+    def _write_sources(self, version_id: str, source_files: dict[str, bytes]) -> Path | None:
+        if not source_files:
+            return None
+        import shutil
+        sources = self.root / "sources"
+        sources.mkdir(parents=True, exist_ok=True)
+        staging = sources / f".{version_id}.tmp"
+        destination = sources / version_id
+        shutil.rmtree(staging, ignore_errors=True)
+        shutil.rmtree(destination, ignore_errors=True)
+        staging.mkdir()
+        try:
+            for document_id, contents in source_files.items():
+                if not document_id.replace("_", "").isalnum():
+                    raise ValueError("Unsafe document identifier for source storage")
+                with open(staging / f"{document_id}.pdf", "wb") as source:
+                    source.write(contents)
+                    source.flush()
+                    os.fsync(source.fileno())
+            os.replace(staging, destination)
+            return destination
+        except Exception:
+            shutil.rmtree(staging, ignore_errors=True)
+            raise
 
     def close(self) -> None:
         self._client.close()

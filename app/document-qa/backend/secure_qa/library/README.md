@@ -2,7 +2,7 @@
 
 Owns candidate validation and review, staged publication, atomic active-version switching, rollback, cancellation and recovery (SDD §4.1, §6). Chroma is the selected production store behind the module's adapter seam (SDD §4.5); workflow tests use a deterministic fake embedder. See the [SDD](../../../../../docs/architecture/SDD.md).
 
-**Built so far (E3):** the document-store adapter and versioned collections. **Not built yet:** PDF validation and review, progress reporting and cancellation. E2's `chunks()` (branch `E2-Chunking`) will feed `publish`.
+The feature owns PDF validation/review, text extraction, chunk preparation, progress and cancellation, plus versioned collection publication. It requires explicit confirmation when rejected files are present and preserves the active collection on errors and cancellation. PyMuPDF is pinned in the root `requirements.txt` and loaded only when PDFs are reviewed. Chroma remains the store adapter.
 
 Run everything from `app/document-qa/backend` with the repository's `.venv`:
 
@@ -48,9 +48,9 @@ versions.versions()                       # [active, previous]
 versions.rollback()                       # the previous version becomes active; rollback can be undone
 ```
 
-- **Storage:** each version is its own Chroma collection (`secure_qa_v0001`, ...) in `<root>/chroma`. That directory belongs to the Library and is separate from Open WebUI's `DATA_DIR/vector_db`.
+- **Storage:** each version is its own Chroma collection (`secure_qa_v0001`, ...) in `<root>/chroma`; its original PDFs are stored under `<root>/sources/<version>/`. Those paths belong to the Library and are separate from Open WebUI's `DATA_DIR/vector_db`.
 - **Catalog:** `<root>/catalog.json` records the active and previous versions and each version's SDD §5.1 record: creation and activation times, chunk count, embedding model, chunker config ids, integrity checksum and document manifest.
-- **Publication:** `publish` builds a candidate, then verifies it: the count, the chunk ids and checksums read back from Chroma, and a search smoke test. Only after that does it activate the candidate, by atomically replacing the catalog (temp file, fsync, `os.replace`).
+- **Publication:** `publish` stages source PDFs, builds a candidate in bounded batches, then verifies it: the count, the chunk ids and checksums read back from Chroma, and a search smoke test. Only after that does it activate the candidate, by atomically replacing the catalog (temp file, fsync, `os.replace`).
 - **Failure safety:** a failed publish deletes its candidate, raises `PublishError` and leaves the active version unchanged.
 - **Retention:** only the active and previous versions are kept. Opening the store removes anything else, such as interrupted candidates or retired versions.
 

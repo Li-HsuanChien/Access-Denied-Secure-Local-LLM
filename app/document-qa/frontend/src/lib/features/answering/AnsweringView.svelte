@@ -2,8 +2,12 @@
 	import { onMount, tick } from 'svelte';
 	import type { Answer, AnsweringClient, HealthStatus } from './types';
 	import { workspaceVoice } from '$lib/features/personality/presentation';
+	import type { ConversationHistoryClient } from '../history/historyClient';
+	import type { SettingsClient } from '../settings/settingsClient';
 
 	export let client: AnsweringClient;
+	export let historyClient: ConversationHistoryClient | undefined = undefined;
+	export let settingsClient: SettingsClient | undefined = undefined;
 
 	let question = '';
 	let generalKnowledge = true;
@@ -11,6 +15,7 @@
 	let healthError = '';
 	let answer: Answer | null = null;
 	let error: string | null = null;
+	let saveWarning = '';
 	let busy = false;
 	let questionInput: HTMLTextAreaElement;
 
@@ -22,6 +27,7 @@
 
 	onMount(() => {
 		refreshHealth();
+		if (settingsClient) settingsClient.read().then((value) => generalKnowledge = value.general_knowledge).catch(() => {});
 	});
 
 	async function refreshHealth() {
@@ -40,8 +46,15 @@
 		busy = true;
 		answer = null;
 		error = null;
+		saveWarning = '';
 		try {
 			answer = await client.ask(prompt, generalKnowledge);
+			if (historyClient) {
+				try {
+					const saved = await historyClient.save(crypto.randomUUID(), prompt.slice(0, 120), answer as unknown as Record<string, unknown>);
+					if (!saved) saveWarning = 'This answer is visible, but history persistence is disabled.';
+				} catch { saveWarning = 'This answer is visible, but it could not be saved. Check local storage in Settings.'; }
+			}
 		} catch (cause) {
 			error = errorMessage(cause);
 		} finally {
@@ -64,7 +77,7 @@
 <div class="app-frame">
 	<header class="topbar">
 		<a class="brand" href="/qa" aria-label="Access Denied home"><span class="brand-mark" aria-hidden="true">A</span><span>Access Denied</span></a>
-		<nav aria-label="Main navigation"><a class="active" href="/qa" aria-current="page">Chat</a><span aria-disabled="true">Library</span><span aria-disabled="true">History</span><span aria-disabled="true">Settings</span></nav>
+		<nav aria-label="Main navigation"><a class="active" href="/qa" aria-current="page">Chat</a><a href="/library">Library</a><a href="/history">History</a><a href="/settings">Settings</a></nav>
 		<span class="local-tag"><span></span> LOCAL WORKSPACE</span>
 	</header>
 
@@ -74,7 +87,6 @@
 			<p class="eyebrow">PRIVATE DOCUMENT ASSISTANT</p>
 			<h1 id="page-title">Ask your library.</h1>
 			<p class="lede">Answers stay on this computer and point back to their source.</p>
-			<p class="qa-scope">Chat preview · Library, History, and Settings are coming later.</p>
 		</section>
 
 		<section class:degraded={!health?.ready} class="readiness" aria-label="Local service status">
@@ -101,6 +113,7 @@
 
 			{#if answer}
 				<article class="answer-card">
+					{#if saveWarning}<p class="message insufficient" role="status">{saveWarning}</p>{/if}
 					<div class="question-bubble"><span class="label">YOUR QUESTION</span><p>{answer.question}</p></div>
 					{#if answer.status === 'failed'}
 						<div class="message error" role="alert"><strong>{answer.error?.code === 'busy' ? 'Another question is running.' : 'The answer could not be completed.'}</strong><p>{answer.error?.message || 'The local workflow did not return a usable answer.'}</p>{#if answer.error?.hint}<p>{answer.error.hint}</p>{/if}</div>
@@ -151,7 +164,7 @@
 	.brand { display:flex; align-items:center; gap:11px; color:var(--workspace-ink); font-weight:700; font-size:15px; text-decoration:none; white-space:nowrap; }
 	.brand-mark { display:grid; place-items:center; width:31px; height:31px; border-radius:var(--workspace-radius-control); background:var(--workspace-accent); color:white; font-family:var(--workspace-font-ui); font-size:16px; }
 	nav { display:flex; align-items:center; gap:29px; height:100%; color:#83908a; font-size:13px; }
-	nav a, nav span { text-decoration:none; height:100%; display:grid; align-items:center; color:inherit; }
+	nav a { text-decoration:none; height:100%; display:grid; align-items:center; color:inherit; }
 	nav .active { color:#176b50; border-bottom:2px solid #248467; font-weight:650; }
 	.local-tag { margin-left:auto; display:flex; align-items:center; gap:8px; color:#687970; font-size:10px; letter-spacing:.12em; font-weight:700; }
 	.local-tag span, .status-light { width:8px; height:8px; border-radius:50%; background:#32966e; box-shadow:0 0 0 3px #e0f1e8; }
@@ -161,7 +174,6 @@
 	.eyebrow { margin:0 0 13px; }
 	h1 { margin:0; font-size:clamp(31px,5vw,43px); line-height:1.12; letter-spacing:-.045em; font-weight:650; }
 	.lede { color:#586961; font-size:15px; margin:12px 0 0; }
-	.qa-scope { color:#596c61; font-size:11px; margin:12px 0 0; }
 	.readiness { display:flex; align-items:center; gap:13px; border:1px solid #dce8e0; border-radius:12px; padding:14px 16px; background:rgba(255,255,255,.68); }
 	.readiness.degraded { border-color:#eadbc4; }
 	.degraded .status-light { background:#c58b35; box-shadow:0 0 0 3px #f7ecd9; }
@@ -223,5 +235,5 @@
 	.sr-only { position:absolute; width:1px; height:1px; padding:0; margin:-1px; overflow:hidden; clip:rect(0,0,0,0); white-space:nowrap; border:0; }
 	:global(button:focus-visible), :global(a:focus-visible), summary:focus-visible, textarea:focus-visible { outline:3px solid #94cdb2; outline-offset:3px; }
 	@keyframes spin { to { transform:rotate(360deg); } }
-	@media (max-width:650px) { .topbar { gap:18px; padding:0 16px; height:61px; } nav { gap:14px; font-size:11px; } nav span:nth-of-type(n+2), .local-tag { display:none; } main { padding-top:47px; } .hint { display:none; } .composer-footer { align-items:flex-end; } .readiness { align-items:flex-start; } .quiet-button { white-space:nowrap; } }
+	@media (max-width:650px) { .topbar { gap:18px; padding:0 16px; height:61px; } nav { gap:10px; font-size:10px; } .local-tag { display:none; } main { padding-top:47px; } .hint { display:none; } .composer-footer { align-items:flex-end; } .readiness { align-items:flex-start; } .quiet-button { white-space:nowrap; } }
 </style>

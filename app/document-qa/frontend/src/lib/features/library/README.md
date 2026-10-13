@@ -1,3 +1,3 @@
 # Library frontend
 
-Scaffold only. This feature will show PDF selection, validation review, publication progress, versions, rollback, and actionable errors. It will call the Collection Library transport contract and will not mutate a document index directly. See the [Collection Library design](../../../../../../../docs/architecture/SDD.md#41-collection-library).
+`LibraryView` and `LibraryClient` implement local PDF selection, per-file validation review, explicit confirmation of the accepted remainder, cancellable publication progress, version listing, and rollback. The client calls the versioned host contract; it never mutates an index. See the [Collection Library design](../../../../../../../docs/architecture/SDD.md#41-collection-library).
