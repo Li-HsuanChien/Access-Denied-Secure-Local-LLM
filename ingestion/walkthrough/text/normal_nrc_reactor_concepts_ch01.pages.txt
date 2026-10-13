@@ -188,12 +188,11 @@ A brief description and a picture of boiling water reactor fuel can be found in 
 
 
 ==============================================================================
-PAGE 11  |  chars 6405-6585 (180 chars)  |  612x792 pt
+PAGE 11  |  chars 6405-6581 (176 chars)  |  612x792 pt
 ==============================================================================
 HOLD DOWN SPRING
 ROD CLUSTER CONTROL
 TOP NOZZLE
-   
 FUEL ROD
 CONTROL ROD
 THIMBLE TUBE
@@ -208,7 +207,7 @@ THIMBLE SCREW
 
 
 ==============================================================================
-PAGE 12  |  chars 6585-6818 (233 chars)  |  612x792 pt
+PAGE 12  |  chars 6581-6814 (233 chars)  |  612x792 pt
 ==============================================================================
 At the nuclear power plant, the fuel assemblies are inserted vertically into the reactor vessel (a large steel
 tank filled with water with a removable top).  The fuel is placed in a precise grid pattern known as the
@@ -216,7 +215,7 @@ tank filled with water with a removable top).  The fuel is placed in a precise g
 
 
 ==============================================================================
-PAGE 13  |  chars 6818-8485 (1667 chars)  |  612x792 pt
+PAGE 13  |  chars 6814-8481 (1667 chars)  |  612x792 pt
 ==============================================================================
 Containment/Drywell
 Reactor
@@ -259,7 +258,7 @@ California.  Boiling water reactors comprise about one-third of the power reacto
 
 
 ==============================================================================
-PAGE 14  |  chars 8485-9338 (853 chars)  |  612x792 pt
+PAGE 14  |  chars 8481-9334 (853 chars)  |  612x792 pt
 ==============================================================================
 Containment
 Throttle
@@ -291,7 +290,7 @@ Engineering Company (Windsor, Connecticut).
 
 
 ==============================================================================
-PAGE 15  |  chars 9338-9869 (531 chars)  |  612x792 pt
+PAGE 15  |  chars 9334-9865 (531 chars)  |  612x792 pt
 ==============================================================================
 Throttle
 Valve
@@ -315,7 +314,7 @@ temperature gas-cooled reactors are widely used in other countries.
 
 
 ==============================================================================
-PAGE 16  |  chars 9869-10715 (846 chars)  |  612x792 pt
+PAGE 16  |  chars 9865-10711 (846 chars)  |  612x792 pt
 ==============================================================================
 Other
 (biomass fuels, wood, wind,
@@ -343,12 +342,28 @@ Germany, 5% for Russia, and 4% for South Korea and United Kingdom.
 
 
 ==============================================================================
-PAGE 17  |  chars 10715-11148 (433 chars)  |  612x792 pt
+PAGE 17  |  chars 10711-11180 (469 chars)  |  612x792 pt
 ==============================================================================
 Region I
 Region II
+1
+3
+4
+2
+9
+20
+7
+13
 Region III
 Region IV
+1
+1
+1
+11
+8
+8
+11
+4
 Westinghouse
 General Electric
 Combustion Engineering
@@ -360,7 +375,7 @@ The illustration above shows the breakdown of the plants, by vendor, assigned to
 
 
 ==============================================================================
-PAGE 18  |  chars 11148-12078 (930 chars)  |  612x792 pt
+PAGE 18  |  chars 11180-12110 (930 chars)  |  612x792 pt
 ==============================================================================
 STEAM
 ELECTRIC
@@ -385,7 +400,7 @@ to the environment.
 
 
 ==============================================================================
-PAGE 19  |  chars 12078-12671 (593 chars)  |  612x792 pt
+PAGE 19  |  chars 12110-12703 (593 chars)  |  612x792 pt
 ==============================================================================
 ELECTRIC
 GENERATOR
@@ -408,7 +423,7 @@ to outlet is about 5 to 10 degrees Fahrenheit.
 
 
 ==============================================================================
-PAGE 20  |  chars 12671-13278 (607 chars)  |  612x792 pt
+PAGE 20  |  chars 12703-13310 (607 chars)  |  612x792 pt
 ==============================================================================
 ELECTRIC
 GENERATOR
@@ -429,7 +444,7 @@ located at the top of the cooling tower, provide forced air circulation for more
 
 
 ==============================================================================
-PAGE 21  |  chars 13278-13715 (437 chars)  |  612x792 pt
+PAGE 21  |  chars 13310-13747 (437 chars)  |  612x792 pt
 ==============================================================================
 ELECTRIC
 GENERATOR
@@ -448,18 +463,28 @@ are typically several hundred feet tall.
 
 
 ==============================================================================
-PAGE 22  |  chars 13715-14353 (638 chars)  |  612x792 pt
+PAGE 22  |  chars 13747-14417 (670 chars)  |  612x792 pt
 ==============================================================================
 Cold Dry Air
+35
+30
+25
 Warm
 Grams of
 Water per
+20
 Wet
-100% RELATIVE HUMIDITY
 Air
+15
 Cubic
 Meter
 of Air
+10
+5
+30
+50
+70
+90
 EF
 The “steam” vented from the top of a cooling tower is really lukewarm water vapor.  IT IS NOT
 RADIOACTIVE.  As the warm, wet air from inside the cooling tower contacts the cooler, dryer air
@@ -467,10 +492,11 @@ above the cooling tower, the water vapor which cannot be held by the cooler air 
 This is because the colder the air is, the lower its ability to hold water.  The released cloud of vapor will
 only be visible until it is dispersed and absorbed by the air.  The graph above shows air’s ability to hold
 water as air temperature increases.
+100% RELATIVE HUMIDITY
 
 
 ==============================================================================
-PAGE 23  |  chars 14353-15290 (937 chars)  |  612x792 pt
+PAGE 23  |  chars 14417-15354 (937 chars)  |  612x792 pt
 ==============================================================================
 PRESSURIZED WATER REACTOR PLANT LAYOUT
 CONTAINMENT BUILDING
@@ -524,7 +550,7 @@ tower to remove the excess heat from the facility.
 
 
 ==============================================================================
-PAGE 24  |  chars 15290-16030 (740 chars)  |  612x792 pt
+PAGE 24  |  chars 15354-16094 (740 chars)  |  612x792 pt
 ==============================================================================
 Containment/Drywell
 Reactor

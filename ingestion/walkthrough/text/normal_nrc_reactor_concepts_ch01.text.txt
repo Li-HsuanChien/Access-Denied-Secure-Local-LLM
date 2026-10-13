@@ -149,7 +149,6 @@ A brief description and a picture of boiling water reactor fuel can be found in 
 HOLD DOWN SPRING
 ROD CLUSTER CONTROL
 TOP NOZZLE
-   
 FUEL ROD
 CONTROL ROD
 THIMBLE TUBE
@@ -279,8 +278,24 @@ Germany, 5% for Russia, and 4% for South Korea and United Kingdom.
 
 Region I
 Region II
+1
+3
+4
+2
+9
+20
+7
+13
 Region III
 Region IV
+1
+1
+1
+11
+8
+8
+11
+4
 Westinghouse
 General Electric
 Combustion Engineering
@@ -363,15 +378,25 @@ removes the excess heat as the circulating water splashes down inside the coolin
 are typically several hundred feet tall.
 
 Cold Dry Air
+35
+30
+25
 Warm
 Grams of
 Water per
+20
 Wet
-100% RELATIVE HUMIDITY
 Air
+15
 Cubic
 Meter
 of Air
+10
+5
+30
+50
+70
+90
 EF
 The “steam” vented from the top of a cooling tower is really lukewarm water vapor.  IT IS NOT
 RADIOACTIVE.  As the warm, wet air from inside the cooling tower contacts the cooler, dryer air
@@ -379,6 +404,7 @@ above the cooling tower, the water vapor which cannot be held by the cooler air 
 This is because the colder the air is, the lower its ability to hold water.  The released cloud of vapor will
 only be visible until it is dispersed and absorbed by the air.  The graph above shows air’s ability to hold
 water as air temperature increases.
+100% RELATIVE HUMIDITY
 
 PRESSURIZED WATER REACTOR PLANT LAYOUT
 CONTAINMENT BUILDING
