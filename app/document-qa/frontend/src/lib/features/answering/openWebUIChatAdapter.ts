@@ -1,5 +1,7 @@
 import { createAnsweringClient } from './answeringClient';
 import type { Answer, AnsweringClient } from './types';
+import { createHistoryClient, type ConversationHistoryClient } from '../history/historyClient';
+import { workspaceVoice } from '../personality/presentation';
 
 export const SECURE_QA_MODEL_ID = 'secure-qa-local';
 
@@ -27,11 +29,11 @@ export function formatAnswerForChat(answer: Answer): string {
 	}
 
 	if (answer.general_knowledge) {
-		sections.push(`### General model knowledge\n\n${answer.general_knowledge}\n\n_Not verified against your documents._`);
+		sections.push(`### General model knowledge\n\n${answer.general_knowledge}\n\n_${workspaceVoice.generalKnowledgeNotice}_`);
 	}
 
 	if (answer.limitations.length > 0) {
-		sections.push(`### Limitations\n\n${answer.limitations.map((item) => `- ${item}`).join('\n')}`);
+		sections.push(`### ${workspaceVoice.uncertaintyLabel}\n\n${answer.limitations.map((item) => `- ${item}`).join('\n')}`);
 	}
 
 	if (answer.warnings.length > 0) {
@@ -55,10 +57,21 @@ export function toOpenWebUICitations(answer: Answer) {
 	}));
 }
 
-export function createOpenWebUIAnsweringAdapter(client: AnsweringClient = createAnsweringClient()) {
-	return {
-		ask: (question: string, generalKnowledge: boolean) => client.ask(question, generalKnowledge)
-	};
+/** Answer first; history failure must never discard an already validated answer. */
+export function createOpenWebUIAnsweringAdapter(
+    client: AnsweringClient = createAnsweringClient(),
+    history: Pick<ConversationHistoryClient, 'save'> = createHistoryClient()
+) {
+    return {
+        async ask(question: string, generalKnowledge: boolean) {
+            const answer = await client.ask(question, generalKnowledge);
+            let historyWarning: string | null = null;
+            try {
+                await history.save(answer.request_id, question, answer as unknown as Record<string, unknown>);
+            } catch {
+                historyWarning = 'This answer is available here, but could not be saved to local history.';
+            }
+            return { answer, historyWarning };
+        }
+    };
 }
-
-export { createAnsweringClient };

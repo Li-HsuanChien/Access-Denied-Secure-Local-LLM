@@ -1,5 +1,7 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
+	import { createAnsweringClient } from '../answering/answeringClient';
+	import { secureQaGeneralKnowledge } from './preferencesStore';
 	import type { SettingsClient } from './settingsClient';
 	import type { ConversationHistoryClient } from '../history/historyClient';
 	export let client: SettingsClient;
@@ -10,10 +12,10 @@
 	let error = '';
 	let notice = '';
 	async function refresh() {
-		try { const [settings, enabled, health] = await Promise.all([client.read(), history.enabled(), fetch('http://127.0.0.1:8765/health', { cache: 'no-store', credentials: 'omit' }).then((r) => r.json())]); generalKnowledge = settings.general_knowledge; persistence = enabled; readiness = `${health.ready ? 'Ready' : 'Needs attention'} · ${health.library.document_count} documents · ${health.answering.ready ? 'local model ready' : health.answering.error?.message || 'local model unavailable'}`; }
+		try { const [settings, enabled, health] = await Promise.all([client.read(), history.enabled(), createAnsweringClient().health()]); generalKnowledge = settings.general_knowledge; persistence = enabled; readiness = `${health.ready ? 'Ready' : 'Needs attention'} · ${health.library.document_count} documents · ${health.answering.ready ? 'local model ready' : health.answering.error?.message || 'local model unavailable'}`; }
 		catch (e) { readiness = 'The local host could not be reached.'; error = e instanceof Error ? e.message : readiness; }
 	}
-	async function knowledge(event: Event) { const value = (event.currentTarget as HTMLInputElement).checked; try { generalKnowledge = (await client.update({ general_knowledge: value })).general_knowledge; notice = 'General knowledge preference saved and used for new questions.'; } catch (e) { error = e instanceof Error ? e.message : 'Could not save this preference.'; } }
+	async function knowledge(event: Event) { const value = (event.currentTarget as HTMLInputElement).checked; try { generalKnowledge = (await client.update({ general_knowledge: value })).general_knowledge; secureQaGeneralKnowledge.set(generalKnowledge); notice = 'General knowledge preference saved and used for new questions.'; } catch (e) { error = e instanceof Error ? e.message : 'Could not save this preference.'; } }
 	async function historySetting(event: Event) { const value = (event.currentTarget as HTMLInputElement).checked; try { persistence = await history.setEnabled(value); notice = persistence ? 'New answers will be saved.' : 'New answers will not be saved.'; } catch (e) { error = e instanceof Error ? e.message : 'Could not save this preference.'; } }
 	onMount(refresh);
 </script>

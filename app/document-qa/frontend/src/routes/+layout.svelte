@@ -9,13 +9,14 @@
 		config, functions, models, secureQaGeneralKnowledge, showSidebar, skills, temporaryChatEnabled,
 		tools, user, WEBUI_NAME
 	} from '$lib/stores';
+	import { createSettingsClient } from '$lib/features/settings/settingsClient';
 	import { createAnsweringClient } from '$lib/features/answering/answeringClient';
 	import type { HealthStatus } from '$lib/features/answering/types';
 
 	setContext('i18n', i18n);
 
 	// Seed the pinned Open WebUI chat with one local model and no account/network features.
-	user.set({ id: 'local-user', name: 'Local user', role: 'user', permissions: { features: {} } } as any);
+	user.set({ id: 'local-user', name: 'Local user', role: 'user', permissions: { features: {}, chat: { temporary: true, temporary_enforced: true, import: false, export: false } } } as any);
 	WEBUI_NAME.set('Access Denied');
 	models.set([{
 		id: 'secure-qa-local', name: 'Document Assistant', owned_by: 'openai', external: false,
@@ -39,14 +40,21 @@
 	let health: HealthStatus | null = null;
 	let healthMessage = 'Checking the local service…';
 	let healthError = false;
-	let generalKnowledge = true;
+	const preferences = createSettingsClient();
+	let preferenceError = '';
 	const client = createAnsweringClient();
 
-	$: secureQaGeneralKnowledge.set(generalKnowledge);
+	async function saveKnowledge(event: Event) {
+        const value = (event.currentTarget as HTMLInputElement).checked;
+        preferenceError = '';
+        try { secureQaGeneralKnowledge.set((await preferences.update({ general_knowledge: value })).general_knowledge); }
+        catch { preferenceError = 'Could not save this preference. Please retry.'; }
+    }
 
 	onMount(async () => {
 		await initI18n();
 		await refreshHealth();
+		try { secureQaGeneralKnowledge.set((await preferences.read()).general_knowledge); } catch {}
 	});
 
 	async function refreshHealth() {
@@ -71,14 +79,15 @@
 </svelte:head>
 
 <div class="desktop-shell">
-	<Sidebar />
+	<Sidebar localMode navigation={[{ label: 'Library', href: '/library' }, { label: 'History', href: '/history' }, { label: 'Settings', href: '/settings' }]} />
 	<div class="workspace">
 		<div class:degraded={healthError} class="service-status" role="status" aria-live="polite">
 			<span class="status-mark" aria-hidden="true"></span>
 			<div><strong>{healthError ? 'Workspace needs attention' : 'Local workspace'}</strong><span>{healthMessage}</span></div>
-			<label><input type="checkbox" bind:checked={generalKnowledge} /> Include general model knowledge</label>
+			<label><input type="checkbox" checked={$secureQaGeneralKnowledge} on:change={saveKnowledge} /> Include general model knowledge</label>
 			<button type="button" on:click={refreshHealth}>Refresh</button>
 		</div>
+		{#if preferenceError}<p role="alert">{preferenceError}</p>{/if}
 		<main id="main-content"><slot /></main>
 	</div>
 </div>
@@ -86,7 +95,7 @@
 <style>
 	:global(html), :global(body) { height: 100%; }
 	:global(body) { margin: 0; }
-	.desktop-shell { display: flex; width: 100%; height: 100dvh; overflow: hidden; background: var(--background-color, #fff); color: var(--text-primary, #222); }
+	.desktop-shell { display: flex; width: 100%; height: 100dvh; overflow: hidden; background: var(--workspace-paper); color: var(--workspace-ink); }
 	.workspace { display: flex; min-width: 0; flex: 1; flex-direction: column; }
 	.service-status { z-index: 20; display: flex; align-items: center; gap: 12px; min-height: 54px; border-bottom: 1px solid #e5e7eb; padding: 8px 18px; font: 12px/1.35 system-ui, sans-serif; }
 	.service-status > div { display: grid; gap: 2px; flex: 1; }
@@ -96,6 +105,6 @@
 	.service-status.degraded .status-mark { background: #c98524; }
 	.service-status label { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
 	.service-status button { border: 0; background: transparent; color: #356b53; cursor: pointer; }
-	#main-content { min-height: 0; flex: 1; }
+	#main-content { min-height: 0; flex: 1; overflow: auto; }
 	@media (max-width: 700px) { .service-status { flex-wrap: wrap; } .service-status label { font-size: 11px; } }
 </style>

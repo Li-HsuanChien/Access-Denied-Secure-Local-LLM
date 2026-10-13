@@ -189,7 +189,7 @@ class Handler(BaseHTTPRequestHandler):
             return self._error(400, request_id, "invalid_request", problem, "See the request envelope in dev_host.py.")
         payload = body["payload"]
         library = self.server.library_health()
-        if library["error"] and library["error"]["code"] == "embedding_model_mismatch":
+        if body["operation"] == "answering.ask" and library["error"] and library["error"]["code"] == "embedding_model_mismatch":
             err = library["error"]
             return self._error(409, request_id, err["code"], err["message"], err["hint"])
         try:

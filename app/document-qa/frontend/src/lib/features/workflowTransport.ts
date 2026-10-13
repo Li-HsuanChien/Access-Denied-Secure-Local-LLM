@@ -2,7 +2,7 @@ import { ClientError } from './answering/answeringClient';
 
 const base = 'http://127.0.0.1:8765';
 
-export async function workflowRequest<T>(operation: string, payload: Record<string, unknown> = {}, requestId = crypto.randomUUID()): Promise<T> {
+export async function workflowRequest<T>(operation: string, payload: Record<string, unknown> = {}, requestId: string = crypto.randomUUID()): Promise<T> {
 	let response: Response;
 	try {
 		response = await fetch(`${base}/v1/requests`, { method: 'POST', cache: 'no-store', redirect: 'error', credentials: 'omit',

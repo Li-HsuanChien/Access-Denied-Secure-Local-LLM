@@ -27,7 +27,7 @@ npm run dev:qa
 
 Open `http://127.0.0.1:5173/qa` (or `/`). The host seeds the golden collection and uses fake answering and embedding adapters, so QA needs no model weights. The Open WebUI chat and service-health banner call the host only on `127.0.0.1:8765`.
 
-The chat uses an in-memory temporary conversation during this UI QA flow. Conversation persistence and Library, History, and Settings pages are separate workstreams. See [VM QA over SSH forwarding](../../../docs/development/vm-qa-ssh-forwarding.md) for running the same loopback-only services on a private development VM.
+The native chat keeps the current conversation in memory and saves each returned answer to local History when persistence is enabled. Use the sidebar to open Library for PDF review, publication and rollback; History for saved answers and citations; and Settings for preferences and readiness. History write failures leave the current answer visible. See [VM QA over SSH forwarding](../../../docs/development/vm-qa-ssh-forwarding.md) for running the same loopback-only services on a private development VM.
 
 Ask **“What is the annual occupational dose limit?”** to see a citation from the seeded Radiation Protection Handbook. Ask about an unrelated topic to see the insufficient-evidence response. Toggle general knowledge, submit with Enter, and use Shift+Enter for a new line.
 

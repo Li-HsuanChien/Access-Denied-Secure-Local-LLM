@@ -109,7 +109,7 @@
 	import { initiateOAuthRedirect } from '$lib/apis/configs';
 	import { updateFolderById } from '$lib/apis/folders';
 import {
-	createAnsweringClient,
+	createOpenWebUIAnsweringAdapter,
 	formatAnswerForChat,
 	toOpenWebUICitations,
 	SECURE_QA_MODEL_ID
@@ -1582,7 +1582,7 @@ import {
 		}
 
 		const pageSubscribe = page.subscribe(async (p) => {
-			if (p.url.pathname === '/' || p.url.pathname.startsWith('/folders/')) {
+			if (p.url.pathname === '/' || p.url.pathname === '/qa' || p.url.pathname.startsWith('/folders/')) {
 				await tick();
 				initNewChat();
 			}
@@ -3460,11 +3460,11 @@ import {
 				return;
 			}
 			try {
-				const answer = await createAnsweringClient().ask(
+				const { answer, historyWarning } = await createOpenWebUIAnsweringAdapter().ask(
 					String(userMessage?.content ?? ''),
 					get(secureQaGeneralKnowledge)
 				);
-				responseMessage.content = formatAnswerForChat(answer);
+				responseMessage.content = formatAnswerForChat(answer) + (historyWarning ? `\n\n> ${historyWarning}` : '');
 				responseMessage.citations = toOpenWebUICitations(answer);
 				if (answer.status === 'failed') {
 					responseMessage.error = { content: answer.error?.message ?? 'The local workflow failed.' };

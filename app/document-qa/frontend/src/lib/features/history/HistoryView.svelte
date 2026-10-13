@@ -24,7 +24,7 @@
 	{#if selected && answer}<section class="panel" aria-labelledby="opened-title"><h2 id="opened-title">{selected.title}</h2><p><strong>Question:</strong> {answer.question}</p><p><strong>Model:</strong> {selected.model_id || 'unknown'} · <strong>Collection:</strong> {selected.collection_version || 'unknown'}</p>
 		{#if Array.isArray(answer.documents)}<h3>From your documents</h3>{#each answer.documents as claim}<p>{claim.text} {#each claim.citation_ids || [] as id}<span class="cite">[{id}]</span>{/each}</p>{/each}{/if}
 		{#if answer.general_knowledge}<h3>General model knowledge</h3><p>{answer.general_knowledge}</p>{/if}{#if Array.isArray(answer.limitations)}<h3>Limitations</h3><ul>{#each answer.limitations as item}<li>{item}</li>{/each}</ul>{/if}</section>{/if}
-		{#if Array.isArray(answer.citations)}<section class="panel"><h2>Sources</h2>{#each answer.citations as citation}<details><summary>{citation.document_title} · pages {citation.page_start}{#if citation.page_end !== citation.page_start}–{citation.page_end}{/if}</summary><blockquote>{citation.quote}</blockquote></details>{/each}</section>{/if}
+		{#if Array.isArray(answer?.citations)}<section class="panel"><h2>Sources</h2>{#each answer.citations as citation}<details><summary>{citation.document_title} · pages {citation.page_start}{#if citation.page_end !== citation.page_start}–{citation.page_end}{/if}</summary><blockquote>{citation.quote}</blockquote></details>{/each}</section>{/if}
 	{#if notice}<p role="status" class="notice">{notice}</p>{/if}{#if error}<p role="alert" class="error">{error}</p>{/if}
 </main>
 <style>

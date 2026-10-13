@@ -3,7 +3,7 @@ import { createHistoryClient } from './history/historyClient';
 import { createLibraryClient } from './library/libraryClient';
 import { createSettingsClient } from './settings/settingsClient';
 
-afterEach(() => vi.unstubAllGlobals());
+afterEach(() => { vi.unstubAllGlobals(); });
 
 function hostReply(operation: string, result: unknown) {
 	vi.stubGlobal('fetch', vi.fn(async (_url: string, init: RequestInit) => {

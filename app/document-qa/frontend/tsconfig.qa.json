@@ -9,9 +9,9 @@
 		".svelte-kit/env.d.ts",
 		".svelte-kit/types/**/$types.d.ts",
 		"src/app.d.ts",
-		"src/lib/features/answering/**/*.js",
-		"src/lib/features/answering/**/*.ts",
-		"src/lib/features/answering/**/*.svelte"
+		"src/lib/features/**/*.js",
+		"src/lib/features/**/*.ts",
+		"src/lib/features/**/*.svelte"
 	],
 	"exclude": ["node_modules/**"]
 }

@@ -6,8 +6,9 @@ Local product changes:
 - The `/`, `/qa`, and `/c/[id]` routes use the upstream `Chat.svelte` page; it composes the upstream `MessageInput`, `Messages`, and `Navbar` components.
 - `src/lib/features/answering/` contains the product-owned loopback client, validated wire types, and deterministic QA tests.
 - `src/lib/features/answering/openWebUIChatAdapter.ts` calls the Python `answering.ask` operation and formats its result for the upstream message renderer. It supplies already-validated citations to Open WebUI's expandable citation panel. It does not expose Open WebUI's remote model, plugin, tool, or agent workflows.
-- `src/lib/stores/index.ts` adds a single product preference for general model knowledge.
-- `src/app.html` uses a minimal local document shell. `vite.config.ts` removes upstream backend proxies. Supported development servers bind to loopback, and build/startup scripts omit upstream Pyodide downloads.
+- `src/lib/stores/index.ts` re-exports the shared product preference from `features/settings/preferencesStore.ts`; its durable value is owned by the local Settings workflow.
+- `Sidebar.svelte` supports local navigation and skips upstream account and chat-list endpoints in local mode. The answer adapter saves returned answers best-effort through the History workflow, preserving the answer if saving fails.
+- `src/app.html` uses a minimal local document shell with a content policy allowing only local connections and resources, with evaluated code retained for schema validation. `vite.config.ts` removes upstream backend proxies. Supported development servers bind to loopback, and build/startup scripts omit upstream Pyodide downloads.
 - The development host uses the deterministic fake embedder and answering runtime, so local UI QA needs no model weights.
 - `README.md` and `docs/development/vm-qa-ssh-forwarding.md` document local and private-VM QA.
 - The HTTP adapter uses the backend-owned answer schema through Ajv; Vitest and jsdom provide the feature and adapter checks.

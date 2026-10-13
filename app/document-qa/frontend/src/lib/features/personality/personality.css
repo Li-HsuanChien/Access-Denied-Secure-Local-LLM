@@ -75,3 +75,8 @@
 		transition-duration: 0.01ms !important;
 	}
 }
+
+/* Apply the shared palette to the pinned native shell without replacing its layout. */
+.desktop-shell .sidebar { background-color: var(--workspace-paper); color: var(--workspace-ink); }
+.desktop-shell #chat-container { background-color: var(--workspace-surface); }
+.desktop-shell { font-family: var(--workspace-font-ui); }

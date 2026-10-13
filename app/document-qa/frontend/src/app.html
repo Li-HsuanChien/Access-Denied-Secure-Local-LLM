@@ -4,7 +4,8 @@
 		<meta charset="utf-8" />
 		<meta name="viewport" content="width=device-width, initial-scale=1" />
 		<meta name="theme-color" content="#f6f7f7" />
-		<meta name="robots" content="noindex,nofollow" />
+		<meta http-equiv="Content-Security-Policy" content="default-src 'self'; connect-src 'self' http://127.0.0.1:* http://localhost:* ws://127.0.0.1:* ws://localhost:*; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; frame-src 'none'; object-src 'none'" />
+        <meta name="robots" content="noindex,nofollow" />
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

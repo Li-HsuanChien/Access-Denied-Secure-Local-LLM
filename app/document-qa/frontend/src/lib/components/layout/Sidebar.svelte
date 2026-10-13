@@ -93,6 +93,9 @@
 	import MoreHorizontalIcon from './Sidebar/icons/MoreHorizontal.svelte';
 	import MobileSwipePanel from '../common/MobileSwipePanel.svelte';
 
+	export let localMode = false;
+	export let navigation: { label: string; href: string }[] = [];
+
 	const BREAKPOINT = 768;
 	const DEFAULT_PINNED_ITEMS = ['notes', 'workspace'];
 
@@ -374,6 +377,7 @@
 	};
 
 	const initChatList = async () => {
+		if (localMode) { allChatsLoaded = true; chatListReady = true; return; }
 		// Reset pagination variables
 		console.log('initChatList');
 		allChatsLoaded = false;
@@ -415,6 +419,7 @@
 	};
 
 	const refreshChatRows = async () => {
+		if (localMode) { allChatsLoaded = true; chatListReady = true; return; }
 		const result = await refreshChatList(localStorage.token, { refreshPinned: true });
 		if (result.accepted) {
 			await initFolders();
@@ -665,7 +670,7 @@
 			document.documentElement.style.setProperty('--sidebar-width', `${w}px`);
 		});
 
-		showSidebar.set(!$mobile ? localStorage.sidebar === 'true' : false);
+		showSidebar.set(!$mobile ? (localMode ? localStorage.sidebar !== 'false' : localStorage.sidebar === 'true') : false);
 
 		const unsubscribers = [
 			mobile.subscribe((value) => {
@@ -1012,7 +1017,7 @@
 									e.stopImmediatePropagation();
 									e.preventDefault();
 
-									showSearch.set(true);
+									if (localMode) { goto('/history'); closeMobileSidebar(); } else { showSearch.set(true); }
 								}}
 								draggable="false"
 								aria-label={$i18n.t('Search')}
@@ -1026,6 +1031,10 @@
 						</Tooltip>
 					</div>
 
+                    {#each navigation as item}
+                        <a href={item.href} title={item.label} aria-label={item.label} on:click={closeMobileSidebar}
+                            class="flex size-8 items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900">{item.label[0]}</a>
+                    {/each}
 					{#each pinnedItems as itemId (itemId)}
 						{@const meta = getMenuItemMeta(itemId)}
 						{#if meta && isMenuItemVisible(itemId)}
@@ -1074,7 +1083,7 @@
 			<div>
 				<div>
 					<div class=" flex justify-center items-center">
-						{#if $user !== undefined && $user !== null}
+						{#if !localMode && $user !== undefined && $user !== null}
 							<UserMenu role={$user?.role} profile={$config?.features?.enable_user_status ?? true}>
 								<button
 									type="button"
@@ -1235,7 +1244,7 @@
 								id="sidebar-search-button"
 								class="group grow flex items-center space-x-2 rounded-xl px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-900 transition outline-none"
 								on:click={() => {
-									showSearch.set(true);
+									if (localMode) { goto('/history'); closeMobileSidebar(); } else { showSearch.set(true); }
 								}}
 								draggable="false"
 								aria-label={$i18n.t('Search')}
@@ -1251,6 +1260,10 @@
 							</button>
 						</div>
 
+						{#each navigation as item}
+                            <a href={item.href} on:click={closeMobileSidebar} aria-current={$page.url.pathname === item.href ? 'page' : undefined}
+                                class="mx-1 flex rounded-xl px-2 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900">{item.label}</a>
+                        {/each}
 						<div id="pinned-menu-items-list">
 							{#each pinnedItems as itemId (itemId)}
 								{@const meta = getMenuItemMeta(itemId)}
@@ -1706,7 +1719,7 @@
 						class=" sidebar-bg-gradient-to-t bg-linear-to-t from-gray-50 dark:from-gray-950 to-transparent from-50% pointer-events-none absolute inset-0 -z-10 -mt-6"
 					></div>
 					<div class="flex flex-col">
-						{#if $user !== undefined && $user !== null}
+						{#if !localMode && $user !== undefined && $user !== null}
 							<UserMenu
 								role={$user?.role}
 								profile={$config?.features?.enable_user_status ?? true}
