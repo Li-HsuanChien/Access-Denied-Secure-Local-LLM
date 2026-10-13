@@ -66,6 +66,8 @@ export const folders = writable([]);
 export const selectedFolder = writable(null);
 
 export const models: Writable<Model[]> = writable([]);
+/** Product-owned QA preference consumed only by the local answering adapter. */
+export const secureQaGeneralKnowledge = writable(true);
 
 export const knowledge: Writable<null | Document[]> = writable(null);
 export const tools = writable(null);

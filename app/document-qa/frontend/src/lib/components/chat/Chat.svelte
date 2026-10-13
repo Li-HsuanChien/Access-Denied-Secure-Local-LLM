@@ -46,7 +46,8 @@
 		showFileNavPath,
 		showFileNavDir,
 		chatRequestQueues,
-		desktopEvent
+		desktopEvent,
+		secureQaGeneralKnowledge
 	} from '$lib/stores';
 	import { refreshChatList, refreshFolderChatLists } from '$lib/stores/chatList';
 
@@ -107,6 +108,12 @@
 	import { getFunctions } from '$lib/apis/functions';
 	import { initiateOAuthRedirect } from '$lib/apis/configs';
 	import { updateFolderById } from '$lib/apis/folders';
+import {
+	createAnsweringClient,
+	formatAnswerForChat,
+	toOpenWebUICitations,
+	SECURE_QA_MODEL_ID
+} from '$lib/features/answering/openWebUIChatAdapter';
 
 	import Banner from '../common/Banner.svelte';
 	import MessageInput from '$lib/components/chat/MessageInput.svelte';
@@ -3358,7 +3365,9 @@
 		const primaryResponseMessageId = messageIdsList[0]?.message_id;
 
 		if (primaryModel && primaryResponseMessageId) {
-			const chatEventEmitter = await getChatEventEmitter(primaryModel.id, _chatId);
+			const chatEventEmitter = primaryModel.id === SECURE_QA_MODEL_ID
+				? null
+				: await getChatEventEmitter(primaryModel.id, _chatId);
 
 			try {
 				scrollToBottom();
@@ -3440,6 +3449,44 @@
 	) => {
 		const responseMessage = _history.messages[responseMessageId];
 		const userMessage = _history.messages[responseMessage.parentId];
+
+		if (model?.id === SECURE_QA_MODEL_ID) {
+			history = _history;
+			if ((userMessage?.files ?? []).length > 0) {
+				responseMessage.error = { content: 'Attached files are not supported in local document chat.' };
+				responseMessage.done = true;
+				history.messages[responseMessageId] = responseMessage;
+				history = history;
+				return;
+			}
+			try {
+				const answer = await createAnsweringClient().ask(
+					String(userMessage?.content ?? ''),
+					get(secureQaGeneralKnowledge)
+				);
+				responseMessage.content = formatAnswerForChat(answer);
+				responseMessage.citations = toOpenWebUICitations(answer);
+				if (answer.status === 'failed') {
+					responseMessage.error = { content: answer.error?.message ?? 'The local workflow failed.' };
+				}
+			} catch (error) {
+				responseMessage.content = '';
+				responseMessage.error = {
+					content: error instanceof Error ? error.message : 'The local service could not answer.'
+				};
+			} finally {
+				responseMessage.done = true;
+				_history.messages[responseMessageId] = responseMessage;
+				_history.currentId = responseMessageId;
+				history.messages[responseMessageId] = responseMessage;
+				history.currentId = responseMessageId;
+				history = history;
+				await tick();
+				if (shouldAutoScrollResponse()) scrollToBottom();
+			}
+			await processNextInQueue(_chatId);
+			return;
+		}
 
 		const chatMessageFiles = _messages
 			.filter((message) => message.files)
