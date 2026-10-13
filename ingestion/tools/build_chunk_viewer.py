@@ -118,7 +118,7 @@ def main():
     }
 
     html = TEMPLATE.replace('__PAYLOAD__', json.dumps(payload, ensure_ascii=False))
-    out = Path(args.out) if args.out else ROOT / 'walkthrough' / 'chunk_viewer.html'
+    out = Path(args.out).resolve() if args.out else ROOT / 'walkthrough' / 'chunk_viewer.html'
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding='utf-8')
 

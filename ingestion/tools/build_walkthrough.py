@@ -44,7 +44,10 @@ def main():
     targets = citation_targets(example)
 
     # Artifacts a reviewer can open alongside the narrative.
-    (OUT / 'validation_result.json').write_text(j(result.to_dict()) + '\n')
+    # source_path is wherever the file was read from; relative to the repo it
+    # is the same on every machine, so the committed artifact does not churn.
+    (OUT / 'validation_result.json').write_text(
+        j({**result.to_dict(), 'source_path': str(SAMPLE.relative_to(ROOT))}) + '\n')
     (OUT / 'document.json').write_text(j(doc_meta) + '\n')
     (OUT / 'chunk_000.json').write_text(j(first.to_dict()) + '\n')
     (OUT / 'all_chunks.json').write_text(
