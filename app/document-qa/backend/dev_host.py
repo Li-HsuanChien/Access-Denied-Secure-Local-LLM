@@ -186,18 +186,19 @@ def validate(body) -> tuple[str | None, str | None]:
 def main() -> None:
     from secure_qa.answering import FakeModelRuntime, LlamaCppGatewayRuntime
     from secure_qa.answering.benchmarks.golden import golden_collection
-    from secure_qa.library import CollectionVersions, Embedder
+    from secure_qa.library import CollectionVersions, FakeEmbedder
     from secure_qa.paths import DATA_DIR
 
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--port", type=int, default=8765)
     p.add_argument("--runtime", default="fake", help="'fake' (deterministic test model) or E1's gateway URL")
-    p.add_argument("--store", default=str(DATA_DIR / "dev_host_store"), help="collection root (catalog + Chroma directory)")
+    p.add_argument("--store", default=str(DATA_DIR / "dev_host_fake_store"), help="collection root for the deterministic QA embedder (catalog + Chroma directory)")
     args = p.parse_args()
 
     runtime = FakeModelRuntime() if args.runtime == "fake" else LlamaCppGatewayRuntime(args.runtime)
-    print("dev_host: loading embedding model (offline) ...", flush=True)
-    versions = CollectionVersions(Embedder(), args.store)
+    # Use a deterministic embedder alongside FakeModelRuntime. The QA harness
+    # must not need local model weights or fetch anything on startup.
+    versions = CollectionVersions(FakeEmbedder(), args.store)
     if versions.active() is None:
         chunks, documents, _ = golden_collection()
         version = versions.publish(chunks, documents)

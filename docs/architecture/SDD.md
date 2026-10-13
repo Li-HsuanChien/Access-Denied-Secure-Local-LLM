@@ -94,6 +94,12 @@ The module hides retrieval, relevance filtering, visual-evidence selection, page
 
 The Svelte frontend sends versioned same-origin HTTP requests to the Python host, with a request ID, operation name, and validated payload. The host returns progress events followed by one result or error associated with that request ID; cancellation targets the request ID. Schemas reject unknown operations or fields. The Python host and llama.cpp listener bind only to 127.0.0.1, and the Tauri shell manages their lifecycle. No listener binds to a non-loopback address, and the application does not support a standalone browser workflow.
 
+#### 4.7 Answering UI QA Harness
+
+The pinned Open WebUI v0.11.4 SvelteKit source is vendored under `app/document-qa/frontend/`. The first product-owned view is the `answering` feature. Its `AnsweringView` depends on the narrow `AnsweringClient` interface (`health()` and `ask(question, generalKnowledge)`). The loopback HTTP adapter validates the destination and request/response envelope; a deterministic fixture adapter supplies repeatable states through the same interface. Workflow classification, evidence selection, and citation validation remain in the Python Question Answering module.
+
+For developer QA only, `npm run dev:qa` serves the `/qa` route on `127.0.0.1:5173`, and `python app/document-qa/backend/dev_host.py` serves the deterministic fake model, fake embedder, and seeded collection on `127.0.0.1:8765`. It needs the pinned Python dependencies and Chroma storage package, but no model weights. The QA route bypasses Open WebUI session, API, and websocket initialization and sends only the documented `GET /health` and `POST /v1/requests` calls to the loopback host. The browser route is not a supported standalone product workflow; the released application continues to run within Tauri. The current development host returns one result rather than progress events and does not support cancellation; the view disables a second submission while a question is in flight.
+
 ### 5. Data Design
 
 A collection is a complete searchable snapshot of approved PDFs and their derived data. Each version contains the source PDFs, manifest, extraction metadata, chunks, embeddings, document index, and import report.

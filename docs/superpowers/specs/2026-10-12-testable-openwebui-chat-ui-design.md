@@ -1,6 +1,6 @@
 # Testable Open WebUI Chat Interface Design
 
-**Status:** Proposed design for review  
+**Status:** Approved and implemented on `codex/integrate-workstreams`
 **Scope:** First QA-ready frontend slice on `codex/integrate-workstreams`
 
 ## Context
