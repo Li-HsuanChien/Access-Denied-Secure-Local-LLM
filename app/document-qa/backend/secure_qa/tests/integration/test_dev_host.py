@@ -10,7 +10,7 @@ import threading
 import unittest
 from pathlib import Path
 
-from dev_host import DevHost
+from dev_host import DevHost, create_embedder
 from secure_qa.answering import AnswerService, AnswerSettings, FakeModelRuntime, ModelRuntimeError
 from secure_qa.library import CollectionVersions, FakeEmbedder
 from secure_qa.library.synthetic import synthetic_corpus
@@ -64,6 +64,32 @@ class DevHostTest(unittest.TestCase):
         status, body, _ = self.call("GET", "/health")
         self.assertEqual((status, body["status"], body["answering"]["ready"]), (200, "degraded", False))
         self.assertEqual(body["answering"]["error"]["code"], "runtime_unreachable")
+
+    def test_health_reports_embedding_model_mismatch_before_a_question(self):
+        original = self.versions.embedder
+        self.versions.embedder = FakeEmbedder(dimension=128)
+        try:
+            status, body, _ = self.call("GET", "/health")
+        finally:
+            self.versions.embedder = original
+        self.assertEqual((status, body["ready"]), (200, False))
+        self.assertEqual(body["library"]["error"]["code"], "embedding_model_mismatch")
+        self.assertIn("republish", body["library"]["error"]["hint"].lower())
+
+    def test_question_is_rejected_when_collection_uses_another_embedding_model(self):
+        original = self.versions.embedder
+        self.versions.embedder = FakeEmbedder(dimension=128)
+        try:
+            status, body, _ = self.ask()
+        finally:
+            self.versions.embedder = original
+        self.assertEqual((status, body["error"]["code"]), (409, "embedding_model_mismatch"))
+        self.assertIn("republish", body["error"]["hint"].lower())
+
+    def test_embedder_selection_keeps_fakes_explicit_and_local_model_errors_actionable(self):
+        self.assertIsInstance(create_embedder("fake"), FakeEmbedder)
+        with self.assertRaisesRegex(FileNotFoundError, "fetch_model.py"):
+            create_embedder("local", Path(self.dir) / "missing-model")
 
     def test_ask_returns_a_cited_answer_matching_the_wire_schema(self):
         status, body, _ = self.ask()

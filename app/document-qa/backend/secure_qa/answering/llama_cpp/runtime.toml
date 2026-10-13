@@ -11,7 +11,7 @@ allow_remote = false      # true exposes the model (and any document text) to th
 server_bin = ""           # "" = auto: bin/llama-server.exe, then PATH. "stub" = simulated backend.
 backend_port = 0          # 0 = pick a free loopback port for llama-server
 models_dir = "models"
-model = ""                # "" = auto-pick by quant_preference; or a file name / id / path
+model = "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf" # Week 1 primary candidate; qualify on the 8 GB reference machine before release
 ctx_size = 4096
 threads = 0               # 0 = number of physical cores
 n_gpu_layers = 0          # reference laptop is CPU-only
