@@ -1,0 +1,218 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docqa.local/contract/2026-09-v1/health.schema.json",
+  "title": "GET /health (200 when ready, 503 otherwise)",
+  "type": "object",
+  "properties": {
+    "status": {
+      "enum": [
+        "starting",
+        "loading",
+        "ok",
+        "error",
+        "stopped"
+      ]
+    },
+    "ready": {
+      "type": "boolean"
+    },
+    "api_version": {
+      "const": "2026-09-v1"
+    },
+    "runtime_version": {
+      "type": "string"
+    },
+    "engine": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "const": "llama.cpp"
+        },
+        "server_version": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "stub": {
+          "type": "boolean"
+        },
+        "pid": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "name",
+        "server_version",
+        "stub",
+        "pid"
+      ],
+      "additionalProperties": false
+    },
+    "model": {
+      "type": "object",
+      "properties": {
+        "id": {
+          "type": "string"
+        },
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "quant": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "architecture": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "file_size_bytes": {
+          "type": "integer"
+        },
+        "ctx_size": {
+          "type": "integer"
+        },
+        "ctx_size_requested": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "id",
+        "name",
+        "quant",
+        "architecture",
+        "file_size_bytes",
+        "ctx_size",
+        "ctx_size_requested"
+      ],
+      "additionalProperties": false
+    },
+    "security": {
+      "type": "object",
+      "properties": {
+        "bind": {
+          "type": "string"
+        },
+        "loopback_only": {
+          "type": "boolean"
+        },
+        "offline_mode": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "bind",
+        "loopback_only",
+        "offline_mode"
+      ],
+      "additionalProperties": false
+    },
+    "release": {
+      "type": "object",
+      "properties": {
+        "manifest": {
+          "type": "boolean"
+        },
+        "frozen_at": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "matches_manifest": {
+          "type": "boolean"
+        },
+        "model_sha256": {
+          "type": [
+            "string",
+            "null"
+          ]
+        }
+      },
+      "required": [
+        "manifest",
+        "frozen_at",
+        "matches_manifest",
+        "model_sha256"
+      ],
+      "additionalProperties": false
+    },
+    "uptime_s": {
+      "type": "number"
+    },
+    "startup_s": {
+      "type": [
+        "number",
+        "null"
+      ]
+    },
+    "requests": {
+      "type": "object",
+      "properties": {
+        "total": {
+          "type": "integer"
+        },
+        "failed": {
+          "type": "integer"
+        }
+      },
+      "required": [
+        "total",
+        "failed"
+      ],
+      "additionalProperties": false
+    },
+    "error": {
+      "oneOf": [
+        {
+          "type": "null"
+        },
+        {
+          "type": "object",
+          "properties": {
+            "code": {
+              "type": "string"
+            },
+            "message": {
+              "type": "string"
+            },
+            "hint": {
+              "type": "string"
+            },
+            "details": {}
+          },
+          "required": [
+            "code",
+            "message"
+          ],
+          "additionalProperties": true
+        }
+      ]
+    }
+  },
+  "required": [
+    "status",
+    "ready",
+    "api_version",
+    "runtime_version",
+    "engine",
+    "model",
+    "security",
+    "release",
+    "uptime_s",
+    "startup_s",
+    "requests",
+    "error"
+  ],
+  "additionalProperties": false
+}

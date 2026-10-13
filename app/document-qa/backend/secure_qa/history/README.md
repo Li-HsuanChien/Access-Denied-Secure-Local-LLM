@@ -1,3 +1,3 @@
 # Conversation History
 
-Scaffold only. This module owns saved conversations, persistence settings, and deletion. Its SQLite schema and migrations remain private to this feature. The SDD governs historical citation behavior and retention; do not add an archive mechanism unless that design is approved there. See the [SDD](../../../../../docs/architecture/SDD.md).
+`ConversationHistory` owns local SQLite persistence for answer snapshots. Its host contract is documented in [`wire/README.md`](wire/README.md). Each answer snapshot retains its model and collection identifiers; SQLite data relies on operating-system full-disk encryption. Save failures are surfaced to Chat without discarding the current answer. See the [SDD](../../../../../docs/architecture/SDD.md#43-conversation-history).

@@ -1,0 +1,80 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docqa.local/contract/2026-09-v1/model.schema.json",
+  "title": "GET /v1/models/{id}",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "object": {
+      "const": "model"
+    },
+    "created": {
+      "type": "integer"
+    },
+    "owned_by": {
+      "type": "string"
+    },
+    "ready": {
+      "type": "boolean"
+    },
+    "meta": {
+      "type": "object",
+      "properties": {
+        "name": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "quant": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "architecture": {
+          "type": [
+            "string",
+            "null"
+          ]
+        },
+        "file_size_bytes": {
+          "type": "integer"
+        },
+        "context_length_train": {
+          "type": [
+            "integer",
+            "null"
+          ]
+        },
+        "ctx_size": {
+          "type": "integer"
+        },
+        "stub": {
+          "type": "boolean"
+        }
+      },
+      "required": [
+        "name",
+        "quant",
+        "architecture",
+        "file_size_bytes",
+        "context_length_train",
+        "ctx_size",
+        "stub"
+      ],
+      "additionalProperties": false
+    }
+  },
+  "required": [
+    "id",
+    "object",
+    "created",
+    "owned_by",
+    "ready",
+    "meta"
+  ],
+  "additionalProperties": false
+}

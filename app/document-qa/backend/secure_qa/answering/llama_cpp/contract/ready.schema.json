@@ -1,0 +1,55 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docqa.local/contract/2026-09-v1/ready.schema.json",
+  "title": "docqa-runtime up --json / --ready-file (success)",
+  "type": "object",
+  "required": [
+    "status",
+    "base_url",
+    "endpoints",
+    "model",
+    "startup_s",
+    "backend"
+  ],
+  "properties": {
+    "status": {
+      "const": "ok"
+    },
+    "base_url": {
+      "type": "string"
+    },
+    "endpoints": {
+      "type": "object",
+      "properties": {
+        "health": {
+          "type": "string"
+        },
+        "models": {
+          "type": "string"
+        },
+        "chat_completions": {
+          "type": "string"
+        }
+      },
+      "required": [
+        "health",
+        "models",
+        "chat_completions"
+      ],
+      "additionalProperties": true
+    },
+    "model": {
+      "type": "object"
+    },
+    "startup_s": {
+      "type": "number"
+    },
+    "backend": {
+      "type": "object",
+      "required": [
+        "pid",
+        "port"
+      ]
+    }
+  }
+}
