@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { workspaceVoice } from '$lib/features/personality/presentation';
 	import { toast } from 'svelte-sonner';
 	import { marked } from 'marked';
 	import DOMPurify from 'dompurify';
@@ -262,7 +263,7 @@
 						{onToolApprovalModeChange}
 						{stopResponse}
 						{createMessagePair}
-						placeholder={$i18n.t('How can I help you today?')}
+						placeholder={workspaceVoice.askPlaceholder}
 						{onChange}
 						{onUpload}
 						{onUpdate}

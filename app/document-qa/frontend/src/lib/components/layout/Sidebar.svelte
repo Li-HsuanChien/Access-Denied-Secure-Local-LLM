@@ -92,9 +92,10 @@
 	import CheckIcon from '../icons/Check.svelte';
 	import MoreHorizontalIcon from './Sidebar/icons/MoreHorizontal.svelte';
 	import MobileSwipePanel from '../common/MobileSwipePanel.svelte';
+	import NavIcon from '$lib/features/personality/NavIcon.svelte';
 
 	export let localMode = false;
-	export let navigation: { label: string; href: string }[] = [];
+	export let navigation: { label: string; href: string; icon: 'library' | 'history' | 'settings' }[] = [];
 
 	const BREAKPOINT = 768;
 	const DEFAULT_PINNED_ITEMS = ['notes', 'workspace'];
@@ -1009,7 +1010,7 @@
 						</Tooltip>
 					</div>
 
-					<div>
+					<div class:hidden={localMode}>
 						<Tooltip content={$i18n.t('Search')} placement="right">
 							<button
 								class=" cursor-pointer flex size-8 items-center justify-center transition group"
@@ -1031,10 +1032,28 @@
 						</Tooltip>
 					</div>
 
-                    {#each navigation as item}
-                        <a href={item.href} title={item.label} aria-label={item.label} on:click={closeMobileSidebar}
-                            class="flex size-8 items-center justify-center rounded-lg hover:bg-gray-100 dark:hover:bg-gray-900">{item.label[0]}</a>
-                    {/each}
+					{#each navigation as item}
+						<div>
+							<Tooltip content={item.label} placement="right">
+								<a
+									href={item.href}
+									aria-label={item.label}
+									aria-current={$page.url.pathname === item.href ? 'page' : undefined}
+									class="flex size-8 items-center justify-center transition group"
+									draggable="false"
+								>
+									<div
+										class="self-center flex size-[calc(30px*var(--app-text-scale,1))] items-center justify-center rounded-lg transition {$page
+											.url.pathname === item.href
+											? 'bg-black/[0.06] dark:bg-white/[0.08]'
+											: 'group-hover:bg-gray-100 dark:group-hover:bg-gray-900'}"
+									>
+										<NavIcon name={item.icon} />
+									</div>
+								</a>
+							</Tooltip>
+						</div>
+					{/each}
 					{#each pinnedItems as itemId (itemId)}
 						{@const meta = getMenuItemMeta(itemId)}
 						{#if meta && isMenuItemVisible(itemId)}
@@ -1239,7 +1258,7 @@
 							</a>
 						</div>
 
-						<div class="px-1 flex justify-center text-gray-700 dark:text-gray-300">
+						<div class="px-1 flex justify-center text-gray-700 dark:text-gray-300" class:hidden={localMode}>
 							<button
 								id="sidebar-search-button"
 								class="group grow flex items-center space-x-2 rounded-xl px-2 py-1.5 hover:bg-gray-100 dark:hover:bg-gray-900 transition outline-none"
@@ -1261,9 +1280,26 @@
 						</div>
 
 						{#each navigation as item}
-                            <a href={item.href} on:click={closeMobileSidebar} aria-current={$page.url.pathname === item.href ? 'page' : undefined}
-                                class="mx-1 flex rounded-xl px-2 py-2 text-sm hover:bg-gray-100 dark:hover:bg-gray-900">{item.label}</a>
-                        {/each}
+							<div class="px-1 flex justify-center text-gray-700 dark:text-gray-300">
+								<a
+									href={item.href}
+									on:click={closeMobileSidebar}
+									aria-current={$page.url.pathname === item.href ? 'page' : undefined}
+									draggable="false"
+									class="grow flex items-center space-x-2 rounded-xl px-2 py-1.5 transition {$page.url
+										.pathname === item.href
+										? 'bg-black/[0.06] dark:bg-white/[0.08]'
+										: 'hover:bg-gray-100 dark:hover:bg-gray-900'}"
+								>
+									<div class="self-center flex size-4 shrink-0 items-center justify-center">
+										<NavIcon name={item.icon} />
+									</div>
+									<div class="flex self-center translate-y-[0.5px]">
+										<div class="self-center text-[0.8125rem] leading-5">{item.label}</div>
+									</div>
+								</a>
+							</div>
+						{/each}
 						<div id="pinned-menu-items-list">
 							{#each pinnedItems as itemId (itemId)}
 								{@const meta = getMenuItemMeta(itemId)}
@@ -1426,6 +1462,7 @@
 						</SidebarSection>
 					{/if}
 
+					{#if !localMode}
 					<SidebarSection
 						id="sidebar-chats"
 						name={$i18n.t('Chats')}
@@ -1712,6 +1749,7 @@
 							</div>
 						</div>
 					</SidebarSection>
+					{/if}
 				</div>
 
 				<div class="px-1 pt-1 pb-1.5 sticky bottom-0 z-10 -mt-2 sidebar">

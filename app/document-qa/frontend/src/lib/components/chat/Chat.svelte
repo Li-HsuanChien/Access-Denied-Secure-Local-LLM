@@ -114,6 +114,7 @@ import {
 	toOpenWebUICitations,
 	SECURE_QA_MODEL_ID
 } from '$lib/features/answering/openWebUIChatAdapter';
+import { workspaceVoice } from '$lib/features/personality/presentation';
 
 	import Banner from '../common/Banner.svelte';
 	import MessageInput from '$lib/components/chat/MessageInput.svelte';
@@ -4484,6 +4485,7 @@ import {
 									class=" pb-2 {dragged ? 'z-0' : 'z-10'}"
 								>
 									<MessageInput
+										placeholder={workspaceVoice.askPlaceholder}
 										bind:this={messageInput}
 										{history}
 										{taskIds}
@@ -4576,6 +4578,7 @@ import {
 								{/if}
 								<div id={embedded ? messageInputDropzoneId : undefined} class="pb-2 z-10">
 									<MessageInput
+										placeholder={workspaceVoice.askPlaceholder}
 										bind:this={messageInput}
 										{history}
 										{taskIds}

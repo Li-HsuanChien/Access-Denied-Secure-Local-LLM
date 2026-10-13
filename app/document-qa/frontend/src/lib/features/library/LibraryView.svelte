@@ -41,19 +41,65 @@
 </script>
 
 <svelte:head><title>Library · Access Denied</title></svelte:head>
-<main aria-labelledby="title">
-	<p class="eyebrow">LOCAL DOCUMENT COLLECTION</p><h1 id="title">Library</h1><p>Select PDFs, review every rejection, then confirm publication of the accepted remainder.</p>
-	<section class="panel" aria-labelledby="select-title"><h2 id="select-title">Add PDFs</h2>	<label for="pdfs">Choose PDF files</label><input bind:this={picker} id="pdfs" type="file" accept="application/pdf,.pdf" multiple on:change={(event) => selected = Array.from(event.currentTarget.files || [])} />
-	{#if selected.length}<p>{selected.length} file(s) selected</p><button type="button" on:click={inspect} disabled={busy}>{busy ? 'Reviewing…' : 'Review selected files'}</button>{/if}</section>
-	{#if review}<section class="panel" aria-labelledby="review-title"><h2 id="review-title">Review import</h2><h3>Accepted ({review.accepted.length})</h3>{#if review.accepted.length}<ul>{#each review.accepted as file}<li>{file.name} <span>{(file.size / 1048576).toFixed(1)} MiB</span></li>{/each}</ul>{:else}<p>No PDFs passed validation.</p>{/if}
-		{#if review.rejected.length}<h3>Rejected ({review.rejected.length})</h3><p role="alert">{review.warning} Review each reason before continuing.</p><ul class="rejected">{#each review.rejected as file}<li><strong>{file.name}</strong><span>{file.reason}</span></li>{/each}</ul><label class="confirm"><input type="checkbox" bind:checked={confirmed} /> I reviewed the rejected files and confirm publishing only the accepted PDFs.</label>{/if}
-		<button type="button" on:click={publish} disabled={busy || !review.accepted.length || (review.rejected.length > 0 && !confirmed)}>{attempted ? 'Restart publication' : 'Publish accepted PDFs'}</button></section>{/if}
-	{#if busy}<section class="panel" role="status" aria-live="polite"><strong>Publication in progress</strong><p>{progress} · {elapsed}s elapsed</p><button type="button" on:click={cancel} disabled={!requestId}>Cancel publication</button></section>{/if}
-	{#if notice}<p class="notice" role="status">{notice}</p>{/if}{#if error}<p class="error" role="alert">{error}</p>{/if}
-	<section class="panel" aria-labelledby="versions-title"><div class="heading"><h2 id="versions-title">Collection versions</h2><button type="button" on:click={refresh}>Refresh</button></div>
-	{#if versions.length}<ul>{#each versions as version}<li><strong>{version.version_id}</strong><span>{version.status} · {version.document_count} PDFs · {version.chunk_count} passages</span></li>{/each}</ul>{#if versions.length > 1}<button type="button" on:click={rollback} disabled={busy}>Roll back to previous version</button>{/if}{:else}<p>No collection has been published.</p>{/if}</section>
-</main>
+<div class="workspace-page" aria-labelledby="title">
+	<p class="eyebrow">Local document collection</p>
+	<h1 id="title">Library</h1>
+	<p class="lede">Select PDFs, review every rejection, then confirm publication of the accepted remainder.</p>
+
+	<section class="panel" aria-labelledby="select-title">
+		<h2 id="select-title">Add PDFs</h2>
+		<label class="picker" class:has-files={selected.length > 0} for="pdfs">
+			<input bind:this={picker} id="pdfs" type="file" accept="application/pdf,.pdf" multiple on:change={(event) => selected = Array.from(event.currentTarget.files || [])} />
+			<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M12 16V5M7.5 9.5 12 5l4.5 4.5M5 19h14" /></svg>
+			<span class="picker-title">{selected.length ? `${selected.length} file${selected.length === 1 ? '' : 's'} selected` : 'Choose PDF files'}</span>
+			<span class="hint">{selected.length ? selected.map((file) => file.name).join(', ') : 'Files stay on this computer. Nothing is published until you confirm.'}</span>
+		</label>
+		{#if selected.length}<div class="actions"><button class="btn primary" type="button" on:click={inspect} disabled={busy}>{busy ? 'Reviewing…' : 'Review selected files'}</button></div>{/if}
+	</section>
+
+	{#if review}
+		<section class="panel" aria-labelledby="review-title">
+			<h2 id="review-title">Review import</h2>
+			<h3>Accepted ({review.accepted.length})</h3>
+			{#if review.accepted.length}
+				<ul class="rows">{#each review.accepted as file}<li><span class="grow"><span class="name">{file.name}</span></span><span class="meta">{(file.size / 1048576).toFixed(1)} MiB</span></li>{/each}</ul>
+			{:else}<p class="empty">No PDFs passed validation.</p>{/if}
+			{#if review.rejected.length}
+				<h3>Rejected ({review.rejected.length})</h3>
+				<p class="message warning" role="alert">{review.warning} Review each reason before continuing.</p>
+				<ul class="rows">{#each review.rejected as file}<li><span class="grow"><span class="name">{file.name}</span><span class="meta rejected">{file.reason}</span></span></li>{/each}</ul>
+				<label class="check"><input type="checkbox" bind:checked={confirmed} /><span>I reviewed the rejected files and confirm publishing only the accepted PDFs.</span></label>
+			{/if}
+			<div class="actions"><button class="btn primary" type="button" on:click={publish} disabled={busy || !review.accepted.length || (review.rejected.length > 0 && !confirmed)}>{attempted ? 'Restart publication' : 'Publish accepted PDFs'}</button></div>
+		</section>
+	{/if}
+
+	{#if busy}
+		<section class="panel" role="status" aria-live="polite">
+			<div class="heading"><h2>Publication in progress</h2><button class="btn" type="button" on:click={cancel} disabled={!requestId}>Cancel publication</button></div>
+			<p class="hint">{progress} · {elapsed}s elapsed</p>
+		</section>
+	{/if}
+	{#if notice}<p class="message notice" role="status">{notice}</p>{/if}
+	{#if error}<p class="message error" role="alert">{error}</p>{/if}
+
+	<section class="panel" aria-labelledby="versions-title">
+		<div class="heading"><h2 id="versions-title">Collection versions</h2><button class="btn quiet" type="button" on:click={refresh}>Refresh</button></div>
+		{#if versions.length}
+			<ul class="rows">{#each versions as version}<li><span class="grow"><span class="name">{version.version_id}</span><span class="meta">{version.document_count} PDFs · {version.chunk_count} passages</span></span><span class="badge" class:active={version.status === 'active'}>{version.status}</span></li>{/each}</ul>
+			{#if versions.length > 1}<div class="actions"><button class="btn" type="button" on:click={rollback} disabled={busy}>Roll back to previous version</button></div>{/if}
+		{:else}<p class="empty">No collection has been published.</p>{/if}
+	</section>
+</div>
 
 <style>
-	main{max-width:760px;margin:48px auto;padding:0 22px;color:#24352c;font:15px/1.55 system-ui,sans-serif}.eyebrow{font-size:11px;letter-spacing:.12em;color:#47755f;font-weight:700}h1{font-size:36px;margin:.2em 0}h2{font-size:18px;margin:0 0 14px}h3{font-size:14px}.panel{background:white;border:1px solid #dce8e0;border-radius:12px;padding:20px;margin:16px 0}.panel ul{padding-left:20px}.panel li{margin:8px 0}.panel li span{color:#68766e;margin-left:8px}.rejected{color:#733f35}.rejected li span{display:block;margin:0}.confirm{display:flex;gap:9px;margin:16px 0}.heading{display:flex;justify-content:space-between}button{border:0;border-radius:8px;background:#176b50;color:white;padding:10px 14px;font-weight:650;cursor:pointer}button:disabled{opacity:.5;cursor:not-allowed}input[type=file]{display:block;margin:9px 0 14px}.notice{padding:12px;background:#e9f5ee;border-radius:8px;color:#285c41}.error{color:#8b3028}.panel p{color:#5d6d63}button:focus-visible,input:focus-visible{outline:3px solid #87c3a4;outline-offset:3px}
+	.picker { position: relative; display: grid; justify-items: center; gap: 2px; border: 1px dashed var(--workspace-line); border-radius: var(--workspace-radius-control); padding: var(--workspace-space-6) var(--workspace-space-4); text-align: center; cursor: pointer; transition: background-color var(--workspace-motion-fast), border-color var(--workspace-motion-fast); }
+	.picker:hover, .picker:focus-within { border-color: var(--workspace-accent); background: var(--workspace-hover); }
+	.picker.has-files { border-style: solid; }
+	.picker:focus-within { outline: 2px solid var(--workspace-focus); outline-offset: 2px; }
+	.picker input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+	.picker svg { width: 20px; height: 20px; margin-bottom: 4px; color: var(--workspace-accent); }
+	.picker-title { font-weight: 500; }
+	.picker .hint { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+	.rejected { color: var(--workspace-error); }
 </style>

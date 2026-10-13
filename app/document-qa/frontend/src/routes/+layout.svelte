@@ -2,11 +2,12 @@
 	import { onMount, setContext } from 'svelte';
 	import '../tailwind.css';
 	import '../app.css';
+	import 'tippy.js/dist/tippy.css';
 	import '$lib/features/personality/personality.css';
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
 	import i18n, { initI18n } from '$lib/i18n';
 	import {
-		config, functions, models, secureQaGeneralKnowledge, showSidebar, skills, temporaryChatEnabled,
+		config, functions, mobile, models, secureQaGeneralKnowledge, showSidebar, skills, temporaryChatEnabled,
 		tools, user, WEBUI_NAME
 	} from '$lib/stores';
 	import { createSettingsClient } from '$lib/features/settings/settingsClient';
@@ -16,7 +17,7 @@
 	setContext('i18n', i18n);
 
 	// Seed the pinned Open WebUI chat with one local model and no account/network features.
-	user.set({ id: 'local-user', name: 'Local user', role: 'user', permissions: { features: {}, chat: { temporary: true, temporary_enforced: true, import: false, export: false } } } as any);
+	user.set({ id: 'local-user', name: 'Local user', role: 'user', permissions: { features: {}, chat: { temporary: true, temporary_enforced: true, import: false, export: false, stt: false, call: false, controls: false, tts: false, continue_response: false } } } as any);
 	WEBUI_NAME.set('Access Denied');
 	models.set([{
 		id: 'secure-qa-local', name: 'Document Assistant', owned_by: 'openai', external: false,
@@ -24,6 +25,11 @@
 	} as any]);
 	config.set({
 		default_models: 'secure-qa-local', default_pinned_models: '',
+		default_prompt_suggestions: [
+			{ title: ['Summarize the key points', 'of a document in my library'], content: 'Summarize the key points of ' },
+			{ title: ['Find the exact requirement', 'and cite the page it comes from'], content: 'What do my documents require for ' },
+			{ title: ['Compare two documents', 'and show where they differ'], content: 'Compare what my documents say about ' }
+		],
 		features: {
 			enable_direct_connections: false, enable_folders: false, enable_notes: false,
 			enable_automations: false, enable_channels: false, enable_web_search: false,
@@ -51,18 +57,39 @@
         catch { preferenceError = 'Could not save this preference. Please retry.'; }
     }
 
+	// The pinned shell reads these stores; nothing else in the local build sets them.
+	const MOBILE_BREAKPOINT = 768;
+	const darkQuery = typeof window === 'undefined' ? null : window.matchMedia('(prefers-color-scheme: dark)');
+	function syncViewport() { mobile.set(window.innerWidth < MOBILE_BREAKPOINT); }
+	function syncTheme() {
+		const theme = localStorage.theme ?? 'system';
+		document.documentElement.classList.toggle('dark', theme === 'dark' || (theme === 'system' && !!darkQuery?.matches));
+	}
+	if (typeof window !== 'undefined') { syncViewport(); syncTheme(); }
+
+	onMount(() => {
+		window.addEventListener('resize', syncViewport);
+		darkQuery?.addEventListener('change', syncTheme);
+		return () => {
+			window.removeEventListener('resize', syncViewport);
+			darkQuery?.removeEventListener('change', syncTheme);
+		};
+	});
+
 	onMount(async () => {
 		await initI18n();
 		await refreshHealth();
 		try { secureQaGeneralKnowledge.set((await preferences.read()).general_knowledge); } catch {}
 	});
 
+	const count = (n: number, noun: string) => `${n} ${noun}${n === 1 ? '' : 's'}`;
+
 	async function refreshHealth() {
 		healthError = false;
 		try {
 			health = await client.health();
 			healthMessage = health.ready
-				? `${health.library.document_count} documents · ${health.library.chunk_count} passages · local model ready`
+				? `${count(health.library.document_count, 'document')} · ${count(health.library.chunk_count, 'passage')} · local model ready`
 				: health.answering.error?.message ?? 'The local model or library is not ready.';
 			healthError = !health.ready;
 		} catch (error) {
@@ -78,16 +105,25 @@
 	<meta name="description" content="Private, local document question answering." />
 </svelte:head>
 
-<div class="desktop-shell">
-	<Sidebar localMode navigation={[{ label: 'Library', href: '/library' }, { label: 'History', href: '/history' }, { label: 'Settings', href: '/settings' }]} />
+<div class="desktop-shell" class:sidebar-open={$showSidebar && !$mobile}>
+	<Sidebar localMode navigation={[
+		{ label: 'Library', href: '/library', icon: 'library' },
+		{ label: 'History', href: '/history', icon: 'history' },
+		{ label: 'Settings', href: '/settings', icon: 'settings' }
+	]} />
 	<div class="workspace">
 		<div class:degraded={healthError} class="service-status" role="status" aria-live="polite">
+			{#if $mobile}
+				<button type="button" class="menu-button" aria-label="Open sidebar" on:click={() => showSidebar.set(true)}>
+					<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg>
+				</button>
+			{/if}
 			<span class="status-mark" aria-hidden="true"></span>
-			<div><strong>{healthError ? 'Workspace needs attention' : 'Local workspace'}</strong><span>{healthMessage}</span></div>
-			<label><input type="checkbox" checked={$secureQaGeneralKnowledge} on:change={saveKnowledge} /> Include general model knowledge</label>
-			<button type="button" on:click={refreshHealth}>Refresh</button>
+			<div class="status-text"><strong>{healthError ? 'Workspace needs attention' : 'Local workspace'}</strong><span title={healthMessage}>{healthMessage}</span></div>
+			<label class="workspace-switch"><input type="checkbox" role="switch" checked={$secureQaGeneralKnowledge} on:change={saveKnowledge} /><span>Include general model knowledge</span></label>
+			<button type="button" class="status-action" on:click={refreshHealth}>Refresh</button>
 		</div>
-		{#if preferenceError}<p role="alert">{preferenceError}</p>{/if}
+		{#if preferenceError}<p class="preference-error" role="alert">{preferenceError}</p>{/if}
 		<main id="main-content"><slot /></main>
 	</div>
 </div>
@@ -96,15 +132,28 @@
 	:global(html), :global(body) { height: 100%; }
 	:global(body) { margin: 0; }
 	.desktop-shell { display: flex; width: 100%; height: 100dvh; overflow: hidden; background: var(--workspace-paper); color: var(--workspace-ink); }
-	.workspace { display: flex; min-width: 0; flex: 1; flex-direction: column; }
-	.service-status { z-index: 20; display: flex; align-items: center; gap: 12px; min-height: 54px; border-bottom: 1px solid #e5e7eb; padding: 8px 18px; font: 12px/1.35 system-ui, sans-serif; }
-	.service-status > div { display: grid; gap: 2px; flex: 1; }
-	.service-status strong { font-size: 12px; }
-	.service-status span { color: #667085; }
-	.service-status .status-mark { width: 8px; height: 8px; border-radius: 50%; background: #2d9b6b; }
-	.service-status.degraded .status-mark { background: #c98524; }
-	.service-status label { display: flex; align-items: center; gap: 6px; white-space: nowrap; }
-	.service-status button { border: 0; background: transparent; color: #356b53; cursor: pointer; }
-	#main-content { min-height: 0; flex: 1; overflow: auto; }
-	@media (max-width: 700px) { .service-status { flex-wrap: wrap; } .service-status label { font-size: 11px; } }
+	/* The expanded sidebar is fixed-position, so the workspace reserves its width instead of sitting underneath it. */
+	.workspace { display: flex; min-width: 0; flex: 1; flex-direction: column; transition: margin-inline-start 250ms cubic-bezier(0.22, 1, 0.36, 1); }
+	.sidebar-open .workspace { margin-inline-start: var(--sidebar-width); }
+	.service-status { z-index: 20; display: flex; flex: none; align-items: center; gap: var(--workspace-space-3); min-height: 48px; border-bottom: 1px solid var(--workspace-line); padding: 6px var(--workspace-space-4); font-size: 12px; line-height: 1.35; }
+	.status-text { display: grid; flex: 1; min-width: 0; }
+	.status-text strong { font-weight: 600; }
+	.status-text span { overflow: hidden; color: var(--workspace-ink-muted); text-overflow: ellipsis; white-space: nowrap; }
+	.status-mark { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--workspace-evidence); box-shadow: 0 0 0 3px color-mix(in srgb, var(--workspace-evidence) 18%, transparent); }
+	.degraded .status-mark { background: var(--workspace-warning); box-shadow: 0 0 0 3px color-mix(in srgb, var(--workspace-warning) 18%, transparent); }
+	.status-action, .menu-button { flex: none; border-radius: var(--workspace-radius-control); color: var(--workspace-accent); cursor: pointer; transition: background-color var(--workspace-motion-fast); }
+	.status-action { padding: 6px 10px; font-weight: 500; }
+	.menu-button { display: grid; width: 32px; height: 32px; place-items: center; color: var(--workspace-ink); }
+	.menu-button svg { width: 18px; height: 18px; }
+	.status-action:hover, .menu-button:hover { background: var(--workspace-hover); }
+	.preference-error { margin: 0; border-bottom: 1px solid var(--workspace-error-line); background: var(--workspace-error-surface); padding: 8px var(--workspace-space-4); color: var(--workspace-error); font-size: 13px; }
+	#main-content { position: relative; min-height: 0; flex: 1; overflow: auto; }
+	/* The pinned chat sizes itself to the viewport and subtracts the sidebar; inside the workspace both are already accounted for. */
+	#main-content :global(#chat-container) { height: 100%; max-height: 100%; max-width: 100%; }
+	/* The status bar owns the mobile sidebar toggle, and the attachment menu only offers workflows this build does not support. */
+	#main-content :global(#sidebar-toggle-button), #main-content :global(#input-menu-button) { display: none; }
+	@media (max-width: 700px) {
+		.service-status { flex-wrap: wrap; row-gap: 4px; }
+		.status-text { flex-basis: 40%; }
+	}
 </style>
