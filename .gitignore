@@ -2,7 +2,7 @@
 __pycache__/
 *.pyc
 .venv/
-
+venv/
 # Embedding model weights (populated by scripts/fetch_model.py)
 models/
 

@@ -6,6 +6,21 @@ The repository contains the product and architecture specifications and a workin
 
 ## Run it locally
 
+The easiest way is the one-command launcher. It creates the Python environment, installs the
+backend and frontend dependencies, starts the two loopback services, and opens the browser. It is
+interactive and asks whether to run the **Quick demo** (a deterministic test model and a seeded
+collection - no model weights, no downloads) or **Real local AI** (a real llama.cpp model and
+embeddings, downloading the weights only if you agree). Press Ctrl+C to stop everything.
+
+- **Windows:** double-click `start.cmd`, or run it from a terminal.
+- **macOS / Linux:** `./start.sh` (or `bash start.sh`).
+
+Requirements: Python 3.11+ and Node.js 18-22 on your PATH. The first run installs dependencies and
+takes a few minutes; later runs start quickly. Only setup downloads (pip, npm, and any weights you
+opt into) use the network - the running services stay bound to `127.0.0.1`.
+
+### Manual steps (fallback)
+
 From the repository root, install the pinned Python dependencies once and start the host:
 
 ```sh
@@ -23,6 +38,8 @@ npm run dev:qa
 ```
 
 This uses a deterministic test model and a seeded test collection, so it needs no model weights. The [frontend README](app/document-qa/frontend/README.md) covers what to try, the test commands, and running against the real llama.cpp runtime.
+
+The standalone llama.cpp runtime chat that `start.cmd` used to launch now lives at [`app/document-qa/backend/secure_qa/answering/llama_cpp/start.cmd`](app/document-qa/backend/secure_qa/answering/llama_cpp/start.cmd).
 
 ## Documentation
 
