@@ -17,16 +17,63 @@
 </script>
 
 <svelte:head><title>History · Access Denied</title></svelte:head>
-<main aria-labelledby="title"><p class="eyebrow">SAVED ON THIS COMPUTER</p><h1 id="title">History</h1><p>Saved answers retain the model and collection versions that produced them.</p>
-	<section class="panel"><div class="heading"><h2>Conversations</h2><button type="button" on:click={refresh}>Refresh</button></div>
-	<label class="toggle"><input type="checkbox" checked={enabled} on:change={persistence} /><span>Save new answers to local history</span></label>
-	{#if rows.length}<ul>{#each rows as row}<li><button class="open" type="button" on:click={() => open(row.conversation_id)}>{row.title}</button><small>{row.updated_at} · model {row.model_id || 'unknown'} · collection {row.collection_version || 'unknown'}</small><button class="delete" type="button" aria-label={`Delete ${row.title}`} on:click={() => remove(row.conversation_id)}>Delete</button></li>{/each}</ul><button class="danger" type="button" on:click={clear}>Clear all history</button>{:else}<p>No saved conversations yet.</p>{/if}</section>
-	{#if selected && answer}<section class="panel" aria-labelledby="opened-title"><h2 id="opened-title">{selected.title}</h2><p><strong>Question:</strong> {answer.question}</p><p><strong>Model:</strong> {selected.model_id || 'unknown'} · <strong>Collection:</strong> {selected.collection_version || 'unknown'}</p>
-		{#if Array.isArray(answer.documents)}<h3>From your documents</h3>{#each answer.documents as claim}<p>{claim.text} {#each claim.citation_ids || [] as id}<span class="cite">[{id}]</span>{/each}</p>{/each}{/if}
-		{#if answer.general_knowledge}<h3>General model knowledge</h3><p>{answer.general_knowledge}</p>{/if}{#if Array.isArray(answer.limitations)}<h3>Limitations</h3><ul>{#each answer.limitations as item}<li>{item}</li>{/each}</ul>{/if}</section>{/if}
-		{#if Array.isArray(answer?.citations)}<section class="panel"><h2>Sources</h2>{#each answer.citations as citation}<details><summary>{citation.document_title} · pages {citation.page_start}{#if citation.page_end !== citation.page_start}–{citation.page_end}{/if}</summary><blockquote>{citation.quote}</blockquote></details>{/each}</section>{/if}
-	{#if notice}<p role="status" class="notice">{notice}</p>{/if}{#if error}<p role="alert" class="error">{error}</p>{/if}
-</main>
+<div class="workspace-page" aria-labelledby="title">
+	<p class="eyebrow">Saved on this computer</p>
+	<h1 id="title">History</h1>
+	<p class="lede">Saved answers retain the model and collection versions that produced them.</p>
+
+	<section class="panel" aria-labelledby="conversations-title">
+		<div class="heading"><h2 id="conversations-title">Conversations</h2><button class="btn quiet" type="button" on:click={refresh}>Refresh</button></div>
+		<label class="setting"><span class="grow"><span class="name">Save new answers to local history</span></span><span class="workspace-switch"><input type="checkbox" role="switch" checked={enabled} on:change={persistence} /></span></label>
+		{#if rows.length}
+			<ul class="rows">{#each rows as row}
+				<li class="row" class:current={selected?.conversation_id === row.conversation_id}>
+					<button class="open grow" type="button" on:click={() => open(row.conversation_id)}><span class="name">{row.title}</span><span class="meta">{row.updated_at} · model {row.model_id || 'unknown'} · collection {row.collection_version || 'unknown'}</span></button>
+					<button class="btn danger delete" type="button" aria-label={`Delete ${row.title}`} on:click={() => remove(row.conversation_id)}>Delete</button>
+				</li>
+			{/each}</ul>
+			<div class="actions"><button class="btn danger" type="button" on:click={clear}>Clear all history</button></div>
+		{:else}<p class="empty">No saved conversations yet.</p>{/if}
+	</section>
+	{#if notice}<p role="status" class="message notice">{notice}</p>{/if}
+	{#if error}<p role="alert" class="message error">{error}</p>{/if}
+
+	{#if selected && answer}
+		<section class="panel" aria-labelledby="opened-title">
+			<h2 id="opened-title">{selected.title}</h2>
+			<p class="hint">Model {selected.model_id || 'unknown'} · Collection {selected.collection_version || 'unknown'}</p>
+			<p><strong>Question:</strong> {answer.question}</p>
+			{#if Array.isArray(answer.documents)}<div data-evidence-kind="document" class="evidence"><h3>From your documents</h3>{#each answer.documents as claim}<p>{claim.text} {#each claim.citation_ids || [] as id}<span class="cite">{id}</span>{/each}</p>{/each}</div>{/if}
+			{#if answer.general_knowledge}<div data-evidence-kind="general" class="evidence"><h3>General model knowledge</h3><p>{answer.general_knowledge}</p></div>{/if}
+			{#if Array.isArray(answer.limitations)}<div data-evidence-kind="uncertain" class="evidence"><h3>Limitations</h3><ul>{#each answer.limitations as item}<li>{item}</li>{/each}</ul></div>{/if}
+		</section>
+	{/if}
+	{#if Array.isArray(answer?.citations)}
+		<section class="panel" aria-labelledby="sources-title">
+			<h2 id="sources-title">Sources</h2>
+			{#each answer.citations as citation}<details><summary>{citation.document_title} · pages {citation.page_start}{#if citation.page_end !== citation.page_start}–{citation.page_end}{/if}</summary><blockquote>{citation.quote}</blockquote></details>{/each}
+		</section>
+	{/if}
+</div>
+
 <style>
-	main{max-width:760px;margin:48px auto;padding:0 22px;color:#24352c;font:15px/1.55 system-ui,sans-serif}.eyebrow{font-size:11px;letter-spacing:.12em;color:#47755f;font-weight:700}h1{font-size:36px;margin:.2em 0}h2{font-size:18px;margin:0 0 14px}.panel{background:white;border:1px solid #dce8e0;border-radius:12px;padding:20px;margin:16px 0}.heading{display:flex;justify-content:space-between}.panel ul{padding-left:20px}.panel li{margin:12px 0}.open{display:block;border:0;padding:0;background:none;color:#176b50;text-align:left;font-weight:700;cursor:pointer}.panel small{display:block;color:#64756b}.delete{margin-top:4px;border:0;background:none;color:#8b4036;padding:4px 0;cursor:pointer}.danger{background:#9b453c}button:not(.open):not(.delete){border:0;border-radius:8px;background:#176b50;color:white;padding:9px 13px;cursor:pointer}.toggle{display:flex;gap:9px;align-items:center;margin:12px 0 20px}.cite{color:#39765b;font-weight:650}.notice{color:#285c41}.error{color:#8b3028}button:focus-visible,input:focus-visible{outline:3px solid #87c3a4;outline-offset:3px}
+	.panel .rows > li.row { margin: 0 -8px; border-top: 0; border-radius: var(--workspace-radius-control); padding: 8px; transition: background-color var(--workspace-motion-fast); }
+	.panel .rows > li.row:hover, .panel .rows > li.row.current { background: var(--workspace-hover); }
+	.open { text-align: left; cursor: pointer; }
+	.open .name { color: var(--workspace-accent); }
+	.open:hover .name { text-decoration: underline; text-underline-offset: 2px; }
+	/* Row actions appear on hover or keyboard focus, and stay visible where there is no hover. */
+	.delete { opacity: 0; }
+	.rows > li:hover .delete, .rows > li:focus-within .delete { opacity: 1; }
+	@media (hover: none) { .delete { opacity: 1; } }
+	.evidence { padding-inline-start: var(--workspace-space-3); }
+	.evidence h3 { margin-top: 0; color: var(--evidence-accent); }
+	.evidence p { margin: 0 0 var(--workspace-space-2); }
+	.evidence ul { margin: 0; padding-inline-start: 1.1rem; list-style: disc; }
+	.cite { display: inline-block; margin-inline-start: 2px; border-radius: 4px; background: color-mix(in srgb, var(--workspace-evidence) 14%, transparent); padding: 0 5px; color: var(--workspace-evidence); font-size: 11px; font-weight: 600; }
+	details { border-top: 1px solid var(--workspace-line); padding: var(--workspace-space-2) 0; }
+	details:first-of-type { border-top: 0; }
+	summary { border-radius: 4px; font-weight: 500; cursor: pointer; }
+	summary:hover { color: var(--workspace-accent); }
+	blockquote { margin: var(--workspace-space-2) 0 0; border-inline-start: 2px solid var(--workspace-line); padding-inline-start: var(--workspace-space-3); color: var(--workspace-ink-muted); font-size: 13px; }
 </style>
