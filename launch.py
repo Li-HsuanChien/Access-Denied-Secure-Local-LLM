@@ -389,7 +389,8 @@ def start_stack(mode: str, py: Path) -> None:
 
     if mode == "real":
         step("Starting the local AI runtime")
-        sup.start("llama runtime", [str(venv_bin(py, "docqa-runtime")), "up", "--server-only"], cwd=RUNTIME_DIR)
+        # Bare `up` starts the loopback API server and blocks (no --chat = no interactive prompt).
+        sup.start("llama runtime", [str(venv_bin(py, "docqa-runtime")), "up"], cwd=RUNTIME_DIR)
         if not wait_for(RUNTIME_URL, "llama runtime", timeout=240):
             sup.shutdown()
             fail("The model runtime did not become ready. See its output above.")
