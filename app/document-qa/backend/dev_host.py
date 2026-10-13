@@ -6,7 +6,8 @@ validates the SDD §4.6 request envelope and dispatches to the Question Answerin
 workflow; all behavior lives in `secure_qa`.
 
     python dev_host.py                                    # deterministic test model, seeded golden collection
-    python dev_host.py --runtime http://127.0.0.1:8080    # E1's runtime (`docqa-runtime up`)
+    python dev_host.py --runtime http://127.0.0.1:8080    # E1 gateway + staged local embedding model
+    python dev_host.py --runtime http://127.0.0.1:8080 --embedding-model /path/to/all-MiniLM-L6-v2
 
     GET  /health        host, library and model-runtime state
     POST /v1/requests   {"request_id": "...", "operation": "answering.ask",
@@ -51,19 +52,37 @@ class DevHost(ThreadingHTTPServer):
         self.service = service
         self.versions = versions
 
+    def library_health(self) -> dict:
+        active = self.versions.active()
+        embedding_error = None
+        if active is None:
+            embedding_error = {"code": "no_active_collection", "message": "No collection is published yet",
+                               "hint": "Publish a collection using the configured local embedding model."}
+        elif (active.embedding_model, active.embedding_dim) != (self.versions.embedder.model_name,
+                                                                  self.versions.embedder.dimension):
+            embedding_error = {
+                "code": "embedding_model_mismatch",
+                "message": (f"The active collection uses {active.embedding_model} ({active.embedding_dim}-dim), "
+                            f"but this host uses {self.versions.embedder.model_name} "
+                            f"({self.versions.embedder.dimension}-dim)"),
+                "hint": "Republish the collection with the configured embedding model before asking questions.",
+            }
+        return {"ready": active is not None and embedding_error is None,
+                "active_version": active.version_id if active else None,
+                "chunk_count": active.chunk_count if active else 0,
+                "document_count": len(active.documents) if active else 0,
+                "embedding_model": active.embedding_model if active else self.versions.embedder.model_name,
+                "error": embedding_error}
+
     def health(self) -> dict:
         try:
             info = self.service.runtime.info()
             model = {"ready": True, "model_id": info.model_id, "name": info.name, "quant": info.quant,
-                     "ctx_size": info.ctx_size, "stub": info.stub, "error": None}
+                     "ctx_size": info.ctx_size, "api_version": info.api_version,
+                     "runtime_version": info.runtime_version, "stub": info.stub, "error": None}
         except ModelRuntimeError as exc:
             model = {"ready": False, "error": {"code": exc.code, "message": exc.message, "hint": exc.hint}}
-        active = self.versions.active()
-        library = {"ready": active is not None,
-                   "active_version": active.version_id if active else None,
-                   "chunk_count": active.chunk_count if active else 0,
-                   "document_count": len(active.documents) if active else 0,
-                   "embedding_model": active.embedding_model if active else None}
+        library = self.library_health()
         ready = model["ready"] and library["ready"]
         return {"status": "ok" if ready else "degraded", "ready": ready, "api_version": API_VERSION,
                 "answering": model, "library": library}
@@ -149,6 +168,10 @@ class Handler(BaseHTTPRequestHandler):
         if problem:
             return self._error(400, request_id, "invalid_request", problem, "See the request envelope in dev_host.py.")
         payload = body["payload"]
+        library = self.server.library_health()
+        if library["error"] and library["error"]["code"] == "embedding_model_mismatch":
+            err = library["error"]
+            return self._error(409, request_id, err["code"], err["message"], err["hint"])
         try:
             collection = self.server.versions.open_active()
         except LookupError:
@@ -183,29 +206,63 @@ def validate(body) -> tuple[str | None, str | None]:
     return request_id, None
 
 
+def create_embedder(mode: str, model_path=None):
+    """Choose the QA fake explicitly or load the staged, offline production embedder."""
+    from secure_qa.library import Embedder, FakeEmbedder
+
+    if mode == "fake":
+        return FakeEmbedder()
+    if mode != "local":
+        raise ValueError("embedding mode must be 'fake' or 'local'")
+    try:
+        return Embedder(model_path) if model_path is not None else Embedder()
+    except ImportError as exc:
+        raise RuntimeError(
+            "The local embedding dependencies aren't installed. Install the pinned backend requirements "
+            "on the connected staging machine, stage the model, then run this host offline."
+        ) from exc
+
+
+def resolve_embedding_mode(runtime: str, requested: str, model_path=None) -> str:
+    """Default QA to fakes, while treating an explicit local path as a real embedder choice."""
+    if requested != "auto":
+        return requested
+    return "fake" if runtime == "fake" and model_path is None else "local"
+
+
 def main() -> None:
     from secure_qa.answering import FakeModelRuntime, LlamaCppGatewayRuntime
     from secure_qa.answering.benchmarks.golden import golden_collection
-    from secure_qa.library import CollectionVersions, FakeEmbedder
+    from secure_qa.library import CollectionVersions
     from secure_qa.paths import DATA_DIR
 
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--port", type=int, default=8765)
-    p.add_argument("--runtime", default="fake", help="'fake' (deterministic test model) or E1's gateway URL")
-    p.add_argument("--store", default=str(DATA_DIR / "dev_host_fake_store"), help="collection root for the deterministic QA embedder (catalog + Chroma directory)")
+    p.add_argument("--runtime", default="fake", help="'fake' (deterministic QA) or E1's loopback gateway URL")
+    p.add_argument("--embedding", choices=("auto", "fake", "local"), default="auto",
+                   help="auto uses fake embeddings only with --runtime fake; real gateway mode uses the staged local model")
+    p.add_argument("--embedding-model", help="path to the staged Sentence Transformers model directory")
+    p.add_argument("--store", help="collection root; defaults to a separate fake or local-embedding QA store")
     args = p.parse_args()
 
     runtime = FakeModelRuntime() if args.runtime == "fake" else LlamaCppGatewayRuntime(args.runtime)
-    # Use a deterministic embedder alongside FakeModelRuntime. The QA harness
-    # must not need local model weights or fetch anything on startup.
-    versions = CollectionVersions(FakeEmbedder(), args.store)
-    if versions.active() is None:
+    embedding_mode = resolve_embedding_mode(args.runtime, args.embedding, args.embedding_model)
+    try:
+        embedder = create_embedder(embedding_mode, args.embedding_model)
+    except (OSError, RuntimeError, ValueError) as exc:
+        p.exit(2, f"dev_host: local embedding model unavailable: {exc}\n")
+    store = args.store or str(DATA_DIR / ("dev_host_fake_store" if embedding_mode == "fake" else "dev_host_local_store"))
+    versions = CollectionVersions(embedder, store)
+    if versions.active() is None and embedding_mode == "fake":
         chunks, documents, _ = golden_collection()
         version = versions.publish(chunks, documents)
         print(f"dev_host: published the golden test collection as {version.version_id}", flush=True)
+    elif versions.active() is None:
+        print("dev_host: no local collection is published; health will remain degraded until one is published", flush=True)
     server = DevHost(args.port, AnswerService(runtime), versions)
     print(f"dev_host: ready on http://127.0.0.1:{args.port}  (GET /health, POST /v1/requests)  "
-          f"runtime={args.runtime} collection={versions.active().version_id}", flush=True)
+          f"runtime={args.runtime} embedding={embedding_mode} collection="
+          f"{versions.active().version_id if versions.active() else 'none'}", flush=True)
     try:
         server.serve_forever()
     except KeyboardInterrupt:
