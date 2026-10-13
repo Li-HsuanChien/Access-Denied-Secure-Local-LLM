@@ -237,7 +237,11 @@ def ensure_llama_server() -> bool:
         info("The llama.cpp binary (llama-server.exe) was not found.")
         if ask_yes_no("Download the pinned Windows CPU build now?", default=True):
             script = RUNTIME_DIR / "scripts" / "windows" / "fetch_runtime.ps1"
-            run(["powershell", "-ExecutionPolicy", "Bypass", "-File", str(script)], cwd=RUNTIME_DIR)
+            # Set $ProgressPreference before dot-sourcing so Invoke-WebRequest doesn't crash drawing a
+            # progress bar in this non-interactive console (a Windows PowerShell bug), even on an
+            # older checkout where the script itself doesn't set it.
+            run(["powershell", "-NoProfile", "-ExecutionPolicy", "Bypass", "-Command",
+                 f"$ProgressPreference='SilentlyContinue'; & '{script}'"], cwd=RUNTIME_DIR)
             if have_llama_server():
                 ok("llama-server installed.")
                 return True

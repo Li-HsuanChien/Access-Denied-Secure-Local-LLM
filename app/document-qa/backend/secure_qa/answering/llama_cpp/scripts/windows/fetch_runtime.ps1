@@ -13,6 +13,10 @@ param(
   [string]$Dest = (Join-Path $PSScriptRoot "..\..\bin")
 )
 $ErrorActionPreference = "Stop"
+# Windows PowerShell's Invoke-WebRequest throws "Index was outside the bounds of the array" when it
+# tries to draw its progress bar in a non-interactive console (e.g. launched as a child process).
+# Silencing progress avoids the crash and speeds the download up.
+$ProgressPreference = "SilentlyContinue"
 if (-not $Tag) {
   $manifest = Get-Content (Join-Path $PSScriptRoot "..\..\models\shortlist.json") -Raw | ConvertFrom-Json
   $Tag = if ($manifest.llama_cpp.tag) { $manifest.llama_cpp.tag } else { "latest" }

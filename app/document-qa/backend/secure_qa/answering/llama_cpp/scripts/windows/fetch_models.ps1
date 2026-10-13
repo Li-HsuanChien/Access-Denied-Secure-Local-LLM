@@ -15,6 +15,10 @@ param(
   [string]$Dest = (Join-Path $PSScriptRoot "..\..\models")
 )
 $ErrorActionPreference = "Stop"
+# Silence the progress bar: Windows PowerShell's Invoke-WebRequest (the no-BITS fallback below) throws
+# "Index was outside the bounds of the array" drawing it in a non-interactive console, and it slows
+# the download down regardless.
+$ProgressPreference = "SilentlyContinue"
 [Net.ServicePointManager]::SecurityProtocol = [Net.SecurityProtocolType]::Tls12
 $manifest = Get-Content (Join-Path $PSScriptRoot "..\..\models\shortlist.json") -Raw | ConvertFrom-Json
 New-Item -ItemType Directory -Force -Path $Dest | Out-Null
