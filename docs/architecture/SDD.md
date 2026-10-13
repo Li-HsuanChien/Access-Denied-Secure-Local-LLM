@@ -177,6 +177,8 @@ After generation, the application verifies that document citations refer to evid
 
 The desktop shell uses the pinned Open WebUI Sidebar and Chat components for navigation, message history within the active session, composer behavior, progress, and errors. The answering adapter presents separate document, general-knowledge, limitation, warning, and source sections. Each source includes its document title, page range, and supporting passage. The host health state is visible above the chat, and the user can disable general model knowledge. Library, persistent History, and Settings workflows remain owned by their feature modules.
 
+The interface uses a restrained, evidence-led visual voice: locally bundled typography, warm neutral surfaces, evergreen primary actions, and a compact spacing scale. Document-backed claims, general model knowledge, uncertainty, warnings, and errors have distinct semantic labels and visual treatments; color never carries meaning alone. Shared tokens and presentation copy live in the frontend `personality` feature so the integrated Open WebUI chat can consume them without replacing its chat implementation. See [ADR 0003](decisions/0003-research-workspace-personality.md). The current QA slice imports the tokens; the actual chat shell applies them as part of issue #4 integration.
+
 - Show one primary action per workflow step and use plain-language labels rather than implementation terms.
 - During publication, show the current phase, completed files or pages, warnings, elapsed time, and a cancel action.
 - Keep the current answer visible if saving fails, and pair each error with an actionable next step.

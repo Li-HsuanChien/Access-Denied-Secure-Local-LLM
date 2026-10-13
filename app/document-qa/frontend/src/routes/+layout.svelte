@@ -2,6 +2,7 @@
 	import { onMount, setContext } from 'svelte';
 	import '../tailwind.css';
 	import '../app.css';
+	import '$lib/features/personality/personality.css';
 	import Sidebar from '$lib/components/layout/Sidebar.svelte';
 	import i18n, { initI18n } from '$lib/i18n';
 	import {

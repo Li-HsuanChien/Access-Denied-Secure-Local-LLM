@@ -11,5 +11,7 @@ Local product changes:
 - The development host uses the deterministic fake embedder and answering runtime, so local UI QA needs no model weights.
 - `README.md` and `docs/development/vm-qa-ssh-forwarding.md` document local and private-VM QA.
 - The HTTP adapter uses the backend-owned answer schema through Ajv; Vitest and jsdom provide the feature and adapter checks.
+- `src/lib/features/personality/` supplies shared local design tokens, evidence styling, and concise state copy for the native shell.
+
 
 The source license and notices are retained in `LICENSE`, `LICENSE_NOTICE`, and `LICENSE_HISTORY`. Open WebUI v0.11.4 permits changed branding for deployments with no more than fifty users in any rolling thirty-day period; this product's local single-user deployment falls within that stated condition. Review those notices again before any broader distribution.
