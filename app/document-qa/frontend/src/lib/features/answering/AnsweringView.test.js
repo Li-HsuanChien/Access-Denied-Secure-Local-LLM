@@ -2,6 +2,7 @@ import { afterEach, describe, expect, it, vi } from 'vitest';
 import { flushSync, mount, tick, unmount } from 'svelte';
 import AnsweringView from './AnsweringView.svelte';
 import { createFixtureAnsweringClient } from './fixtureAnsweringClient';
+import { workspaceVoice } from '../personality/presentation';
 
 let component;
 afterEach(async () => { if (component) await unmount(component); document.body.innerHTML = ''; });
@@ -27,7 +28,7 @@ describe('AnsweringView public interface', () => {
 	it('renders answer sections and an expandable source passage', async () => {
 		await render(); await answered();
 		expect(document.body.textContent).toContain('From your documents');
-		expect(document.body.textContent).toContain('Not verified against your documents');
+		expect(document.body.textContent).toContain(workspaceVoice.generalKnowledgeNotice);
 		const source = document.querySelector('details');
 		expect(source.open).toBe(false);
 		source.querySelector('summary').click();

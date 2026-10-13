@@ -7,7 +7,7 @@ Working notes from reviewing Open WebUI's built-in Chroma and Ollama support aga
 **Sources reviewed:**
 - **Open WebUI** v0.11.4 (commit `8bd8b4f`, 2026-09-21). Paths below are relative to its `backend/open_webui/`. To look again: `git clone --depth 1 https://github.com/open-webui/open-webui.git`.
 - **Our design:** `main`'s ADR 0001 and the codebase design spec §4.1–4.2.
-- **E1's llama.cpp runtime:** branch `E1-LLM/Runtime`, `app/open-webui/backend/secure_qa/answering/llama_cpp/`.
+- **E1's llama.cpp runtime:** branch `E1-LLM/Runtime`, `app/document-qa/backend/secure_qa/answering/llama_cpp/`.
 
 ---
 

@@ -117,7 +117,7 @@ class VersionsTest(unittest.TestCase):
     def test_progress_reports_indexing_verification_and_activation(self):
         stages = []
         self.versions.publish(*synthetic(), progress=lambda stage, done, total: stages.append((stage, done, total)))
-        self.assertEqual([stage for stage, _, _ in stages], ["indexing", "verifying", "activated"])
+        self.assertEqual([stage for stage, _, _ in stages], ["indexing", "verifying", "activating", "activated"])
         self.assertEqual(stages[-1][1], stages[-1][2])
 
     def test_rollback_without_previous_and_open_without_active(self):

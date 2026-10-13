@@ -49,6 +49,7 @@ OPERATIONS = {
     "history.clear": {}, "history.enabled": {}, "history.set_enabled": {"enabled": bool},
     "settings.get": {}, "settings.update": {"general_knowledge": bool},
 }
+OPTIONAL = {("answering.ask", "general_knowledge")}  # omitted, it falls back to the saved setting
 ENVELOPE = {"request_id", "operation", "payload"}
 _LOCAL_ORIGIN_SCHEMES = ("tauri://", "app://")
 
@@ -188,10 +189,10 @@ class Handler(BaseHTTPRequestHandler):
         if problem:
             return self._error(400, request_id, "invalid_request", problem, "See the request envelope in dev_host.py.")
         payload = body["payload"]
-        library = self.server.library_health()
-        if body["operation"] == "answering.ask" and library["error"] and library["error"]["code"] == "embedding_model_mismatch":
-            err = library["error"]
-            return self._error(409, request_id, err["code"], err["message"], err["hint"])
+        if body["operation"] == "answering.ask":
+            err = self.server.library_health()["error"]
+            if err and err["code"] == "embedding_model_mismatch":
+                return self._error(409, request_id, err["code"], err["message"], err["hint"])
         try:
             operation = body["operation"]
             if operation == "answering.ask":
@@ -251,7 +252,7 @@ def validate(body) -> tuple[str | None, str | None]:
         for index, item in enumerate(payload["files"]):
             if not isinstance(item, dict) or set(item) != {"name", "data"} or not isinstance(item["name"], str) or not isinstance(item["data"], str):
                 return request_id, f"payload.files[{index}] must contain only string name and data fields"
-    missing = fields.keys() - payload.keys()
+    missing = {name for name in fields.keys() - payload.keys() if (body["operation"], name) not in OPTIONAL}
     if missing:
         return request_id, f"payload.{sorted(missing)[0]} is required"
     return request_id, None

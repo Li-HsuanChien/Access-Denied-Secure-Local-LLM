@@ -1,5 +1,6 @@
 import { describe, expect, it } from 'vitest';
 import { formatAnswerForChat, toOpenWebUICitations } from './openWebUIChatAdapter';
+import { workspaceVoice } from '../personality/presentation';
 
 const base = {
 	schema_version: '1.0.0', request_id: 'test', question: 'Why?', status: 'answered',
@@ -15,7 +16,8 @@ describe('Open WebUI answering adapter', () => {
 		expect(markdown).toContain('### From your documents');
 		expect(markdown).toContain('Supported claim. [^source-1]');
 		expect(markdown).toContain('### General model knowledge');
-		expect(markdown).toContain('### Limitations');
+		expect(markdown).toContain(`### ${workspaceVoice.uncertaintyLabel}`);
+		expect(markdown).toContain('Only one source was available.');
 		expect(markdown).toContain('The table is unclear.');
 			const [source] = toOpenWebUICitations(base);
 			expect(source.source.name).toBe('Manual');

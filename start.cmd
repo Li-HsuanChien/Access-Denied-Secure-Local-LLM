@@ -4,5 +4,5 @@ rem Type your question in this window once the model is loaded; "exit" (or Ctrl+
 rem Uses llama.cpp with a real model when one is installed, otherwise the stub backend (simulated answers).
 rem   start.cmd [flags]                 flags go to "docqa-runtime up", e.g. --model <id> --port 9090
 rem   start.cmd --server-only [flags]   API server only on http://127.0.0.1:8080, no chat prompt
-rem The runtime lives in app\open-webui\backend\secure_qa\answering\llama_cpp\ - see its README.
-call "%~dp0app\open-webui\backend\secure_qa\answering\llama_cpp\start.cmd" %*
+rem The runtime lives in app\document-qa\backend\secure_qa\answering\llama_cpp\ - see its README.
+call "%~dp0app\document-qa\backend\secure_qa\answering\llama_cpp\start.cmd" %*
