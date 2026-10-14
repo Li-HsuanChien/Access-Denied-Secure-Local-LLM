@@ -13,6 +13,7 @@ Run:  python3 tests/test_contracts.py
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import sys
 import tempfile
@@ -804,6 +805,24 @@ def test_running_headers_are_stripped():
     assert 'HYDROELECTRIC PLANT' in stripped
     saved = len(kept) - len(stripped)
     return f'{saved} chars of running boilerplate removed ({100 * saved // len(kept)}% of the raw stream)'
+
+
+def test_ligatures_are_expanded():
+    """
+    A font's 'fi' or 'ff' glyph reaches the stream as two letters, not as one
+    presentation-form code point (U+FB00 to U+FB06). Left in, "ﬁnd" matches
+    neither "find" in a keyword search nor in most embedding vocabularies; E3
+    found it in 46 of 309 chunks of the arXiv paper.
+    """
+    ligature = re.compile('[ﬀ-ﬆ]')
+    expanded = 0
+    for path in ACCEPTING:
+        text = _stream(path)
+        found = ligature.findall(text)
+        assert not found, f'{path.name}: {len(found)} ligature code points, e.g. {found[:3]}'
+        expanded += text.count('fi') + text.count('ff') + text.count('fl')
+    assert expanded, 'no fi/ff/fl at all: the fixtures no longer exercise this'
+    return f'no ligature code points in {len(ACCEPTING)} documents; {expanded} fi/ff/fl pairs read as letters'
 
 
 def test_reading_order_follows_the_page():
