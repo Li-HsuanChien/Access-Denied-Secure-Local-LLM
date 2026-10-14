@@ -69,7 +69,7 @@ class ChunkerConfig:
     strip_running_headers: bool = True
     # Chunk boundary policy. False cuts on whole lines instead of sentences.
     respect_sentence_boundaries: bool = True
-    chunker_version: str = 'refchunk-3.0.0'
+    chunker_version: str = 'refchunk-3.1.0'      # 3.1: ligatures expanded in the text stream
 
     def __post_init__(self) -> None:
         for name, least in (('target_chars', 1), ('overlap_chars', 0), ('min_chunk_chars', 0)):

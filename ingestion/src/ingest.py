@@ -277,7 +277,13 @@ def _set_on(blocks: list[dict], gutter: tuple[float, float]) -> bool:
 
 # Text only: by default the 'dict' output carries every image's bytes, which
 # nothing here reads. The images are counted instead.
-_TEXT_FLAGS = pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES
+#
+# Ligatures are expanded: a font's single 'fi' glyph comes out as 'f' + 'i',
+# not as U+FB01. Kept, the ligature splits the word for search and embedding
+# ("ﬁnd" does not match "find"); on the arXiv fixture 113 of them did. The span
+# box is the same either way, so highlights are unaffected.
+_TEXT_FLAGS = (pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES
+               & ~pymupdf.TEXT_PRESERVE_LIGATURES)
 
 
 def _page_blocks(page, sort: bool) -> tuple[list[dict], int, int]:
