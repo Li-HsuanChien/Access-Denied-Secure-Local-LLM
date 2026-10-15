@@ -12,7 +12,7 @@ and rectangles come out, in a sealed directory the document store can publish.
 | Import pipeline and its manifest | `src/pipeline.py`, `schemas/ingest_manifest.schema.json`, `schemas/import_report.schema.json` |
 | Fixture set | `fixtures/`, labeled in `manifest.json` |
 | Sample-document demo | `demo.py` (live), `WALKTHROUGH.md` (written), `walkthrough/chunk_viewer.html` (visual) |
-| Tests | `tests/test_contracts.py` (32), `tests/test_chunking.py` (11), `tests/test_pipeline.py` (36) |
+| Tests | `tests/test_contracts.py` (33), `tests/test_chunking.py` (11), `tests/test_pipeline.py` (36) |
 
 Three ways to walk through one document, for three audiences:
 
@@ -243,8 +243,11 @@ these is a cut in the wrong place; they are about the text itself.
   two-column zones (acknowledgments above references) is read as one zone.
 - **Figure labels** on the NRC slides come out as a column of short lines in no
   useful order, attached to the first sentence that follows them.
-- **Ligatures and line-end hyphens are kept as printed** (`ﬁ`, `real-` /
-  `izing`), so a plain keyword search for `specifications` can miss.
+- **Line-end hyphens are kept as printed** (`real-` / `izing`), so a plain
+  keyword search for a hyphenated word can miss. They are not joined because
+  the stream cannot tell `ramifi-` / `cations` from a real compound broken at
+  its hyphen, such as `self-` / `contained`. Ligatures, which used to have the
+  same effect (`ﬁ`), are expanded to letters since `refchunk-3.1.0`.
 - **Highlights are whole spans.** The first and last highlighted line of a chunk
   can include a few words outside it.
 - **English only.** The abbreviation and sentence-opener lists are English.
@@ -277,7 +280,7 @@ src/
   sentences.py     sentence boundaries and line-cut grading
   pipeline.py      the import flow: stage, validate, chunk, review, seal, verify
 tests/
-  test_contracts.py    32 tests: schemas, IDs, provenance, validation outcomes, damaged files
+  test_contracts.py    33 tests: schemas, IDs, provenance, validation outcomes, damaged files
   test_chunking.py     11 tests: where chunks begin and end
   test_pipeline.py     36 tests: the import flow against its acceptance criteria
 fixtures/
@@ -306,7 +309,7 @@ probe_results.json           raw measurement output
 
 ```bash
 pip install -r requirements.txt      # PyMuPDF is pinned: chunk IDs depend on the extractor
-python3 tests/test_contracts.py      # 32/32, about a minute (it reads the 1,200-page fixture)
+python3 tests/test_contracts.py      # 33/33, about a minute (it reads the 1,200-page fixture)
 python3 tests/test_chunking.py       # 11/11
 python3 tests/test_pipeline.py       # 36/36; two of them need E3_LIBRARY=<E3 checkout>/secure_qa/library
                                      # and are reported as SKIPPED without it
