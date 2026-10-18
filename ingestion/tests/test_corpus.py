@@ -31,6 +31,12 @@ COMMITTED = {name: (C.OUT / name).read_bytes() for name in ('manifest.json', 'su
 SUMMARY = json.loads(COMMITTED['summary.json'])
 
 
+def _write_corpus(corpus: dict, folder: Path) -> Path:
+    path = folder / 'corpus.json'
+    path.write_text(json.dumps(corpus), encoding='utf-8')
+    return path
+
+
 def test_a_fresh_run_reproduces_the_committed_outputs():
     """Rerun produces consistent output: a new directory, the same bytes."""
     with tempfile.TemporaryDirectory() as scratch:
@@ -94,6 +100,38 @@ def test_counts_and_checksums_are_recorded():
         assert len(d['checksum_sha256']) == len(d['text_sha256']) == len(d['chunk_set_sha256']) == 64, d
     return (f'{t["accepted"]} documents, {t["pages"]} pages and {t["chunks"]} chunks add up; '
             f'source, text and chunk-set checksums recorded for each')
+
+
+def test_a_changed_file_stops_the_run_before_ingesting():
+    corpus = json.loads(C.CORPUS.read_text())
+    corpus['documents'][0]['sha256'] = '0' * 64
+    with tempfile.TemporaryDirectory() as scratch:
+        try:
+            C.load_corpus(_write_corpus(corpus, Path(scratch)))
+        except C.CorpusError as exc:
+            message = str(exc)
+        else:
+            raise AssertionError('a file that no longer matches its checksum was accepted')
+    assert corpus['documents'][0]['id'] in message, message
+    return 'a file whose bytes differ from its recorded SHA-256 is named, and nothing is ingested'
+
+
+def test_an_unexpected_outcome_seals_nothing():
+    """A reject the corpus list does not predict is not confirmed on the user's behalf."""
+    corpus = json.loads(C.CORPUS.read_text())
+    corpus['documents'].append(corpus['intake_checks'].pop(0))     # expect a bad file to be accepted
+    corpus['intake_checks'][0]['expected_reject_reason'] = 'oversized'  # and another rejected for the wrong reason
+    with tempfile.TemporaryDirectory() as scratch:
+        try:
+            C.ingest(corpus, Path(scratch))
+        except C.CorpusError as exc:
+            message = str(exc)
+        else:
+            raise AssertionError('an unexpected outcome was sealed')
+        assert P.list_runs(scratch) == [], 'a run was sealed'
+        assert not any(Path(scratch, 'runs').glob('.partial-*')), 'the attempt was left behind'
+    assert 'expected accepted' in message and 'expected oversized' in message, message
+    return 'a bad file expected to pass and a reject for the wrong reason both stop the run; nothing sealed'
 
 
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith('test_')]
