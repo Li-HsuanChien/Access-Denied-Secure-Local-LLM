@@ -12,6 +12,8 @@ Run:  python3 tests/test_corpus.py
 """
 from __future__ import annotations
 
+import contextlib
+import io
 import json
 import sys
 import tempfile
@@ -132,6 +134,31 @@ def test_an_unexpected_outcome_seals_nothing():
         assert not any(Path(scratch, 'runs').glob('.partial-*')), 'the attempt was left behind'
     assert 'expected accepted' in message and 'expected oversized' in message, message
     return 'a bad file expected to pass and a reject for the wrong reason both stop the run; nothing sealed'
+
+
+def test_the_check_command_exits_by_its_verdict():
+    """`ingest_corpus.py --check` exits 0 on identical output, 1 when a committed file differs."""
+    out = io.StringIO()
+    with contextlib.redirect_stdout(out):
+        clean = C.main(['--check'])
+    assert clean == 0 and 'CONSISTENT' in out.getvalue(), out.getvalue()[-400:]
+    saved = C.OUT
+    with tempfile.TemporaryDirectory() as scratch:
+        for name, data in COMMITTED.items():
+            Path(scratch, name).write_bytes(data)
+        summary = json.loads(COMMITTED['summary.json'])
+        summary['totals']['chunks'] += 1                    # a hand edit to the recorded counts
+        Path(scratch, 'summary.json').write_text(C._dump(summary), encoding='utf-8')
+        out = io.StringIO()
+        try:
+            C.OUT = Path(scratch)
+            with contextlib.redirect_stdout(out):
+                drifted = C.main(['--check'])
+        finally:
+            C.OUT = saved
+    assert drifted == 1 and 'INCONSISTENT' in out.getvalue() and 'summary.json' in out.getvalue(), \
+        out.getvalue()[-400:]
+    return '--check exits 0 against the committed output and 1, naming summary.json, after a hand edit'
 
 
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith('test_')]
