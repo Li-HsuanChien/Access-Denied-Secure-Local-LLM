@@ -253,6 +253,15 @@ file and the adversarial document are fixtures, not collection documents: the
 first two repeat text already in the corpus, and the third is a test for
 E3 and E5.
 
+**Rejects are part of the batch on purpose.** The batch also carries the seven
+fixtures labelled `reject`, so every run shows how a reject is explained: a
+reason from the SDD 6.1 vocabulary, the check that failed and a sentence of
+detail. A file is rejected only if the corpus list expects it, for the reason
+the list gives. Any other outcome stops the run before anything is sealed: a
+document rejected, a bad file accepted, a reject for another reason, or a file
+whose bytes no longer match its checksum. That expectation stands in for the
+user's confirmation of the rejected set. No reject reaches the sealed run.
+
 ## Known limitations
 
 What a reader of the chunks will still run into, most serious first. None of
