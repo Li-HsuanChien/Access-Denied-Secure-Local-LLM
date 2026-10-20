@@ -1,0 +1,123 @@
+{
+  "ctx_size": 4096,
+  "max_answer_tokens": 512,
+  "min_score": 0.38,
+  "top_k": 5,
+  "questions": [
+    {
+      "id": "c01",
+      "passages": 5,
+      "dropped": 0,
+      "estimated_prompt_tokens": 2031,
+      "headroom_tokens": 1553
+    },
+    {
+      "id": "c02",
+      "passages": 5,
+      "dropped": 0,
+      "estimated_prompt_tokens": 2030,
+      "headroom_tokens": 1554
+    },
+    {
+      "id": "c03",
+      "passages": 5,
+      "dropped": 0,
+      "estimated_prompt_tokens": 1964,
+      "headroom_tokens": 1620
+    },
+    {
+      "id": "c04",
+      "passages": 5,
+      "dropped": 0,
+      "estimated_prompt_tokens": 2032,
+      "headroom_tokens": 1552
+    },
+    {
+      "id": "c05",
+      "passages": 5,
+      "dropped": 0,
+      "estimated_prompt_tokens": 2057,
+      "headroom_tokens": 1527
+    },
+    {
+      "id": "c06",
+      "passages": 5,
+      "dropped": 0,
+      "estimated_prompt_tokens": 2088,
+      "headroom_tokens": 1496
+    },
+    {
+      "id": "c07",
+      "passages": 5,
+      "dropped": 0,
+      "estimated_prompt_tokens": 2027,
+      "headroom_tokens": 1557
+    },
+    {
+      "id": "c08",
+      "passages": 5,
+      "dropped": 0,
+      "estimated_prompt_tokens": 2093,
+      "headroom_tokens": 1491
+    },
+    {
+      "id": "c09",
+      "passages": 4,
+      "dropped": 0,
+      "estimated_prompt_tokens": 1690,
+      "headroom_tokens": 1894
+    },
+    {
+      "id": "c10",
+      "passages": 3,
+      "dropped": 0,
+      "estimated_prompt_tokens": 1314,
+      "headroom_tokens": 2270
+    },
+    {
+      "id": "c11",
+      "passages": 1,
+      "dropped": 0,
+      "estimated_prompt_tokens": 646,
+      "headroom_tokens": 2938
+    },
+    {
+      "id": "i01",
+      "passages": 5,
+      "dropped": 0,
+      "estimated_prompt_tokens": 2078,
+      "headroom_tokens": 1506
+    },
+    {
+      "id": "i02",
+      "passages": 5,
+      "dropped": 0,
+      "estimated_prompt_tokens": 1892,
+      "headroom_tokens": 1692
+    },
+    {
+      "id": "o01",
+      "passages": 0,
+      "estimated_prompt_tokens": null,
+      "note": "no evidence above min_score"
+    },
+    {
+      "id": "o02",
+      "passages": 0,
+      "estimated_prompt_tokens": null,
+      "note": "no evidence above min_score"
+    },
+    {
+      "id": "o03",
+      "passages": 0,
+      "estimated_prompt_tokens": null,
+      "note": "no evidence above min_score"
+    },
+    {
+      "id": "o04",
+      "passages": 0,
+      "estimated_prompt_tokens": null,
+      "note": "no evidence above min_score"
+    }
+  ]
+}

@@ -1,6 +1,6 @@
 # E3: RAG and Document Store status
 
-**Last updated:** 2026-10-12 · **Owner:** E3 (Conrad Brady) · **Branch:** `E3-Rag/Document-Store`
+**Last updated:** 2026-10-20 · **Owner:** E3 (Conrad Brady) · **Branch:** `E3-Rag/Document-Store`
 
 This is a running document. Update the **BLUF**, **Current status**, **Deliverables** and the **Log** whenever work lands.
 Requirements are quoted from the PRD and SDD, which now live in the repo at `docs/product/PRD.md` and `docs/architecture/SDD.md`. The older *Capstone Project Doc* and the codebase design spec on `main` have been superseded; the spec is now a pointer to the SDD.
@@ -8,6 +8,13 @@ Requirements are quoted from the PRD and SDD, which now live in the repo at `doc
 ---
 
 ## BLUF
+
+**All E3 work that doesn't depend on someone else is finished (2026-10-20). The week 5 row repeats the week 4 objective, and it holds. The new work was getting it onto `main`'s UI path: done and tested, but the merge of `origin/main` into this branch is waiting on a team go-ahead. What is left depends on others: the 8 GB reference laptop (latency and RAM), the team's retrieval decision, and E2's chunker and policy calls.** `main` gained its own Library workflow on Oct 13 that chunks with the synthetic placeholder chunker and bypasses E2's `validate()`/`chunks()`, and its `dev_host.py` conflicts with ours. I rebuilt it on E2's pipeline, keeping `main`'s upload-based wire contract (which the Library screen already calls), in a scratch merge of `origin/main`. It is packaged in `.e3-merge-bundle/` (12 files plus `APPLY.md`) because the merge itself was not done in this working tree.
+
+- **Through the host, as the UI drives it, with the real model (2026-10-19):** upload 4 real PDFs and 2 unreadable ones, review (rejects listed with reasons, confirmation required), publish while polling `library.status`, integrity re-read, ask, publish a second version, roll back. **15 of 15 checks pass.** 309 chunks from 4 documents, the same as the direct run. Answers took 26 s, 19 s and 53 s (c01, c10, i01) on this swap-bound Mac, and the off-topic question was refused in 0.1 s. Evidence: `docs/evidence/e3-host-path-2026-10-19-qwen3-4b.json`. Repeat with `secure_qa/answering/benchmarks/host_path_check.py`.
+- **115 backend tests pass in the merged tree** (91 on this branch as it stands), including new tests for progress, cancellation, one-at-a-time, source PDF staging and the integrity operation, now run over E2's real PDFs.
+- **For E1:** real retrieved context is about 2,100 estimated prompt tokens at most (5 passages) in a 4,096 window with 512 reserved, so nothing is dropped and headroom is about 1,500 tokens. The estimate runs high (last week's measured prompts were about 1,700). `docs/evidence/e3-context-sizes-2026-10-19.json`.
+- **New risk, E2's unmerged chunker (`origin/E2-Chunking`, Oct 13, sentence-aligned cuts):** run through our golden set it fails c10 ("how many students": rank 2 becomes not retrieved) and c11 now returns no evidence at all, so 14 of 15 gated checks pass instead of 15. Other ranks shift by one or two. It is not in `main`, and I did not adopt it. See Findings.
 
 **The week 4 objective is met on the dev laptop. E2's real PDFs are ingested, indexed and published as a versioned collection. A real question is retrieved, answered by E1's frozen Qwen3-4B model, and cited to the exact source characters. Rollback and republish are evidenced.** Latency is not met yet: it can only be judged on the 8 GB reference laptop.
 
@@ -21,12 +28,16 @@ Requirements are quoted from the PRD and SDD, which now live in the repo at `doc
 - **Retrieval quality on the real corpus is weaker than on the synthetic set.** The expected chunk ranks first for 8 of 13 questions and reaches the answer for 11 of 13. The two misses are on the noisy arXiv paper, where the right chunk scores below `min_score`. They are reported as known gaps, not hidden.
 
 **Needs outside help:**
-- **E1 / reference laptop:** latency. On this 8 GB Mac with about 6 GB of swap in use, answers took 70 s on average and 199 s at worst (target: under 30 s). Prompt processing ran at 62 tok/s and generation at 2.6 tok/s. That is a swap-bound dev machine, so the numbers are not decision-grade, but they show real RAG prompts are not safe until measured on the reference laptop. E1 also hasn't committed `release-manifest.json`, so `/health` reports `release.manifest: false`.
+- **Team go-ahead to merge `origin/main`** into this branch (E3 owner to raise with the team on 2026-10-20). The resolved files are ready (`.e3-merge-bundle/APPLY.md`).
+- **E1 / reference laptop:** latency and RAM. **The reference laptop is not available yet, so this waits.** On this 8 GB Mac with about 6 GB of swap in use, answers took 70 s on average and 199 s at worst in week 4 (target: under 30 s), and 19 to 53 s for three answers through the host in week 5. The Mac is swap-bound, so the numbers are not decision-grade, but real RAG prompts are not safe until measured on the reference laptop. E1 also hasn't committed `release-manifest.json`, so `/health` reports `release.manifest: false`.
+- **E2 (E3 owner to talk to E2 on 2026-10-20):**
+  - Will the sentence-cut chunker on `E2-Chunking` go into `main`? On a scratch run it regresses golden query c10 and leaves c11 with no evidence (14 of 15 gated checks instead of 15). Whichever chunker ships, `min_score` has to be re-measured with it.
+  - The arXiv extraction keeps ligature characters (`ﬁ`, `ﬀ`) and line-break hyphens, and `oversized_1200_pages.pdf` is accepted under the current 2,000-page limit. Both are E2's policy calls.
 - **Team decision:** how to fix retrieval on noisy PDF text. On the 13 questions, dense-only retrieval ranks the expected chunk in the top 5 for 12, and 11 once the threshold applies; BM25 fused with dense retrieval gets all 13. Fusing changes the retrieval design (SDD §7.1), so it needs an ADR. See Findings.
-- **E2:** the arXiv extraction keeps ligature characters (`ﬁ`, `ﬀ`) and line-break hyphens, and E2's `oversized_1200_pages.pdf` is accepted under the current 2,000-page limit. Both are E2's policy calls.
 - **Resolved since week 3:** the citation page format. `main`'s SDD §5.1 now says the citation payload carries a page range plus per-page spans.
 
 **Next:**
+- Merge `origin/main` with the team's go-ahead, re-run the tests and `host_path_check.py`, and tell E4 about `library.integrity` and the real-pipeline review reasons.
 - Re-run the golden set and the demo on the 8 GB reference laptop and record latency and RAM.
 - Hand E4 the `library.*` operations (`library/wire/README.md`). Hand E5 the real-corpus golden set, the threshold data and the integrity check.
 - Get the retrieval decision from the team, then freeze `min_score` with E5.
@@ -48,7 +59,7 @@ The review of Open WebUI's built-in Chroma and Ollama support, and the decisions
 - **Integrity and diagnostics:** `CollectionVersions.check_integrity()` re-reads a version from the store and compares it with the manifest. `trace_search()` explains every search result: score, kept or dropped by the threshold, document, pages, chunk and offsets.
 - **Answer path (SDD §4.2, §7.1, §7.3):** done for text, and run with a real model on 2026-10-12. Visual evidence, streaming progress and cancellation are not built.
 - **Host for E4:** `dev_host.py` serves `answering.ask` and the `library.*` operations (status, review, publish with confirmation, rollback, integrity). Start it with `--corpus <folder of PDFs>`. The contract is `library/wire/README.md`.
-- **Tests:** 91 backend tests pass (67 last week). With `SECURE_QA_TEST_RUNTIME_URL` set, the live E1 test also passed against the real Qwen3-4B runtime; without it, that one test is skipped.
+- **Tests:** 91 backend tests pass (67 last week). With `SECURE_QA_TEST_RUNTIME_URL` set, the live E1 test also passed against the real Qwen3-4B runtime; without it, that one test is skipped. All runs are manual, with no CI. See [Testing](#testing-how-we-run-tests).
 - **Decision record (ADR):** none written. Chroma is recorded in SDD §4.5 and §11 and in ADR 0001. The retrieval question below would need one if the team changes the retrieval design.
 
 ## Project overview
@@ -71,6 +82,21 @@ The review of Open WebUI's built-in Chroma and Ollama support, and the decisions
 - for week 3, the retrieval-to-answer path in Question Answering: context assembly and the citation payload
 
 ## Deliverables
+
+### Week 5 (Oct 13 – Oct 19): first true end-to-end path through the host
+
+> Same E3 row as week 4: complete embedding/index pipeline, atomic publish/rollback, search diagnostics, and the first true retrieval-to-answer integration. **Depends on:** E2 corpus chunks; E1 runtime. **Demo:** ingest/index → ask → retrieve → answer → citation → rollback/republish evidence. The week's other rows lean on E3: E1 needs real retrieved context, E4 needs real publish and ask endpoints, E5 needs the index integrity report and golden queries.
+
+| Item | Status | Evidence |
+|---|---|---|
+| Acceptance (results map to document/page/chunk, atomic publish, rollback, real cited answer) | Met on the dev laptop, unchanged since week 4 | Week 4 table below; `docs/evidence/e3-demo-2026-10-12-qwen3-4b.json` |
+| Reconcile with `main`'s Library workflow | **Done in a scratch merge; not merged on this branch** | `main` replaced our folder-based `library.*` operations with upload-based ones (base64 PDFs, `review_id`, `target_request_id` polling, `library.cancel`) over a placeholder chunker. `library/workflow.py` now keeps that wire contract and runs E2's `validate()`/`chunks()` through `Publisher.publish_review()`. Resolved files are in `.e3-merge-bundle/` (see its `APPLY.md`). |
+| `library.integrity` over the host | Added | New operation, documented in `library/wire/README.md` and SDD §4.1. A publish also reports `integrity_ok`. |
+| Progress and cancellation (SDD §4.1) | Built on `main`'s store changes | Cancellation is checked between bounded index batches, before verification and before activation. Tested; failed or cancelled publishes leave the active version unchanged. |
+| E4: publish and ask from the UI | Backend path verified over HTTP; UI itself not run | `host_path_check.py`: 15/15 with the real model (above). `npm` and the Svelte app were not started here. |
+| E1: real retrieved context for runtime tuning | Delivered | `docs/evidence/e3-context-sizes-2026-10-19.json` (`context_sizes.py`): at most about 2,100 estimated prompt tokens, 0 of 13 answerable questions drop passages, about 1,500 tokens of headroom. |
+| E5: integrity report, golden set, threshold data | Ready to hand over | `library.integrity` (also in the host-path evidence: 309 chunks, 4 documents, `ok`), `golden_real_queries.json`, the threshold table under Results. |
+| Latency within threshold | **Still not met, not judged** | 26 s, 19 s and 53 s for three answers through the host on the swap-bound Mac. Needs the reference laptop. |
 
 ### Week 4 (Oct 6 – Oct 12): real corpus, real model, publish and rollback
 
@@ -237,10 +263,49 @@ The audit hook can't see connections opened from native code. That includes Chro
 - **Vendored text streams must keep their exact bytes.** A line-ending conversion shifts every offset. `tests/fixtures/e2/.gitattributes` marks `nrc_text.txt` as `-text`, as E2 does.
 
 - **Dense retrieval struggles with noisy extraction.** The arXiv paper's chunks carry ligature characters (`ﬁ`, `ﬀ`; 46 of 309 chunks) and line-break hyphens, and its abstract chunk scores 0.293 against a question that quotes its own title. Normalizing the embedded text barely helped, so the cause is mostly the model and the chunk length, not only the characters. Two arXiv records are kept as known gaps instead of being dropped.
+- **E2's unmerged chunker changes our retrieval results.** `origin/E2-Chunking` (Oct 13) cuts on sentence boundaries and adds an import pipeline. Its `validate()`/`chunks()` still work with `ingest_corpus` (all library and publication tests pass), but the real-corpus golden set moves. Expected-chunk rank, current vs E2 branch (dense retrieval, `min_score` 0.38): c03 1/1, c05 2→3, c06 1→2, c08 1→3, c10 2→**not retrieved**, c11 not retrieved→**no passage above the threshold** (c09 not retrieved in both). Gated acceptance is 14 of 15 instead of 15 of 15. This is more evidence for the retrieval decision (BM25 fusion) and a reason to re-measure `min_score` whenever E2's chunker lands. Measured on a scratch copy; nothing was adopted.
 - **The model answers well on retrieved evidence.** Qwen3-4B cited the right passages, kept to the supplied labels, refused every off-topic question, and ignored planted instructions. It adds a "General model knowledge" section after a document answer, which is allowed by SDD §7.3.
 - **Answers are long.** About 290 generated tokens for a one-sentence fact. At 2 to 3 tok/s that is most of the latency. A tighter answer instruction in the prompt is worth testing on the reference laptop.
 - **E2's decision-required fixtures:** `oversized_1200_pages.pdf` is accepted under the current 2,000-page limit, and the repaired `corrupt_bad_xref.pdf` and the mixed scanned PDF are accepted with warnings. They duplicate NRC text, so they're kept out of the golden collection.
 - **`/health.release.manifest` is `false`.** E1's `freeze` writes `release-manifest.json` on the reference laptop, and none is committed, so nothing checks the loaded model against a frozen manifest yet.
+
+## Testing: how we run tests
+
+**Short version:** tests are run by hand. There is no CI, no `.github/workflows`, and no git hooks (checked 2026-10-13), so nothing runs automatically on commit, push or merge. The SDD §14 requirement for packaged, network-disabled acceptance runs on all three platforms is not built yet.
+
+SDD §13 sets the approach: behavior tests through public interfaces at the agreed seams, with deterministic fakes in workflow tests and focused integration tests for the real adapters. Quality of the model itself is measured by the golden-query benchmarks, not by unit tests.
+
+| Suite | Runner | Command | Size |
+|---|---|---|---|
+| E3 backend (library, answering, dev host) | `unittest` | from `app/document-qa/backend`: `../../../.venv/bin/python -m unittest discover -s secure_qa -t .` | 91 tests, about 40 s, 1 skipped |
+| E2 ingestion contracts | plain script | from `ingestion/`: `../.venv/bin/python tests/test_contracts.py` | 24 tests, all pass (2026-10-13) |
+| E1 runtime | `pytest` | from `answering/llama_cpp/`: `pip install -e ".[dev]" && pytest` (uses the stub, about 1 minute) | 56 tests per E1's README; **not run here**, `pytest` isn't in the shared `.venv` |
+| Frontend (E4) | none found | no Svelte or Tauri tests are in the repo yet | |
+
+The E3 command does not pick up E1's tests, because they use pytest and live under `answering/llama_cpp/tests/`. Run each suite from its own folder.
+
+**What the E3 suite covers (91 tests):**
+- `library/tests/`: store contract, versioning, publication (38 tests)
+  - search results map to document, page and chunk
+  - atomic publish and rollback
+  - the integrity check detects a tampered chunk
+  - the same files give the same manifest checksum
+- `answering/tests/`: service, citation validation, E1 gateway adapter, golden queries, offline audit (40 tests)
+- `tests/integration/test_dev_host.py`: the loopback host's `/health`, request handling and `library.*` operations (13 tests)
+
+**Tests that skip themselves.** Some tests need things that are gitignored or optional, and they skip with a stated reason when those are missing. A "passing" run on a fresh clone can therefore cover less than it looks like:
+- Embedding model not fetched (`python -m secure_qa.library.scripts.fetch_model`): skips the Chroma store tests and the golden tests.
+- PyMuPDF or E2's fixture PDFs missing: skips the publication tests and the dev-host corpus test.
+- `SECURE_QA_TEST_RUNTIME_URL` unset: skips the live test against E1's runtime. This is the one skip in the 2026-10-13 run. To include it: `SECURE_QA_TEST_RUNTIME_URL=http://127.0.0.1:8080 ../../../.venv/bin/python -m unittest secure_qa.answering.tests.test_model_runtime`, with E1's runtime running (stub or real model).
+
+**Benchmarks and demos (not part of the unit run).** These measure quality and produce evidence. Commands are in the next section.
+- `golden` (synthetic set, 14 queries) and `golden --corpus real` (E2's PDFs, 17 queries) print a gated pass count. `--runtime URL` runs them through E1's runtime.
+- `demo_end_to_end --evidence out.json` runs ingest, ask, publish, rollback and republish and saves the evidence. Last run: 18 of 18 with the real model.
+- `run_benchmark` is the store benchmark.
+
+**Offline checking.** `answering/tests/test_offline.py` fails on any non-loopback connect or DNS lookup made from Python. It can't see native code (Chroma's Rust core, torch), so the packet capture is still open (see Parked items).
+
+**Suggested routine:** run the E3 `unittest` command before pushing, and E2's script if ingestion code changed. The golden runs need a model, so run them by hand when the answer path, prompt or retrieval changes.
 
 ## Environment and how to run
 
@@ -294,10 +359,13 @@ To run with the real model (one-time online setup, then offline): put llama.cpp 
 | Retrieval on noisy PDF text: adopt BM25 and dense fusion (needs an ADR and a change to SDD §7.1), try another embedding model, or accept two known gaps? | Team, E5 |
 | E2: should extraction normalize ligatures and line-break hyphens in the text stream, and is a 1,200-page PDF meant to pass the "oversized" check? | E2 |
 | Should the dev-host `library.*` operations and `library/wire/README.md` be E4's contract, and does E4 want progress events during publication? | E4 |
+| Will E2's sentence-cut chunker (`E2-Chunking`) go into `main`? It regresses golden query c10 under dense retrieval (see Findings), so `min_score` and the retrieval decision should be settled with it in the loop. | E2, team |
+| Does E4 know the Library host now includes `library.integrity` and that publication runs on E2's real pipeline (rejected files, real reasons)? Their screen reads `rejected[].reason`; extra `files` and `summary` fields are additive. | E4 |
 | Should E5 take the real-corpus golden set (`golden_real_queries.json`), the integrity check and the threshold data as the start of the smoke suite? | E5 |
 
 ## Next steps (proposed)
 
+0. Merge `origin/main` using `.e3-merge-bundle/APPLY.md`, re-run the 115 tests, and delete the bundle. Then run `host_path_check.py` once more against the merged tree.
 1. Re-run the real-corpus golden set and the demo on the **8 GB reference laptop** with the frozen model. Record latency, peak RAM, and the answer facts and citations again.
 2. Test a shorter answer instruction in the prompt, to cut generation time. Re-run the golden set to check quality holds.
 3. Hand E4 the `library.*` operations, and E5 the real-corpus golden set, the integrity check and the threshold data, so they can tune and freeze `min_score` (SDD §7.1).
@@ -309,6 +377,16 @@ To run with the real model (one-time online setup, then offline): put llama.cpp 
 9. Visual evidence selection (SDD §7.2), with the Question Answering owner.
 
 ## Log
+
+- **2026-10-20 (week 5, work done 2026-10-19 to 2026-10-20):**
+  - Confirmed the remaining items are outside E3's control: the reference laptop is unavailable, the E2 conversation is planned for today, and the merge awaits the team's go-ahead. Committed and pushed the docs and evidence; the merge bundle stays uncommitted.
+  - Compared `origin/main` and the other workstreams. `main` now has its own `library/workflow.py` (placeholder chunker, upload-based `library.*` operations, cancellation and source staging in `versions.py`), history and settings modules, and a native chat UI. A trial merge conflicts in `dev_host.py` and three READMEs.
+  - In a scratch worktree (this working tree was not merged): kept `main`'s wire contract, rebuilt `CollectionLibrary` on E2's pipeline via `Publisher.publish_review()`, added `library.integrity`, rewrote the Library and dev-host tests for uploads, and merged the READMEs and SDD §4.1. 115 tests pass. The resolved files are in `.e3-merge-bundle/`.
+  - Added `host_path_check.py` (the UI path over HTTP) and ran it with the real Qwen3-4B model: 15/15. Added `context_sizes.py` for E1.
+  - Tried E2's latest branch on a scratch copy: compatible, but it regresses c10 (see Findings). Not adopted.
+  - The code changes are in the merge bundle, not yet in the branch.
+
+- **2026-10-13:** added the Testing section: how each suite is run, what skips itself, and that nothing runs automatically (no CI or hooks). Re-ran the E3 suite (91 pass, 1 skipped) and E2's contract script (24/24). E1's pytest suite wasn't run because `pytest` isn't installed in `.venv`.
 
 - **2026-10-12 (week 4):**
   - Brought the branch up to date by fast-forwarding to `origin/codex/integrate-workstreams` (E1, E2, E3, E4 merged on `main`). The 67 existing tests still passed.
