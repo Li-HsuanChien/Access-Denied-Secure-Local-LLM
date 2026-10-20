@@ -6,9 +6,10 @@ observed/expected pair recorded per check is what makes Week 2's criterion
 ("unreadable/encrypted/malformed inputs return explicit errors") assertable
 rather than a matter of opinion.
 
-The four decisions E2 still owes the team live in IngestionPolicy, not in the
-check code. Flipping one is a config change, not a patch, which is the point:
-the team can settle them on Friday without touching the parser.
+The four policy decisions from the fixture corpus live in IngestionPolicy, not
+in the check code. Flipping one is a config change, not a patch, which is the
+point: each can be settled without touching the parser. The size cap was
+settled on 2026-10-20; the other three still await team sign-off.
 """
 from __future__ import annotations
 
@@ -63,11 +64,11 @@ class Check:
 @dataclass
 class IngestionPolicy:
     """
-    The four open decisions from the fixture corpus, as configuration.
+    The four policy decisions from the fixture corpus, as configuration.
 
-    Defaults below are the recommendations from README.md. They are proposals
-    awaiting team sign-off, not settled rules; each one is here so it gets
-    decided deliberately instead of by whatever the parser happened to do.
+    Defaults below are the recommendations from README.md. Decisions 1 to 3 are
+    proposals awaiting team sign-off; decision 4 is settled. Each one is here so
+    it gets decided deliberately instead of by whatever the parser happened to do.
     """
 
     # Decision 1: a PDF whose structure was damaged but which the parser rebuilt.
@@ -92,9 +93,10 @@ class IngestionPolicy:
     # This is the check that a page-count comparison misses entirely.
     min_chars_per_page_when_repaired: int = 200
 
-    # Decision 4: the size cap, currently a placeholder. 2,000 pages sits above
-    # the PRD's 5,000-page initial collection spread across many documents and
-    # below the 10,000-page stress corpus.
+    # Decision 4, settled 2026-10-20: the size cap. 2,000 pages sits above any
+    # single document expected in the PRD's 2,000-5,000-page collection and
+    # below the 10,000-page stress corpus. A 1,200-page file ingests without
+    # trouble, so nothing technical calls for a lower cap.
     max_pages: int = 2000
     max_bytes: int = 200 * 1024 * 1024
 

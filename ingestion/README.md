@@ -77,8 +77,8 @@ offsets and highlight rectangles. The Citation record in SDD 5.1 now allows a
 page range; the Chunk record there still says one page number. Numbers and
 reasoning are in `WALKTHROUGH.md` section 4.
 
-The four open policy decisions below are configuration in `IngestionPolicy`,
-not conditionals in the parser. `test_policy_decisions_are_live_knobs` proves
+The four policy decisions below (three still open, the size cap settled) are
+configuration in `IngestionPolicy`, not conditionals in the parser. `test_policy_decisions_are_live_knobs` proves
 each one flips behavior from config alone.
 
 ## From PDF to text stream
@@ -401,7 +401,7 @@ have an expected outcome.
 | `scanned_mixed_text_and_image_pages` | scanned | *decision* | per-page text yield |
 | `nonpdf_zip_container_renamed` | nonpdf | reject | magic bytes |
 | `nonpdf_plaintext_renamed` | nonpdf | reject | magic bytes |
-| `oversized_1200_pages` | oversized | *decision* | page/byte cap, not yet set |
+| `oversized_1200_pages` | oversized | accept | under the 2,000-page / 200 MB cap (decision 4, settled) |
 | `adversarial_prompt_injection` | adversarial | accept | must not be filtered |
 
 ## Findings that shaped validation
@@ -465,15 +465,14 @@ only evidence. It is now read for every page: the file is accepted with a
 no Unicode map is visible to a reader and empty to search; it is reported as
 unreadable, not counted among the blank pages.
 
-## Four policy decisions awaiting sign-off
+## Policy decisions: three awaiting sign-off, one settled
 
-Each is a fixture sitting at `decision_required` in the manifest, and each is a
-field of `IngestionPolicy` with the recommended value as its default, so the
+Each open one is a fixture sitting at `decision_required` in the manifest, and
+each is a field of `IngestionPolicy` with the recommended value as its default, so the
 code behaves one defined way today and changing the decision is a one-line
 change. Under the defaults `corrupt_bad_xref` and `scanned_mixed` are accepted
 with a warning, `protected_owner_password_no_extract` is rejected, and
-`oversized_1200_pages` is accepted (the placeholder cap is 2,000 pages and
-200 MB). The policy in force is recorded in every validation result and every
+`oversized_1200_pages` is accepted (the cap is 2,000 pages and 200 MB). The policy in force is recorded in every validation result and every
 run manifest. A misspelt setting raises `ValueError` when the policy is built;
 it used to select the permissive branch without a word.
 
@@ -489,9 +488,12 @@ it used to select the permissive branch without a word.
    per-document threshold, and does the import report name the dropped pages?
    Recommend accept-with-warning plus an explicit page list, so QA can tell a
    parser bug from a scan without reopening the source.
-4. **The size cap** (`oversized_1200_pages`) — page count, byte size, or both,
-   and at what number? Currently unset, which is why this fixture has no fixed
-   expected outcome.
+4. **The size cap** (`oversized_1200_pages`). **Settled on 2026-10-20:** the
+   cap stays at 2,000 pages and 200 MB, both checked. A 1,200-page file ingests
+   without trouble, so nothing technical calls for a lower number, and 2,000
+   pages is above any single document expected in a 2,000 to 5,000-page
+   collection. The fixture is now labelled `accept`; `max_pages=1000` still
+   rejects it, which the live-knobs test keeps proving.
 
 ## Notes on individual fixtures
 

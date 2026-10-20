@@ -302,7 +302,7 @@ def test_policy_decisions_are_live_knobs():
     # Decision 1: repaired documents
     assert validate(xref, IngestionPolicy(repaired_document='accept_with_warning')).outcome != Outcome.REJECTED
     assert validate(xref, IngestionPolicy(repaired_document='reject')).outcome == Outcome.REJECTED
-    return 'all four open decisions flip behavior from config alone'
+    return 'all four policy decisions, three open and the settled size cap, flip behavior from config alone'
 
 
 def test_truncation_is_caught_despite_correct_page_count():
