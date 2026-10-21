@@ -52,7 +52,7 @@ class _Page:
     width: float         # as displayed, i.e. after any page rotation
     height: float
     spans: list[_Span]
-    images: int = 0      # image blocks drawn on the page
+    images: int = 0      # image blocks drawn on the page; counted only when it yields no text
     undecoded: int = 0   # lines left out because no glyph on them could be named
     damaged: bool = False    # the parser reported damage while reading the page
 
@@ -276,7 +276,8 @@ def _set_on(blocks: list[dict], gutter: tuple[float, float]) -> bool:
 
 
 # Text only: by default the 'dict' output carries every image's bytes, which
-# nothing here reads. The images are counted instead.
+# nothing here reads. Images are counted, and only on pages that yield no text
+# (see extract_document).
 #
 # Ligatures are expanded: a font's single 'fi' glyph comes out as 'f' + 'i',
 # not as U+FB01. Kept, the ligature splits the word for search and embedding
@@ -286,10 +287,10 @@ _TEXT_FLAGS = (pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES
                & ~pymupdf.TEXT_PRESERVE_LIGATURES)
 
 
-def _page_blocks(page, sort: bool) -> tuple[list[dict], int, int]:
+def _page_blocks(page, sort: bool) -> tuple[list[dict], int]:
     """
-    A page's text blocks, holding the lines that carry ink; how many images the
-    page draws; and how many lines were left out as unreadable glyphs.
+    A page's text blocks, holding the lines that carry ink, and how many lines
+    were left out as unreadable glyphs.
 
     PyMuPDF reports boxes in the page as stored, before any /Rotate. That frame
     is the right one for reading order and for finding margins, because it is
@@ -308,7 +309,7 @@ def _page_blocks(page, sort: bool) -> tuple[list[dict], int, int]:
     """
     box = page.cropbox                    # get_text() coordinates are in the unrotated page
     turn = page.rotation_matrix if page.rotation else None
-    blocks, images, undecoded = [], len(page.get_image_info()), 0
+    blocks, undecoded = [], 0
     for block in page.get_text('dict', sort=sort, flags=_TEXT_FLAGS)['blocks']:
         if block.get('type') != 0:            # 0 = text block
             continue
@@ -329,7 +330,7 @@ def _page_blocks(page, sort: bool) -> tuple[list[dict], int, int]:
                                                        max(s['size'] for s in spans))})
         if lines:
             blocks.append({'bbox': tuple(block['bbox']), 'lines': lines})
-    return blocks, images, undecoded
+    return blocks, undecoded
 
 
 def _in_order(blocks: list[dict]) -> list[_Line]:
@@ -344,12 +345,6 @@ def _in_order(blocks: list[dict]) -> list[_Line]:
     # page's own text it cannot split a sentence.
     return ([line for line in flat if line.frame == main]
             + [line for line in flat if line.frame != main])
-
-
-def _page_lines(page, sort: bool) -> tuple[list[_Line], int]:
-    """One page read by itself: its lines in reading order and its image count."""
-    blocks, images, _ = _page_blocks(page, sort)
-    return _in_order(_reading_order(blocks) if sort else blocks), images
 
 
 def _body_size(page_lines: list[list[_Line]]) -> float:
@@ -610,17 +605,21 @@ def extract_document(doc, *, sort: bool = True, strip_boilerplate: bool = True,
 
     Every page the document declares is loaded by number, so a page that is
     not there raises instead of quietly ending the loop.
+
+    Images are counted only on the pages that end up with no text. Counting
+    them means MuPDF reads the page a second time with its images loaded, and
+    the count is only ever asked of a page with nothing to read.
     """
     total = doc.page_count
     pymupdf.TOOLS.mupdf_warnings()            # start clean: what follows is about these pages
     read = []
     for index in range(total):
         page = doc.load_page(index)
-        blocks, images, undecoded = _page_blocks(page, sort)
+        blocks, undecoded = _page_blocks(page, sort)
         printed = pymupdf.TOOLS.mupdf_warnings()
         if said is not None:
             said.extend(printed.splitlines())
-        read.append((blocks, images, undecoded, bool(_DAMAGE.search(printed)),
+        read.append((blocks, undecoded, bool(_DAMAGE.search(printed)),
                      page.rect.width, page.rect.height))
         if on_page is not None:
             on_page(index + 1, total)
@@ -638,13 +637,15 @@ def extract_document(doc, *, sort: bool = True, strip_boilerplate: bool = True,
             if ordered[index] is blocks and _set_on(blocks, shared[0]):
                 ordered[index] = _by_columns(blocks, list(shared))
     layout = [(_in_order(blocks), *rest) for blocks, (_, *rest) in zip(ordered, read)]
+    del read, ordered                         # the blocks; their lines live on in layout
     drop = _running_lines([lines for lines, *_ in layout]) if strip_boilerplate else {}
 
     parts: list[str] = []
     pages: list[_Page] = []
     cursor = 0
 
-    for index, (lines, images, undecoded, damaged, width, height) in enumerate(layout):
+    for index, (lines, undecoded, damaged, width, height) in enumerate(layout):
+        layout[index] = None                  # a page's lines are spent once its spans are made
         page_start = cursor
         spans: list[_Span] = []
         for number, line in enumerate(lines):
@@ -663,8 +664,12 @@ def extract_document(doc, *, sort: bool = True, strip_boilerplate: bool = True,
         if cursor > page_start:
             parts.append('\n')
             cursor += 1
-        pages.append(_Page(index + 1, page_start, cursor, width, height, spans, images,
+        pages.append(_Page(index + 1, page_start, cursor, width, height, spans, 0,
                            undecoded, damaged))
+    for page in pages:
+        if not page.has_text:
+            page.images = len(doc.load_page(page.number - 1).get_image_info())
+    pymupdf.TOOLS.mupdf_warnings()            # the pages were read above; this was a second look
     return ''.join(parts), pages
 
 
