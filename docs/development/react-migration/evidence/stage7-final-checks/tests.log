@@ -1,0 +1,41 @@
+
+> access-denied-document-qa@0.11.4 test:frontend
+> vitest run
+
+
+ RUN  v1.6.1 /Users/evansinocchi/Desktop/Projects/Access-Denied-Secure-Local-LLM/app/document-qa/frontend/react
+
+ ✓ ../src/react/providers/controllers.test.ts  (11 tests) 60ms
+ ✓ ../src/lib/features/answering/react/Composer.test.tsx  (10 tests) 196ms
+ ✓ ../src/lib/features/history/react/HistoryPage.test.tsx  (8 tests) 287ms
+ ✓ ../src/lib/features/library/react/LibraryPage.test.tsx  (8 tests) 349ms
+ ✓ ../src/lib/features/answer-renderer/react/parity.test.tsx  (5 tests) 176ms
+ ✓ ../src/lib/features/answering/react/chatController.test.ts  (8 tests) 738ms
+ ✓ ../src/lib/features/answer-renderer/react/renderer.test.tsx  (6 tests) 574ms
+ ✓ ../src/lib/features/settings/react/SettingsPage.test.tsx  (6 tests) 377ms
+ ✓ ../src/lib/features/desktop-shell/react/NativeDropdown.test.tsx  (6 tests) 133ms
+ ✓ ../src/react/i18n/bridge.test.tsx  (9 tests) 187ms
+ ✓ ../src/lib/features/answering/react/ChatPage.test.tsx  (7 tests) 488ms
+ ✓ ../src/lib/features/answering/react/chatMotion.test.tsx  (4 tests) 39ms
+ ✓ ../src/lib/features/desktop-shell/react/PinnedModel.test.tsx  (5 tests) 405ms
+ ✓ ../src/lib/features/desktop-shell/react/AppShell.locale.test.tsx  (8 tests) 680ms
+ ✓ ../src/react/App.test.tsx  (9 tests) 727ms
+ ✓ ../src/lib/features/answer-renderer/react/security.test.ts  (6 tests) 49ms
+ ✓ ../src/lib/features/desktop-shell/react/AppShell.test.tsx  (8 tests) 372ms
+ ✓ ../src/lib/features/answering/answeringClient.test.js  (10 tests) 40ms
+ ✓ ../src/lib/features/answer-renderer/react/content.test.ts  (7 tests) 51ms
+ ✓ ../src/lib/features/answering/react/draftText.test.ts  (4 tests) 156ms
+ ✓ ../src/react/providers/AppProviders.test.tsx  (3 tests) 193ms
+ ✓ ../src/lib/features/answering/react/ModelOption.test.tsx  (5 tests) 376ms
+ ✓ ../src/react/routes/navigation.test.ts  (3 tests) 11ms
+ ✓ ../src/lib/features/answering/react/ChatLocale.test.tsx  (2 tests) 478ms
+ ✓ ../src/lib/features/answer-renderer/react/diagram.test.ts  (13 tests) 194ms
+ ✓ ../src/lib/features/workflows.test.ts  (3 tests) 6ms
+ ✓ ../src/lib/features/answering/react/clipboard.test.ts  (2 tests) 12ms
+ ✓ ../src/lib/features/answer-renderer/react/locale.test.tsx  (1 test) 62ms
+
+ Test Files  28 passed (28)
+      Tests  177 passed (177)
+   Start at  00:54:15
+   Duration  4.91s (transform 1.07s, setup 2ms, collect 8.33s, tests 7.42s, environment 10.59s, prepare 2.30s)
+

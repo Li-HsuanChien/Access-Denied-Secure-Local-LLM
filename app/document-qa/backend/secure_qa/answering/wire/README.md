@@ -4,7 +4,7 @@
 
 ## Development HTTP envelope (frontend → host, SDD §4.6)
 
-Until the Open WebUI host exists, `app/document-qa/backend/dev_host.py` serves this contract on `127.0.0.1` only (default port 8765):
+The Python development host at `app/document-qa/backend/dev_host.py` serves this contract on `127.0.0.1` only (default port 8765):
 
 ```
 GET  /health

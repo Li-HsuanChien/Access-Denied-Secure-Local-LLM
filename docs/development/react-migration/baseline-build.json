@@ -1,0 +1,11 @@
+{
+  "baseline_commit": "4dc2a06",
+  "build_bytes": 144190783,
+  "build_files": 5139,
+  "checks": {
+    "test:frontend": "26 passed",
+    "check": "0 errors, 0 warnings",
+    "build": "passed; existing upstream Svelte/dependency warnings"
+  },
+  "log": "/private/tmp/secure-qa-react-baseline-build.log"
+}

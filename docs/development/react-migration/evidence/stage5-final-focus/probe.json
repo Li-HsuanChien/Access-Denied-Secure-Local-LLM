@@ -1,0 +1,556 @@
+{
+  "reactMode": "production build from disk, no frontend network",
+  "browser": "151.0.7922.34",
+  "executable": "/Users/evansinocchi/Library/Caches/ms-playwright/chromium-1234/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+  "cases": [
+    {
+      "origin": "http://127.0.0.1:5173",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "activation": "pointer",
+      "opened": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": "More Options",
+        "text": ""
+      },
+      "tab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Set as default"
+      },
+      "shiftTab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": "More Options",
+        "text": ""
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [
+        "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+      ],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5176",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "activation": "pointer",
+      "opened": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": "More Options",
+        "text": ""
+      },
+      "tab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Set as default"
+      },
+      "shiftTab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": "More Options",
+        "text": ""
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5173",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "activation": "Enter",
+      "opened": {
+        "id": "",
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "text": null
+      },
+      "tab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Keep in Sidebar"
+      },
+      "shiftTab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Set as default"
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [
+        "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+      ],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5176",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "activation": "Enter",
+      "opened": {
+        "id": "",
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "text": null
+      },
+      "tab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Keep in Sidebar"
+      },
+      "shiftTab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Set as default"
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5173",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "activation": "Space",
+      "opened": {
+        "id": "",
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "text": null
+      },
+      "tab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Keep in Sidebar"
+      },
+      "shiftTab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Set as default"
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [
+        "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+      ],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5176",
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "activation": "Space",
+      "opened": {
+        "id": "",
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "text": null
+      },
+      "tab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Keep in Sidebar"
+      },
+      "shiftTab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Set as default"
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5173",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "activation": "pointer",
+      "opened": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": "More Options",
+        "text": ""
+      },
+      "tab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Set as default"
+      },
+      "shiftTab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": "More Options",
+        "text": ""
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [
+        "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+      ],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5176",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "activation": "pointer",
+      "opened": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": "More Options",
+        "text": ""
+      },
+      "tab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Set as default"
+      },
+      "shiftTab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": "More Options",
+        "text": ""
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5173",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "activation": "Enter",
+      "opened": {
+        "id": "",
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "text": null
+      },
+      "tab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Keep in Sidebar"
+      },
+      "shiftTab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Set as default"
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [
+        "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+      ],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5176",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "activation": "Enter",
+      "opened": {
+        "id": "",
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "text": null
+      },
+      "tab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Keep in Sidebar"
+      },
+      "shiftTab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Set as default"
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5173",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "activation": "Space",
+      "opened": {
+        "id": "",
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "text": null
+      },
+      "tab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Keep in Sidebar"
+      },
+      "shiftTab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Set as default"
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [
+        "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+      ],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5176",
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "activation": "Space",
+      "opened": {
+        "id": "",
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "text": null
+      },
+      "tab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Keep in Sidebar"
+      },
+      "shiftTab": {
+        "id": "",
+        "tag": "BUTTON",
+        "role": null,
+        "label": null,
+        "text": "Set as default"
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5173",
+      "selector": "#chat-context-menu-button",
+      "opened": {
+        "id": "",
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "text": null
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5173",
+      "selector": "button[aria-label=\"Regenerate\"]",
+      "opened": {
+        "id": "",
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "text": null
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5176",
+      "selector": "#chat-context-menu-button",
+      "opened": {
+        "id": "",
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "text": null
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [],
+      "blocked": []
+    },
+    {
+      "origin": "http://127.0.0.1:5176",
+      "selector": "button[aria-label=\"Regenerate\"]",
+      "opened": {
+        "id": "",
+        "tag": "DIV",
+        "role": "menu",
+        "label": null,
+        "text": null
+      },
+      "escape": {
+        "id": "chat-input",
+        "tag": "DIV",
+        "role": null,
+        "label": "Ask a question about your library…",
+        "text": null
+      },
+      "errors": [],
+      "blocked": []
+    }
+  ],
+  "status": "PASS"
+}

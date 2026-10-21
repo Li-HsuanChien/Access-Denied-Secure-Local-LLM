@@ -1,6 +1,6 @@
 # React frontend migration: parity execution plan
 
-Updated: 2026-10-20. Planning only; implementation has not started.
+Plan approved: 2026-10-20. Execution completed: 2026-10-21. See the [acceptance record](react-migration/acceptance.md) for results, evidence, and remaining product limitations. The execution instructions and historical assessment below are retained as the approved plan.
 
 ## Binding acceptance criteria
 

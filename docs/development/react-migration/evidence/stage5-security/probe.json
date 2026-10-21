@@ -1,0 +1,543 @@
+{
+  "reactMode": "production build from disk, no frontend network",
+  "browser": "151.0.7922.34",
+  "executable": "/Users/evansinocchi/Library/Caches/ms-playwright/chromium-1234/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+  "cases": [
+    {
+      "name": "long-desktop",
+      "origin": "http://127.0.0.1:5173",
+      "draft": "first line\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \nlast line",
+      "initial": {
+        "text": "first line\n\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \n\nlast line",
+        "html": "<p>first line</p><p class=\"is-empty is-editor-empty\">Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. </p><p class=\"is-empty is-editor-empty\">last line</p>",
+        "caretPrefix": "first lineLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. last line",
+        "textContent": "first lineLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. last line",
+        "active": true,
+        "rect": {
+          "x": 16,
+          "y": 56,
+          "width": 1408,
+          "height": 948,
+          "top": 56,
+          "right": 1424,
+          "bottom": 1004,
+          "left": 16
+        },
+        "modal": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 1000,
+          "top": 0,
+          "right": 1440,
+          "bottom": 1000,
+          "left": 0
+        },
+        "font": "",
+        "whiteSpace": "break-spaces",
+        "paragraphs": [
+          {
+            "text": "first line",
+            "rect": {
+              "x": 16,
+              "y": 56,
+              "width": 1408,
+              "height": 26.25,
+              "top": 56,
+              "right": 1424,
+              "bottom": 82.25,
+              "left": 16
+            }
+          },
+          {
+            "text": "Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. ",
+            "rect": {
+              "x": 16,
+              "y": 86.25,
+              "width": 1408,
+              "height": 105,
+              "top": 86.25,
+              "right": 1424,
+              "bottom": 191.25,
+              "left": 16
+            }
+          },
+          {
+            "text": "last line",
+            "rect": {
+              "x": 16,
+              "y": 195.25,
+              "width": 1408,
+              "height": 26.25,
+              "top": 195.25,
+              "right": 1424,
+              "bottom": 221.5,
+              "left": 16
+            }
+          }
+        ]
+      },
+      "final": {
+        "text": "first line\n\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \n\nlast line!",
+        "active": false,
+        "html": "<p>first line</p><p class=\"is-empty is-editor-empty\">Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. </p><p class=\"is-empty is-editor-empty\">last line!</p>"
+      },
+      "expected": "first line\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \nlast line!",
+      "blocked": [],
+      "errors": [
+        "a.valueOf is not a function\n\n\tin <unknown>\n\tin RichTextInput.svelte\n\tin Drawer.svelte\n\tin InputModal.svelte\n\tin MessageInput.svelte\n\tin Placeholder.svelte\n\tin Chat.svelte\n\tin +page.svelte\n\tin +layout.svelte\n\tin root.svelte\n\tin undefined\n"
+      ]
+    },
+    {
+      "name": "long-desktop",
+      "origin": "http://127.0.0.1:5176",
+      "draft": "first line\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \nlast line",
+      "initial": {
+        "text": "first line\n\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \n\nlast line",
+        "html": "<p>first line</p><p>Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. </p><p>last line</p>",
+        "caretPrefix": "first lineLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. last line",
+        "textContent": "first lineLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. last line",
+        "active": true,
+        "rect": {
+          "x": 16,
+          "y": 56,
+          "width": 1408,
+          "height": 948,
+          "top": 56,
+          "right": 1424,
+          "bottom": 1004,
+          "left": 16
+        },
+        "modal": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 1000,
+          "top": 0,
+          "right": 1440,
+          "bottom": 1000,
+          "left": 0
+        },
+        "font": "",
+        "whiteSpace": "break-spaces",
+        "paragraphs": [
+          {
+            "text": "first line",
+            "rect": {
+              "x": 16,
+              "y": 56,
+              "width": 1408,
+              "height": 26.25,
+              "top": 56,
+              "right": 1424,
+              "bottom": 82.25,
+              "left": 16
+            }
+          },
+          {
+            "text": "Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. ",
+            "rect": {
+              "x": 16,
+              "y": 86.25,
+              "width": 1408,
+              "height": 105,
+              "top": 86.25,
+              "right": 1424,
+              "bottom": 191.25,
+              "left": 16
+            }
+          },
+          {
+            "text": "last line",
+            "rect": {
+              "x": 16,
+              "y": 195.25,
+              "width": 1408,
+              "height": 26.25,
+              "top": 195.25,
+              "right": 1424,
+              "bottom": 221.5,
+              "left": 16
+            }
+          }
+        ]
+      },
+      "final": {
+        "text": "first line\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \nlast line!",
+        "active": true,
+        "html": "first line\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \nlast line!"
+      },
+      "expected": "first line\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \nlast line!",
+      "blocked": [],
+      "errors": []
+    },
+    {
+      "name": "long-narrow",
+      "origin": "http://127.0.0.1:5173",
+      "draft": "first line\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \nlast line",
+      "initial": {
+        "text": "first line\n\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \n\nlast line",
+        "html": "<p>first line</p><p class=\"is-empty is-editor-empty\">Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. </p><p class=\"is-empty is-editor-empty\">last line</p>",
+        "caretPrefix": "first lineLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. last line",
+        "textContent": "first lineLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. last line",
+        "active": true,
+        "rect": {
+          "x": 16,
+          "y": 56,
+          "width": 358,
+          "height": 792,
+          "top": 56,
+          "right": 374,
+          "bottom": 848,
+          "left": 16
+        },
+        "modal": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "top": 0,
+          "right": 390,
+          "bottom": 844,
+          "left": 0
+        },
+        "font": "",
+        "whiteSpace": "break-spaces",
+        "paragraphs": [
+          {
+            "text": "first line",
+            "rect": {
+              "x": 16,
+              "y": 56,
+              "width": 358,
+              "height": 26.25,
+              "top": 56,
+              "right": 374,
+              "bottom": 82.25,
+              "left": 16
+            }
+          },
+          {
+            "text": "Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. ",
+            "rect": {
+              "x": 16,
+              "y": 86.25,
+              "width": 358,
+              "height": 446.25,
+              "top": 86.25,
+              "right": 374,
+              "bottom": 532.5,
+              "left": 16
+            }
+          },
+          {
+            "text": "last line",
+            "rect": {
+              "x": 16,
+              "y": 536.5,
+              "width": 358,
+              "height": 26.25,
+              "top": 536.5,
+              "right": 374,
+              "bottom": 562.75,
+              "left": 16
+            }
+          }
+        ]
+      },
+      "final": {
+        "text": "first line\n\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \n\nlast line!",
+        "active": false,
+        "html": "<p>first line</p><p class=\"is-empty is-editor-empty\">Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. </p><p class=\"is-empty is-editor-empty\">last line!</p>"
+      },
+      "expected": "first line\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \nlast line!",
+      "blocked": [],
+      "errors": [
+        "a.valueOf is not a function\n\n\tin <unknown>\n\tin RichTextInput.svelte\n\tin Drawer.svelte\n\tin InputModal.svelte\n\tin MessageInput.svelte\n\tin Placeholder.svelte\n\tin Chat.svelte\n\tin +page.svelte\n\tin +layout.svelte\n\tin root.svelte\n\tin undefined\n"
+      ]
+    },
+    {
+      "name": "long-narrow",
+      "origin": "http://127.0.0.1:5176",
+      "draft": "first line\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \nlast line",
+      "initial": {
+        "text": "first line\n\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \n\nlast line",
+        "html": "<p>first line</p><p>Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. </p><p>last line</p>",
+        "caretPrefix": "first lineLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. last line",
+        "textContent": "first lineLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. last line",
+        "active": true,
+        "rect": {
+          "x": 16,
+          "y": 56,
+          "width": 358,
+          "height": 792,
+          "top": 56,
+          "right": 374,
+          "bottom": 848,
+          "left": 16
+        },
+        "modal": {
+          "x": 0,
+          "y": 0,
+          "width": 390,
+          "height": 844,
+          "top": 0,
+          "right": 390,
+          "bottom": 844,
+          "left": 0
+        },
+        "font": "",
+        "whiteSpace": "break-spaces",
+        "paragraphs": [
+          {
+            "text": "first line",
+            "rect": {
+              "x": 16,
+              "y": 56,
+              "width": 358,
+              "height": 26.25,
+              "top": 56,
+              "right": 374,
+              "bottom": 82.25,
+              "left": 16
+            }
+          },
+          {
+            "text": "Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. ",
+            "rect": {
+              "x": 16,
+              "y": 86.25,
+              "width": 358,
+              "height": 446.25,
+              "top": 86.25,
+              "right": 374,
+              "bottom": 532.5,
+              "left": 16
+            }
+          },
+          {
+            "text": "last line",
+            "rect": {
+              "x": 16,
+              "y": 536.5,
+              "width": 358,
+              "height": 26.25,
+              "top": 536.5,
+              "right": 374,
+              "bottom": 562.75,
+              "left": 16
+            }
+          }
+        ]
+      },
+      "final": {
+        "text": "first line\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \nlast line!",
+        "active": true,
+        "html": "first line\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \nlast line!"
+      },
+      "expected": "first line\nLong text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. Long text with   preserved spacing and wrapping across the available viewport. \nlast line!",
+      "blocked": [],
+      "errors": []
+    },
+    {
+      "name": "blank-paragraph",
+      "origin": "http://127.0.0.1:5173",
+      "draft": "first\n\nthird",
+      "initial": {
+        "text": "first\n\n\n\n\nthird",
+        "html": "<p>first</p><p class=\"is-empty is-editor-empty\"><br class=\"ProseMirror-trailingBreak\"></p><p class=\"is-empty is-editor-empty\">third</p>",
+        "caretPrefix": "firstthird",
+        "textContent": "firstthird",
+        "active": true,
+        "rect": {
+          "x": 16,
+          "y": 56,
+          "width": 1408,
+          "height": 948,
+          "top": 56,
+          "right": 1424,
+          "bottom": 1004,
+          "left": 16
+        },
+        "modal": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 1000,
+          "top": 0,
+          "right": 1440,
+          "bottom": 1000,
+          "left": 0
+        },
+        "font": "",
+        "whiteSpace": "break-spaces",
+        "paragraphs": [
+          {
+            "text": "first",
+            "rect": {
+              "x": 16,
+              "y": 56,
+              "width": 1408,
+              "height": 26.25,
+              "top": 56,
+              "right": 1424,
+              "bottom": 82.25,
+              "left": 16
+            }
+          },
+          {
+            "text": "",
+            "rect": {
+              "x": 16,
+              "y": 86.25,
+              "width": 1408,
+              "height": 26.25,
+              "top": 86.25,
+              "right": 1424,
+              "bottom": 112.5,
+              "left": 16
+            }
+          },
+          {
+            "text": "third",
+            "rect": {
+              "x": 16,
+              "y": 116.5,
+              "width": 1408,
+              "height": 26.25,
+              "top": 116.5,
+              "right": 1424,
+              "bottom": 142.75,
+              "left": 16
+            }
+          }
+        ]
+      },
+      "final": {
+        "text": "first\n\n\n\n\nthird!",
+        "active": false,
+        "html": "<p>first</p><p class=\"is-empty is-editor-empty\"><br class=\"ProseMirror-trailingBreak\"></p><p class=\"is-empty is-editor-empty\">third!</p>"
+      },
+      "expected": "first\n\nthird!",
+      "blocked": [],
+      "errors": [
+        "a.valueOf is not a function\n\n\tin <unknown>\n\tin RichTextInput.svelte\n\tin Drawer.svelte\n\tin InputModal.svelte\n\tin MessageInput.svelte\n\tin Placeholder.svelte\n\tin Chat.svelte\n\tin +page.svelte\n\tin +layout.svelte\n\tin root.svelte\n\tin undefined\n"
+      ]
+    },
+    {
+      "name": "blank-paragraph",
+      "origin": "http://127.0.0.1:5176",
+      "draft": "first\n\nthird",
+      "initial": {
+        "text": "first\n\n\n\n\n\n\n\nthird",
+        "html": "<p>first</p><p><br></p><p><br></p><p>third</p>",
+        "caretPrefix": "firstthird",
+        "textContent": "firstthird",
+        "active": true,
+        "rect": {
+          "x": 16,
+          "y": 56,
+          "width": 1408,
+          "height": 948,
+          "top": 56,
+          "right": 1424,
+          "bottom": 1004,
+          "left": 16
+        },
+        "modal": {
+          "x": 0,
+          "y": 0,
+          "width": 1440,
+          "height": 1000,
+          "top": 0,
+          "right": 1440,
+          "bottom": 1000,
+          "left": 0
+        },
+        "font": "",
+        "whiteSpace": "break-spaces",
+        "paragraphs": [
+          {
+            "text": "first",
+            "rect": {
+              "x": 16,
+              "y": 56,
+              "width": 1408,
+              "height": 26.25,
+              "top": 56,
+              "right": 1424,
+              "bottom": 82.25,
+              "left": 16
+            }
+          },
+          {
+            "text": "",
+            "rect": {
+              "x": 16,
+              "y": 86.25,
+              "width": 1408,
+              "height": 26.25,
+              "top": 86.25,
+              "right": 1424,
+              "bottom": 112.5,
+              "left": 16
+            }
+          },
+          {
+            "text": "",
+            "rect": {
+              "x": 16,
+              "y": 116.5,
+              "width": 1408,
+              "height": 26.25,
+              "top": 116.5,
+              "right": 1424,
+              "bottom": 142.75,
+              "left": 16
+            }
+          },
+          {
+            "text": "third",
+            "rect": {
+              "x": 16,
+              "y": 146.75,
+              "width": 1408,
+              "height": 26.25,
+              "top": 146.75,
+              "right": 1424,
+              "bottom": 173,
+              "left": 16
+            }
+          }
+        ]
+      },
+      "final": {
+        "text": "first\n\n\n\n\nthird!",
+        "active": true,
+        "html": "first\n\n\n\n\nthird!"
+      },
+      "expected": "first\n\nthird!",
+      "blocked": [],
+      "errors": []
+    },
+    {
+      "name": "svg-escaped-mount-and-both-exports",
+      "mounted": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"240\" height=\"100\"><defs><linearGradient id=\"paint\"><stop offset=\"0\" stop-color=\"green\"></stop></linearGradient></defs><rect id=\"safe\" width=\"50\" height=\"50\" fill=\"url(&quot;#paint&quot;)\"></rect><rect id=\"escape\" x=\"60\" width=\"50\" height=\"50\"></rect><rect width=\"50\" height=\"50\"></rect><path d=\"M0 0L10 10\"></path></svg>",
+      "downloads": [
+        {
+          "label": "Download",
+          "file": "/private/tmp/react-stage5a-extended-round2/artifact.svg",
+          "text": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"240\" height=\"100\"><defs><linearGradient id=\"paint\"><stop offset=\"0\" stop-color=\"green\"></stop></linearGradient></defs><rect id=\"safe\" width=\"50\" height=\"50\" fill=\"url(&quot;#paint&quot;)\"></rect><rect id=\"escape\" x=\"60\" width=\"50\" height=\"50\"></rect><rect width=\"50\" height=\"50\"></rect><path d=\"M0 0L10 10\"></path></svg>"
+        },
+        {
+          "label": "Download as SVG",
+          "file": "/private/tmp/react-stage5a-extended-round2/diagram.svg",
+          "text": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"240\" height=\"100\"><defs><linearGradient id=\"paint\"><stop offset=\"0\" stop-color=\"green\"></stop></linearGradient></defs><rect id=\"safe\" width=\"50\" height=\"50\" fill=\"url(&quot;#paint&quot;)\"></rect><rect id=\"escape\" x=\"60\" width=\"50\" height=\"50\"></rect><rect width=\"50\" height=\"50\"></rect><path d=\"M0 0L10 10\"></path></svg>"
+        }
+      ],
+      "requests": [],
+      "blocked": [],
+      "errors": []
+    }
+  ]
+}

@@ -1,0 +1,14 @@
+{
+  "target": "/private/tmp/react-migration-fresh-install/app/document-qa/frontend",
+  "node_executable": "/usr/local/bin/node",
+  "node_version": "v22.17.1",
+  "legacy_svelte_present_before": false,
+  "actual_npm_ci": "passed",
+  "second_call_without_install": "passed",
+  "npm_ls_all": "passed",
+  "svelte_nodes": [],
+  "receipt": {
+    "fingerprint": "bc3279581f3a75c155e45069b48b1f71082b8df1d95f201cc30f85ea94046e06",
+    "format": 1
+  }
+}

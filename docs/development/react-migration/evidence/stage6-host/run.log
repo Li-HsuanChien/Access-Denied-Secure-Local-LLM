@@ -1,0 +1,44 @@
+{
+  "mode": "host",
+  "output": "/private/tmp/react-stage6-host",
+  "cases": [
+    {
+      "name": "all four workflows through unchanged isolated Python API",
+      "operations": {
+        "health": 4,
+        "history.list": 5,
+        "settings.get": 9,
+        "history.enabled": 9,
+        "history.open": 1,
+        "settings.update": 2,
+        "history.set_enabled": 2,
+        "answering.ask": 5,
+        "history.save": 5,
+        "library.versions": 5,
+        "library.review": 1,
+        "library.publish": 1,
+        "library.status": 1,
+        "library.cancel": 1,
+        "library.rollback": 1,
+        "history.delete": 1,
+        "history.clear": 1
+      },
+      "errors": 0,
+      "blocked": 0
+    },
+    {
+      "name": "disposable host setup and final public API assertions",
+      "operations": {
+        "history.set_enabled": 1,
+        "settings.update": 1,
+        "history.clear": 1,
+        "answering.ask": 1,
+        "history.save": 1,
+        "history.list": 2,
+        "library.versions": 1
+      },
+      "errors": 0,
+      "blocked": 0
+    }
+  ]
+}

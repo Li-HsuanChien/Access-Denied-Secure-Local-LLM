@@ -1,9 +1,3 @@
-# Open WebUI Branding Assets
+# Retained upstream asset notes
 
-This directory contains Open WebUI branding assets and references, including favicons, logos, splash images, app icons, manifests, metadata, and search identifiers.
-
-Open WebUI branding here includes the name, logo, and any visual, textual, or symbolic identifiers that present or preserve Open WebUI attribution.
-
-Do not alter, remove, obscure, or replace Open WebUI branding except as permitted by `LICENSE`.
-
-See also: https://docs.openwebui.com/license.
+The active React build retains local font files and Open WebUI favicon assets from this directory. Historical Open WebUI branding guidance remains applicable to the retained favicon; the source license and notices are at the frontend root. See [UPSTREAM.md](../UPSTREAM.md) for asset provenance and [LICENSE](../LICENSE) for the binding terms.

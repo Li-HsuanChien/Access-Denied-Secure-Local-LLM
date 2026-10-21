@@ -1,0 +1,100 @@
+[
+  {
+    "case": "more-options",
+    "port": 5173,
+    "variant": "desktop-light",
+    "initialMenu": "Keep in Sidebar\nCopy Link",
+    "menuRect": {
+      "x": 936.5,
+      "y": 586.125,
+      "width": 210,
+      "height": 60
+    },
+    "copied": "http://127.0.0.1:5173/?model=secure-qa-local",
+    "copyToasts": [],
+    "afterMenu": "Hide from Sidebar\nCopy Link",
+    "pinStorage": {},
+    "unsupported": [
+      {
+        "url": "http://127.0.0.1:5173/api/v1/users/user/settings/update",
+        "body": "{\"ui\":{\"pinnedModels\":[\"secure-qa-local\"]}}"
+      },
+      {
+        "url": "http://127.0.0.1:5173/api/v1/users/user/settings/update",
+        "body": "{\"ui\":{\"pinnedModels\":[]}}"
+      }
+    ],
+    "errors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "blocked": []
+  },
+  {
+    "case": "more-options",
+    "port": 5173,
+    "variant": "narrow-dark",
+    "initialMenu": "Keep in Sidebar\nCopy Link",
+    "menuRect": {
+      "x": 95.5,
+      "y": 524.90625,
+      "width": 210,
+      "height": 60
+    },
+    "copied": "http://127.0.0.1:5173/?model=secure-qa-local",
+    "copyToasts": [],
+    "afterMenu": "Hide from Sidebar\nCopy Link",
+    "pinStorage": {},
+    "unsupported": [
+      {
+        "url": "http://127.0.0.1:5173/api/v1/users/user/settings/update",
+        "body": "{\"ui\":{\"pinnedModels\":[\"secure-qa-local\"]}}"
+      },
+      {
+        "url": "http://127.0.0.1:5173/api/v1/users/user/settings/update",
+        "body": "{\"ui\":{\"pinnedModels\":[]}}"
+      }
+    ],
+    "errors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "blocked": []
+  },
+  {
+    "case": "more-options",
+    "port": 4177,
+    "variant": "desktop-light",
+    "initialMenu": "Keep in Sidebar\nCopy Link",
+    "menuRect": {
+      "x": 936.5,
+      "y": 586.125,
+      "width": 210,
+      "height": 60
+    },
+    "copied": "http://127.0.0.1:4177/?model=secure-qa-local",
+    "copyToasts": [],
+    "afterMenu": "Hide from Sidebar\nCopy Link",
+    "pinStorage": {},
+    "unsupported": [],
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "case": "more-options",
+    "port": 4177,
+    "variant": "narrow-dark",
+    "initialMenu": "Keep in Sidebar\nCopy Link",
+    "menuRect": {
+      "x": 95.5,
+      "y": 524.90625,
+      "width": 210,
+      "height": 60
+    },
+    "copied": "http://127.0.0.1:4177/?model=secure-qa-local",
+    "copyToasts": [],
+    "afterMenu": "Hide from Sidebar\nCopy Link",
+    "pinStorage": {},
+    "unsupported": [],
+    "errors": [],
+    "blocked": []
+  }
+]

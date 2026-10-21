@@ -1,0 +1,52 @@
+[
+  {
+    "run": 0,
+    "base": {
+      "pixels": 0,
+      "box": null,
+      "max": 0
+    },
+    "hover": {
+      "pixels": 0,
+      "box": null,
+      "max": 0
+    },
+    "rangesStylesStable": true,
+    "animationsStable": true
+  },
+  {
+    "run": 1,
+    "base": {
+      "pixels": 6667,
+      "box": [
+        537,
+        502,
+        1207,
+        723
+      ],
+      "max": 129
+    },
+    "hover": {
+      "pixels": 0,
+      "box": null,
+      "max": 0
+    },
+    "rangesStylesStable": true,
+    "animationsStable": true
+  },
+  {
+    "run": 2,
+    "base": {
+      "pixels": 0,
+      "box": null,
+      "max": 0
+    },
+    "hover": {
+      "pixels": 0,
+      "box": null,
+      "max": 0
+    },
+    "rangesStylesStable": true,
+    "animationsStable": true
+  }
+]

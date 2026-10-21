@@ -1,0 +1,544 @@
+{
+  "outcome": "passed",
+  "source": "The fictional Alder station maintenance window is Tuesday from 09:00 to 11:00. Supervisor Mira must approve maintenance before work begins.",
+  "question": "When is the Alder station maintenance window, and who must approve the work?",
+  "appOrigin": "http://127.0.0.1:4177",
+  "hostOrigin": "http://127.0.0.1:8767",
+  "browserVersion": "151.0.7922.34",
+  "requests": [
+    {
+      "operation": "health",
+      "request_id": null,
+      "started": "2026-10-21T04:55:47.740Z",
+      "status": 200,
+      "result": {
+        "status": "ok",
+        "ready": true,
+        "api_version": "secure-qa-dev/1",
+        "answering": {
+          "ready": true,
+          "model_id": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+          "name": "Qwen3 4B Instruct 2507",
+          "quant": "Q4_K_M",
+          "ctx_size": 4096,
+          "api_version": "2026-09-v1",
+          "runtime_version": "0.2.0",
+          "stub": false,
+          "error": null
+        },
+        "library": {
+          "ready": true,
+          "active_version": "v0001",
+          "chunk_count": 1,
+          "document_count": 1,
+          "embedding_model": "all-MiniLM-L6-v2",
+          "error": null
+        },
+        "preferences": {
+          "general_knowledge": false,
+          "history_enabled": true
+        }
+      },
+      "ended": "2026-10-21T04:55:47.756Z"
+    },
+    {
+      "operation": "library.versions",
+      "request_id": "352bdc17-d885-45cb-8071-0775bbbf92a3",
+      "started": "2026-10-21T04:55:47.744Z",
+      "status": 200,
+      "result": {
+        "request_id": "352bdc17-d885-45cb-8071-0775bbbf92a3",
+        "operation": "library.versions",
+        "result": {
+          "active": "v0001",
+          "versions": [
+            {
+              "version_id": "v0001",
+              "status": "active",
+              "created_at": "2026-10-21T00:18:58+00:00",
+              "document_count": 1,
+              "chunk_count": 1
+            }
+          ]
+        }
+      },
+      "ended": "2026-10-21T04:55:47.756Z"
+    },
+    {
+      "operation": "settings.get",
+      "request_id": "27e9e0aa-848e-41b7-848d-51ad0601cbce",
+      "started": "2026-10-21T04:55:47.745Z",
+      "status": 200,
+      "result": {
+        "request_id": "27e9e0aa-848e-41b7-848d-51ad0601cbce",
+        "operation": "settings.get",
+        "result": {
+          "general_knowledge": false
+        }
+      },
+      "ended": "2026-10-21T04:55:47.757Z"
+    },
+    {
+      "operation": "history.enabled",
+      "request_id": "a85b3853-4e2d-4bba-8c04-fb4aa25b51d2",
+      "started": "2026-10-21T04:55:47.749Z",
+      "status": 200,
+      "result": {
+        "request_id": "a85b3853-4e2d-4bba-8c04-fb4aa25b51d2",
+        "operation": "history.enabled",
+        "result": {
+          "enabled": true
+        }
+      },
+      "ended": "2026-10-21T04:55:47.757Z"
+    },
+    {
+      "operation": "library.review",
+      "request_id": "b7d9ae06-57af-4b8f-819f-9f1569c3be18",
+      "started": "2026-10-21T04:55:47.798Z",
+      "status": 200,
+      "result": {
+        "request_id": "b7d9ae06-57af-4b8f-819f-9f1569c3be18",
+        "operation": "library.review",
+        "result": {
+          "review_id": "f615817998854e56bf5bb2ba0a811c09",
+          "accepted": [
+            {
+              "name": "alder-station.pdf",
+              "size": 716
+            }
+          ],
+          "rejected": [],
+          "requires_confirmation": false,
+          "warning": null
+        }
+      },
+      "ended": "2026-10-21T04:55:47.906Z"
+    },
+    {
+      "operation": "library.publish",
+      "request_id": "e5524827-ee37-4813-9575-98882e83c5d4",
+      "started": "2026-10-21T04:55:48.007Z",
+      "status": 200,
+      "result": {
+        "request_id": "e5524827-ee37-4813-9575-98882e83c5d4",
+        "operation": "library.publish",
+        "result": {
+          "version_id": "v0002",
+          "document_count": 1,
+          "chunk_count": 1
+        }
+      },
+      "ended": "2026-10-21T04:55:48.183Z"
+    },
+    {
+      "operation": "library.versions",
+      "request_id": "df897a7d-9b2d-4137-9b99-d299138cbd2b",
+      "started": "2026-10-21T04:55:48.185Z",
+      "status": 200,
+      "result": {
+        "request_id": "df897a7d-9b2d-4137-9b99-d299138cbd2b",
+        "operation": "library.versions",
+        "result": {
+          "active": "v0002",
+          "versions": [
+            {
+              "version_id": "v0002",
+              "status": "active",
+              "created_at": "2026-10-21T04:55:48+00:00",
+              "document_count": 1,
+              "chunk_count": 1
+            },
+            {
+              "version_id": "v0001",
+              "status": "previous",
+              "created_at": "2026-10-21T00:18:58+00:00",
+              "document_count": 1,
+              "chunk_count": 1
+            }
+          ]
+        }
+      },
+      "ended": "2026-10-21T04:55:48.189Z"
+    },
+    {
+      "operation": "health",
+      "request_id": null,
+      "started": "2026-10-21T04:55:48.221Z",
+      "status": 200,
+      "result": {
+        "status": "ok",
+        "ready": true,
+        "api_version": "secure-qa-dev/1",
+        "answering": {
+          "ready": true,
+          "model_id": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+          "name": "Qwen3 4B Instruct 2507",
+          "quant": "Q4_K_M",
+          "ctx_size": 4096,
+          "api_version": "2026-09-v1",
+          "runtime_version": "0.2.0",
+          "stub": false,
+          "error": null
+        },
+        "library": {
+          "ready": true,
+          "active_version": "v0002",
+          "chunk_count": 1,
+          "document_count": 1,
+          "embedding_model": "all-MiniLM-L6-v2",
+          "error": null
+        },
+        "preferences": {
+          "general_knowledge": false,
+          "history_enabled": true
+        }
+      },
+      "ended": "2026-10-21T04:55:48.224Z"
+    },
+    {
+      "operation": "health",
+      "request_id": null,
+      "started": "2026-10-21T04:55:48.269Z",
+      "status": 200,
+      "result": {
+        "status": "ok",
+        "ready": true,
+        "api_version": "secure-qa-dev/1",
+        "answering": {
+          "ready": true,
+          "model_id": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+          "name": "Qwen3 4B Instruct 2507",
+          "quant": "Q4_K_M",
+          "ctx_size": 4096,
+          "api_version": "2026-09-v1",
+          "runtime_version": "0.2.0",
+          "stub": false,
+          "error": null
+        },
+        "library": {
+          "ready": true,
+          "active_version": "v0002",
+          "chunk_count": 1,
+          "document_count": 1,
+          "embedding_model": "all-MiniLM-L6-v2",
+          "error": null
+        },
+        "preferences": {
+          "general_knowledge": false,
+          "history_enabled": true
+        }
+      },
+      "ended": "2026-10-21T04:55:48.310Z"
+    },
+    {
+      "operation": "settings.get",
+      "request_id": "0c74a322-80fb-4b6d-bd2a-bd22f90aa56d",
+      "started": "2026-10-21T04:55:48.309Z",
+      "status": 200,
+      "result": {
+        "request_id": "0c74a322-80fb-4b6d-bd2a-bd22f90aa56d",
+        "operation": "settings.get",
+        "result": {
+          "general_knowledge": false
+        }
+      },
+      "ended": "2026-10-21T04:55:48.313Z"
+    },
+    {
+      "operation": "history.enabled",
+      "request_id": "b0ac6137-8256-4487-980c-5f9b5252d1fa",
+      "started": "2026-10-21T04:55:48.309Z",
+      "status": 200,
+      "result": {
+        "request_id": "b0ac6137-8256-4487-980c-5f9b5252d1fa",
+        "operation": "history.enabled",
+        "result": {
+          "enabled": true
+        }
+      },
+      "ended": "2026-10-21T04:55:48.313Z"
+    },
+    {
+      "operation": "answering.ask",
+      "request_id": "28cdeb8c-15e3-4537-ad64-9e74e99d3b20",
+      "started": "2026-10-21T04:55:48.440Z",
+      "status": 200,
+      "result": {
+        "request_id": "28cdeb8c-15e3-4537-ad64-9e74e99d3b20",
+        "operation": "answering.ask",
+        "result": {
+          "request_id": "28cdeb8c-15e3-4537-ad64-9e74e99d3b20",
+          "question": "When is the Alder station maintenance window, and who must approve the work?",
+          "status": "answered",
+          "evidence_mode": "text",
+          "documents": [
+            {
+              "text": "The Alder station maintenance window is Tuesday from 09:00 to 11:00.",
+              "citation_ids": [
+                "S1"
+              ]
+            },
+            {
+              "text": "Supervisor Mira must approve maintenance before work begins.",
+              "citation_ids": [
+                "S1"
+              ]
+            }
+          ],
+          "general_knowledge": null,
+          "limitations": [
+            "None. The passages clearly state the maintenance window and the required approval. There is no ambiguity or missing information."
+          ],
+          "citations": [
+            {
+              "citation_id": "S1",
+              "document_id": "doc_dc7c79501c776328f65af9c9",
+              "document_title": "Alder-Station",
+              "source_filename": "alder-station.pdf",
+              "page_start": 1,
+              "page_end": 1,
+              "pages": [
+                {
+                  "page_number": 1,
+                  "page_char_start": 0,
+                  "page_char_end": 139,
+                  "highlight_rects": [],
+                  "coordinates_reliable": false,
+                  "page_width": 1000,
+                  "page_height": 792
+                }
+              ],
+              "chunk_ids": [
+                "chk_40e48aed574b1725f6d0865d"
+              ],
+              "char_start": 0,
+              "char_end": 139,
+              "text_checksum_sha256": "f03e5a1f68b156d7c5438f037d6a510e24d2e01b9392abc0a298e032228436e7",
+              "quote": "The fictional Alder station maintenance window is Tuesday from 09:00 to 11:00. Supervisor Mira must approve maintenance before work begins.",
+              "evidence_type": "text",
+              "score": 0.7959,
+              "rank": 1
+            }
+          ],
+          "evidence": [
+            {
+              "citation_id": "S1",
+              "chunk_id": "chk_40e48aed574b1725f6d0865d",
+              "document_id": "doc_dc7c79501c776328f65af9c9",
+              "page_start": 1,
+              "page_end": 1,
+              "score": 0.7959,
+              "rank": 1,
+              "cited": true
+            }
+          ],
+          "warnings": [],
+          "model": {
+            "model_id": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+            "name": "Qwen3 4B Instruct 2507",
+            "quant": "Q4_K_M",
+            "api_version": "2026-09-v1",
+            "runtime_version": "0.2.0",
+            "stub": false
+          },
+          "collection_version": "v0002",
+          "prompt_version": "e3-rag-2026-10-05.1",
+          "timing": {
+            "retrieval_ms": 7.1,
+            "generation_ms": 21009.3,
+            "total_ms": 21017.9,
+            "attempts": 1,
+            "prompt_tokens": 292,
+            "completion_tokens": 72
+          },
+          "error": null,
+          "schema_version": "1.0.0"
+        }
+      },
+      "ended": "2026-10-21T04:56:09.465Z"
+    },
+    {
+      "operation": "history.save",
+      "request_id": "59a52611-e019-452e-a762-06bcd4c4d67e",
+      "started": "2026-10-21T04:56:09.471Z",
+      "status": 200,
+      "result": {
+        "request_id": "59a52611-e019-452e-a762-06bcd4c4d67e",
+        "operation": "history.save",
+        "result": {
+          "saved": true
+        }
+      },
+      "ended": "2026-10-21T04:56:09.490Z"
+    },
+    {
+      "operation": "history.list",
+      "request_id": "ee62c50c-c091-4ee2-bda2-e0562354bb76",
+      "started": "2026-10-21T04:56:09.805Z",
+      "status": 200,
+      "result": {
+        "request_id": "ee62c50c-c091-4ee2-bda2-e0562354bb76",
+        "operation": "history.list",
+        "result": {
+          "conversations": [
+            {
+              "conversation_id": "28cdeb8c-15e3-4537-ad64-9e74e99d3b20",
+              "title": "When is the Alder station maintenance window, and who must approve the work?",
+              "updated_at": "2026-10-21 04:56:09",
+              "model_id": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+              "collection_version": "v0002"
+            },
+            {
+              "conversation_id": "70e695b9-70b4-4a49-b321-35b31ad7d10f",
+              "title": "When is the Alder station maintenance window, and who must approve the work?",
+              "updated_at": "2026-10-21 00:19:24",
+              "model_id": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+              "collection_version": "v0001"
+            }
+          ]
+        }
+      },
+      "ended": "2026-10-21T04:56:09.811Z"
+    },
+    {
+      "operation": "settings.get",
+      "request_id": "0cd46749-15b5-4fb6-8ec6-6d62255c5cf9",
+      "started": "2026-10-21T04:56:09.805Z",
+      "status": 200,
+      "result": {
+        "request_id": "0cd46749-15b5-4fb6-8ec6-6d62255c5cf9",
+        "operation": "settings.get",
+        "result": {
+          "general_knowledge": false
+        }
+      },
+      "ended": "2026-10-21T04:56:09.813Z"
+    },
+    {
+      "operation": "history.enabled",
+      "request_id": "19a137ce-0e86-4d24-bab5-deb68f4d8429",
+      "started": "2026-10-21T04:56:09.805Z",
+      "status": 200,
+      "result": {
+        "request_id": "19a137ce-0e86-4d24-bab5-deb68f4d8429",
+        "operation": "history.enabled",
+        "result": {
+          "enabled": true
+        }
+      },
+      "ended": "2026-10-21T04:56:09.812Z"
+    },
+    {
+      "operation": "history.open",
+      "request_id": "c7bcc0d5-226c-4a01-8480-c2c3edd76381",
+      "started": "2026-10-21T04:56:09.858Z",
+      "status": 200,
+      "result": {
+        "request_id": "c7bcc0d5-226c-4a01-8480-c2c3edd76381",
+        "operation": "history.open",
+        "result": {
+          "conversation": {
+            "conversation_id": "28cdeb8c-15e3-4537-ad64-9e74e99d3b20",
+            "title": "When is the Alder station maintenance window, and who must approve the work?",
+            "updated_at": "2026-10-21 04:56:09",
+            "model_id": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+            "collection_version": "v0002",
+            "answer_json": "{\"request_id\": \"28cdeb8c-15e3-4537-ad64-9e74e99d3b20\", \"question\": \"When is the Alder station maintenance window, and who must approve the work?\", \"status\": \"answered\", \"evidence_mode\": \"text\", \"documents\": [{\"text\": \"The Alder station maintenance window is Tuesday from 09:00 to 11:00.\", \"citation_ids\": [\"S1\"]}, {\"text\": \"Supervisor Mira must approve maintenance before work begins.\", \"citation_ids\": [\"S1\"]}], \"general_knowledge\": null, \"limitations\": [\"None. The passages clearly state the maintenance window and the required approval. There is no ambiguity or missing information.\"], \"citations\": [{\"citation_id\": \"S1\", \"document_id\": \"doc_dc7c79501c776328f65af9c9\", \"document_title\": \"Alder-Station\", \"source_filename\": \"alder-station.pdf\", \"page_start\": 1, \"page_end\": 1, \"pages\": [{\"page_number\": 1, \"page_char_start\": 0, \"page_char_end\": 139, \"highlight_rects\": [], \"coordinates_reliable\": false, \"page_width\": 1000, \"page_height\": 792}], \"chunk_ids\": [\"chk_40e48aed574b1725f6d0865d\"], \"char_start\": 0, \"char_end\": 139, \"text_checksum_sha256\": \"f03e5a1f68b156d7c5438f037d6a510e24d2e01b9392abc0a298e032228436e7\", \"quote\": \"The fictional Alder station maintenance window is Tuesday from 09:00 to 11:00. Supervisor Mira must approve maintenance before work begins.\", \"evidence_type\": \"text\", \"score\": 0.7959, \"rank\": 1}], \"evidence\": [{\"citation_id\": \"S1\", \"chunk_id\": \"chk_40e48aed574b1725f6d0865d\", \"document_id\": \"doc_dc7c79501c776328f65af9c9\", \"page_start\": 1, \"page_end\": 1, \"score\": 0.7959, \"rank\": 1, \"cited\": true}], \"warnings\": [], \"model\": {\"model_id\": \"qwen_qwen3-4b-instruct-2507-q4_k_m\", \"name\": \"Qwen3 4B Instruct 2507\", \"quant\": \"Q4_K_M\", \"api_version\": \"2026-09-v1\", \"runtime_version\": \"0.2.0\", \"stub\": false}, \"collection_version\": \"v0002\", \"prompt_version\": \"e3-rag-2026-10-05.1\", \"timing\": {\"retrieval_ms\": 7.1, \"generation_ms\": 21009.3, \"total_ms\": 21017.9, \"attempts\": 1, \"prompt_tokens\": 292, \"completion_tokens\": 72}, \"error\": null, \"schema_version\": \"1.0.0\"}",
+            "answer": {
+              "request_id": "28cdeb8c-15e3-4537-ad64-9e74e99d3b20",
+              "question": "When is the Alder station maintenance window, and who must approve the work?",
+              "status": "answered",
+              "evidence_mode": "text",
+              "documents": [
+                {
+                  "text": "The Alder station maintenance window is Tuesday from 09:00 to 11:00.",
+                  "citation_ids": [
+                    "S1"
+                  ]
+                },
+                {
+                  "text": "Supervisor Mira must approve maintenance before work begins.",
+                  "citation_ids": [
+                    "S1"
+                  ]
+                }
+              ],
+              "general_knowledge": null,
+              "limitations": [
+                "None. The passages clearly state the maintenance window and the required approval. There is no ambiguity or missing information."
+              ],
+              "citations": [
+                {
+                  "citation_id": "S1",
+                  "document_id": "doc_dc7c79501c776328f65af9c9",
+                  "document_title": "Alder-Station",
+                  "source_filename": "alder-station.pdf",
+                  "page_start": 1,
+                  "page_end": 1,
+                  "pages": [
+                    {
+                      "page_number": 1,
+                      "page_char_start": 0,
+                      "page_char_end": 139,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 1000,
+                      "page_height": 792
+                    }
+                  ],
+                  "chunk_ids": [
+                    "chk_40e48aed574b1725f6d0865d"
+                  ],
+                  "char_start": 0,
+                  "char_end": 139,
+                  "text_checksum_sha256": "f03e5a1f68b156d7c5438f037d6a510e24d2e01b9392abc0a298e032228436e7",
+                  "quote": "The fictional Alder station maintenance window is Tuesday from 09:00 to 11:00. Supervisor Mira must approve maintenance before work begins.",
+                  "evidence_type": "text",
+                  "score": 0.7959,
+                  "rank": 1
+                }
+              ],
+              "evidence": [
+                {
+                  "citation_id": "S1",
+                  "chunk_id": "chk_40e48aed574b1725f6d0865d",
+                  "document_id": "doc_dc7c79501c776328f65af9c9",
+                  "page_start": 1,
+                  "page_end": 1,
+                  "score": 0.7959,
+                  "rank": 1,
+                  "cited": true
+                }
+              ],
+              "warnings": [],
+              "model": {
+                "model_id": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+                "name": "Qwen3 4B Instruct 2507",
+                "quant": "Q4_K_M",
+                "api_version": "2026-09-v1",
+                "runtime_version": "0.2.0",
+                "stub": false
+              },
+              "collection_version": "v0002",
+              "prompt_version": "e3-rag-2026-10-05.1",
+              "timing": {
+                "retrieval_ms": 7.1,
+                "generation_ms": 21009.3,
+                "total_ms": 21017.9,
+                "attempts": 1,
+                "prompt_tokens": 292,
+                "completion_tokens": 72
+              },
+              "error": null,
+              "schema_version": "1.0.0"
+            }
+          }
+        }
+      },
+      "ended": "2026-10-21T04:56:09.860Z"
+    }
+  ],
+  "errors": [],
+  "blocked": []
+}

@@ -1,0 +1,16 @@
+[
+  {
+    "variant": "desktop-dark",
+    "menuChanged": 38,
+    "menuMax": 1,
+    "innerChanged": 0,
+    "innerMax": 0
+  },
+  {
+    "variant": "narrow-dark",
+    "menuChanged": 40,
+    "menuMax": 1,
+    "innerChanged": 2,
+    "innerMax": 1
+  }
+]

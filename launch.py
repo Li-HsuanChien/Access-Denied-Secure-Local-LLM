@@ -3,7 +3,7 @@
 
 Brings up the loopback-only development stack the README describes, doing every
 manual step for you: create the Python environment, install the backend and
-frontend dependencies, then start the dev host and the Open WebUI frontend and
+frontend dependencies, then start the dev host and the React frontend and
 open the browser. It is interactive - it explains each install and lets you pick
 a mode - and runs the same on Windows, macOS and Linux.
 
@@ -26,10 +26,13 @@ import argparse
 import hashlib
 import json
 import os
+import platform as platform_module
+import re
 import shutil
 import signal
 import subprocess
 import sys
+import tempfile
 import time
 import urllib.request
 import webbrowser
@@ -49,6 +52,10 @@ SHORTLIST = GGUF_DIR / "shortlist.json"
 HOST_URL = "http://127.0.0.1:8765/health"
 RUNTIME_URL = "http://127.0.0.1:8080/health"
 FRONTEND_URL = "http://127.0.0.1:5173/"
+NODE_EXECUTABLE: str | None = None
+NODE_VERSION: str | None = None
+INSTALL_RECEIPT = ".launcher-install-receipt.json"
+INSTALL_RECEIPT_FORMAT = 1
 
 # The default real-model pick (see shortlist.json / docs/week1-candidate-models.md).
 DEFAULT_MODEL_KEY = "qwen3-4b-2507"
@@ -146,19 +153,28 @@ def check_prerequisites() -> None:
              "Install a newer Python from https://www.python.org/downloads/ and run again.")
     ok(f"Python {sys.version.split()[0]}")
 
+    global NODE_EXECUTABLE, NODE_VERSION
     node = shutil.which("node")
     npm = shutil.which("npm")
     if not node or not npm:
         hint = {
-            "nt": "Install Node.js LTS (18-22) from https://nodejs.org/ and reopen the terminal.",
-            "darwin": "Install Node.js LTS (18-22): `brew install node@22`, or from https://nodejs.org/.",
-        }.get(sys.platform, "Install Node.js LTS (18-22) from your package manager or https://nodejs.org/.")
+            "nt": "Install Node.js 20-22 from https://nodejs.org/ and reopen the terminal.",
+            "darwin": "Install Node.js 20-22: `brew install node@22`, or from https://nodejs.org/.",
+        }.get(sys.platform, "Install Node.js 20-22 from your package manager or https://nodejs.org/.")
         fail(f"Node.js and npm are required for the frontend but were not found on PATH.\n    {hint}")
     try:
-        ver = subprocess.run([node, "--version"], capture_output=True, text=True).stdout.strip()
+        result = subprocess.run([node, "--version"], capture_output=True, text=True)
+        if result.returncode != 0:
+            fail("Could not read the Node.js version. Reinstall Node.js 20-22 and try again.")
+        ver = result.stdout.strip()
+        match = re.fullmatch(r"v?(\d+)\.\d+\.\d+", ver)
+        if not match or not 20 <= int(match.group(1)) <= 22:
+            fail(f"Node.js 20 through 22 is required; found {ver or 'an unknown version'}. Install Node.js 20-22 and run again.")
+        NODE_EXECUTABLE = node
+        NODE_VERSION = ver
         ok(f"Node.js {ver}")
-    except OSError:
-        ok("Node.js found")
+    except OSError as exc:
+        fail(f"Could not run Node.js ({exc}). Install Node.js 20-22 and try again.")
 
 
 # -------------------------------------------------- python environment --
@@ -194,13 +210,76 @@ def ensure_backend_deps(py: Path) -> None:
     ok("Backend dependencies installed.")
 
 
-def ensure_frontend_deps() -> None:
+def install_fingerprint(frontend_dir: Path, node_version: str, platform_name: str, architecture: str) -> str:
+    """Hash exact manifests and runtime identity using unambiguous length-delimited fields."""
+    match = re.fullmatch(r"v?(\d+)\.\d+\.\d+", node_version)
+    if not match or not 20 <= int(match.group(1)) <= 22:
+        raise ValueError(f"Unsupported Node.js version for frontend install receipt: {node_version}")
+    fields = (
+        str(INSTALL_RECEIPT_FORMAT).encode(),
+        (frontend_dir / "package.json").read_bytes(),
+        (frontend_dir / "package-lock.json").read_bytes(),
+        match.group(1).encode(),
+        platform_name.encode(),
+        architecture.encode(),
+    )
+    digest = hashlib.sha256()
+    for field in fields:
+        digest.update(len(field).to_bytes(8, "big"))
+        digest.update(b":")
+        digest.update(field)
+        digest.update(b";")
+    return digest.hexdigest()
+
+
+def _frontend_packages_present(frontend_dir: Path) -> bool:
+    return all((frontend_dir / "node_modules" / name / "package.json").is_file()
+               for name in ("react", "react-dom", "vite"))
+
+
+def ensure_frontend_deps(
+    frontend_dir: Path = FRONTEND_DIR,
+    node_version: str | None = None,
+    platform: str | None = None,
+    architecture: str | None = None,
+) -> None:
     step("Installing frontend dependencies")
-    if (FRONTEND_DIR / "node_modules").is_dir():
-        ok("node_modules/ already present - skipping npm install.")
-        return
-    info("Running `npm ci` to install the pinned Open WebUI frontend packages (one-time, a few minutes).")
-    run(npm_cmd("ci"), cwd=FRONTEND_DIR)
+    frontend_dir = Path(frontend_dir)
+    node_version = node_version or NODE_VERSION
+    if not node_version:
+        fail("Node.js version was not checked. Run prerequisite checks before installing frontend dependencies.")
+    platform = platform or sys.platform
+    architecture = architecture or platform_module.machine()
+    modules = frontend_dir / "node_modules"
+    receipt = modules / INSTALL_RECEIPT
+    fingerprint = install_fingerprint(frontend_dir, node_version, platform, architecture)
+    try:
+        data = json.loads(receipt.read_text(encoding="utf-8"))
+        if (modules.is_dir() and _frontend_packages_present(frontend_dir)
+                and data == {"format": INSTALL_RECEIPT_FORMAT, "fingerprint": fingerprint}):
+            ok("Frontend dependencies match the manifests and Node.js runtime.")
+            return
+    except (OSError, ValueError):
+        pass
+
+    # Never leave a stale receipt that could survive a failed or partial npm ci.
+    receipt.unlink(missing_ok=True)
+    info("Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).")
+    run(npm_cmd("ci"), cwd=frontend_dir)
+    if not _frontend_packages_present(frontend_dir):
+        fail("npm ci completed but React, React DOM, or Vite is missing from node_modules.")
+    payload = json.dumps({"format": INSTALL_RECEIPT_FORMAT, "fingerprint": fingerprint}, sort_keys=True) + "\n"
+    temp_name = None
+    try:
+        with tempfile.NamedTemporaryFile("w", encoding="utf-8", dir=modules, prefix=".launcher-receipt-", delete=False) as stream:
+            temp_name = stream.name
+            stream.write(payload)
+            stream.flush()
+            os.fsync(stream.fileno())
+        os.replace(temp_name, receipt)
+    finally:
+        if temp_name and os.path.exists(temp_name):
+            os.unlink(temp_name)
     ok("Frontend dependencies installed.")
 
 

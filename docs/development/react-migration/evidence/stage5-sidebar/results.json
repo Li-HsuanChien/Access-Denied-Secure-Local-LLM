@@ -1,0 +1,400 @@
+[
+  {
+    "port": 5173,
+    "variant": "light",
+    "sidebar": "Access Denied\nNew Chat\n⌘⇧O\nLibrary\nHistory\nSettings\nModels\nDocument Assistant",
+    "section": "true",
+    "row": {
+      "html": "<div class=\"mt-0.5 pb-1.5\" id=\"pinned-models-list\"><!----><!----><div class=\" flex justify-center text-gray-800 dark:text-gray-200 cursor-grab relative group\" data-id=\"secure-qa-local\"><a class=\"grow flex items-center space-x-2 rounded-xl px-2 py-[0.4375rem] group-hover:bg-gray-100 dark:group-hover:bg-gray-900 transition\" draggable=\"false\" href=\"/?model=secure-qa-local\"><div class=\"self-center shrink-0\"><img class=\" size-4 rounded-full\" alt=\"logo\" src=\"/favicon.png\"></div> <div class=\"flex self-center translate-y-[0.5px]\"><div class=\" self-center text-[0.8125rem] leading-5 line-clamp-1\">Document Assistant</div></div></a> <!----></div></div>",
+      "rect": {
+        "x": 6,
+        "y": 206,
+        "width": 232,
+        "height": 40,
+        "top": 206,
+        "right": 238,
+        "bottom": 246,
+        "left": 6
+      },
+      "images": [
+        {
+          "src": "/favicon.png",
+          "natural": 512
+        }
+      ]
+    },
+    "errors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON",
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "blocked": [],
+    "unpinTooltip": "Unpin",
+    "afterUnpin": "Access Denied\nNew Chat\n⌘⇧O\nLibrary\nHistory\nSettings",
+    "folder": "false",
+    "afterClick": {
+      "url": "/?model=secure-qa-local",
+      "hasPin": 1,
+      "input": "\n",
+      "asks": 0,
+      "saves": 0,
+      "sidebarVisible": true,
+      "sidebarState": "true"
+    }
+  },
+  {
+    "port": 5176,
+    "variant": "light",
+    "sidebar": "Access Denied\nNew Chat\n⌘⇧O\nLibrary\nHistory\nSettings\nModels\nDocument Assistant",
+    "section": "true",
+    "row": {
+      "html": "<div class=\"mt-0.5 pb-1.5\" id=\"pinned-models-list\"><div class=\"flex justify-center text-gray-800 dark:text-gray-200 cursor-grab relative group\" data-id=\"secure-qa-local\"><a class=\"grow flex items-center space-x-2 rounded-xl px-2 py-[0.4375rem] group-hover:bg-gray-100 dark:group-hover:bg-gray-900 transition\" href=\"/?model=secure-qa-local\" draggable=\"false\"><div class=\"self-center shrink-0\"><img class=\"size-4 rounded-full\" alt=\"logo\" src=\"/favicon.png\"></div><div class=\"flex self-center translate-y-[0.5px]\"><div class=\"self-center text-[0.8125rem] leading-5 line-clamp-1\">Document Assistant</div></div></a></div></div>",
+      "rect": {
+        "x": 6,
+        "y": 206,
+        "width": 232,
+        "height": 40,
+        "top": 206,
+        "right": 238,
+        "bottom": 246,
+        "left": 6
+      },
+      "images": [
+        {
+          "src": "/favicon.png",
+          "natural": 512
+        }
+      ]
+    },
+    "errors": [],
+    "blocked": [],
+    "unpinTooltip": "Unpin",
+    "afterUnpin": "Access Denied\nNew Chat\n⌘⇧O\nLibrary\nHistory\nSettings",
+    "folder": "false",
+    "afterClick": {
+      "url": "/?model=secure-qa-local",
+      "hasPin": 1,
+      "input": "",
+      "asks": 0,
+      "saves": 0,
+      "sidebarVisible": true,
+      "sidebarState": "true"
+    }
+  },
+  {
+    "port": 5173,
+    "variant": "dark",
+    "sidebar": "Access Denied\nNew Chat\n⌘⇧O\nLibrary\nHistory\nSettings\nModels\nDocument Assistant",
+    "section": "true",
+    "row": {
+      "html": "<div class=\"mt-0.5 pb-1.5\" id=\"pinned-models-list\"><!----><!----><div class=\" flex justify-center text-gray-800 dark:text-gray-200 cursor-grab relative group\" data-id=\"secure-qa-local\"><a class=\"grow flex items-center space-x-2 rounded-xl px-2 py-[0.4375rem] group-hover:bg-gray-100 dark:group-hover:bg-gray-900 transition\" draggable=\"false\" href=\"/?model=secure-qa-local\"><div class=\"self-center shrink-0\"><img class=\" size-4 rounded-full\" alt=\"logo\" src=\"/favicon.png\"></div> <div class=\"flex self-center translate-y-[0.5px]\"><div class=\" self-center text-[0.8125rem] leading-5 line-clamp-1\">Document Assistant</div></div></a> <!----></div></div>",
+      "rect": {
+        "x": 6,
+        "y": 206,
+        "width": 232,
+        "height": 40,
+        "top": 206,
+        "right": 238,
+        "bottom": 246,
+        "left": 6
+      },
+      "images": [
+        {
+          "src": "/favicon.png",
+          "natural": 512
+        }
+      ]
+    },
+    "errors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON",
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "blocked": [],
+    "unpinTooltip": "Unpin",
+    "afterUnpin": "Access Denied\nNew Chat\n⌘⇧O\nLibrary\nHistory\nSettings",
+    "folder": "false",
+    "afterClick": {
+      "url": "/?model=secure-qa-local",
+      "hasPin": 1,
+      "input": "\n",
+      "asks": 0,
+      "saves": 0,
+      "sidebarVisible": true,
+      "sidebarState": "true"
+    }
+  },
+  {
+    "port": 5176,
+    "variant": "dark",
+    "sidebar": "Access Denied\nNew Chat\n⌘⇧O\nLibrary\nHistory\nSettings\nModels\nDocument Assistant",
+    "section": "true",
+    "row": {
+      "html": "<div class=\"mt-0.5 pb-1.5\" id=\"pinned-models-list\"><div class=\"flex justify-center text-gray-800 dark:text-gray-200 cursor-grab relative group\" data-id=\"secure-qa-local\"><a class=\"grow flex items-center space-x-2 rounded-xl px-2 py-[0.4375rem] group-hover:bg-gray-100 dark:group-hover:bg-gray-900 transition\" href=\"/?model=secure-qa-local\" draggable=\"false\"><div class=\"self-center shrink-0\"><img class=\"size-4 rounded-full\" alt=\"logo\" src=\"/favicon.png\"></div><div class=\"flex self-center translate-y-[0.5px]\"><div class=\"self-center text-[0.8125rem] leading-5 line-clamp-1\">Document Assistant</div></div></a></div></div>",
+      "rect": {
+        "x": 6,
+        "y": 206,
+        "width": 232,
+        "height": 40,
+        "top": 206,
+        "right": 238,
+        "bottom": 246,
+        "left": 6
+      },
+      "images": [
+        {
+          "src": "/favicon.png",
+          "natural": 512
+        }
+      ]
+    },
+    "errors": [],
+    "blocked": [],
+    "unpinTooltip": "Unpin",
+    "afterUnpin": "Access Denied\nNew Chat\n⌘⇧O\nLibrary\nHistory\nSettings",
+    "folder": "false",
+    "afterClick": {
+      "url": "/?model=secure-qa-local",
+      "hasPin": 1,
+      "input": "",
+      "asks": 0,
+      "saves": 0,
+      "sidebarVisible": true,
+      "sidebarState": "true"
+    }
+  },
+  {
+    "port": 5173,
+    "variant": "mobile",
+    "sidebar": "Access Denied\nNew Chat\nLibrary\nHistory\nSettings\nModels\nDocument Assistant",
+    "section": "true",
+    "row": {
+      "html": "<div class=\"mt-0.5 pb-1.5\" id=\"pinned-models-list\"><!----><!----><div class=\" flex justify-center text-gray-800 dark:text-gray-200 cursor-grab relative group\" data-id=\"secure-qa-local\"><a class=\"grow flex items-center space-x-2 rounded-xl px-2 py-[0.4375rem] group-hover:bg-gray-100 dark:group-hover:bg-gray-900 transition\" draggable=\"false\" href=\"/?model=secure-qa-local\"><div class=\"self-center shrink-0\"><img class=\" size-4 rounded-full\" alt=\"logo\" src=\"/favicon.png\"></div> <div class=\"flex self-center translate-y-[0.5px]\"><div class=\" self-center text-[0.8125rem] leading-5 line-clamp-1\">Document Assistant</div></div></a> <!----></div></div>",
+      "rect": {
+        "x": 6,
+        "y": 206,
+        "width": 232,
+        "height": 40,
+        "top": 206,
+        "right": 238,
+        "bottom": 246,
+        "left": 6
+      },
+      "images": [
+        {
+          "src": "/favicon.png",
+          "natural": 512
+        }
+      ]
+    },
+    "errors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "blocked": [],
+    "afterClick": {
+      "url": "/?model=secure-qa-local",
+      "hasPin": 1,
+      "input": "\n",
+      "asks": 0,
+      "saves": 0,
+      "sidebarVisible": true,
+      "sidebarState": "false"
+    }
+  },
+  {
+    "port": 5176,
+    "variant": "mobile",
+    "sidebar": "Access Denied\nNew Chat\nLibrary\nHistory\nSettings\nModels\nDocument Assistant",
+    "section": "true",
+    "row": {
+      "html": "<div class=\"mt-0.5 pb-1.5\" id=\"pinned-models-list\"><div class=\"flex justify-center text-gray-800 dark:text-gray-200 cursor-grab relative group\" data-id=\"secure-qa-local\"><a class=\"grow flex items-center space-x-2 rounded-xl px-2 py-[0.4375rem] group-hover:bg-gray-100 dark:group-hover:bg-gray-900 transition\" href=\"/?model=secure-qa-local\" draggable=\"false\"><div class=\"self-center shrink-0\"><img class=\"size-4 rounded-full\" alt=\"logo\" src=\"/favicon.png\"></div><div class=\"flex self-center translate-y-[0.5px]\"><div class=\"self-center text-[0.8125rem] leading-5 line-clamp-1\">Document Assistant</div></div></a></div></div>",
+      "rect": {
+        "x": 6,
+        "y": 206,
+        "width": 232,
+        "height": 40,
+        "top": 206,
+        "right": 238,
+        "bottom": 246,
+        "left": 6
+      },
+      "images": [
+        {
+          "src": "/favicon.png",
+          "natural": 512
+        }
+      ]
+    },
+    "errors": [],
+    "blocked": [],
+    "afterClick": {
+      "url": "/?model=secure-qa-local",
+      "hasPin": 1,
+      "input": "",
+      "asks": 0,
+      "saves": 0,
+      "sidebarVisible": true,
+      "sidebarState": "false"
+    }
+  },
+  {
+    "port": 5173,
+    "variant": "fr",
+    "sidebar": "Access Denied\nNouvelle conversation\n⌘⇧O\nLibrary\nHistory\nSettings\nModèles\nDocument Assistant",
+    "section": "true",
+    "row": {
+      "html": "<div class=\"mt-0.5 pb-1.5\" id=\"pinned-models-list\"><!----><!----><div class=\" flex justify-center text-gray-800 dark:text-gray-200 cursor-grab relative group\" data-id=\"secure-qa-local\"><a class=\"grow flex items-center space-x-2 rounded-xl px-2 py-[0.4375rem] group-hover:bg-gray-100 dark:group-hover:bg-gray-900 transition\" draggable=\"false\" href=\"/?model=secure-qa-local\"><div class=\"self-center shrink-0\"><img class=\" size-4 rounded-full\" alt=\"logo\" src=\"/favicon.png\"></div> <div class=\"flex self-center translate-y-[0.5px]\"><div class=\" self-center text-[0.8125rem] leading-5 line-clamp-1\">Document Assistant</div></div></a> <!----></div></div>",
+      "rect": {
+        "x": 6,
+        "y": 206,
+        "width": 232,
+        "height": 40,
+        "top": 206,
+        "right": 238,
+        "bottom": 246,
+        "left": 6
+      },
+      "images": [
+        {
+          "src": "/favicon.png",
+          "natural": 512
+        }
+      ]
+    },
+    "errors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON",
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "blocked": [],
+    "unpinTooltip": "Désépingler",
+    "afterUnpin": "Access Denied\nNouvelle conversation\n⌘⇧O\nLibrary\nHistory\nSettings",
+    "folder": "false",
+    "afterClick": {
+      "url": "/?model=secure-qa-local",
+      "hasPin": 1,
+      "input": "\n",
+      "asks": 0,
+      "saves": 0,
+      "sidebarVisible": true,
+      "sidebarState": "true"
+    }
+  },
+  {
+    "port": 5176,
+    "variant": "fr",
+    "sidebar": "Access Denied\nNouvelle conversation\n⌘⇧O\nLibrary\nHistory\nSettings\nModèles\nDocument Assistant",
+    "section": "true",
+    "row": {
+      "html": "<div class=\"mt-0.5 pb-1.5\" id=\"pinned-models-list\"><div class=\"flex justify-center text-gray-800 dark:text-gray-200 cursor-grab relative group\" data-id=\"secure-qa-local\"><a class=\"grow flex items-center space-x-2 rounded-xl px-2 py-[0.4375rem] group-hover:bg-gray-100 dark:group-hover:bg-gray-900 transition\" href=\"/?model=secure-qa-local\" draggable=\"false\"><div class=\"self-center shrink-0\"><img class=\"size-4 rounded-full\" alt=\"logo\" src=\"/favicon.png\"></div><div class=\"flex self-center translate-y-[0.5px]\"><div class=\"self-center text-[0.8125rem] leading-5 line-clamp-1\">Document Assistant</div></div></a></div></div>",
+      "rect": {
+        "x": 6,
+        "y": 206,
+        "width": 232,
+        "height": 40,
+        "top": 206,
+        "right": 238,
+        "bottom": 246,
+        "left": 6
+      },
+      "images": [
+        {
+          "src": "/favicon.png",
+          "natural": 512
+        }
+      ]
+    },
+    "errors": [],
+    "blocked": [],
+    "unpinTooltip": "Désépingler",
+    "afterUnpin": "Access Denied\nNouvelle conversation\n⌘⇧O\nLibrary\nHistory\nSettings",
+    "folder": "false",
+    "afterClick": {
+      "url": "/?model=secure-qa-local",
+      "hasPin": 1,
+      "input": "",
+      "asks": 0,
+      "saves": 0,
+      "sidebarVisible": true,
+      "sidebarState": "true"
+    }
+  },
+  {
+    "port": 5173,
+    "variant": "de",
+    "sidebar": "Access Denied\nNeuer Chat\n⌘⇧O\nLibrary\nHistory\nSettings\nModelle\nDocument Assistant",
+    "section": "true",
+    "row": {
+      "html": "<div class=\"mt-0.5 pb-1.5\" id=\"pinned-models-list\"><!----><!----><div class=\" flex justify-center text-gray-800 dark:text-gray-200 cursor-grab relative group\" data-id=\"secure-qa-local\"><a class=\"grow flex items-center space-x-2 rounded-xl px-2 py-[0.4375rem] group-hover:bg-gray-100 dark:group-hover:bg-gray-900 transition\" draggable=\"false\" href=\"/?model=secure-qa-local\"><div class=\"self-center shrink-0\"><img class=\" size-4 rounded-full\" alt=\"logo\" src=\"/favicon.png\"></div> <div class=\"flex self-center translate-y-[0.5px]\"><div class=\" self-center text-[0.8125rem] leading-5 line-clamp-1\">Document Assistant</div></div></a> <!----></div></div>",
+      "rect": {
+        "x": 6,
+        "y": 206,
+        "width": 232,
+        "height": 40,
+        "top": 206,
+        "right": 238,
+        "bottom": 246,
+        "left": 6
+      },
+      "images": [
+        {
+          "src": "/favicon.png",
+          "natural": 512
+        }
+      ]
+    },
+    "errors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON",
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "blocked": [],
+    "unpinTooltip": "Lösen",
+    "afterUnpin": "Access Denied\nNeuer Chat\n⌘⇧O\nLibrary\nHistory\nSettings",
+    "folder": "false",
+    "afterClick": {
+      "url": "/?model=secure-qa-local",
+      "hasPin": 1,
+      "input": "\n",
+      "asks": 0,
+      "saves": 0,
+      "sidebarVisible": true,
+      "sidebarState": "true"
+    }
+  },
+  {
+    "port": 5176,
+    "variant": "de",
+    "sidebar": "Access Denied\nNeuer Chat\n⌘⇧O\nLibrary\nHistory\nSettings\nModelle\nDocument Assistant",
+    "section": "true",
+    "row": {
+      "html": "<div class=\"mt-0.5 pb-1.5\" id=\"pinned-models-list\"><div class=\"flex justify-center text-gray-800 dark:text-gray-200 cursor-grab relative group\" data-id=\"secure-qa-local\"><a class=\"grow flex items-center space-x-2 rounded-xl px-2 py-[0.4375rem] group-hover:bg-gray-100 dark:group-hover:bg-gray-900 transition\" href=\"/?model=secure-qa-local\" draggable=\"false\"><div class=\"self-center shrink-0\"><img class=\"size-4 rounded-full\" alt=\"logo\" src=\"/favicon.png\"></div><div class=\"flex self-center translate-y-[0.5px]\"><div class=\"self-center text-[0.8125rem] leading-5 line-clamp-1\">Document Assistant</div></div></a></div></div>",
+      "rect": {
+        "x": 6,
+        "y": 206,
+        "width": 232,
+        "height": 40,
+        "top": 206,
+        "right": 238,
+        "bottom": 246,
+        "left": 6
+      },
+      "images": [
+        {
+          "src": "/favicon.png",
+          "natural": 512
+        }
+      ]
+    },
+    "errors": [],
+    "blocked": [],
+    "unpinTooltip": "Lösen",
+    "afterUnpin": "Access Denied\nNeuer Chat\n⌘⇧O\nLibrary\nHistory\nSettings",
+    "folder": "false",
+    "afterClick": {
+      "url": "/?model=secure-qa-local",
+      "hasPin": 1,
+      "input": "",
+      "asks": 0,
+      "saves": 0,
+      "sidebarVisible": true,
+      "sidebarState": "true"
+    }
+  }
+]

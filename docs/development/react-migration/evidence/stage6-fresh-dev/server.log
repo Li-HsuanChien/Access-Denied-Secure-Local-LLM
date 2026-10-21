@@ -1,0 +1,8 @@
+
+> access-denied-document-qa@0.11.4 dev:qa
+> vite --host 127.0.0.1 --port 5173 --strictPort
+
+
+  VITE v5.4.21  ready in 147 ms
+
+  ➜  Local:   http://127.0.0.1:5173/

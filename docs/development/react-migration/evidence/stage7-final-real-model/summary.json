@@ -1,0 +1,73 @@
+{
+  "outcome": "passed",
+  "model": {
+    "model_id": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+    "name": "Qwen3 4B Instruct 2507",
+    "quant": "Q4_K_M",
+    "api_version": "2026-09-v1",
+    "runtime_version": "0.2.0",
+    "stub": false
+  },
+  "timing": {
+    "retrieval_ms": 7.1,
+    "generation_ms": 21009.3,
+    "total_ms": 21017.9,
+    "attempts": 1,
+    "prompt_tokens": 292,
+    "completion_tokens": 72
+  },
+  "source": "The fictional Alder station maintenance window is Tuesday from 09:00 to 11:00. Supervisor Mira must approve maintenance before work begins.",
+  "question": "When is the Alder station maintenance window, and who must approve the work?",
+  "claims": [
+    {
+      "text": "The Alder station maintenance window is Tuesday from 09:00 to 11:00.",
+      "citation_ids": [
+        "S1"
+      ]
+    },
+    {
+      "text": "Supervisor Mira must approve maintenance before work begins.",
+      "citation_ids": [
+        "S1"
+      ]
+    }
+  ],
+  "citations": [
+    {
+      "citation_id": "S1",
+      "document_id": "doc_dc7c79501c776328f65af9c9",
+      "document_title": "Alder-Station",
+      "source_filename": "alder-station.pdf",
+      "page_start": 1,
+      "page_end": 1,
+      "pages": [
+        {
+          "page_number": 1,
+          "page_char_start": 0,
+          "page_char_end": 139,
+          "highlight_rects": [],
+          "coordinates_reliable": false,
+          "page_width": 1000,
+          "page_height": 792
+        }
+      ],
+      "chunk_ids": [
+        "chk_40e48aed574b1725f6d0865d"
+      ],
+      "char_start": 0,
+      "char_end": 139,
+      "text_checksum_sha256": "f03e5a1f68b156d7c5438f037d6a510e24d2e01b9392abc0a298e032228436e7",
+      "quote": "The fictional Alder station maintenance window is Tuesday from 09:00 to 11:00. Supervisor Mira must approve maintenance before work begins.",
+      "evidence_type": "text",
+      "score": 0.7959,
+      "rank": 1
+    }
+  ],
+  "errors": [],
+  "blocked": [],
+  "explicit_readiness_refresh": "passed",
+  "runtime_offline": true,
+  "huggingface_offline": true,
+  "machine_physically_disconnected": false,
+  "scope": "One fictional PDF and one question on the final fixed production build, not hardware/model-quality qualification."
+}

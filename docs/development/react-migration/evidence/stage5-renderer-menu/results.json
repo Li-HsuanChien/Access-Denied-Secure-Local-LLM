@@ -1,0 +1,1118 @@
+[
+  {
+    "port": 5173,
+    "variant": "desktop-light",
+    "regenerate": {
+      "html": "<div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt;button]:flex [&amp;&gt;button]:w-full [&amp;&gt;button]:h-[1.6875rem] [&amp;&gt;button]:items-center [&amp;&gt;button]:gap-2 [&amp;&gt;button]:rounded-xl! [&amp;&gt;button]:px-2! [&amp;&gt;button]:text-[0.8125rem] [&amp;&gt;button:hover]:bg-gray-50/60 dark:[&amp;&gt;button:hover]:bg-gray-800/60 [&amp;&gt;a]:flex [&amp;&gt;a]:w-full [&amp;&gt;a]:h-[1.6875rem] [&amp;&gt;a]:items-center [&amp;&gt;a]:gap-2 [&amp;&gt;a]:rounded-xl! [&amp;&gt;a]:px-2! [&amp;&gt;a]:text-[0.8125rem] [&amp;&gt;a:hover]:bg-gray-50/60 dark:[&amp;&gt;a:hover]:bg-gray-800/60 [&amp;&gt;button_svg]:size-3.5 [&amp;&gt;a_svg]:size-3.5 [&amp;&gt;hr]:my-0.5 [&amp;&gt;hr]:mx-1\" style=\"\"><div class=\"py-1 px-2 flex dark:text-gray-100\"><input type=\"text\" id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" autocomplete=\"off\" placeholder=\"Suggest a change\"> <div class=\"ml-2 self-center flex items-center\"><button aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button></div></div> <hr class=\"border-gray-50/30 dark:border-gray-800/30 my-0.5 mx-1\"> <button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" aria-hidden=\"true\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg> <div class=\"flex items-center\">Try Again</div></button> <button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">Add Details</div></button> <button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">More Concise</div></button><!----></div>",
+      "rect": {
+        "x": 489,
+        "y": 514.875,
+        "width": 198,
+        "height": 122,
+        "top": 514.875,
+        "right": 687,
+        "bottom": 636.875,
+        "left": 489
+      },
+      "style": {
+        "padding": "2px",
+        "border-radius": "12px",
+        "background-color": "rgb(255, 255, 255)",
+        "border-top-color": "oklch(0.94 0 0)",
+        "color": "rgb(0, 0, 0)",
+        "font-size": "16px",
+        "max-width": "200px",
+        "max-height": "none",
+        "overflow": "visible",
+        "position": "static",
+        "z-index": "50"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "controls": [
+        {
+          "html": "<input type=\"text\" id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" autocomplete=\"off\" placeholder=\"Suggest a change\">",
+          "rect": {
+            "x": 500,
+            "y": 521.875,
+            "width": 146,
+            "height": 22,
+            "top": 521.875,
+            "right": 646,
+            "bottom": 543.875,
+            "left": 500
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px"
+        },
+        {
+          "html": "<button aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button>",
+          "rect": {
+            "x": 654,
+            "y": 521.875,
+            "width": 22,
+            "height": 22,
+            "top": 521.875,
+            "right": 676,
+            "bottom": 543.875,
+            "left": 654
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "4px"
+        },
+        {
+          "html": "<button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" aria-hidden=\"true\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg> <div class=\"flex items-center\">Try Again</div></button>",
+          "rect": {
+            "x": 492,
+            "y": 552.875,
+            "width": 192,
+            "height": 27,
+            "top": 552.875,
+            "right": 684,
+            "bottom": 579.875,
+            "left": 492
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">Add Details</div></button>",
+          "rect": {
+            "x": 492,
+            "y": 579.875,
+            "width": 192,
+            "height": 27,
+            "top": 579.875,
+            "right": 684,
+            "bottom": 606.875,
+            "left": 492
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">More Concise</div></button>",
+          "rect": {
+            "x": 492,
+            "y": 606.875,
+            "width": 192,
+            "height": 27,
+            "top": 606.875,
+            "right": 684,
+            "bottom": 633.875,
+            "left": 492
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px 8px"
+        }
+      ],
+      "focus": {
+        "open": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 514.875px auto auto 489px;\"><div slot=\"content\"><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "ArrowDown": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 514.875px auto auto 489px;\"><div slot=\"content\"><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "ArrowUp": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 514.875px auto auto 489px;\"><div slot=\"content\"><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "Home": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 514.875px auto auto 489px;\"><div slot=\"content\"><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "End": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 514.875px auto auto 489px;\"><div slot=\"content\"><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "Escape": {
+          "active": "<div contenteditable=\"true\" translate=\"no\" class=\"tiptap ProseMirror ProseMirror-focused\" tabindex=\"0\" id=\"chat-input\" aria-label=\"Ask a question about your library…\" style=\"\"><p data-placeholder=\"Ask a question about your library…\" class=\"is-empty is-editor-empty\"><br class=\"ProseMirror-trailingBreak\"></p></div>",
+          "id": "chat-input",
+          "role": null,
+          "selected": []
+        },
+        "outside": {
+          "active": "<body data-sveltekit-preload-data=\"hover\">\n\t\t<div style=\"display: contents\">\n\t\t\t<script>\n\t\t\t\t{\n\t\t\t\t\t__sveltekit_dev = {\n\t\t\t\t\t\tbase: new URL(\".\", location).pathname.slice(0, -1),\n\t\t\t\t\t\tenv: {}\n\t\t\t\t\t};\n\n\t\t\t\t\tconst element = document.currentScript.parentElement;\n\n\t\t\t\t\tPromise.all([\n\t\t\t\t\t\timport(\"/node_modules/@sveltejs/kit/src/runtime/client/entry.js\"",
+          "id": "",
+          "role": null,
+          "selected": []
+        }
+      }
+    },
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "port": 5173,
+    "variant": "desktop-dark",
+    "regenerate": {
+      "html": "<div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt;button]:flex [&amp;&gt;button]:w-full [&amp;&gt;button]:h-[1.6875rem] [&amp;&gt;button]:items-center [&amp;&gt;button]:gap-2 [&amp;&gt;button]:rounded-xl! [&amp;&gt;button]:px-2! [&amp;&gt;button]:text-[0.8125rem] [&amp;&gt;button:hover]:bg-gray-50/60 dark:[&amp;&gt;button:hover]:bg-gray-800/60 [&amp;&gt;a]:flex [&amp;&gt;a]:w-full [&amp;&gt;a]:h-[1.6875rem] [&amp;&gt;a]:items-center [&amp;&gt;a]:gap-2 [&amp;&gt;a]:rounded-xl! [&amp;&gt;a]:px-2! [&amp;&gt;a]:text-[0.8125rem] [&amp;&gt;a:hover]:bg-gray-50/60 dark:[&amp;&gt;a:hover]:bg-gray-800/60 [&amp;&gt;button_svg]:size-3.5 [&amp;&gt;a_svg]:size-3.5 [&amp;&gt;hr]:my-0.5 [&amp;&gt;hr]:mx-1\" style=\"\"><div class=\"py-1 px-2 flex dark:text-gray-100\"><input type=\"text\" id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" autocomplete=\"off\" placeholder=\"Suggest a change\"> <div class=\"ml-2 self-center flex items-center\"><button aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button></div></div> <hr class=\"border-gray-50/30 dark:border-gray-800/30 my-0.5 mx-1\"> <button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" aria-hidden=\"true\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg> <div class=\"flex items-center\">Try Again</div></button> <button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">Add Details</div></button> <button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">More Concise</div></button><!----></div>",
+      "rect": {
+        "x": 489,
+        "y": 514.875,
+        "width": 198,
+        "height": 122,
+        "top": 514.875,
+        "right": 687,
+        "bottom": 636.875,
+        "left": 489
+      },
+      "style": {
+        "padding": "2px",
+        "border-radius": "12px",
+        "background-color": "oklch(0.27 0 0)",
+        "border-top-color": "oklch(0.32 0 0)",
+        "color": "rgb(255, 255, 255)",
+        "font-size": "16px",
+        "max-width": "200px",
+        "max-height": "none",
+        "overflow": "visible",
+        "position": "static",
+        "z-index": "50"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "controls": [
+        {
+          "html": "<input type=\"text\" id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" autocomplete=\"off\" placeholder=\"Suggest a change\">",
+          "rect": {
+            "x": 500,
+            "y": 521.875,
+            "width": 146,
+            "height": 22,
+            "top": 521.875,
+            "right": 646,
+            "bottom": 543.875,
+            "left": 500
+          },
+          "color": "oklch(0.94 0 0)",
+          "font": "",
+          "padding": "0px"
+        },
+        {
+          "html": "<button aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button>",
+          "rect": {
+            "x": 654,
+            "y": 521.875,
+            "width": 22,
+            "height": 22,
+            "top": 521.875,
+            "right": 676,
+            "bottom": 543.875,
+            "left": 654
+          },
+          "color": "oklch(0.2 0 0)",
+          "font": "",
+          "padding": "4px"
+        },
+        {
+          "html": "<button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" aria-hidden=\"true\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg> <div class=\"flex items-center\">Try Again</div></button>",
+          "rect": {
+            "x": 492,
+            "y": 552.875,
+            "width": 192,
+            "height": 27,
+            "top": 552.875,
+            "right": 684,
+            "bottom": 579.875,
+            "left": 492
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">Add Details</div></button>",
+          "rect": {
+            "x": 492,
+            "y": 579.875,
+            "width": 192,
+            "height": 27,
+            "top": 579.875,
+            "right": 684,
+            "bottom": 606.875,
+            "left": 492
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">More Concise</div></button>",
+          "rect": {
+            "x": 492,
+            "y": 606.875,
+            "width": 192,
+            "height": 27,
+            "top": 606.875,
+            "right": 684,
+            "bottom": 633.875,
+            "left": 492
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "0px 8px"
+        }
+      ],
+      "focus": {
+        "open": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 514.875px auto auto 489px;\"><div slot=\"content\"><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "Escape": {
+          "active": "<div contenteditable=\"true\" translate=\"no\" class=\"tiptap ProseMirror ProseMirror-focused\" tabindex=\"0\" id=\"chat-input\" aria-label=\"Ask a question about your library…\" style=\"\"><p data-placeholder=\"Ask a question about your library…\" class=\"is-empty is-editor-empty\"><br class=\"ProseMirror-trailingBreak\"></p></div>",
+          "id": "chat-input",
+          "role": null,
+          "selected": []
+        }
+      }
+    },
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "port": 5173,
+    "variant": "narrow-light",
+    "regenerate": {
+      "html": "<div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt;button]:flex [&amp;&gt;button]:w-full [&amp;&gt;button]:h-[1.6875rem] [&amp;&gt;button]:items-center [&amp;&gt;button]:gap-2 [&amp;&gt;button]:rounded-xl! [&amp;&gt;button]:px-2! [&amp;&gt;button]:text-[0.8125rem] [&amp;&gt;button:hover]:bg-gray-50/60 dark:[&amp;&gt;button:hover]:bg-gray-800/60 [&amp;&gt;a]:flex [&amp;&gt;a]:w-full [&amp;&gt;a]:h-[1.6875rem] [&amp;&gt;a]:items-center [&amp;&gt;a]:gap-2 [&amp;&gt;a]:rounded-xl! [&amp;&gt;a]:px-2! [&amp;&gt;a]:text-[0.8125rem] [&amp;&gt;a:hover]:bg-gray-50/60 dark:[&amp;&gt;a:hover]:bg-gray-800/60 [&amp;&gt;button_svg]:size-3.5 [&amp;&gt;a_svg]:size-3.5 [&amp;&gt;hr]:my-0.5 [&amp;&gt;hr]:mx-1\" style=\"\"><div class=\"py-1 px-2 flex dark:text-gray-100\"><input type=\"text\" id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" autocomplete=\"off\" placeholder=\"Suggest a change\"> <div class=\"ml-2 self-center flex items-center\"><button aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button></div></div> <hr class=\"border-gray-50/30 dark:border-gray-800/30 my-0.5 mx-1\"> <button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" aria-hidden=\"true\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg> <div class=\"flex items-center\">Try Again</div></button> <button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">Add Details</div></button> <button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">More Concise</div></button><!----></div>",
+      "rect": {
+        "x": 74,
+        "y": 597.1875,
+        "width": 198,
+        "height": 122,
+        "top": 597.1875,
+        "right": 272,
+        "bottom": 719.1875,
+        "left": 74
+      },
+      "style": {
+        "padding": "2px",
+        "border-radius": "12px",
+        "background-color": "rgb(255, 255, 255)",
+        "border-top-color": "oklch(0.94 0 0)",
+        "color": "rgb(0, 0, 0)",
+        "font-size": "16px",
+        "max-width": "200px",
+        "max-height": "none",
+        "overflow": "visible",
+        "position": "static",
+        "z-index": "50"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "controls": [
+        {
+          "html": "<input type=\"text\" id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" autocomplete=\"off\" placeholder=\"Suggest a change\">",
+          "rect": {
+            "x": 85,
+            "y": 604.1875,
+            "width": 146,
+            "height": 22,
+            "top": 604.1875,
+            "right": 231,
+            "bottom": 626.1875,
+            "left": 85
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px"
+        },
+        {
+          "html": "<button aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button>",
+          "rect": {
+            "x": 239,
+            "y": 604.1875,
+            "width": 22,
+            "height": 22,
+            "top": 604.1875,
+            "right": 261,
+            "bottom": 626.1875,
+            "left": 239
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "4px"
+        },
+        {
+          "html": "<button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" aria-hidden=\"true\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg> <div class=\"flex items-center\">Try Again</div></button>",
+          "rect": {
+            "x": 77,
+            "y": 635.1875,
+            "width": 192,
+            "height": 27,
+            "top": 635.1875,
+            "right": 269,
+            "bottom": 662.1875,
+            "left": 77
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">Add Details</div></button>",
+          "rect": {
+            "x": 77,
+            "y": 662.1875,
+            "width": 192,
+            "height": 27,
+            "top": 662.1875,
+            "right": 269,
+            "bottom": 689.1875,
+            "left": 77
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">More Concise</div></button>",
+          "rect": {
+            "x": 77,
+            "y": 689.1875,
+            "width": 192,
+            "height": 27,
+            "top": 689.1875,
+            "right": 269,
+            "bottom": 716.1875,
+            "left": 77
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px 8px"
+        }
+      ],
+      "focus": {
+        "open": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 597.188px auto auto 74px;\"><div slot=\"content\"><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt;",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "Escape": {
+          "active": "<div contenteditable=\"true\" translate=\"no\" class=\"tiptap ProseMirror ProseMirror-focused\" tabindex=\"0\" id=\"chat-input\" aria-label=\"Ask a question about your library…\" style=\"\"><p data-placeholder=\"Ask a question about your library…\" class=\"is-empty is-editor-empty\"><br class=\"ProseMirror-trailingBreak\"></p></div>",
+          "id": "chat-input",
+          "role": null,
+          "selected": []
+        }
+      }
+    },
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "port": 5173,
+    "variant": "narrow-dark",
+    "regenerate": {
+      "html": "<div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt;button]:flex [&amp;&gt;button]:w-full [&amp;&gt;button]:h-[1.6875rem] [&amp;&gt;button]:items-center [&amp;&gt;button]:gap-2 [&amp;&gt;button]:rounded-xl! [&amp;&gt;button]:px-2! [&amp;&gt;button]:text-[0.8125rem] [&amp;&gt;button:hover]:bg-gray-50/60 dark:[&amp;&gt;button:hover]:bg-gray-800/60 [&amp;&gt;a]:flex [&amp;&gt;a]:w-full [&amp;&gt;a]:h-[1.6875rem] [&amp;&gt;a]:items-center [&amp;&gt;a]:gap-2 [&amp;&gt;a]:rounded-xl! [&amp;&gt;a]:px-2! [&amp;&gt;a]:text-[0.8125rem] [&amp;&gt;a:hover]:bg-gray-50/60 dark:[&amp;&gt;a:hover]:bg-gray-800/60 [&amp;&gt;button_svg]:size-3.5 [&amp;&gt;a_svg]:size-3.5 [&amp;&gt;hr]:my-0.5 [&amp;&gt;hr]:mx-1\" style=\"\"><div class=\"py-1 px-2 flex dark:text-gray-100\"><input type=\"text\" id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" autocomplete=\"off\" placeholder=\"Suggest a change\"> <div class=\"ml-2 self-center flex items-center\"><button aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button></div></div> <hr class=\"border-gray-50/30 dark:border-gray-800/30 my-0.5 mx-1\"> <button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" aria-hidden=\"true\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg> <div class=\"flex items-center\">Try Again</div></button> <button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">Add Details</div></button> <button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">More Concise</div></button><!----></div>",
+      "rect": {
+        "x": 74,
+        "y": 597.1875,
+        "width": 198,
+        "height": 122,
+        "top": 597.1875,
+        "right": 272,
+        "bottom": 719.1875,
+        "left": 74
+      },
+      "style": {
+        "padding": "2px",
+        "border-radius": "12px",
+        "background-color": "oklch(0.27 0 0)",
+        "border-top-color": "oklch(0.32 0 0)",
+        "color": "rgb(255, 255, 255)",
+        "font-size": "16px",
+        "max-width": "200px",
+        "max-height": "none",
+        "overflow": "visible",
+        "position": "static",
+        "z-index": "50"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "controls": [
+        {
+          "html": "<input type=\"text\" id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" autocomplete=\"off\" placeholder=\"Suggest a change\">",
+          "rect": {
+            "x": 85,
+            "y": 604.1875,
+            "width": 146,
+            "height": 22,
+            "top": 604.1875,
+            "right": 231,
+            "bottom": 626.1875,
+            "left": 85
+          },
+          "color": "oklch(0.94 0 0)",
+          "font": "",
+          "padding": "0px"
+        },
+        {
+          "html": "<button aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button>",
+          "rect": {
+            "x": 239,
+            "y": 604.1875,
+            "width": 22,
+            "height": 22,
+            "top": 604.1875,
+            "right": 261,
+            "bottom": 626.1875,
+            "left": 239
+          },
+          "color": "oklch(0.2 0 0)",
+          "font": "",
+          "padding": "4px"
+        },
+        {
+          "html": "<button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" aria-hidden=\"true\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0l3.181 3.183a8.25 8.25 0 0013.803-3.7M4.031 9.865a8.25 8.25 0 0113.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg> <div class=\"flex items-center\">Try Again</div></button>",
+          "rect": {
+            "x": 77,
+            "y": 635.1875,
+            "width": 192,
+            "height": 27,
+            "top": 635.1875,
+            "right": 269,
+            "bottom": 662.1875,
+            "left": 77
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">Add Details</div></button>",
+          "rect": {
+            "x": 77,
+            "y": 662.1875,
+            "width": 192,
+            "height": 27,
+            "top": 662.1875,
+            "right": 269,
+            "bottom": 689.1875,
+            "left": 77
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke=\"currentColor\" stroke-width=\"2\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><!----> <div class=\"flex items-center\">More Concise</div></button>",
+          "rect": {
+            "x": 77,
+            "y": 689.1875,
+            "width": 192,
+            "height": 27,
+            "top": 689.1875,
+            "right": 269,
+            "bottom": 716.1875,
+            "left": 77
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "0px 8px"
+        }
+      ],
+      "focus": {
+        "open": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 597.188px auto auto 74px;\"><div slot=\"content\"><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt;",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "Escape": {
+          "active": "<div contenteditable=\"true\" translate=\"no\" class=\"tiptap ProseMirror ProseMirror-focused\" tabindex=\"0\" id=\"chat-input\" aria-label=\"Ask a question about your library…\" style=\"\"><p data-placeholder=\"Ask a question about your library…\" class=\"is-empty is-editor-empty\"><br class=\"ProseMirror-trailingBreak\"></p></div>",
+          "id": "chat-input",
+          "role": null,
+          "selected": []
+        }
+      }
+    },
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "port": 5176,
+    "variant": "desktop-light",
+    "regenerate": {
+      "html": "<div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt;button]:flex [&amp;&gt;button]:w-full [&amp;&gt;button]:h-[1.6875rem] [&amp;&gt;button]:items-center [&amp;&gt;button]:gap-2 [&amp;&gt;button]:rounded-xl! [&amp;&gt;button]:px-2! [&amp;&gt;button]:text-[0.8125rem] [&amp;&gt;button:hover]:bg-gray-50/60 dark:[&amp;&gt;button:hover]:bg-gray-800/60 [&amp;&gt;a]:flex [&amp;&gt;a]:w-full [&amp;&gt;a]:h-[1.6875rem] [&amp;&gt;a]:items-center [&amp;&gt;a]:gap-2 [&amp;&gt;a]:rounded-xl! [&amp;&gt;a]:px-2! [&amp;&gt;a]:text-[0.8125rem] [&amp;&gt;a:hover]:bg-gray-50/60 dark:[&amp;&gt;a:hover]:bg-gray-800/60 [&amp;&gt;button_svg]:size-3.5 [&amp;&gt;a_svg]:size-3.5 [&amp;&gt;hr]:my-0.5 [&amp;&gt;hr]:mx-1\"><div class=\"py-1 px-2 flex dark:text-gray-100\"><input id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" placeholder=\"Suggest a change\" autocomplete=\"off\" type=\"text\" value=\"\"><div class=\"ml-2 self-center flex items-center\"><button type=\"button\" aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button></div></div><hr class=\"border-gray-50/30 dark:border-gray-800/30 my-0.5 mx-1\"><button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg><div class=\"flex items-center\">Try Again</div></button><button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">Add Details</div></button><button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">More Concise</div></button></div>",
+      "rect": {
+        "x": 489,
+        "y": 514.875,
+        "width": 198,
+        "height": 122,
+        "top": 514.875,
+        "right": 687,
+        "bottom": 636.875,
+        "left": 489
+      },
+      "style": {
+        "padding": "2px",
+        "border-radius": "12px",
+        "background-color": "rgb(255, 255, 255)",
+        "border-top-color": "oklch(0.94 0 0)",
+        "color": "rgb(0, 0, 0)",
+        "font-size": "16px",
+        "max-width": "200px",
+        "max-height": "none",
+        "overflow": "visible",
+        "position": "static",
+        "z-index": "50"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "controls": [
+        {
+          "html": "<input id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" placeholder=\"Suggest a change\" autocomplete=\"off\" type=\"text\" value=\"\">",
+          "rect": {
+            "x": 500,
+            "y": 521.875,
+            "width": 146,
+            "height": 22,
+            "top": 521.875,
+            "right": 646,
+            "bottom": 543.875,
+            "left": 500
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px"
+        },
+        {
+          "html": "<button type=\"button\" aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button>",
+          "rect": {
+            "x": 654,
+            "y": 521.875,
+            "width": 22,
+            "height": 22,
+            "top": 521.875,
+            "right": 676,
+            "bottom": 543.875,
+            "left": 654
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "4px"
+        },
+        {
+          "html": "<button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg><div class=\"flex items-center\">Try Again</div></button>",
+          "rect": {
+            "x": 492,
+            "y": 552.875,
+            "width": 192,
+            "height": 27,
+            "top": 552.875,
+            "right": 684,
+            "bottom": 579.875,
+            "left": 492
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">Add Details</div></button>",
+          "rect": {
+            "x": 492,
+            "y": 579.875,
+            "width": 192,
+            "height": 27,
+            "top": 579.875,
+            "right": 684,
+            "bottom": 606.875,
+            "left": 492
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">More Concise</div></button>",
+          "rect": {
+            "x": 492,
+            "y": 606.875,
+            "width": 192,
+            "height": 27,
+            "top": 606.875,
+            "right": 684,
+            "bottom": 633.875,
+            "left": 492
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px 8px"
+        }
+      ],
+      "focus": {
+        "open": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" class=\"renderer-regenerate-menu\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 514.875px auto auto 489px;\"><div><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] tr",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "ArrowDown": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" class=\"renderer-regenerate-menu\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 514.875px auto auto 489px;\"><div><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] tr",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "ArrowUp": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" class=\"renderer-regenerate-menu\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 514.875px auto auto 489px;\"><div><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] tr",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "Home": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" class=\"renderer-regenerate-menu\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 514.875px auto auto 489px;\"><div><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] tr",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "End": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" class=\"renderer-regenerate-menu\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 514.875px auto auto 489px;\"><div><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] tr",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "Escape": {
+          "active": "<div id=\"chat-input\" class=\"chat-editable\" contenteditable=\"true\" data-placeholder=\"Ask a question about your library…\" aria-label=\"Ask a question about your library…\" style=\"\"></div>",
+          "id": "chat-input",
+          "role": null,
+          "selected": []
+        },
+        "outside": {
+          "active": "<body>\n\t\t<div id=\"root\"><div class=\"desktop-shell react-desktop-shell sidebar-open\"><div id=\"sidebar\" role=\"navigation\" aria-label=\"Chat history\" aria-hidden=\"false\" data-state=\"true\" class=\"shell-expanded h-screen max-h-[100dvh] min-h-screen select-none bg-gray-50 dark:bg-gray-950 z-50 shrink-0 text-gray-700 dark:text-gray-300 text-[0.8125rem] lea",
+          "id": "",
+          "role": null,
+          "selected": []
+        }
+      }
+    },
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "port": 5176,
+    "variant": "desktop-dark",
+    "regenerate": {
+      "html": "<div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt;button]:flex [&amp;&gt;button]:w-full [&amp;&gt;button]:h-[1.6875rem] [&amp;&gt;button]:items-center [&amp;&gt;button]:gap-2 [&amp;&gt;button]:rounded-xl! [&amp;&gt;button]:px-2! [&amp;&gt;button]:text-[0.8125rem] [&amp;&gt;button:hover]:bg-gray-50/60 dark:[&amp;&gt;button:hover]:bg-gray-800/60 [&amp;&gt;a]:flex [&amp;&gt;a]:w-full [&amp;&gt;a]:h-[1.6875rem] [&amp;&gt;a]:items-center [&amp;&gt;a]:gap-2 [&amp;&gt;a]:rounded-xl! [&amp;&gt;a]:px-2! [&amp;&gt;a]:text-[0.8125rem] [&amp;&gt;a:hover]:bg-gray-50/60 dark:[&amp;&gt;a:hover]:bg-gray-800/60 [&amp;&gt;button_svg]:size-3.5 [&amp;&gt;a_svg]:size-3.5 [&amp;&gt;hr]:my-0.5 [&amp;&gt;hr]:mx-1\"><div class=\"py-1 px-2 flex dark:text-gray-100\"><input id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" placeholder=\"Suggest a change\" autocomplete=\"off\" type=\"text\" value=\"\"><div class=\"ml-2 self-center flex items-center\"><button type=\"button\" aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button></div></div><hr class=\"border-gray-50/30 dark:border-gray-800/30 my-0.5 mx-1\"><button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg><div class=\"flex items-center\">Try Again</div></button><button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">Add Details</div></button><button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">More Concise</div></button></div>",
+      "rect": {
+        "x": 489,
+        "y": 514.875,
+        "width": 198,
+        "height": 122,
+        "top": 514.875,
+        "right": 687,
+        "bottom": 636.875,
+        "left": 489
+      },
+      "style": {
+        "padding": "2px",
+        "border-radius": "12px",
+        "background-color": "oklch(0.27 0 0)",
+        "border-top-color": "oklch(0.32 0 0)",
+        "color": "rgb(255, 255, 255)",
+        "font-size": "16px",
+        "max-width": "200px",
+        "max-height": "none",
+        "overflow": "visible",
+        "position": "static",
+        "z-index": "50"
+      },
+      "viewport": {
+        "width": 1440,
+        "height": 1000
+      },
+      "controls": [
+        {
+          "html": "<input id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" placeholder=\"Suggest a change\" autocomplete=\"off\" type=\"text\" value=\"\">",
+          "rect": {
+            "x": 500,
+            "y": 521.875,
+            "width": 146,
+            "height": 22,
+            "top": 521.875,
+            "right": 646,
+            "bottom": 543.875,
+            "left": 500
+          },
+          "color": "oklch(0.94 0 0)",
+          "font": "",
+          "padding": "0px"
+        },
+        {
+          "html": "<button type=\"button\" aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button>",
+          "rect": {
+            "x": 654,
+            "y": 521.875,
+            "width": 22,
+            "height": 22,
+            "top": 521.875,
+            "right": 676,
+            "bottom": 543.875,
+            "left": 654
+          },
+          "color": "oklch(0.2 0 0)",
+          "font": "",
+          "padding": "4px"
+        },
+        {
+          "html": "<button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg><div class=\"flex items-center\">Try Again</div></button>",
+          "rect": {
+            "x": 492,
+            "y": 552.875,
+            "width": 192,
+            "height": 27,
+            "top": 552.875,
+            "right": 684,
+            "bottom": 579.875,
+            "left": 492
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">Add Details</div></button>",
+          "rect": {
+            "x": 492,
+            "y": 579.875,
+            "width": 192,
+            "height": 27,
+            "top": 579.875,
+            "right": 684,
+            "bottom": 606.875,
+            "left": 492
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">More Concise</div></button>",
+          "rect": {
+            "x": 492,
+            "y": 606.875,
+            "width": 192,
+            "height": 27,
+            "top": 606.875,
+            "right": 684,
+            "bottom": 633.875,
+            "left": 492
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "0px 8px"
+        }
+      ],
+      "focus": {
+        "open": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" class=\"renderer-regenerate-menu\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 514.875px auto auto 489px;\"><div><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] tr",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "Escape": {
+          "active": "<div id=\"chat-input\" class=\"chat-editable\" contenteditable=\"true\" data-placeholder=\"Ask a question about your library…\" aria-label=\"Ask a question about your library…\" style=\"\"></div>",
+          "id": "chat-input",
+          "role": null,
+          "selected": []
+        }
+      }
+    },
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "port": 5176,
+    "variant": "narrow-light",
+    "regenerate": {
+      "html": "<div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt;button]:flex [&amp;&gt;button]:w-full [&amp;&gt;button]:h-[1.6875rem] [&amp;&gt;button]:items-center [&amp;&gt;button]:gap-2 [&amp;&gt;button]:rounded-xl! [&amp;&gt;button]:px-2! [&amp;&gt;button]:text-[0.8125rem] [&amp;&gt;button:hover]:bg-gray-50/60 dark:[&amp;&gt;button:hover]:bg-gray-800/60 [&amp;&gt;a]:flex [&amp;&gt;a]:w-full [&amp;&gt;a]:h-[1.6875rem] [&amp;&gt;a]:items-center [&amp;&gt;a]:gap-2 [&amp;&gt;a]:rounded-xl! [&amp;&gt;a]:px-2! [&amp;&gt;a]:text-[0.8125rem] [&amp;&gt;a:hover]:bg-gray-50/60 dark:[&amp;&gt;a:hover]:bg-gray-800/60 [&amp;&gt;button_svg]:size-3.5 [&amp;&gt;a_svg]:size-3.5 [&amp;&gt;hr]:my-0.5 [&amp;&gt;hr]:mx-1\"><div class=\"py-1 px-2 flex dark:text-gray-100\"><input id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" placeholder=\"Suggest a change\" autocomplete=\"off\" type=\"text\" value=\"\"><div class=\"ml-2 self-center flex items-center\"><button type=\"button\" aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button></div></div><hr class=\"border-gray-50/30 dark:border-gray-800/30 my-0.5 mx-1\"><button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg><div class=\"flex items-center\">Try Again</div></button><button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">Add Details</div></button><button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">More Concise</div></button></div>",
+      "rect": {
+        "x": 74,
+        "y": 597.1875,
+        "width": 198,
+        "height": 122,
+        "top": 597.1875,
+        "right": 272,
+        "bottom": 719.1875,
+        "left": 74
+      },
+      "style": {
+        "padding": "2px",
+        "border-radius": "12px",
+        "background-color": "rgb(255, 255, 255)",
+        "border-top-color": "oklch(0.94 0 0)",
+        "color": "rgb(0, 0, 0)",
+        "font-size": "16px",
+        "max-width": "200px",
+        "max-height": "none",
+        "overflow": "visible",
+        "position": "static",
+        "z-index": "50"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "controls": [
+        {
+          "html": "<input id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" placeholder=\"Suggest a change\" autocomplete=\"off\" type=\"text\" value=\"\">",
+          "rect": {
+            "x": 85,
+            "y": 604.1875,
+            "width": 146,
+            "height": 22,
+            "top": 604.1875,
+            "right": 231,
+            "bottom": 626.1875,
+            "left": 85
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px"
+        },
+        {
+          "html": "<button type=\"button\" aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button>",
+          "rect": {
+            "x": 239,
+            "y": 604.1875,
+            "width": 22,
+            "height": 22,
+            "top": 604.1875,
+            "right": 261,
+            "bottom": 626.1875,
+            "left": 239
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "4px"
+        },
+        {
+          "html": "<button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg><div class=\"flex items-center\">Try Again</div></button>",
+          "rect": {
+            "x": 77,
+            "y": 635.1875,
+            "width": 192,
+            "height": 27,
+            "top": 635.1875,
+            "right": 269,
+            "bottom": 662.1875,
+            "left": 77
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">Add Details</div></button>",
+          "rect": {
+            "x": 77,
+            "y": 662.1875,
+            "width": 192,
+            "height": 27,
+            "top": 662.1875,
+            "right": 269,
+            "bottom": 689.1875,
+            "left": 77
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">More Concise</div></button>",
+          "rect": {
+            "x": 77,
+            "y": 689.1875,
+            "width": 192,
+            "height": 27,
+            "top": 689.1875,
+            "right": 269,
+            "bottom": 716.1875,
+            "left": 77
+          },
+          "color": "rgb(0, 0, 0)",
+          "font": "",
+          "padding": "0px 8px"
+        }
+      ],
+      "focus": {
+        "open": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" class=\"renderer-regenerate-menu\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 597.188px auto auto 74px;\"><div><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] tra",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "Escape": {
+          "active": "<div id=\"chat-input\" class=\"chat-editable\" contenteditable=\"true\" data-placeholder=\"Ask a question about your library…\" aria-label=\"Ask a question about your library…\" style=\"\"></div>",
+          "id": "chat-input",
+          "role": null,
+          "selected": []
+        }
+      }
+    },
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "port": 5176,
+    "variant": "narrow-dark",
+    "regenerate": {
+      "html": "<div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&amp;&gt;button]:flex [&amp;&gt;button]:w-full [&amp;&gt;button]:h-[1.6875rem] [&amp;&gt;button]:items-center [&amp;&gt;button]:gap-2 [&amp;&gt;button]:rounded-xl! [&amp;&gt;button]:px-2! [&amp;&gt;button]:text-[0.8125rem] [&amp;&gt;button:hover]:bg-gray-50/60 dark:[&amp;&gt;button:hover]:bg-gray-800/60 [&amp;&gt;a]:flex [&amp;&gt;a]:w-full [&amp;&gt;a]:h-[1.6875rem] [&amp;&gt;a]:items-center [&amp;&gt;a]:gap-2 [&amp;&gt;a]:rounded-xl! [&amp;&gt;a]:px-2! [&amp;&gt;a]:text-[0.8125rem] [&amp;&gt;a:hover]:bg-gray-50/60 dark:[&amp;&gt;a:hover]:bg-gray-800/60 [&amp;&gt;button_svg]:size-3.5 [&amp;&gt;a_svg]:size-3.5 [&amp;&gt;hr]:my-0.5 [&amp;&gt;hr]:mx-1\"><div class=\"py-1 px-2 flex dark:text-gray-100\"><input id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" placeholder=\"Suggest a change\" autocomplete=\"off\" type=\"text\" value=\"\"><div class=\"ml-2 self-center flex items-center\"><button type=\"button\" aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button></div></div><hr class=\"border-gray-50/30 dark:border-gray-800/30 my-0.5 mx-1\"><button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg><div class=\"flex items-center\">Try Again</div></button><button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">Add Details</div></button><button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">More Concise</div></button></div>",
+      "rect": {
+        "x": 74,
+        "y": 597.1875,
+        "width": 198,
+        "height": 122,
+        "top": 597.1875,
+        "right": 272,
+        "bottom": 719.1875,
+        "left": 74
+      },
+      "style": {
+        "padding": "2px",
+        "border-radius": "12px",
+        "background-color": "oklch(0.27 0 0)",
+        "border-top-color": "oklch(0.32 0 0)",
+        "color": "rgb(255, 255, 255)",
+        "font-size": "16px",
+        "max-width": "200px",
+        "max-height": "none",
+        "overflow": "visible",
+        "position": "static",
+        "z-index": "50"
+      },
+      "viewport": {
+        "width": 390,
+        "height": 844
+      },
+      "controls": [
+        {
+          "html": "<input id=\"floating-message-input\" class=\"bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]\" placeholder=\"Suggest a change\" autocomplete=\"off\" type=\"text\" value=\"\">",
+          "rect": {
+            "x": 85,
+            "y": 604.1875,
+            "width": 146,
+            "height": 22,
+            "top": 604.1875,
+            "right": 231,
+            "bottom": 626.1875,
+            "left": 85
+          },
+          "color": "oklch(0.94 0 0)",
+          "font": "",
+          "padding": "0px"
+        },
+        {
+          "html": "<button type=\"button\" aria-label=\"Submit suggestion\" class=\"text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled transition rounded-full p-1 self-center\"><svg xmlns=\"http://www.w3.org/2000/svg\" viewBox=\"0 0 16 16\" fill=\"currentColor\" class=\"size-3.5\"><path fill-rule=\"evenodd\" d=\"M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z\" clip-rule=\"evenodd\"></path></svg></button>",
+          "rect": {
+            "x": 239,
+            "y": 604.1875,
+            "width": 22,
+            "height": 22,
+            "top": 604.1875,
+            "right": 261,
+            "bottom": 626.1875,
+            "left": 239
+          },
+          "color": "oklch(0.2 0 0)",
+          "font": "",
+          "padding": "4px"
+        },
+        {
+          "html": "<button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path stroke-linecap=\"round\" stroke-linejoin=\"round\" d=\"M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99\"></path></svg><div class=\"flex items-center\">Try Again</div></button>",
+          "rect": {
+            "x": 77,
+            "y": 635.1875,
+            "width": 192,
+            "height": 27,
+            "top": 635.1875,
+            "right": 269,
+            "bottom": 662.1875,
+            "left": 77
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 19L3 16.5M5 19L7 16.5M5 5L3 7M5 5L7 7\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">Add Details</div></button>",
+          "rect": {
+            "x": 77,
+            "y": 662.1875,
+            "width": 192,
+            "height": 27,
+            "top": 662.1875,
+            "right": 269,
+            "bottom": 689.1875,
+            "left": 77
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "0px 8px"
+        },
+        {
+          "html": "<button type=\"button\" class=\"select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40\"><svg aria-hidden=\"true\" xmlns=\"http://www.w3.org/2000/svg\" fill=\"none\" viewBox=\"0 0 24 24\" stroke-width=\"2\" stroke=\"currentColor\" class=\"size-3.5\"><path d=\"M11 6H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 12H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M11 18H21\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path><path d=\"M5 19V5M5 10L3 8M5 10L7 8M5 14L3 16M5 14L7 16\" stroke-linecap=\"round\" stroke-linejoin=\"round\"></path></svg><div class=\"flex items-center\">More Concise</div></button>",
+          "rect": {
+            "x": 77,
+            "y": 689.1875,
+            "width": 192,
+            "height": 27,
+            "top": 689.1875,
+            "right": 269,
+            "bottom": 716.1875,
+            "left": 77
+          },
+          "color": "rgb(255, 255, 255)",
+          "font": "",
+          "padding": "0px 8px"
+        }
+      ],
+      "focus": {
+        "open": {
+          "active": "<div role=\"menu\" tabindex=\"-1\" class=\"renderer-regenerate-menu\" style=\"max-height: min(32rem, 100dvh - 2rem); position: fixed; z-index: 9999; inset: 597.188px auto auto 74px;\"><div><div class=\"app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] tra",
+          "id": "",
+          "role": "menu",
+          "selected": []
+        },
+        "Escape": {
+          "active": "<div id=\"chat-input\" class=\"chat-editable\" contenteditable=\"true\" data-placeholder=\"Ask a question about your library…\" aria-label=\"Ask a question about your library…\" style=\"\"></div>",
+          "id": "chat-input",
+          "role": null,
+          "selected": []
+        }
+      }
+    },
+    "errors": [],
+    "blocked": []
+  }
+]

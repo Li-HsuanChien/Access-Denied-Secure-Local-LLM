@@ -1,0 +1,21 @@
+{
+  "date": "2026-10-21",
+  "branch": "refactor/react",
+  "head": "4dc2a06a4fc57ff393ea43ef4b75014b1458eb9b",
+  "original_index_sha256": "560ed579f85718b5cc71f9569fd0eb6cde4d7ae92850ee38f1f75e581aa422b1",
+  "original_screenshot_hashes_verified": 95,
+  "licenses_unchanged": {
+    "LICENSE": "5f1bd74c48bf13ab0f82e177ad9e637313b92533d20ead2593d49347a47fc232",
+    "LICENSE_NOTICE": "9de72254becbb9a317410a459447be7e8f042b911a846c58307319c77e50df00",
+    "LICENSE_HISTORY": "b1567cc9763241a41569e01f08272a167dac57273f717b95b31ba7b5ec935e17"
+  },
+  "start_sh_content_and_executable_preserved": true,
+  "active_svelte_source_files": 0,
+  "svelte_lock_entries": 0,
+  "lock_entries": 587,
+  "final_build_files": 554,
+  "final_build_bytes": 45212907,
+  "git_diff_check": "passed",
+  "acceptance_links": "all local targets exist",
+  "committed": false
+}

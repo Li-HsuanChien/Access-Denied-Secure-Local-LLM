@@ -1,0 +1,203 @@
+{
+  "case": "chat-typed-multiline",
+  "capturedAt": "2026-10-20T12:00:00.000Z",
+  "browser": "Chromium 151.0.7922.34",
+  "screenshotSha256": "76c28c5296db74c8cd9806f1098ec0bcdc524cd3df46fa0580ff6624dd546a53",
+  "performance": {
+    "Documents": 272,
+    "Nodes": 4958,
+    "LayoutCount": 0,
+    "JSHeapUsedSize": 33314576
+  },
+  "viewport": {
+    "width": 1440,
+    "height": 1000,
+    "devicePixelRatio": 1
+  },
+  "composerText": "What does the local library preserve?\n\nInclude the source details.",
+  "details": {
+    "route": "/qa",
+    "state": "typed multiline composer"
+  },
+  "title": "Access Denied",
+  "url": "http://127.0.0.1:5173/qa",
+  "document": {
+    "width": 1440,
+    "height": 1000
+  },
+  "themeClass": "",
+  "scroll": null,
+  "renderer": null,
+  "styles": {
+    "body": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 1000
+      },
+      "color": "rgb(0, 0, 0)",
+      "backgroundColor": "rgb(255, 255, 255)",
+      "fontFamily": "-apple-system, \"system-ui\", Inter, Vazirmatn, ui-sans-serif, system-ui, \"Segoe UI\", Roboto, Ubuntu, Cantarell, \"Noto Sans\", sans-serif, \"Helvetica Neue\", Arial, \"Apple Color Emoji\", \"Segoe UI Emoji\", \"Segoe UI Symbol\", \"Noto Color Emoji\"",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "margin": "0px",
+      "display": "block"
+    },
+    ".desktop-shell": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 1440,
+        "height": 1000
+      },
+      "color": "rgb(32, 41, 37)",
+      "backgroundColor": "rgb(245, 244, 239)",
+      "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "margin": "0px",
+      "display": "flex"
+    },
+    "#sidebar": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 42,
+        "height": 1000
+      },
+      "color": "oklch(0.42 0 0)",
+      "backgroundColor": "rgb(245, 244, 239)",
+      "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "borderRadius": "0px",
+      "padding": "4px",
+      "margin": "0px",
+      "display": "flex"
+    },
+    "#main-content": {
+      "rect": {
+        "x": 42,
+        "y": 48,
+        "width": 1398,
+        "height": 952
+      },
+      "color": "rgb(32, 41, 37)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "margin": "0px",
+      "display": "block"
+    },
+    "#chat-container": {
+      "rect": {
+        "x": 42,
+        "y": 48,
+        "width": 1398,
+        "height": 952
+      },
+      "color": "rgb(32, 41, 37)",
+      "backgroundColor": "rgb(255, 254, 250)",
+      "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "margin": "0px",
+      "display": "flex"
+    },
+    "#chat-input-container": {
+      "rect": {
+        "x": 376,
+        "y": 438,
+        "width": 730,
+        "height": 74.5
+      },
+      "color": "oklch(0.32 0 0)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "borderRadius": "0px",
+      "padding": "8px 4px 2px",
+      "margin": "0px",
+      "display": "block"
+    },
+    "#chat-input": {
+      "rect": {
+        "x": 380,
+        "y": 450,
+        "width": 722,
+        "height": 56.5
+      },
+      "color": "oklch(0.373 0.034 259.733)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "fontSize": "15px",
+      "lineHeight": "26.25px",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "margin": "0px",
+      "display": "block"
+    },
+    "#send-message-button": {
+      "rect": {
+        "x": 1078,
+        "y": 514.5,
+        "width": 30,
+        "height": 30
+      },
+      "color": "rgb(255, 255, 255)",
+      "backgroundColor": "rgb(0, 0, 0)",
+      "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "borderRadius": "3.35544e+07px",
+      "padding": "5px",
+      "margin": "0px",
+      "display": "block"
+    },
+    "button": {
+      "rect": {
+        "x": 0,
+        "y": 0,
+        "width": 0,
+        "height": 0
+      },
+      "color": "rgb(32, 41, 37)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "borderRadius": "0px",
+      "padding": "0px",
+      "margin": "0px",
+      "display": "none"
+    },
+    "nav": {
+      "rect": {
+        "x": 42,
+        "y": 48,
+        "width": 1398,
+        "height": 42.5
+      },
+      "color": "rgb(32, 41, 37)",
+      "backgroundColor": "rgba(0, 0, 0, 0)",
+      "fontFamily": "Inter, ui-sans-serif, system-ui, -apple-system, \"system-ui\", \"Segoe UI\", sans-serif",
+      "fontSize": "16px",
+      "lineHeight": "24px",
+      "borderRadius": "0px",
+      "padding": "2px 0px 4px",
+      "margin": "0px 0px -48px",
+      "display": "flex"
+    }
+  }
+}

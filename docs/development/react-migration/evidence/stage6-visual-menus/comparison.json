@@ -1,0 +1,86 @@
+[
+  {
+    "variant": "desktop-light",
+    "menu": "chat-actions",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null
+  },
+  {
+    "variant": "desktop-light",
+    "menu": "regenerate",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null
+  },
+  {
+    "variant": "desktop-light",
+    "menu": "model",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null
+  },
+  {
+    "variant": "desktop-dark",
+    "menu": "chat-actions",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null
+  },
+  {
+    "variant": "desktop-dark",
+    "menu": "regenerate",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null
+  },
+  {
+    "variant": "desktop-dark",
+    "menu": "model",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null
+  },
+  {
+    "variant": "narrow-light",
+    "menu": "chat-actions",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null
+  },
+  {
+    "variant": "narrow-light",
+    "menu": "regenerate",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null
+  },
+  {
+    "variant": "narrow-light",
+    "menu": "model",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null
+  },
+  {
+    "variant": "narrow-dark",
+    "menu": "chat-actions",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null
+  },
+  {
+    "variant": "narrow-dark",
+    "menu": "regenerate",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null
+  },
+  {
+    "variant": "narrow-dark",
+    "menu": "model",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null
+  }
+]

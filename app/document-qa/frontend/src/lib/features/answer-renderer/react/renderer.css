@@ -1,0 +1,61 @@
+/* Mechanical translation of component-scoped native Open WebUI layout. */
+.renderer-answer {
+  min-width: 0;
+  width: 100%;
+}
+.renderer-assistant-actions {
+  min-height: 28px;
+  position: relative;
+}
+.renderer-assistant .renderer-branch-input {
+  width: 2.5rem;
+}
+.renderer-answer .renderer-blocked-frame {
+  height: 150px;
+  background: #ddd;
+  border: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.renderer-answer .renderer-blocked-frame.aspect-video {
+  height: auto;
+  aspect-ratio: 16/9;
+}
+.renderer-answer .renderer-unavailable-image {
+  display: inline-block;
+  color: #6b7280;
+  font-size: 0.875rem;
+}
+.renderer-panzoom svg {
+  max-width: 100%;
+  height: auto;
+}
+.renderer-artifact {
+  position: fixed;
+  z-index: 40;
+  right: 0;
+  top: 48px;
+  bottom: 0;
+  height: calc(100dvh - 48px);
+  width: calc((100vw - var(--renderer-workspace-offset, 42px)) / 2);
+  border-left: 1px solid var(--border-color, #e5e7eb);
+}
+body:has(.desktop-shell.sidebar-open) .renderer-artifact {
+  --renderer-workspace-offset: calc(var(--sidebar-width, 245px) + 1px);
+}
+.renderer-artifact-full {
+  left: 0;
+  top: 0;
+  width: 100vw;
+  height: 100dvh;
+  z-index: 100;
+}
+@media (max-width: 767px) {
+  .renderer-artifact {
+    left: 0;
+    top: 48px;
+    width: 100%;
+    height: calc(100dvh - 48px);
+  }
+}

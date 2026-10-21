@@ -1,0 +1,13 @@
+{
+  "baseline_commit": "4dc2a06a4fc57ff393ea43ef4b75014b1458eb9b",
+  "accepted_by": "primary agent after inventory and pixel review",
+  "capture_index_sha256": "560ed579f85718b5cc71f9569fd0eb6cde4d7ae92850ee38f1f75e581aa422b1",
+  "screenshot_count": 95,
+  "independent_empty_repeat_sha256": "6b443db414b9e4478e263ebe29038b0cd30c499b2a82e77b1f87d82139b09659",
+  "policy": "Immutable original reference. Capture React or repeat runs into a separate BASELINE_OUTPUT_ROOT. Do not regenerate originals to hide differences.",
+  "limits": [
+    "Browser fixture evidence, not model or packaged desktop qualification.",
+    "Known original console errors and unsupported behavior are documented in baseline inventory/defects.",
+    "Renderer diagnostic query counts are selector-specific, not proof that a format is absent."
+  ]
+}

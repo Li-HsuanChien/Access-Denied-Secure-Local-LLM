@@ -1,0 +1,152 @@
+{
+  "mode": "fixture",
+  "output": "/private/tmp/react-stage6-fixture",
+  "cases": [
+    {
+      "name": "direct routes, reload, Back/Forward and New Chat",
+      "operations": {
+        "health": 10,
+        "settings.get": 13,
+        "history.enabled": 13,
+        "library.versions": 1,
+        "history.list": 3
+      },
+      "errors": 0,
+      "blocked": 0
+    },
+    {
+      "name": "keyboard, suggestion, copy/edit, branch, regenerate, delete and sources",
+      "operations": {
+        "health": 1,
+        "settings.get": 1,
+        "history.enabled": 1,
+        "answering.ask": 2,
+        "history.save": 2
+      },
+      "errors": 0,
+      "blocked": 0
+    },
+    {
+      "name": "rapid Enter/click, queue Edit/Delete/FIFO and dispatch preference",
+      "operations": {
+        "health": 1,
+        "settings.get": 1,
+        "history.enabled": 1,
+        "answering.ask": 3,
+        "settings.update": 1,
+        "history.save": 3
+      },
+      "errors": 0,
+      "blocked": 0
+    },
+    {
+      "name": "pending answer across route and New Chat, discarded queue and late completion",
+      "operations": {
+        "health": 1,
+        "settings.get": 2,
+        "history.enabled": 2,
+        "answering.ask": 2,
+        "history.list": 1,
+        "history.save": 2
+      },
+      "errors": 0,
+      "blocked": 0
+    },
+    {
+      "name": "history-save failure keeps answer and releases lock",
+      "operations": {
+        "health": 1,
+        "settings.get": 1,
+        "history.enabled": 1,
+        "answering.ask": 2,
+        "history.save": 2
+      },
+      "errors": 0,
+      "blocked": 0
+    },
+    {
+      "name": "Header/Settings/History committed preferences and failed writes",
+      "operations": {
+        "health": 2,
+        "settings.get": 3,
+        "history.enabled": 3,
+        "settings.update": 2,
+        "history.set_enabled": 1,
+        "history.list": 1,
+        "answering.ask": 1,
+        "history.save": 1
+      },
+      "errors": 0,
+      "blocked": 0
+    },
+    {
+      "name": "saved metadata/native sources, stale open/list after clear and delete",
+      "operations": {
+        "health": 1,
+        "history.list": 5,
+        "settings.get": 6,
+        "history.enabled": 6,
+        "history.open": 2,
+        "history.clear": 1,
+        "history.delete": 1
+      },
+      "errors": 0,
+      "blocked": 0
+    },
+    {
+      "name": "Library confirmation/publication identity across navigation, cancellation and restart",
+      "operations": {
+        "health": 2,
+        "library.versions": 4,
+        "settings.get": 2,
+        "history.enabled": 2,
+        "library.review": 1,
+        "library.publish": 2,
+        "library.status": 1,
+        "library.cancel": 1,
+        "library.rollback": 1
+      },
+      "errors": 0,
+      "blocked": 0
+    },
+    {
+      "name": "lost publication POST retains ownership through null/error status until terminal",
+      "operations": {
+        "health": 1,
+        "library.versions": 3,
+        "settings.get": 2,
+        "history.enabled": 2,
+        "library.review": 1,
+        "library.publish": 1,
+        "library.status": 3,
+        "history.list": 1
+      },
+      "errors": 0,
+      "blocked": 0
+    },
+    {
+      "name": "model/status menus, long scrolling and code Save preserves original persisted answer",
+      "operations": {
+        "health": 1,
+        "settings.get": 1,
+        "history.enabled": 1,
+        "answering.ask": 2,
+        "history.save": 2
+      },
+      "errors": 0,
+      "blocked": 0
+    },
+    {
+      "name": "regeneration holds shared lock and a pending sibling exposes no overlapping regenerate",
+      "operations": {
+        "health": 1,
+        "settings.get": 1,
+        "history.enabled": 1,
+        "answering.ask": 3,
+        "history.save": 3
+      },
+      "errors": 0,
+      "blocked": 0
+    }
+  ]
+}

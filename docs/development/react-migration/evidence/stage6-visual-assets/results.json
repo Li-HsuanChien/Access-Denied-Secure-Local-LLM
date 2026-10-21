@@ -1,0 +1,418 @@
+[
+  {
+    "responses": [
+      {
+        "url": "http://127.0.0.1:4177/qa",
+        "status": 200,
+        "type": "document",
+        "mime": "text/html"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/index-D7qluYef.css",
+        "status": 200,
+        "type": "stylesheet",
+        "mime": "text/css"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/index-By0We8XW.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/translation-B9zysbjG.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/static/favicon.png",
+        "status": 200,
+        "type": "image",
+        "mime": "image/png"
+      },
+      {
+        "url": "http://127.0.0.1:4177/favicon.png",
+        "status": 200,
+        "type": "image",
+        "mime": "image/png"
+      },
+      {
+        "url": "http://127.0.0.1:8765/health",
+        "status": 200,
+        "type": "fetch",
+        "mime": "application/json"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/fonts/Inter-Variable.ttf",
+        "status": 200,
+        "type": "font",
+        "mime": "font/ttf"
+      },
+      {
+        "url": "http://127.0.0.1:8765/v1/requests",
+        "status": 200,
+        "type": "fetch",
+        "mime": "application/json"
+      },
+      {
+        "url": "http://127.0.0.1:8765/v1/requests",
+        "status": 200,
+        "type": "fetch",
+        "mime": "application/json"
+      },
+      {
+        "url": "http://127.0.0.1:4177/static/favicon.png",
+        "status": 200,
+        "type": "image",
+        "mime": "image/png"
+      },
+      {
+        "url": "http://127.0.0.1:8765/v1/requests",
+        "status": 200,
+        "type": "fetch",
+        "mime": "application/json"
+      },
+      {
+        "url": "http://127.0.0.1:8765/v1/requests",
+        "status": 200,
+        "type": "fetch",
+        "mime": "application/json"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/KaTeX_Main-Regular-B22Nviop.woff2",
+        "status": 200,
+        "type": "font",
+        "mime": "font/woff2"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/KaTeX_Math-Italic-t53AETM-.woff2",
+        "status": 200,
+        "type": "font",
+        "mime": "font/woff2"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/index-DthHYgnd.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/index-DO7smjP5.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/linear-DCLTjozf.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/isString-D_FA-9ax.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/index-BRp9Tkyr.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/init-Dmth1JHB.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/defaultLocale-CzDG__Ur.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/step-DYkdTxz9.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/time-CW78aI_c.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/range-OtVwhkKS.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/ordinal-BeghXfj9.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/colors-Cc3OSVma.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/arc-BN3pgcLk.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/index-Bi7T_FA4.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/vega.module-VtGJHXh6.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/mermaid.core-Dxg8V8J2.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/vega-interpreter-Dh_yu-yv.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/chunk-55IACEB6-BRC3WzNO.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/chunk-ND2GUHAM-CQAhhxxw.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/flowDiagram-I6XJVG4X-Sp3VcN_N.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/chunk-FMBD7UC4-BiGYkCJv.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/chunk-2J33WTMH-jFeynIzp.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/channel-Ct7Sjpm8.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/index-B72Ncwws.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/dagre-BM42HDAG-CKFF5FOO.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/graph-BlwPajkw.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/layout-Boy8vhSP.js",
+        "status": 200,
+        "type": "script",
+        "mime": "text/javascript"
+      },
+      {
+        "url": "http://127.0.0.1:4177/assets/fonts/Vazirmatn-Variable.ttf",
+        "status": 200,
+        "type": "font",
+        "mime": "font/ttf"
+      },
+      {
+        "url": "http://127.0.0.1:4177/favicon.png",
+        "status": 200,
+        "type": "fetch",
+        "mime": "image/png"
+      },
+      {
+        "url": "http://127.0.0.1:4177/static/favicon.png",
+        "status": 200,
+        "type": "fetch",
+        "mime": "image/png"
+      }
+    ],
+    "fonts": [
+      {
+        "family": "Inter",
+        "status": "loaded",
+        "weight": "normal"
+      },
+      {
+        "family": "Vazirmatn",
+        "status": "loaded",
+        "weight": "normal"
+      },
+      {
+        "family": "KaTeX_AMS",
+        "status": "unloaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_Caligraphic",
+        "status": "unloaded",
+        "weight": "700"
+      },
+      {
+        "family": "KaTeX_Caligraphic",
+        "status": "unloaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_Fraktur",
+        "status": "unloaded",
+        "weight": "700"
+      },
+      {
+        "family": "KaTeX_Fraktur",
+        "status": "unloaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_Main",
+        "status": "unloaded",
+        "weight": "700"
+      },
+      {
+        "family": "KaTeX_Main",
+        "status": "unloaded",
+        "weight": "700"
+      },
+      {
+        "family": "KaTeX_Main",
+        "status": "unloaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_Main",
+        "status": "loaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_Math",
+        "status": "unloaded",
+        "weight": "700"
+      },
+      {
+        "family": "KaTeX_Math",
+        "status": "loaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_SansSerif",
+        "status": "unloaded",
+        "weight": "700"
+      },
+      {
+        "family": "KaTeX_SansSerif",
+        "status": "unloaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_SansSerif",
+        "status": "unloaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_Script",
+        "status": "unloaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_Size1",
+        "status": "unloaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_Size2",
+        "status": "unloaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_Size3",
+        "status": "unloaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_Size4",
+        "status": "unloaded",
+        "weight": "400"
+      },
+      {
+        "family": "KaTeX_Typewriter",
+        "status": "unloaded",
+        "weight": "400"
+      }
+    ],
+    "icons": [
+      {
+        "path": "/favicon.png",
+        "status": 200,
+        "mime": "image/png",
+        "bytes": 21666
+      },
+      {
+        "path": "/static/favicon.png",
+        "status": 200,
+        "mime": "image/png",
+        "bytes": 21666
+      }
+    ],
+    "images": [
+      {
+        "src": "http://127.0.0.1:4177/static/favicon.png",
+        "loaded": true,
+        "naturalWidth": 512,
+        "naturalHeight": 512
+      },
+      {
+        "src": "http://127.0.0.1:4177/static/favicon.png",
+        "loaded": true,
+        "naturalWidth": 512,
+        "naturalHeight": 512
+      }
+    ],
+    "errors": [],
+    "blocked": []
+  }
+]

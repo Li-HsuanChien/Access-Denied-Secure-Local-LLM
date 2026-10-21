@@ -1,0 +1,135 @@
+{
+  "reference": "/Users/evansinocchi/Desktop/Projects/Access-Denied-Secure-Local-LLM/docs/development/react-migration/evidence/stage6-visual-full",
+  "reference_index_sha256": "6c1811768f6570e1a6f44de0be3d6f73c63d4d069afbe0699b2f467ea1a52717",
+  "candidate": "/private/tmp/react-stage7-visual-scoped",
+  "pixel_tolerance": 0,
+  "masks": [],
+  "counts": {
+    "identical": 8,
+    "pixels-differ": 0,
+    "dimensions-differ": 0,
+    "missing": 0
+  },
+  "cases": [
+    {
+      "name": "chat-answer-initial",
+      "reference_sha256": "b387a77e01fdd8093c30fd36b84213b26ebe59d3b838286fe3a10e9ef9f5c2c2",
+      "candidate_sha256": "b387a77e01fdd8093c30fd36b84213b26ebe59d3b838286fe3a10e9ef9f5c2c2",
+      "status": "identical",
+      "size": [
+        1440,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 1440000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "name": "chat-answer",
+      "reference_sha256": "40f38609b26717d4273eeed06fda4e33f60c773d20e4d628c94e5f8e1db4791f",
+      "candidate_sha256": "40f38609b26717d4273eeed06fda4e33f60c773d20e4d628c94e5f8e1db4791f",
+      "status": "identical",
+      "size": [
+        1440,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 1440000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "name": "chat-sources-expanded",
+      "reference_sha256": "38a3210ee811d084f6264ecbe36d24d24d23396297efcf05b75c4a5d8a91e35f",
+      "candidate_sha256": "38a3210ee811d084f6264ecbe36d24d24d23396297efcf05b75c4a5d8a91e35f",
+      "status": "identical",
+      "size": [
+        1440,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 1440000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "name": "chat-source-detail-modal",
+      "reference_sha256": "fd53dc55b131c0661015e93c2cc46c6b15eed20fd703702713d82b9f6414b9ca",
+      "candidate_sha256": "fd53dc55b131c0661015e93c2cc46c6b15eed20fd703702713d82b9f6414b9ca",
+      "status": "identical",
+      "size": [
+        1440,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 1440000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "name": "chat-rich-content-initial",
+      "reference_sha256": "0831ebdf07ded6cf5287fabe41a43be652d9ef740533e1fb24e8273877fd16fc",
+      "candidate_sha256": "0831ebdf07ded6cf5287fabe41a43be652d9ef740533e1fb24e8273877fd16fc",
+      "status": "identical",
+      "size": [
+        1440,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 1440000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "name": "chat-rich-content-top",
+      "reference_sha256": "cd2375fc68813fa6bd7ae13cba03543a243e8ab02f4e0a81c66b9d1765f92524",
+      "candidate_sha256": "cd2375fc68813fa6bd7ae13cba03543a243e8ab02f4e0a81c66b9d1765f92524",
+      "status": "identical",
+      "size": [
+        1440,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 1440000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "name": "chat-rich-content-middle",
+      "reference_sha256": "1673537256ccba0f95e6a36f183bfcaf05dc84426849d438a80de1b0c08fefaf",
+      "candidate_sha256": "1673537256ccba0f95e6a36f183bfcaf05dc84426849d438a80de1b0c08fefaf",
+      "status": "identical",
+      "size": [
+        1440,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 1440000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "name": "chat-rich-content-bottom",
+      "reference_sha256": "00e21eb5f6ac3585e1927f347ddac0af7a87db9699161ba2cbd232010f0e35be",
+      "candidate_sha256": "00e21eb5f6ac3585e1927f347ddac0af7a87db9699161ba2cbd232010f0e35be",
+      "status": "identical",
+      "size": [
+        1440,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 1440000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    }
+  ]
+}

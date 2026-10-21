@@ -1,0 +1,14 @@
+
+> access-denied-document-qa@0.11.4 test:host
+> vitest run --config vitest.host.config.ts
+
+
+ RUN  v1.6.1 /Users/evansinocchi/Desktop/Projects/Access-Denied-Secure-Local-LLM/app/document-qa/frontend/react
+
+ ✓ ../src/lib/features/answering/answeringHost.integration.test.ts  (2 tests) 117ms
+
+ Test Files  1 passed (1)
+      Tests  2 passed (2)
+   Start at  20:15:13
+   Duration  1.17s (transform 54ms, setup 0ms, collect 323ms, tests 117ms, environment 0ms, prepare 461ms)
+

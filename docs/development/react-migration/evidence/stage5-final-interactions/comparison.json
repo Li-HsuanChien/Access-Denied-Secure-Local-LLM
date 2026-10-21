@@ -1,0 +1,37 @@
+{
+  "suggestions": {
+    "pixels": 0,
+    "max": 0,
+    "box": null
+  },
+  "suggestion-hover": {
+    "pixels": 0,
+    "max": 0,
+    "box": null
+  },
+  "suggestion-focus": {
+    "pixels": 0,
+    "max": 0,
+    "box": null
+  },
+  "mobile-reduce": {
+    "pixels": 0,
+    "max": 0,
+    "box": null
+  },
+  "mobile-neutral-reduce": {
+    "pixels": 0,
+    "max": 0,
+    "box": null
+  },
+  "mobile-no-preference": {
+    "pixels": 0,
+    "max": 0,
+    "box": null
+  },
+  "mobile-neutral-no-preference": {
+    "pixels": 0,
+    "max": 0,
+    "box": null
+  }
+}

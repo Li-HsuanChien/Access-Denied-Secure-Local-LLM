@@ -1,0 +1,115 @@
+[
+  {
+    "variant": "light",
+    "state": "pinned",
+    "pixels": 5863,
+    "max": 129,
+    "bounds": [
+      537,
+      596,
+      717,
+      723
+    ],
+    "sidebar_crop": [
+      0,
+      0,
+      240,
+      1000
+    ],
+    "sidebar_changed_pixels": 0
+  },
+  {
+    "variant": "light",
+    "state": "shift",
+    "pixels": 5863,
+    "max": 129,
+    "bounds": [
+      537,
+      596,
+      717,
+      723
+    ],
+    "sidebar_crop": [
+      0,
+      0,
+      240,
+      1000
+    ],
+    "sidebar_changed_pixels": 0
+  },
+  {
+    "variant": "light",
+    "state": "collapsed",
+    "pixels": 5863,
+    "max": 129,
+    "bounds": [
+      537,
+      596,
+      717,
+      723
+    ],
+    "sidebar_crop": [
+      0,
+      0,
+      240,
+      1000
+    ],
+    "sidebar_changed_pixels": 0
+  },
+  {
+    "variant": "dark",
+    "state": "pinned",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null,
+    "sidebar_crop": [
+      0,
+      0,
+      240,
+      1000
+    ],
+    "sidebar_changed_pixels": 0
+  },
+  {
+    "variant": "dark",
+    "state": "shift",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null,
+    "sidebar_crop": [
+      0,
+      0,
+      240,
+      1000
+    ],
+    "sidebar_changed_pixels": 0
+  },
+  {
+    "variant": "dark",
+    "state": "collapsed",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null,
+    "sidebar_crop": [
+      0,
+      0,
+      240,
+      1000
+    ],
+    "sidebar_changed_pixels": 0
+  },
+  {
+    "variant": "mobile",
+    "state": "pinned",
+    "pixels": 0,
+    "max": 0,
+    "bounds": null,
+    "sidebar_crop": [
+      0,
+      0,
+      390,
+      844
+    ],
+    "sidebar_changed_pixels": 0
+  }
+]
