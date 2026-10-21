@@ -643,6 +643,39 @@ def test_normal_pdfs_extract_page_text():
             f'yield text; the other {blank_pages} are blank in the PDF')
 
 
+def test_each_page_is_read_once():
+    """
+    Week 6: extraction builds one text page per page, and a second only for a
+    page that yields no text, to count its images. Before, every page was read
+    twice, the second time with every image on it loaded.
+    """
+    scanned = FIX / 'scanned' / 'scanned_mixed_text_and_image_pages.pdf'
+    built: list[int] = []
+    real = pymupdf.Page.get_textpage
+
+    def counted(self, *args, **kwargs):
+        built.append(self.number)
+        return real(self, *args, **kwargs)
+
+    pymupdf.Page.get_textpage = counted
+    seen = []
+    try:
+        for path in (NORMAL, ORIGINAL, scanned):
+            built.clear()
+            text, pages, doc = extract(path)
+            doc.close()
+            empty = [p for p in pages if not p.has_text]
+            assert len(built) == len(pages) + len(empty), (
+                f'{path.name}: {len(built)} text pages built for {len(pages)} pages, {len(empty)} without text')
+            seen.append((path.name, len(pages), len(empty)))
+    finally:
+        pymupdf.Page.get_textpage = real
+    lost = [p.number for p in pages if not p.has_text and not p.images]
+    assert not lost, f'{scanned.name}: image-only pages counted no image: {lost}'
+    return ('text pages built: ' + ', '.join(f'{n + e} for {n} pages ({e} without text)' for _, n, e in seen)
+            + f'; the {len(empty)} scanned pages still report their image')
+
+
 def test_pages_without_text_are_always_on_record():
     """
     Nothing is lost silently. The text_yield check lists every page without
