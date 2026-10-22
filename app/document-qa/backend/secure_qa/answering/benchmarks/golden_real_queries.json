@@ -165,7 +165,8 @@
       },
       "answer_facts": [
         "11 students"
-      ]
+      ],
+      "known_gap": "Under E2's refchunk-3.0.0 the 'composed of 11 students' chunk ranks 4th at 0.358, under min_score 0.38. Same cause as c09/c11 (noisy arXiv two-column text under dense-only retrieval); it retrieved above the floor under the older refchunk-2.0.1. Needs the same team decision (ADR)."
     },
     {
       "id": "c11",
