@@ -70,6 +70,7 @@ RUN_NAME = re.compile(r'run_[0-9a-f]{16}$')
 # not part of a run and must not make an intact one fail verification.
 OS_METADATA = frozenset({'.DS_Store', 'Thumbs.db', 'desktop.ini'})
 COPY_BLOCK = 1 << 20
+TEXT_BLOCK = 1 << 18                        # characters encoded at a time when hashing a text stream
 DISK_RESERVE_BYTES = 64 * 1024 * 1024       # never fill the volume to the last block
 
 log = logging.getLogger('e2.ingest')
@@ -150,9 +151,21 @@ def _sha256_file(path: Path) -> tuple[str, int]:
     return digest.hexdigest(), size
 
 
-def _write(path: Path, data: bytes, durable: bool = True) -> None:
+def _text_sha256(text: str) -> str:
+    """SHA-256 of the text as UTF-8, encoded a slice at a time instead of copied whole."""
+    digest = hashlib.sha256()
+    for at in range(0, len(text), TEXT_BLOCK):
+        digest.update(text[at:at + TEXT_BLOCK].encode('utf-8'))
+    return digest.hexdigest()
+
+
+def _write(path: Path, data: bytes | list[bytes], durable: bool = True) -> None:
+    """Write a file whole, or from a list of its pieces without joining them first."""
     with open(path, 'wb') as handle:         # binary: no newline translation on Windows
-        handle.write(data)
+        if isinstance(data, list):
+            handle.writelines(data)
+        else:
+            handle.write(data)
         if durable:
             handle.flush()
             os.fsync(handle.fileno())
@@ -656,24 +669,25 @@ def prepare(paths: Iterable[str | Path], root: str | Path, *,
             else:
                 text, pages, made = processed.text, processed.pages, processed.chunks
                 document = result.document
-                blob = b''.join(_line(k.to_dict()) for k in made)
+                # Lines, not one joined blob: joining would hold every line twice.
+                lines = [_line(k.to_dict()) for k in made]
                 table = {
                     'schema_version': MANIFEST_SCHEMA_VERSION,
                     'document_id': document['document_id'],
                     'extractor': EXTRACTOR, 'chunker_config_id': config.config_id,
                     'text_chars': len(text),
-                    'text_sha256': hashlib.sha256(text.encode('utf-8')).hexdigest(),
+                    'text_sha256': _text_sha256(text),
                     'pages': [{'page_number': p.number, 'char_start': p.char_start,
                                'char_end': p.char_end, 'width': p.width, 'height': p.height,
                                'has_text': p.has_text, 'spans': len(p.spans)} for p in pages],
                 }
                 table_blob = json.dumps(table, sort_keys=True, separators=(',', ':'),
                                         ensure_ascii=True).encode('ascii') + b'\n'
-                need = len(blob) + len(table_blob) + DISK_RESERVE_BYTES
+                need = sum(map(len, lines)) + len(table_blob) + DISK_RESERVE_BYTES
                 free = disk_free(root)
                 if free < need:
                     raise InsufficientDiskSpace(need, free)
-                _write(partial / 'chunks' / f'{document["document_id"]}.jsonl', blob, durable)
+                _write(partial / 'chunks' / f'{document["document_id"]}.jsonl', lines, durable)
                 _write(partial / 'extraction' / f'{document["document_id"]}.json', table_blob, durable)
                 c.document_id = document['document_id']
                 c.page_count, c.chunk_count = document['page_count'], len(made)
@@ -687,7 +701,7 @@ def prepare(paths: Iterable[str | Path], root: str | Path, *,
                     'chunk_count': len(made),
                 }
                 state['warnings'] += len(result.warnings)
-                del text, pages, made, blob, processed      # one document in memory at a time
+                del text, pages, made, lines, processed     # one document in memory at a time
 
             c.seconds = round(time.perf_counter() - t_file, 4)
             state['files'] += 1
@@ -1131,7 +1145,7 @@ def verify(run_dir: str | Path, *, deep: bool = False, sealed: bool = True) -> V
                     n += 1
             rebuilt = ''.join(stream)
             if (len(rebuilt) != d['text_chars']
-                    or hashlib.sha256(rebuilt.encode('utf-8')).hexdigest() != d['text_sha256']):
+                    or _text_sha256(rebuilt) != d['text_sha256']):
                 problems['text_stream_rebuilt'].append(f'{doc_id}: rebuilt stream does not hash to text_sha256')
             if n != d['chunk_count'] or n < 1:
                 problems['chunk_counts'].append(f'{doc_id}: {n} lines, manifest says {d["chunk_count"]}')
@@ -1173,8 +1187,11 @@ def verify(run_dir: str | Path, *, deep: bool = False, sealed: bool = True) -> V
                 source = run_dir / d['files']['source']['path']
                 again = process(source, policy, config, source_filename=d['source_filename'],
                                 checksum_sha256=d['checksum_sha256'], byte_size=d['byte_size'])
-                blob = b''.join(_line(k.to_dict()) for k in (again.chunks or []))
-                if hashlib.sha256(blob).hexdigest() != d['files']['chunks']['sha256']:
+                digest = hashlib.sha256()
+                for k in again.chunks or []:
+                    digest.update(_line(k.to_dict()))
+                del again
+                if digest.hexdigest() != d['files']['chunks']['sha256']:
                     different.append(d['document_id'])
             check('reextraction_reproduces_chunks', not different,
                   ', '.join(different[:3]) or f'{len(manifest["documents"])} documents re-extracted '
@@ -1341,7 +1358,7 @@ def trace(run: Run, document_id: str, ordinal: int) -> dict:
         'document_id': document_id, 'chunk': chunk, 'text_chars': doc['text_chars'],
         'text_checksum_matches': text_checksum(chunk['text']) == chunk['text_checksum_sha256'],
         'stream_slice_matches': text[chunk['char_start']:chunk['char_end']] == chunk['text'],
-        'stream_sha256_matches': hashlib.sha256(text.encode('utf-8')).hexdigest() == doc['text_sha256'],
+        'stream_sha256_matches': _text_sha256(text) == doc['text_sha256'],
         'spans': spans,
     }
 
