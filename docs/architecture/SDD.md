@@ -45,9 +45,9 @@ A pinned Open WebUI fork supplies the SvelteKit interface and Python/FastAPI hos
 
 #### 4.1 Collection Library
 
-**Interface:** Review selected PDFs and return accepted files, every rejection reason, warnings, and a review ID; publish only after explicit confirmation when any file is rejected; report publication status and accept cancellation; list available versions, return the active version, and roll back to the previous version.
+**Interface:** Review selected PDFs (named from the configured document folder) and return accepted files, every rejection reason, and warnings; publish only after explicit confirmation when any file is rejected; report the active, previous, and listed versions; re-verify a published version's stored counts and checksums against its manifest; and roll back to the previous version.
 
-The module hides PDF validation, extraction, chunking, embedding, indexing, staging, manifest creation, integrity checks, atomic activation, rollback, and cleanup. Indexing checks cancellation between bounded chunk batches. Source PDFs are staged into the candidate version before the active catalog pointer changes, so an activated collection always has its source files and a failed build leaves the active version untouched. The local host exposes versioned `library.review`, `library.publish`, `library.status`, `library.cancel`, `library.versions`, and `library.rollback` operations. Review state is local and temporary; rejected files remain visible until the user confirms the accepted remainder or starts another review. Progress and cancellation are associated with the publication request ID.
+The module hides PDF validation, extraction, chunking (E2's real ingestion pipeline), embedding, indexing, manifest creation, integrity checks, atomic activation, rollback, and cleanup. A failed or unconfirmed build leaves the active version untouched. The local host exposes versioned `library.review`, `library.publish`, `library.status`, `library.rollback`, and `library.integrity` operations; publication acquires a single-job lock and reports `busy` if another is running. Review state is local and temporary; rejected files remain visible until the user confirms the accepted remainder or starts another review. Progress events and cancellation (below) are not implemented yet; publication completes in one request.
 
 **Invariants:**
 
@@ -98,7 +98,7 @@ The host exposes `settings.get` and `settings.update`. The frontend uses the His
 
 #### 4.7 Frontend-to-Host HTTP Contract
 
-The Svelte frontend sends versioned local HTTP requests to the Python host, with a request ID, operation name, and validated payload. Each request returns one result or error associated with that request ID. Long library publication requests are accompanied by `library.status` polling, and cancellation targets the publication request ID. Schemas reject unknown operations or fields. The Python host and llama.cpp listener bind only to 127.0.0.1, and the Tauri shell manages their lifecycle. No listener binds to a non-loopback address, and the application does not support a standalone browser workflow.
+The Svelte frontend sends versioned local HTTP requests to the Python host, with a request ID, operation name, and validated payload. Each request returns one result or error associated with that request ID. The host also serves `history.*` and `settings.*` operations. Publication completes within its request and returns the resulting version and integrity report; progress events and cancellation are a planned addition, not yet implemented. Schemas reject unknown operations or fields. The Python host and llama.cpp listener bind only to 127.0.0.1, and the Tauri shell manages their lifecycle. No listener binds to a non-loopback address, and the application does not support a standalone browser workflow.
 
 #### 4.8 Feature UI QA Harness
 
@@ -119,7 +119,7 @@ For developer QA only, `npm run dev:qa` serves the `/qa`, `/library`, `/history`
 
 ### 5. Data Design
 
-A collection is a complete searchable snapshot of approved PDFs and their derived data. Each version contains the source PDFs, manifest, extraction metadata, chunks, embeddings, document index, and import report.
+A collection is a searchable snapshot of approved PDFs' derived data. Each version contains the manifest, extraction metadata, chunks, embeddings, document index, and import report. The source PDFs themselves live in the user's document folder (the host's `--corpus`), referenced by file name and checksum; they are not copied into the version (see [ADR 0004](decisions/0004-e3-document-store-on-e2-ingestion.md)).
 
 #### 5.1 Persistent Records
 
