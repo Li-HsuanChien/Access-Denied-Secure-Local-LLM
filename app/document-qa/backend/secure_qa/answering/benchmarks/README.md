@@ -23,6 +23,25 @@ cd app/document-qa/backend
 ../../../.venv/bin/python -m secure_qa.answering.benchmarks.golden [--runtime fake|URL] [--show g01] [--json out.json]
 ```
 
+## Real-corpus golden queries (`golden_real_queries.json`, `--corpus real`)
+
+17 questions over E2's real fixture PDFs, ingested end to end through E2's `validate()` and `chunks()`: the NRC Reactor Concepts chapter, the DOE Nuclear Physics handbook, the arXiv two-column paper and E2's adversarial coolant document (309 chunks). Thirteen expect an answer (two of them over the adversarial document, which plants instructions, so the check also fails the answer if it contains the planted text) and four expect a refusal.
+
+- Citing the expected passage and containing the expected facts are quality measures here, not gates, because they depend on the model's choices. Retrieval of the expected chunk, status, resolving citations and ignoring planted instructions are gated.
+- A record with `known_gap` is reported separately and doesn't fail the run. c09 and c11 are known retrieval gaps: dense retrieval scores their evidence below `min_score` on the noisy arXiv text. The test fails if one of them starts passing, so the flag gets removed.
+
+```bash
+../../../.venv/bin/python -m secure_qa.answering.benchmarks.golden --corpus real [--runtime fake|URL] [--json out.json]
+```
+
+## End-to-end demo (`demo_end_to_end.py`)
+
+Ingest and index, ask, retrieve, answer, cite, publish a second version, roll back, republish, with 18 checks and an optional evidence file:
+
+```bash
+../../../.venv/bin/python -m secure_qa.answering.benchmarks.demo_end_to_end [--runtime fake|URL] [--evidence docs/evidence/e3-demo.json]
+```
+
 This is a seed, not the evaluation suite. E5's benchmark adds real questions over the real corpus, answer-quality scoring and threshold tuning.
 
 ## Runtime benchmarks (E1)

@@ -29,6 +29,8 @@ DOCS = {
                'NRC Reactor Concepts Manual, Chapter 1'),
     'large': ('fixtures/large/large_doe_nuclear_physics_v1.pdf',
               'DOE Fundamentals Handbook, Nuclear Physics and Reactor Theory'),
+    'original': ('fixtures/large/large_doe_nuclear_physics_v1_original.pdf',
+                 'DOE Fundamentals Handbook, original typesetting'),
     'arxiv': ('fixtures/layout/layout_arxiv_two_column_2112.11583.pdf',
               'arXiv 2112.11583, two-column layout'),
 }
@@ -116,7 +118,7 @@ def main():
     }
 
     html = TEMPLATE.replace('__PAYLOAD__', json.dumps(payload, ensure_ascii=False))
-    out = Path(args.out) if args.out else ROOT / 'walkthrough' / 'chunk_viewer.html'
+    out = Path(args.out).resolve() if args.out else ROOT / 'walkthrough' / 'chunk_viewer.html'
     out.parent.mkdir(parents=True, exist_ok=True)
     out.write_text(html, encoding='utf-8')
 

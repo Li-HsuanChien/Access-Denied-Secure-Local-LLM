@@ -1,0 +1,9 @@
+# E2 ingestion. Pinned because chunk IDs are a function of the extracted text:
+# a different PyMuPDF can order or split text differently, which moves offsets
+# and so changes every chunk ID. Upgrade deliberately and re-run the tests.
+pymupdf==1.28.2
+
+# Tests and fixture tooling only; not needed to run validate() or chunks().
+jsonschema==4.26.0
+pikepdf==10.15.0
+reportlab==5.0.1

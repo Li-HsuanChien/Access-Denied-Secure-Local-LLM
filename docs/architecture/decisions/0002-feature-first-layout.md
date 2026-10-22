@@ -5,14 +5,14 @@
 
 ## Context
 
-This is one desktop product. The repository separates the Tauri shell, the core document-QA application runtime, and release assembly while keeping product-specific work grouped by feature inside each runtime. The four Python workflow modules own product behavior; Open WebUI and Tauri remain implementation details at their respective seams.
+This is one desktop product. The repository separates the Tauri shell, the core document-QA application runtime, and release assembly while keeping product-specific work grouped by feature inside each runtime. The five Python workflow modules (Collection Library, Question Answering, Conversation History, Local Settings, Release Verification; with a diagnostics scaffold) own product behavior, matching SDD §4; Open WebUI and Tauri remain implementation details at their respective seams.
 
 ## Decision
 
 - Keep the Tauri shell at `app/desktop/`.
 - Keep the document-QA application area at `app/document-qa/`, with the Open WebUI-based frontend workspace under `frontend/src/` and the Python host under `backend/`.
 - Put new frontend behavior and UI tests under `frontend/src/lib/features/<feature>/`; keep frontend route entry points thin.
-- Put the four Python workflow modules under `backend/secure_qa/<feature>/`, with each module's interfaces, wire schema, tests, adapters, and relevant benchmarks beside its owner.
+- Put the five Python workflow modules under `backend/secure_qa/<feature>/`, with each module's interfaces, wire schema, tests, adapters, and relevant benchmarks beside its owner.
 - Keep host registration thin and route product operations through the workflow interfaces.
 - Put shell tests and startup/process benchmarks under `app/desktop/`; put release assembly and full packaged acceptance under `app/release/`.
 - Keep product and architecture documents under `docs/`.

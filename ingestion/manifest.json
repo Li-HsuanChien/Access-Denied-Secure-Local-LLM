@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "generated": "2026-10-06",
+  "generated": "2026-10-13",
   "workstream": "E2 - Ingestion / Chunking",
   "purpose": "Representative document fixture set for the Secure Local Document-QA System. Reject categories follow SDD 6.1: password-protected, corrupt, scanned-only, oversized, and non-PDF.",
   "measured_with": "PyMuPDF 1.28.2 (the extraction library named in SDD 11)",
@@ -11,8 +11,8 @@
     "decision_required": "E2 owes a rule; the fixture exists to force the choice"
   },
   "counts": {
-    "total": 15,
-    "accept": 4,
+    "total": 16,
+    "accept": 5,
     "reject": 7,
     "decision_required": 4
   },
@@ -78,6 +78,37 @@
       },
       "detection_signal": "none required; dense-text happy path",
       "notes": "TEXT REFLOW, NOT ORIGINAL TYPESETTING. The handbook was supplied as an extracted-text file, so pages were reconstructed from the DOE footer convention (\"NP-01 Page 12 Rev. 0\"); fixture page N corresponds to module page N. Original tables and figures are not preserved. Use the NRC and arXiv fixtures for layout-sensitive extraction tests. Covers modules NP-01 and NP-02 only, not the full volume."
+    },
+    {
+      "id": "large-doe-hdbk-1019-v1-original",
+      "path": "fixtures/large/large_doe_nuclear_physics_v1_original.pdf",
+      "category": "large",
+      "expected_outcome": "accept",
+      "reject_reason": null,
+      "title": "DOE Fundamentals Handbook: Nuclear Physics and Reactor Theory, Vol 1 (original typesetting)",
+      "provenance": {
+        "source": "U.S. Department of Energy, DOE-HDBK-1019/1-93",
+        "source_url": "https://www.navsea.navy.mil/Portals/103/Documents/NNPTC/Radiation/doe_reactor_theory_v1.pdf",
+        "license": "U.S. Government work, public domain. Cover: \"Distribution Statement A. Approved for public release; distribution is unlimited.\"",
+        "derived_from": null
+      },
+      "measured": {
+        "bytes": 3521252,
+        "sha256": "8b21195361acc2b2abd0eeae6a0a5bdf0100b24b342612d2c129fabbdb910708",
+        "magic_ok": true,
+        "opens": true,
+        "needs_password": false,
+        "is_encrypted": false,
+        "was_repaired": false,
+        "pages": 142,
+        "chars": 200068,
+        "pages_with_text": 136,
+        "pages_without_text": 6,
+        "extract_allowed": true,
+        "open_error": null
+      },
+      "detection_signal": "none required; real-document happy path",
+      "notes": "THE ORIGINAL PDF of the handbook the reflow fixture above was rebuilt from: the same modules NP-01 and NP-02 in their 1993 typesetting, 142 pages. It carries what the reflow cannot: six intentionally blank pages (4, 6, 8, 10, 12, 94), one landscape page stored rotated 90 degrees (36), running headers that change per module and per section, tables, equations set in symbol fonts, and nuclide notation whose superscripts and subscripts extract as separate lines. Kept alongside the reflow rather than replacing it, so the pair is the same content in two typesettings and a difference between them isolates a layout effect."
     },
     {
       "id": "layout-arxiv-two-column",
@@ -198,7 +229,7 @@
         "pages_with_text": null,
         "pages_without_text": null,
         "extract_allowed": null,
-        "open_error": "Failed to open file '/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/corrupt/corrupt_header_only.pdf' as type pdf."
+        "open_error": "Failed to open file 'corrupt/corrupt_header_only.pdf' as type pdf."
       },
       "detection_signal": "open raises; magic bytes alone are not sufficient validation",
       "notes": "Passes an extension check and a magic-byte check, then fails to parse. Proves validation must attempt a real open, not just sniff the header."
@@ -229,7 +260,7 @@
         "pages_with_text": null,
         "pages_without_text": null,
         "extract_allowed": null,
-        "open_error": "Cannot open empty file: filename='/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/corrupt/corrupt_empty.pdf'."
+        "open_error": "Cannot open empty file: filename='corrupt/corrupt_empty.pdf'."
       },
       "detection_signal": "file size is 0",
       "notes": "Trivial, and the case most often left unhandled until it reaches production."
@@ -384,7 +415,7 @@
         "pages_with_text": null,
         "pages_without_text": null,
         "extract_allowed": null,
-        "open_error": "Failed to open file '/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/nonpdf/nonpdf_zip_container_renamed.pdf' as type pdf."
+        "open_error": "Failed to open file 'nonpdf/nonpdf_zip_container_renamed.pdf' as type pdf."
       },
       "detection_signal": "magic bytes are PK\\x03\\x04, not %PDF-",
       "notes": "Extension-based validation accepts it; content sniffing rejects it."
@@ -415,7 +446,7 @@
         "pages_with_text": null,
         "pages_without_text": null,
         "extract_allowed": null,
-        "open_error": "Failed to open file '/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/nonpdf/nonpdf_plaintext_renamed.pdf' as type pdf."
+        "open_error": "Failed to open file 'nonpdf/nonpdf_plaintext_renamed.pdf' as type pdf."
       },
       "detection_signal": "magic bytes are not %PDF-",
       "notes": "Rejection message must name the real type, not just say \"invalid\"."
@@ -434,15 +465,15 @@
         "derived_from": "tools/doe_hdbk_1019_v1_source.txt"
       },
       "measured": {
-        "bytes": 2605564,
-        "sha256": "f817ce5e3e13e5e92db8acb88bcb6396bdef0660f52691a839857165baa82d34",
+        "bytes": 2623711,
+        "sha256": "27be7680497ed7d05a78b93d15bfb20cf62ad573b807c476b38f589a8f3c2c27",
         "magic_ok": true,
         "opens": true,
         "needs_password": false,
         "is_encrypted": false,
         "was_repaired": false,
         "pages": 1200,
-        "chars": 3178293,
+        "chars": 3176759,
         "pages_with_text": 1200,
         "pages_without_text": 0,
         "extract_allowed": true,

@@ -54,6 +54,28 @@ DESCRIPTORS = {
                'NRC and arXiv fixtures for layout-sensitive extraction tests. Covers '
                'modules NP-01 and NP-02 only, not the full volume.'),
     ),
+    'large/large_doe_nuclear_physics_v1_original.pdf': dict(
+        id='large-doe-hdbk-1019-v1-original',
+        category='large',
+        expected_outcome='accept',
+        reject_reason=None,
+        title='DOE Fundamentals Handbook: Nuclear Physics and Reactor Theory, Vol 1 (original typesetting)',
+        source='U.S. Department of Energy, DOE-HDBK-1019/1-93',
+        source_url='https://www.navsea.navy.mil/Portals/103/Documents/NNPTC/Radiation/doe_reactor_theory_v1.pdf',
+        license=('U.S. Government work, public domain. Cover: "Distribution Statement A. '
+                 'Approved for public release; distribution is unlimited."'),
+        derived_from=None,
+        detection_signal='none required; real-document happy path',
+        notes=('THE ORIGINAL PDF of the handbook the reflow fixture above was rebuilt from: '
+               'the same modules NP-01 and NP-02 in their 1993 typesetting, 142 pages. It '
+               'carries what the reflow cannot: six intentionally blank pages (4, 6, 8, 10, '
+               '12, 94), one landscape page stored rotated 90 degrees (36), running headers '
+               'that change per module and per section, tables, equations set in symbol '
+               'fonts, and nuclide notation whose superscripts and subscripts extract as '
+               'separate lines. Kept alongside the reflow rather than replacing it, so the '
+               'pair is the same content in two typesettings and a difference between them '
+               'isolates a layout effect.'),
+    ),
     'layout/layout_arxiv_two_column_2112.11583.pdf': dict(
         id='layout-arxiv-two-column',
         category='layout',
