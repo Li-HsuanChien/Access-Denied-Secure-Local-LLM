@@ -1,5 +1,4 @@
 <script lang="ts">
-	import { WEBUI_API_BASE_URL, WEBUI_BASE_URL } from '$lib/constants';
 	import { marked } from 'marked';
 	import DOMPurify from 'dompurify';
 
@@ -76,7 +75,7 @@
 							placement="right"
 						>
 							<img
-								src={`${WEBUI_API_BASE_URL}/models/model/profile/image?id=${model?.id}&lang=${$i18n.language}`}
+								src={model?.info?.meta?.profile_image_url ?? '/favicon.png'}
 								class=" size-[2.7rem] rounded-full"
 								alt="logo"
 								draggable="false"

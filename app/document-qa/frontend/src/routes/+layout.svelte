@@ -21,7 +21,8 @@
 	WEBUI_NAME.set('Access Denied');
 	models.set([{
 		id: 'secure-qa-local', name: 'Document Assistant', owned_by: 'openai', external: false,
-		info: { meta: { capabilities: { vision: false, file_upload: false, web_search: false, terminal: false } } }
+		// A local avatar asset so avatar <img> tags don't hit the absent /api/v1/models/.../profile/image route.
+		info: { meta: { profile_image_url: '/favicon.png', capabilities: { vision: false, file_upload: false, web_search: false, terminal: false } } }
 	} as any]);
 	config.set({
 		default_models: 'secure-qa-local', default_pinned_models: '',
@@ -88,10 +89,19 @@
 		healthError = false;
 		try {
 			health = await client.health();
-			healthMessage = health.ready
-				? `${count(health.library.document_count, 'document')} · ${count(health.library.chunk_count, 'passage')} · local model ready`
-				: health.answering.error?.message ?? 'The local model or library is not ready.';
-			healthError = !health.ready;
+			if (health.ready) {
+				// Fully ready: model loaded and a collection is published.
+				healthMessage = `${count(health.library.document_count, 'document')} · ${count(health.library.chunk_count, 'passage')} · local model ready`;
+				healthError = false;
+			} else if (!health.answering.ready) {
+				// The model/runtime itself is not up - this is a real error.
+				healthMessage = health.answering.error?.message ?? 'The local model is not ready.';
+				healthError = true;
+			} else {
+				// Model is ready; the library is just empty. Normal first-run state, not a failure.
+				healthMessage = 'Local model ready — publish documents to your Library to start asking questions.';
+				healthError = false;
+			}
 		} catch (error) {
 			health = null;
 			healthError = true;
