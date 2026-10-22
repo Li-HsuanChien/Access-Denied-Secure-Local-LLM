@@ -1,21 +1,24 @@
-# E2 Ingestion: schemas and fixture corpus
+# E2 Ingestion: validation, extraction, chunking and the import pipeline
 
-Week 1 deliverable for the Secure Local Document-QA System: *"Versioned Chunk
-schema + validation result schema + test document fixture set."*
+The ingestion workstream of the Secure Local Document-QA System. A PDF goes in;
+a verdict, a canonical text stream, and chunks that cite back to exact pages
+and rectangles come out, in a sealed directory the document store can publish.
 
 | Piece | Where |
 |---|---|
 | Chunk and Document schemas | `schemas/chunk.schema.json`, `schemas/document.schema.json`, `src/schema.py` |
 | Validation result schema | `schemas/validation_result.schema.json`, `src/validation.py` |
+| Validation, extraction, chunking | `src/ingest.py`, `src/sentences.py` |
+| Import pipeline and its manifest | `src/pipeline.py`, `schemas/ingest_manifest.schema.json`, `schemas/import_report.schema.json` |
 | Fixture set | `fixtures/`, labeled in `manifest.json` |
 | Sample-document demo | `demo.py` (live), `WALKTHROUGH.md` (written), `walkthrough/chunk_viewer.html` (visual) |
-| Contract tests | `tests/test_contracts.py` (12 tests) |
+| Tests | `tests/test_contracts.py` (32), `tests/test_chunking.py` (11), `tests/test_pipeline.py` (36) |
 
 Three ways to walk through one document, for three audiences:
 
 ```bash
 python3 demo.py                  # live in a terminal, for presenting
-python3 demo.py --doc large      # or arxiv, scanned, truncated, restricted
+python3 demo.py --doc original   # or large, arxiv, scanned, truncated, restricted
 python3 demo.py --full-text      # dump the entire character stream too
 ```
 
@@ -39,8 +42,9 @@ python3 tools/export_text.py
 | `walkthrough/text/<name>.pages.txt` | the same text with page markers, for reading. Markers shift offsets, so never measure against this one. |
 | `walkthrough/text/<name>.offsets.json` | page boundary table and totals. |
 
-The NRC baseline is 18,938 characters across 24 pages, small enough to read end
-to end. The DOE handbook is 201,287.
+The NRC baseline is 16,094 characters across 24 pages, small enough to read end
+to end. The DOE handbook is 196,665 as a text reflow and 187,221 in its original
+typesetting.
 
 ## Schemas
 
@@ -62,19 +66,192 @@ citation stored in conversation history resolve after a collection is
 republished. Changing chunk size or overlap changes every ID, which is correct,
 because the boundaries moved.
 
-**One schema change to raise with the team:** SDD 5.1 records a Chunk as
+**One schema change raised with the team:** SDD 5.1 records a Chunk as
 carrying a single page number. Chunks span pages. On the NRC baseline fixture
-that is wrong for **18 of 19 chunks**, and it holds on dense prose too (46% on
-the DOE handbook, 32% on the arXiv paper), because a chunk boundary has no
-reason to land on a page boundary. The schema here carries `page_start`,
-`page_end`, and a `page_spans` list with per-page offsets and highlight
-rectangles. Per SDD 17.2 this needs an SDD update before implementation, and it
-changes the citation payload E3 finalizes in Week 6. Numbers and reasoning are
-in `WALKTHROUGH.md` section 4.
+that is wrong for **14 of 18 chunks**, and it holds on dense prose too (39% on
+the DOE reflow, 62% on the original DOE typesetting, 24% on the arXiv paper),
+because a chunk boundary has no reason to land on a page boundary. The schema
+here carries `page_start`, `page_end`, and a `page_spans` list with per-page
+offsets and highlight rectangles. The Citation record in SDD 5.1 now allows a
+page range; the Chunk record there still says one page number. Numbers and
+reasoning are in `WALKTHROUGH.md` section 4.
 
 The four open policy decisions below are configuration in `IngestionPolicy`,
 not conditionals in the parser. `test_policy_decisions_are_live_knobs` proves
 each one flips behavior from config alone.
+
+## From PDF to text stream
+
+`extract()` builds one canonical text stream per document from PyMuPDF layout
+spans, so every character offset belongs to a span with a known box. Four things
+happen on the way, each because a fixture showed the need:
+
+- **Reading order.** Lines are ordered top to bottom. On a page set in columns
+  that alone reads straight across both columns, so a page with a real gutter (a
+  strip almost no line crosses, with at least five wide lines on each side) is
+  read column by column, with full-width blocks such as a title or abstract
+  separating bands. A page too sparse to prove its own columns (a page of
+  figures with a caption or two on each side) borrows the gutter the rest of
+  the document uses. Pages without columns are untouched.
+- **Running headers and footers** are removed by position, never by text alone.
+  A line goes only if it sits in the band at the page edge, its text recurs
+  there on at least three pages close together, it is not set larger than body
+  text, and that edge carries running text on at least half the pages. So a
+  section's header that lasts six pages is caught, and a heading that happens to
+  top three scattered pages is not. A line whose text also appears further down
+  the same page is a row of a table or a log, not a header, and is kept: without
+  that, the first three rows of every page of a header-less listing were
+  removed. On the original DOE handbook this removes all 776 header and footer
+  lines and no body line.
+- **Rotated pages.** Boxes are stored in the page as displayed, which is what a
+  renderer draws, so a highlight lands on its text when the page carries
+  `/Rotate`. Text set at an angle to the rest of a page (a stamp up the margin)
+  is placed after the page's own text, where it cannot split a sentence.
+- **Unnamed glyphs.** A symbol font with no Unicode map hands back raw control
+  codes. Each becomes U+FFFD, one for one, so offsets are unchanged and the
+  reader can see a symbol is missing; a line of nothing else is dropped.
+
+## How chunks are cut
+
+A chunk is a run of whole sentences, so a cited chunk reads as a self-contained
+passage and a reader can tell where it came from. `plan_cuts()` in
+`src/ingest.py` decides every boundary and `src/sentences.py` finds the
+sentences.
+
+Where a chunk ends, in order of preference and never past `target_chars`:
+
+1. the last sentence end that fits, even an early one;
+2. where the text has no sentences (a table, a contents page, a column of
+   labels), the last line end that does not split an item;
+3. any line end;
+4. a word gap, only when a single line is longer than the budget.
+
+A page break is not a boundary. A period after `Fig.`, an initial, a list
+marker, or inside a contents dot leader is not a sentence end; the rules and the
+27 hand-labelled cases that pin them are in `tests/test_chunking.py`. A bare
+exponent that the layout left on its own line (`1 x 10 atoms/second.` then `6`)
+stays with the sentence it belongs to. A chunk gives up its overlap before it
+would cut inside a line that fits the budget.
+
+| knob | meaning |
+|---|---|
+| `target_chars` (1200) | hard upper bound on chunk size; only a folded final tail may exceed it |
+| `overlap_chars` (200) | the most text adjacent chunks share, in whole sentences. If the last sentence is longer than this, that one sentence is shared, up to half the chunk |
+| `min_chunk_chars` (100) | the least new text a chunk adds, and the size below which a final tail is folded in |
+| `respect_sentence_boundaries` | `False` cuts on whole lines instead |
+| `sorted_reading_order`, `strip_running_headers` | the two extraction switches above |
+
+Every field is hashed into `config_id`, which is part of every chunk ID, so
+changing any of them, or `chunker_version`, changes every ID.
+
+## The import pipeline
+
+`src/pipeline.py` is the flow from "these files" to "a directory the document
+store may publish". Try it on any PDFs:
+
+```bash
+python3 -m src.pipeline ingest fixtures/large/large_doe_nuclear_physics_v1_original.pdf \
+    fixtures/corrupt/corrupt_truncated_50pct.pdf fixtures/protected/protected_user_password.pdf \
+    --out /tmp/e2-demo --accept-rejections
+python3 -m src.pipeline verify /tmp/e2-demo/runs/run_<id> --deep
+python3 -m src.pipeline show   /tmp/e2-demo/runs/run_<id> --chunk 12
+```
+
+`ingest` prints each stage: stage, validate, extract, chunk, review, seal and
+verify, then traces one chunk back to its file, pages, offsets and rectangles
+and recomputes each link from the staged PDF. Without `--accept-rejections` a
+batch containing a rejected file stops at the review, seals nothing and exits 2.
+
+What happens to a batch:
+
+1. **Stage.** Each file is read once: copied into the attempt directory while
+   its SHA-256 is computed. The staged name is `sources/<document_id>.pdf`,
+   derived from the content, never from the name the file arrived with. The
+   same bytes supplied twice are one document; the other names are kept as
+   aliases.
+2. **Validate, extract, chunk** from a single extraction (`process()` in
+   `src/ingest.py`), so the text that was validated is the text that was chunked.
+3. **Review.** `prepare()` returns a `Review`: every candidate with its verdict,
+   reason and warnings. If anything was rejected, `commit()` needs the review's
+   confirmation token, which is a hash of the rejected set (SDD 6.1: the user
+   confirms before the valid remainder is published).
+4. **Seal.** `commit()` writes the manifest last, re-verifies the directory from
+   the bytes on disk, and renames it to `runs/run_<first 16 hex of the manifest
+   hash>/`. The same files under the same configuration always seal to the same
+   run ID.
+
+```
+<root>/
+  ingest.lock        one import per root at a time
+  journal.jsonl      operational events: ids, counts, codes, timings. No filenames, no text.
+  runs/run_<id>/
+    manifest.json    documents, rejected files, policy, chunker config, checksums, seal
+    report.json      per-candidate verdicts and the full validation results
+    documents.jsonl  one Document record per accepted document
+    sources/<document_id>.pdf
+    chunks/<document_id>.jsonl      one Chunk per line, in order
+    extraction/<document_id>.json   page table: offsets, sizes, which pages have text
+```
+
+**Invalid files fail before indexing.** A rejected file's staged copy is deleted
+the moment it is rejected, it produces no chunk file, and the manifest lists it
+under `rejected` with its checksum, reason and failed check. `verify()` checks
+the sealed directory holds nothing it cannot attribute to an accepted document.
+
+**Nothing half-written is ever a run.** An attempt lives in `runs/.partial-*`
+until it is sealed. `load_run()` refuses anything that is not sealed or that
+fails verification. A full disk, a cancellation or an error removes the
+attempt. `recover()`, for startup after a crash, deletes interrupted attempts
+and nothing else: a `run_*` directory that no longer verifies is moved to
+`quarantine/` with its PDFs, because it may be a good run that was damaged
+later, and a folder the pipeline did not create is left alone.
+
+**A failure that is not the file's fault is not a verdict on the file.** An
+exception from the caller's progress or cancel callback, or a failure to write
+the staged copy, ends the import with its own error. Neither is recorded as a
+corrupt PDF.
+
+**Hand-off to the document store (E3).** `load_run(path)` returns a `Run`;
+`run.documents` and `run.iter_chunks()` yield exactly the Document and Chunk
+dictionaries the schemas describe, and `run.source_path(document_id)` is the
+PDF a citation renders its page from. `integrity.chunk_set_sha256` in the
+manifest uses the same formula as E3's collection integrity hash, so E3 can
+compare what it indexed against what E2 sealed.
+
+Embedding, indexing and activating a collection version are E3's. This module
+stops at a verified directory.
+
+## Known limitations
+
+What a reader of the chunks will still run into, most serious first. None of
+these is a cut in the wrong place; they are about the text itself.
+
+- **Exponents and subscripts are out of place.** PDF sets them on their own
+  baseline and they arrive as separate lines, so `1 x 10⁶ atoms/second` reads
+  `1 x 10 atoms/second.` with a `6` after it (35 places in the original DOE
+  handbook). A chunk is never cut between the two, but the number still reads
+  wrong. Putting them back inline needs a decision on notation (`10^6`), since
+  the character that would mark it is not in the PDF.
+- **Display equations are flattened** to one fragment per line, with operators
+  that were drawn as lines (fraction bars) missing.
+- **Symbols from fonts with no Unicode map.** Greek letters in the original DOE
+  handbook come out as U+FFFD, all alike. In the DOE reflow the source text
+  layer itself has wrong letters for them (`I` for alpha, `)` for sigma).
+- **Floats inside sentences.** On the two-column paper a figure caption or a
+  table sits where it was typeset, which is often in the middle of a body
+  sentence; the sentence is then split around it. A page with two stacked
+  two-column zones (acknowledgments above references) is read as one zone.
+- **Figure labels** on the NRC slides come out as a column of short lines in no
+  useful order, attached to the first sentence that follows them.
+- **Ligatures and line-end hyphens are kept as printed** (`ﬁ`, `real-` /
+  `izing`), so a plain keyword search for `specifications` can miss.
+- **Highlights are whole spans.** The first and last highlighted line of a chunk
+  can include a few words outside it.
+- **English only.** The abbreviation and sentence-opener lists are English.
+- **Strict on two points by choice.** A file whose `%PDF-` header is not at
+  byte 0 is rejected as not a PDF, and a rebuilt document with any empty page is
+  rejected even if that page was blank by design.
+- **No OCR.** A scanned page is reported, never read.
 
 ## Fixture corpus
 
@@ -91,16 +268,21 @@ scanned-only, oversized, and non-PDF**.
 ## Layout
 
 ```
-schemas/       JSON Schema for Document, Chunk, ValidationResult
+schemas/       JSON Schema for Document, Chunk, ValidationResult, and the
+               pipeline's manifest, import report, review and extraction records
 src/
   schema.py        dataclasses, ID derivation, citation targets
   validation.py    outcome/reason vocabulary, checks, IngestionPolicy
-  ingest.py        reference validate() and chunks()
+  ingest.py        validate(), extract(), chunks(), and process() which does all three in one pass
+  sentences.py     sentence boundaries and line-cut grading
+  pipeline.py      the import flow: stage, validate, chunk, review, seal, verify
 tests/
-  test_contracts.py    12 contract tests
+  test_contracts.py    32 tests: schemas, IDs, provenance, validation outcomes, damaged files
+  test_chunking.py     11 tests: where chunks begin and end
+  test_pipeline.py     36 tests: the import flow against its acceptance criteria
 fixtures/
   normal/       baseline happy path
-  large/        96-page dense technical text
+  large/        the DOE handbook twice: a 96-page text reflow and the 142-page original
   layout/       two-column academic paper
   corrupt/      4 distinct corruption modes
   protected/    2 encryption modes
@@ -118,13 +300,16 @@ tools/
   probe_fixtures.py          measures actual parser behavior, writes probe_results.json
   build_manifest.py          merges descriptors + measurements into manifest.json
   build_walkthrough.py       regenerates WALKTHROUGH.md from live output
-manifest.json                the labeled corpus: 15 fixtures, expected outcomes, checksums
+manifest.json                the labeled corpus: 16 fixtures, expected outcomes, checksums
 probe_results.json           raw measurement output
 ```
 
 ```bash
-pip install pymupdf pikepdf reportlab jsonschema
-python3 tests/test_contracts.py      # 12/12
+pip install -r requirements.txt      # PyMuPDF is pinned: chunk IDs depend on the extractor
+python3 tests/test_contracts.py      # 32/32, about a minute (it reads the 1,200-page fixture)
+python3 tests/test_chunking.py       # 11/11
+python3 tests/test_pipeline.py       # 36/36; two of them need E3_LIBRARY=<E3 checkout>/secure_qa/library
+                                     # and are reported as SKIPPED without it
 python3 tools/build_walkthrough.py   # regenerates the demo
 ```
 
@@ -138,22 +323,22 @@ python3 tools/build_manifest.py
 ```
 
 **Regeneration is behavior-stable, not byte-stable.** A clean re-run reproduces
-all 15 fixtures with identical parser behavior, but only 8 of 15 are
-byte-identical: ReportLab stamps a creation date and pikepdf salts each
-encryption, so those files get new checksums every run. Commit the fixture
-binaries and treat the committed SHA-256s as the regression baseline. Do not
-regenerate as part of CI and then compare against the manifest, or 7 fixtures
-will fail for no reason.
+the derived fixtures with identical parser behavior, but not byte for byte:
+ReportLab stamps a creation date and pikepdf salts each encryption, so those
+files get new checksums every run. Commit the fixture binaries and treat the
+committed SHA-256s as the regression baseline. Do not regenerate as part of CI
+and then compare against the manifest, or those fixtures will fail for no reason.
 
 ## What the corpus contains
 
-15 fixtures: 4 must accept, 7 must reject, 4 need a rule from E2 before they
+16 fixtures: 5 must accept, 7 must reject, 4 need a rule from E2 before they
 have an expected outcome.
 
 | Fixture | Category | Expected | Detection signal |
 |---|---|---|---|
 | `normal_nrc_reactor_concepts_ch01` | normal | accept | baseline |
 | `large_doe_nuclear_physics_v1` | large | accept | baseline |
+| `large_doe_nuclear_physics_v1_original` | large | accept | real typesetting: blank pages, a rotated page, per-section headers |
 | `layout_arxiv_two_column_2112.11583` | layout | accept | baseline |
 | `corrupt_truncated_50pct` | corrupt | **reject** | `is_repaired` + text-yield collapse |
 | `corrupt_bad_xref` | corrupt | *decision* | `is_repaired`, text complete |
@@ -168,10 +353,12 @@ have an expected outcome.
 | `oversized_1200_pages` | oversized | *decision* | page/byte cap, not yet set |
 | `adversarial_prompt_injection` | adversarial | accept | must not be filtered |
 
-## Three findings that change how validation gets written
+## Findings that shaped validation
 
 Measured with PyMuPDF 1.28.2, the extraction library named in SDD 11. Full
-numbers in `probe_results.json`.
+numbers in `probe_results.json`. These are raw parser counts, taken before
+running headers are removed, so they are a little higher than the canonical
+stream's (the NRC baseline is 18,609 characters raw and 16,094 in the stream).
 
 **1. A truncated PDF reports a full page count and silently loses 91% of its text.**
 `corrupt_truncated_50pct.pdf` is half a file. PyMuPDF auto-repairs it, reports
@@ -201,11 +388,43 @@ byte-identical to the healthy original. So the flag alone cannot separate "fixed
 it, no harm done" from "lost most of the document." The pair has to be
 distinguished by text yield, which is why both fixtures exist.
 
-## Four decisions E2 owes before Week 2
+**4. Characters per page cannot be the truncation test.** The truncated NRC
+fixture is caught by a low average because that document is sparse. The first
+30% of the DOE reflow is 20 pages of 96 and still averages 490 characters per
+page across all 96, so it was accepted with the message "text recovery looks
+complete". The rule now is about pages, not density: a document the parser had
+to rebuild is accepted with a warning only if every page came back with text.
+If any page came back empty it is rejected as corrupt, and the detail says how
+many pages survived. (This also rejects a rebuilt document whose empty pages
+were blank by design. After a repair the two cannot be told apart, and a false
+rejection is the safe mistake.)
 
-Each is a fixture sitting at `decision_required` in the manifest. Week 2's
-acceptance criterion is *"unreadable/encrypted/malformed inputs return explicit
-errors,"* which cannot be tested until these are settled.
+**5. The page count is a claim, not a measurement.** A file whose page index
+says 20 over 12 real pages was accepted as a clean 20-page document, and one
+that says 3 as a clean 3-page document with nine pages silently missing.
+Neither is "repaired" as far as the parser is concerned. Every declared page is
+now loaded by number, the count is checked again after reading, and any parser
+complaint about the page index rejects the file.
+
+**6. A page can be damaged and still yield text.** A content stream cut off
+half-way gives back the lines before the cut, so the page counts as a page with
+text and the file as intact. What the parser printed about that page is the
+only evidence. It is now read for every page: the file is accepted with a
+`pages_damaged` warning that names the page. Likewise a page set in a font with
+no Unicode map is visible to a reader and empty to search; it is reported as
+unreadable, not counted among the blank pages.
+
+## Four policy decisions awaiting sign-off
+
+Each is a fixture sitting at `decision_required` in the manifest, and each is a
+field of `IngestionPolicy` with the recommended value as its default, so the
+code behaves one defined way today and changing the decision is a one-line
+change. Under the defaults `corrupt_bad_xref` and `scanned_mixed` are accepted
+with a warning, `protected_owner_password_no_extract` is rejected, and
+`oversized_1200_pages` is accepted (the placeholder cap is 2,000 pages and
+200 MB). The policy in force is recorded in every validation result and every
+run manifest. A misspelt setting raises `ValueError` when the policy is built;
+it used to select the permissive branch without a word.
 
 1. **Repaired-but-complete PDFs** (`corrupt_bad_xref`) — accept with a warning,
    or reject as corrupt? Recommend accept-with-warning recorded in the import
@@ -225,8 +444,9 @@ errors,"* which cannot be tested until these are settled.
 
 ## Notes on individual fixtures
 
-**The NRC baseline is text-sparse** — about 775 characters per page, because the
-manual is slide-style with labeled diagrams. Any chunk size above ~800
+**The NRC baseline is text-sparse** — about 670 characters per page once
+running headers are removed (775 raw), because the manual is slide-style with
+labeled diagrams. Any chunk size above ~800
 characters will span pages on this document. That makes it the fixture that
 proves chunk provenance is tracked per page rather than per document, which is
 the Week 3 criterion (*"chunk text/page/offsets are stable"*).
@@ -236,8 +456,17 @@ extracted-text file rather than a PDF, so pages were reconstructed from the DOE
 footer convention (`NP-01 Page 12 Rev. 0`); fixture page N corresponds to module
 page N, and page provenance is therefore meaningful. Original tables and figures
 are not preserved, and it covers modules NP-01 and NP-02 only. Layout-sensitive
-extraction is covered by the NRC and arXiv fixtures instead. If the original PDF
-becomes available, swapping it in is a drop-in replacement.
+extraction is covered by the NRC and arXiv fixtures instead.
+
+**The original DOE handbook sits beside it.** `large_doe_nuclear_physics_v1_original.pdf`
+is the same two modules in their 1993 typesetting, 142 pages. It was added, not
+swapped in, because a different file is a different `document_id` and so
+different chunk IDs, and because the pair is the same content in two
+typesettings: a difference between them isolates a layout effect. It carries
+what the reflow cannot: six intentionally blank pages (4, 6, 8, 10, 12, 94), one
+landscape page stored rotated 90 degrees (36), headers that change per module
+and per section, tables, equations set in symbol fonts, and nuclide notation
+whose superscripts and subscripts extract as separate lines.
 
 **The arXiv paper is the reading-order case.** Two columns, 23 embedded images.
 Naive extraction interleaves the columns and produces chunks whose text is real
@@ -246,8 +475,9 @@ obvious in an answer. Compare extracted order against the rendered page.
 
 **The oversized fixture carries per-page markers** of the form `marker-0042-xray`,
 so retrieval tests can target an exact deep page and prove provenance survives a
-long document. It is also a usable component of the 10,000-page stress corpus
-due in Week 8.
+long document. Each marker is a sentence in the page body; in the running
+header, where it used to be, it was stripped with the header on every page. It
+is also a usable component of the 10,000-page stress corpus due in Week 8.
 
 **The adversarial fixture must ingest normally.** It is not a reject case. Page 1
 carries a visible instruction block; page 2 hides one in near-white 7pt text that
@@ -268,7 +498,7 @@ Documented deliberately; these are test files and the passwords are not secrets.
 | Source | Origin | License |
 |---|---|---|
 | NRC Reactor Concepts Manual Ch.1 | U.S. NRC Technical Training Center | U.S. Government work, public domain |
-| DOE-HDBK-1019/1-93 Vol.1 | U.S. Department of Energy | U.S. Government work, public domain |
+| DOE-HDBK-1019/1-93 Vol.1 (reflow and original) | U.S. Department of Energy | U.S. Government work, public domain; the original is marked "Approved for public release; distribution is unlimited" |
 | arXiv:2112.11583 | arXiv preprint | verify per-paper license before redistributing |
 
 Every fixture in `manifest.json` carries a SHA-256, byte size, page count, and

@@ -27,6 +27,7 @@ from src.schema import ChunkerConfig, citation_targets
 DOCS = {
     'normal': ROOT / 'fixtures/normal/normal_nrc_reactor_concepts_ch01.pdf',
     'large': ROOT / 'fixtures/large/large_doe_nuclear_physics_v1.pdf',
+    'original': ROOT / 'fixtures/large/large_doe_nuclear_physics_v1_original.pdf',
     'arxiv': ROOT / 'fixtures/layout/layout_arxiv_two_column_2112.11583.pdf',
     'scanned': ROOT / 'fixtures/scanned/scanned_mixed_text_and_image_pages.pdf',
     'truncated': ROOT / 'fixtures/corrupt/corrupt_truncated_50pct.pdf',

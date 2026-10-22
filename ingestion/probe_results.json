@@ -42,7 +42,7 @@
     "magic_ok": false,
     "opens": false,
     "error_type": "EmptyFileError",
-    "error": "Cannot open empty file: filename='/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/corrupt/corrupt_empty.pdf'."
+    "error": "Cannot open empty file: filename='corrupt/corrupt_empty.pdf'."
   },
   {
     "file": "corrupt/corrupt_header_only.pdf",
@@ -51,7 +51,7 @@
     "magic_ok": true,
     "opens": false,
     "error_type": "FileDataError",
-    "error": "Failed to open file '/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/corrupt/corrupt_header_only.pdf' as type pdf."
+    "error": "Failed to open file 'corrupt/corrupt_header_only.pdf' as type pdf."
   },
   {
     "file": "corrupt/corrupt_truncated_50pct.pdf",
@@ -90,6 +90,24 @@
     "extract_allowed": true
   },
   {
+    "file": "large/large_doe_nuclear_physics_v1_original.pdf",
+    "bytes": 3521252,
+    "sha256": "8b21195361acc2b2abd0eeae6a0a5bdf0100b24b342612d2c129fabbdb910708",
+    "magic_ok": true,
+    "opens": true,
+    "needs_password": false,
+    "is_encrypted": false,
+    "was_repaired": false,
+    "pages": 142,
+    "chars": 200068,
+    "pages_with_text": 136,
+    "images": 1,
+    "pages_without_text": 6,
+    "avg_chars_per_page": 1408.9,
+    "permissions": -4,
+    "extract_allowed": true
+  },
+  {
     "file": "layout/layout_arxiv_two_column_2112.11583.pdf",
     "bytes": 4523404,
     "sha256": "75b01b7b75102fa1052f88554ae9dcbf9f2313052708259541dce504d08e66f0",
@@ -114,7 +132,7 @@
     "magic_ok": false,
     "opens": false,
     "error_type": "FileDataError",
-    "error": "Failed to open file '/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/nonpdf/nonpdf_plaintext_renamed.pdf' as type pdf."
+    "error": "Failed to open file 'nonpdf/nonpdf_plaintext_renamed.pdf' as type pdf."
   },
   {
     "file": "nonpdf/nonpdf_zip_container_renamed.pdf",
@@ -123,7 +141,7 @@
     "magic_ok": false,
     "opens": false,
     "error_type": "FileDataError",
-    "error": "Failed to open file '/Users/arsh/Documents/vscode/Access-Denied-Secure-Local-LLM/ingestion/fixtures/nonpdf/nonpdf_zip_container_renamed.pdf' as type pdf."
+    "error": "Failed to open file 'nonpdf/nonpdf_zip_container_renamed.pdf' as type pdf."
   },
   {
     "file": "normal/normal_nrc_reactor_concepts_ch01.pdf",
@@ -145,19 +163,19 @@
   },
   {
     "file": "oversized/oversized_1200_pages.pdf",
-    "bytes": 2605564,
-    "sha256": "f817ce5e3e13e5e92db8acb88bcb6396bdef0660f52691a839857165baa82d34",
+    "bytes": 2623711,
+    "sha256": "27be7680497ed7d05a78b93d15bfb20cf62ad573b807c476b38f589a8f3c2c27",
     "magic_ok": true,
     "opens": true,
     "needs_password": false,
     "is_encrypted": false,
     "was_repaired": false,
     "pages": 1200,
-    "chars": 3178293,
+    "chars": 3176759,
     "pages_with_text": 1200,
     "images": 0,
     "pages_without_text": 0,
-    "avg_chars_per_page": 2648.6,
+    "avg_chars_per_page": 2647.3,
     "permissions": -4,
     "extract_allowed": true
   },

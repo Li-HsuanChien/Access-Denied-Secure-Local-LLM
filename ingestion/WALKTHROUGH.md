@@ -10,7 +10,7 @@ python3 tools/build_walkthrough.py
 
 **Sample document:** `normal_nrc_reactor_concepts_ch01.pdf`
 NRC Reactor Concepts Manual, Chapter 1. 24 pages,
-1,291,325 bytes, 16,030 characters of extractable text.
+1,291,325 bytes, 16,094 characters of extractable text.
 
 ---
 
@@ -73,7 +73,7 @@ page  1  →  chars      0–424
 page  2  →  chars    424–1024  
 page  3  →  chars   1024–1320  
 ...
-page 24  →  chars  15290–16030 
+page 24  →  chars  15354–16094 
 ```
 
 ---
@@ -87,22 +87,21 @@ Chunker configuration, whose hash participates in every chunk ID:
   "target_chars": 1200,
   "overlap_chars": 200,
   "min_chunk_chars": 100,
-  "split_on_word_boundary": true,
   "sorted_reading_order": true,
   "strip_running_headers": true,
   "respect_sentence_boundaries": true,
-  "chunker_version": "refchunk-2.0.1",
-  "config_id": "cfg_491d3b9c4d21"
+  "chunker_version": "refchunk-3.0.0",
+  "config_id": "cfg_821e9f258539"
 }
 ```
 
-This produced **21 chunks**. Here is chunk 0 in full, which is exactly what a
+This produced **18 chunks**. Here is chunk 0 in full, which is exactly what a
 `Chunk` object must contain:
 
 ```json
 {
   "schema_version": "1.0.0",
-  "chunk_id": "chk_4fefcb5dcc8f3f48cc8a1519",
+  "chunk_id": "chk_c3cbf93684c33201e4e07d6d",
   "document_id": "doc_72f2433a1e2f2e6340f14040",
   "ordinal": 0,
   "text": "Nuclear\nPower\n for\nElectrical\nGeneration\nThe purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a\nnuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant\nhas many similarities to other electrical generating facilities.  It should also be obvious that nuclear\npower plants have some significant differences from other plants.\n\nStationary Coil\nDrive Shaft\nRotor\nElectrical\nOutput\nFlange\nGenerator Housing\nELECTRICAL GENERATOR\nOf the several known methods to produce electricity, by far the most practical for large scale production\nand distribution involves the use of an “electrical generator.”  In an electrical generator, a magnet (rotor)\nrevolves inside a coil of wire (stator), creating a flow of electrons inside the wire.  This flow of electrons\nis called electricity.  Some mechanical device (wind turbine, water turbine, steam turbine, diesel engine,\netc.) must be available to provide the motive force for the rotor.\n\n",
@@ -270,8 +269,8 @@ This produced **21 chunks**. Here is chunk 0 in full, which is exactly what a
     }
   ],
   "token_estimate": 256,
-  "chunker_config_id": "cfg_491d3b9c4d21",
-  "chunker_version": "refchunk-2.0.1"
+  "chunker_config_id": "cfg_821e9f258539",
+  "chunker_version": "refchunk-3.0.0"
 }
 ```
 
@@ -296,25 +295,26 @@ This produced **21 chunks**. Here is chunk 0 in full, which is exactly what a
 ## 4. Chunks span pages, so `page` cannot be one number
 
 **SDD 5.1 specifies a Chunk as carrying a single page number. On this document
-that is wrong for 18 of 21 chunks.**
+that is wrong for 14 of 18 chunks.**
 
 The NRC manual is slide-style, averaging about
-668 characters per page, so a
+671 characters per page, so a
 1200-character chunk covers two to four pages. A single `page`
 field would make citations point at whichever page happened to be chosen, and
 roughly half of them would point at the wrong one.
 
 | document | pages | chars/page | chunks | chunks spanning pages | share | max pages in one chunk |
 |---|---|---|---|---|---|---|
-| NRC training manual (baseline) | 24 | 668 | 21 | 18 | 86% | 4 |
-| DOE handbook (dense prose) | 96 | 2072 | 233 | 95 | 41% | 3 |
-| arXiv paper (two column) | 13 | 3313 | 54 | 17 | 31% | 3 |
+| NRC training manual (baseline) | 24 | 671 | 18 | 14 | 78% | 4 |
+| DOE handbook (text reflow) | 96 | 2049 | 213 | 83 | 39% | 3 |
+| DOE handbook (original typesetting) | 142 | 1318 | 194 | 121 | 62% | 4 |
+| arXiv paper (two column) | 13 | 3314 | 50 | 13 | 26% | 2 |
 
 It is not an NRC quirk. It shows up on dense prose too, because a chunk boundary
 has no reason to coincide with a page boundary.
 
 The fix is `page_spans`: one entry per page the chunk touches. Chunk
-`chk_4fefcb5dcc8f3f48cc8a1519` spans pages 1–2:
+`chk_c3cbf93684c33201e4e07d6d` spans pages 1–2:
 
 | page | document offsets | page-local offsets | highlight rects | coords reliable |
 |---|---|---|---|---|
@@ -349,7 +349,7 @@ One chunk spanning 2 pages expands into 2 citation targets:
 {
   "schema_version": "1.0.0",
   "document_id": "doc_72f2433a1e2f2e6340f14040",
-  "chunk_id": "chk_4fefcb5dcc8f3f48cc8a1519",
+  "chunk_id": "chk_c3cbf93684c33201e4e07d6d",
   "page_number": 1,
   "highlight_rects": [
     [
@@ -439,7 +439,7 @@ Proven in `tests/test_contracts.py`:
 
 ```
 test_same_file_and_config_yield_same_ids   chunk IDs reproduce exactly across runs
-test_reindex_preserves_ids                 21 chunk IDs survive re-import under a different filename
+test_reindex_preserves_ids                 18 chunk IDs survive re-import under a different filename
 test_config_change_changes_every_id        no ID collisions across configs
 test_offsets_reconstruct_chunk_text        offsets reproduce chunk text on every chunk
 test_page_spans_tile_the_chunk             page spans tile every chunk contiguously
@@ -454,5 +454,5 @@ test_page_spans_tile_the_chunk             page spans tile every chunk contiguou
 | `walkthrough/validation_result.json` | full ValidationResult for the sample |
 | `walkthrough/document.json` | the Document object |
 | `walkthrough/chunk_000.json` | one Chunk in full |
-| `walkthrough/all_chunks.json` | all 21 chunks |
+| `walkthrough/all_chunks.json` | all 18 chunks |
 | `walkthrough/citation_targets.json` | citation targets from one page-spanning chunk |

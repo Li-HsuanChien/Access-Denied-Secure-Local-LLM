@@ -29,6 +29,11 @@ def sha256(path):
     return h.hexdigest()
 
 
+def _message(error, path):
+    """The parser's message with the machine's own directory taken out of it."""
+    return str(error).replace(str(path), str(path.relative_to(FIX)))[:160]
+
+
 def probe(path):
     """Open with PyMuPDF and record what the library reports."""
     r = {
@@ -40,7 +45,7 @@ def probe(path):
     try:
         doc = pymupdf.open(path)
     except Exception as e:
-        r.update(opens=False, error_type=type(e).__name__, error=str(e)[:160])
+        r.update(opens=False, error_type=type(e).__name__, error=_message(e, path))
         return r
 
     r['opens'] = True
@@ -68,7 +73,7 @@ def probe(path):
         r['permissions'] = doc.permissions
         r['extract_allowed'] = bool(doc.permissions & pymupdf.PDF_PERM_COPY)
     except Exception as e:
-        r.update(error_type=type(e).__name__, error=str(e)[:160])
+        r.update(error_type=type(e).__name__, error=_message(e, path))
     doc.close()
     return r
 

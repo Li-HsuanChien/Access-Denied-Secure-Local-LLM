@@ -170,7 +170,9 @@ def make_oversized():
 
     # 11. High page count, modest byte size. Trips a page-count cap, not a
     #     megabyte cap. Each page carries a unique marker so retrieval tests can
-    #     target an exact page deep in the document.
+    #     target an exact page deep in the document. The marker is a sentence in
+    #     the body, at a line that moves from page to page: in the running
+    #     header it would be stripped with the header, on every page.
     lines = [l.rstrip() for l in
              DOE_TEXT.read_text(encoding='utf-8', errors='replace').split('\n')
              if l.strip()]
@@ -181,10 +183,13 @@ def make_oversized():
     for n in range(1200):
         start = (n * per_page) % max(1, len(lines) - per_page)
         c.setFont('Helvetica-Bold', 9)
-        c.drawString(72, 730, f'SYNTHETIC FIXTURE PAGE {n + 1:04d} OF 1200  marker-{n + 1:04d}-xray')
+        c.drawString(72, 730, f'SYNTHETIC FIXTURE PAGE {n + 1:04d} OF 1200')
         c.setFont('Helvetica', 8.5)
+        body = lines[start:start + per_page - 1]
+        body.insert(10 + (n * 7) % 30,
+                    f'Fixture checkpoint marker-{n + 1:04d}-xray is recorded on fixture page {n + 1:04d}.')
         y = 712
-        for line in lines[start:start + per_page]:
+        for line in body:
             c.drawString(72, y, line[:105])
             y -= 10.5
         c.showPage()

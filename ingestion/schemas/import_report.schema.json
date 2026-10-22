@@ -1,0 +1,100 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://securelocaldocqa.local/schemas/import_report/1.0.0",
+  "title": "ImportReport",
+  "description": "What happened during one ingestion run, for the review screen and for diagnosis (SDD 6.1, 6.2). Everything that varies between two runs of the same inputs lives here and not in the manifest: timestamps, durations, the paths the files were selected from, the host. Contains no document text.",
+  "type": "object",
+  "required": [
+    "schema_version", "kind", "run_id", "attempt_id", "state", "manifest_sha256",
+    "started_at", "finished_at", "phases", "host", "candidates", "summary",
+    "confirmation", "seal"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "kind": { "const": "e2.import_report" },
+    "run_id": { "type": "string", "pattern": "^run_[0-9a-f]{16}$" },
+    "attempt_id": { "type": "string" },
+    "state": { "const": "complete", "description": "A report is only written into a sealed run. Cancelled, failed and declined attempts leave one line in journal.jsonl and nothing else." },
+    "manifest_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "The manifest this report describes." },
+    "started_at": { "type": "string", "format": "date-time" },
+    "finished_at": { "type": "string", "format": "date-time" },
+    "phases": {
+      "type": "array",
+      "items": {
+        "type": "object", "required": ["phase", "seconds"], "additionalProperties": false,
+        "properties": { "phase": { "type": "string" }, "seconds": { "type": "number", "minimum": 0 } }
+      }
+    },
+    "host": {
+      "type": "object", "required": ["platform", "python", "extractor"], "additionalProperties": false,
+      "properties": { "platform": { "type": "string" }, "python": { "type": "string" }, "extractor": { "type": "string" } }
+    },
+    "candidates": {
+      "type": "array", "minItems": 1,
+      "description": "One entry per path supplied, in the order supplied. This is the review screen's table.",
+      "items": { "$ref": "#/$defs/candidate" }
+    },
+    "summary": {
+      "type": "object",
+      "required": ["candidates", "accepted", "accepted_with_warnings", "rejected", "duplicates", "pages", "chunks", "text_chars", "warnings"],
+      "additionalProperties": false,
+      "properties": {
+        "candidates": { "type": "integer" }, "accepted": { "type": "integer" },
+        "accepted_with_warnings": { "type": "integer" }, "rejected": { "type": "integer" },
+        "duplicates": { "type": "integer" }, "pages": { "type": "integer" },
+        "chunks": { "type": "integer" }, "text_chars": { "type": "integer" }, "warnings": { "type": "integer" }
+      }
+    },
+    "confirmation": {
+      "type": "object",
+      "required": ["required", "token", "acknowledged", "acknowledged_at"],
+      "additionalProperties": false,
+      "properties": {
+        "required": { "type": "boolean" },
+        "token": { "type": ["string", "null"] },
+        "acknowledged": { "type": "boolean" },
+        "acknowledged_at": { "type": ["string", "null"], "format": "date-time" }
+      }
+    },
+    "seal": {
+      "type": "object", "required": ["report_sha256"], "additionalProperties": false,
+      "properties": { "report_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" } }
+    }
+  },
+  "$defs": {
+    "candidate": {
+      "type": "object",
+      "required": [
+        "index", "source_path", "source_filename", "byte_size", "checksum_sha256",
+        "disposition", "document_id", "duplicate_of", "page_count", "chunk_count",
+        "reject_reason", "reject_detail", "warnings", "validation", "seconds", "parser_messages"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "index": { "type": "integer", "minimum": 0 },
+        "source_path": { "type": "string", "description": "Where the user selected the file from. Report only; never in the manifest." },
+        "source_filename": { "type": "string" },
+        "byte_size": { "type": ["integer", "null"], "minimum": 0 },
+        "checksum_sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$" },
+        "disposition": { "type": "string", "enum": ["accepted", "accepted_with_warnings", "rejected", "duplicate"] },
+        "document_id": { "type": ["string", "null"], "pattern": "^doc_[0-9a-f]{24}$" },
+        "duplicate_of": { "type": ["string", "null"], "description": "Checksum of the earlier candidate with the same bytes." },
+        "page_count": { "type": ["integer", "null"], "minimum": 1 },
+        "chunk_count": { "type": ["integer", "null"], "minimum": 1 },
+        "reject_reason": { "type": ["string", "null"], "enum": ["password_protected", "corrupt", "scanned_only", "oversized", "non_pdf", null] },
+        "reject_detail": { "type": ["string", "null"] },
+        "warnings": { "type": "array", "items": { "type": "object", "required": ["code", "message"] } },
+        "validation": {
+          "oneOf": [
+            { "type": "null" },
+            { "$ref": "https://securelocaldocqa.local/schemas/validation_result/1.0.0" }
+          ],
+          "description": "The full ValidationResult, every check included. Null for a duplicate, which was not validated a second time."
+        },
+        "seconds": { "type": "number", "minimum": 0 },
+        "parser_messages": { "type": "integer", "minimum": 0, "description": "How many diagnostics the PDF parser raised. A count only: the messages can quote names from the document." }
+      }
+    }
+  }
+}

@@ -1,0 +1,190 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://securelocaldocqa.local/schemas/ingest_manifest/1.0.0",
+  "title": "IngestManifest",
+  "description": "The record of one sealed ingestion run: what was accepted, what was rejected and why, the configuration that produced the chunks, counts, and checksums that verify() recomputes. Contains no timestamp, no absolute path and no document text, so the same inputs under the same configuration produce the same bytes. It is the last file written; a run directory without it is not a run.",
+  "type": "object",
+  "required": [
+    "schema_version", "kind", "pipeline_version", "validator_version", "extractor",
+    "chunker", "policy", "documents", "rejected", "documents_file", "totals",
+    "review", "integrity", "seal"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "kind": { "const": "e2.ingest_manifest" },
+    "pipeline_version": { "type": "string" },
+    "validator_version": { "type": "string" },
+    "extractor": {
+      "type": "string",
+      "description": "Library and version that produced the text, e.g. pymupdf/1.28.2. A different extractor moves offsets and so changes chunk ids."
+    },
+    "chunker": {
+      "type": "object",
+      "description": "ChunkerConfig.to_dict(): every parameter that decides what a chunk's text is, and the config_id that participates in every chunk id.",
+      "required": ["config_id", "chunker_version", "target_chars", "overlap_chars", "min_chunk_chars"],
+      "properties": {
+        "config_id": { "type": "string", "pattern": "^cfg_[0-9a-f]{12}$" },
+        "chunker_version": { "type": "string" },
+        "target_chars": { "type": "integer", "minimum": 1 },
+        "overlap_chars": { "type": "integer", "minimum": 0 },
+        "min_chunk_chars": { "type": "integer", "minimum": 0 }
+      }
+    },
+    "policy": { "$ref": "https://securelocaldocqa.local/schemas/validation_result/1.0.0#/$defs/policy" },
+    "documents": {
+      "type": "array",
+      "description": "Accepted documents, sorted by document_id. Exactly these contribute chunks.",
+      "items": { "$ref": "#/$defs/document_entry" }
+    },
+    "rejected": {
+      "type": "array",
+      "description": "Rejected candidates, one per distinct content, sorted by checksum. Nothing derived from these is in the run.",
+      "items": { "$ref": "#/$defs/rejected_entry" }
+    },
+    "documents_file": {
+      "$ref": "#/$defs/file",
+      "description": "documents.jsonl: one Document record (document.schema.json) per accepted document, in the order of 'documents'."
+    },
+    "totals": {
+      "type": "object",
+      "required": ["candidates", "accepted", "accepted_with_warnings", "rejected", "duplicates",
+                   "pages", "chunks", "text_chars", "warnings", "source_bytes", "chunk_bytes"],
+      "additionalProperties": false,
+      "properties": {
+        "candidates": { "type": "integer", "minimum": 1, "description": "Paths supplied, counting repeats." },
+        "accepted": { "type": "integer", "minimum": 1 },
+        "accepted_with_warnings": { "type": "integer", "minimum": 0 },
+        "rejected": { "type": "integer", "minimum": 0 },
+        "duplicates": { "type": "integer", "minimum": 0, "description": "Paths whose bytes had already been supplied in this run." },
+        "pages": { "type": "integer", "minimum": 1 },
+        "chunks": { "type": "integer", "minimum": 1 },
+        "text_chars": { "type": "integer", "minimum": 1 },
+        "warnings": { "type": "integer", "minimum": 0 },
+        "source_bytes": { "type": "integer", "minimum": 1 },
+        "chunk_bytes": { "type": "integer", "minimum": 1 }
+      }
+    },
+    "review": {
+      "type": "object",
+      "description": "SDD 6.1. When any file was rejected the run could only be sealed with the token below, which is a hash of the rejected set the user was shown.",
+      "required": ["confirmation_required", "confirmation_token"],
+      "additionalProperties": false,
+      "properties": {
+        "confirmation_required": { "type": "boolean" },
+        "confirmation_token": { "type": ["string", "null"], "pattern": "^ack_[0-9a-f]{16}$" }
+      }
+    },
+    "integrity": {
+      "type": "object",
+      "required": ["chunk_set_sha256", "files_sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "chunk_set_sha256": {
+          "type": "string", "pattern": "^[0-9a-f]{64}$",
+          "description": "sha256 over the sorted lines 'chunk_id text_checksum_sha256' of every chunk in the run. The same formula as E3's CollectionVersion.integrity_sha256, so the two values are equal when the store holds exactly these chunks."
+        },
+        "files_sha256": {
+          "type": "string", "pattern": "^[0-9a-f]{64}$",
+          "description": "sha256 over the lines 'sha256 bytes path' of every listed file, sorted by path. Covers page provenance and source PDFs, which chunk_set_sha256 does not."
+        }
+      }
+    },
+    "seal": {
+      "type": "object",
+      "required": ["manifest_sha256", "run_id"],
+      "additionalProperties": false,
+      "properties": {
+        "manifest_sha256": {
+          "type": "string", "pattern": "^[0-9a-f]{64}$",
+          "description": "sha256 of this object without 'seal', serialised as JSON with sorted keys, separators ',' ':' and ASCII escapes."
+        },
+        "run_id": {
+          "type": "string", "pattern": "^run_[0-9a-f]{16}$",
+          "description": "'run_' + manifest_sha256[:16]. Also the directory name, so a run names its own content."
+        }
+      }
+    }
+  },
+  "$defs": {
+    "file": {
+      "type": "object",
+      "required": ["path", "bytes", "sha256"],
+      "additionalProperties": false,
+      "properties": {
+        "path": { "type": "string", "pattern": "^[a-z]+(/doc_[0-9a-f]{24})?\\.(pdf|jsonl|json)$", "description": "Relative to the run directory, forward slashes." },
+        "bytes": { "type": "integer", "minimum": 1 },
+        "sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" }
+      }
+    },
+    "warning": {
+      "type": "object",
+      "required": ["code", "message"],
+      "properties": {
+        "code": { "type": "string" },
+        "message": { "type": "string" },
+        "pages": { "type": "array", "items": { "type": "integer", "minimum": 1 } }
+      }
+    },
+    "document_entry": {
+      "type": "object",
+      "required": [
+        "document_id", "checksum_sha256", "byte_size", "source_filename", "aliases",
+        "times_supplied", "outcome", "warnings", "page_count", "pages_with_text",
+        "pages_without_text", "text_chars", "text_sha256", "chunk_count",
+        "chunk_set_sha256", "files"
+      ],
+      "additionalProperties": false,
+      "properties": {
+        "document_id": { "type": "string", "pattern": "^doc_[0-9a-f]{24}$" },
+        "checksum_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "sha256 of the PDF's bytes. Equal to files.source.sha256." },
+        "byte_size": { "type": "integer", "minimum": 1 },
+        "source_filename": { "type": "string", "minLength": 1, "description": "The name the file was supplied under. If the same bytes arrived under several names, the smallest; the rest are in aliases." },
+        "aliases": { "type": "array", "items": { "type": "string" } },
+        "times_supplied": { "type": "integer", "minimum": 1 },
+        "outcome": { "type": "string", "enum": ["accepted", "accepted_with_warnings"] },
+        "warnings": { "type": "array", "items": { "$ref": "#/$defs/warning" } },
+        "page_count": { "type": "integer", "minimum": 1 },
+        "pages_with_text": { "type": "integer", "minimum": 1 },
+        "pages_without_text": {
+          "type": "array", "items": { "type": "integer", "minimum": 1 },
+          "description": "Every page that yielded no text, always listed, whatever the warning threshold in the policy."
+        },
+        "text_chars": { "type": "integer", "minimum": 1 },
+        "text_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$", "description": "sha256 of the canonical text stream (UTF-8). verify() rebuilds the stream from the chunks and compares." },
+        "chunk_count": { "type": "integer", "minimum": 1 },
+        "chunk_set_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+        "files": {
+          "type": "object",
+          "required": ["source", "chunks", "extraction"],
+          "additionalProperties": false,
+          "properties": {
+            "source": { "$ref": "#/$defs/file" },
+            "chunks": { "$ref": "#/$defs/file" },
+            "extraction": { "$ref": "#/$defs/file" }
+          }
+        }
+      }
+    },
+    "rejected_entry": {
+      "type": "object",
+      "required": ["source_filename", "aliases", "times_supplied", "checksum_sha256", "byte_size",
+                   "reject_reason", "reject_detail", "failed_check"],
+      "additionalProperties": false,
+      "properties": {
+        "source_filename": { "type": "string", "minLength": 1 },
+        "aliases": { "type": "array", "items": { "type": "string" } },
+        "times_supplied": { "type": "integer", "minimum": 1 },
+        "checksum_sha256": { "type": ["string", "null"], "pattern": "^[0-9a-f]{64}$", "description": "Null only when the file could not be read at all." },
+        "byte_size": { "type": "integer", "minimum": 0 },
+        "reject_reason": { "type": "string", "enum": ["password_protected", "corrupt", "scanned_only", "oversized", "non_pdf"] },
+        "reject_detail": { "type": "string", "minLength": 1 },
+        "failed_check": {
+          "type": ["string", "null"],
+          "enum": ["file_nonempty", "magic_bytes", "parser_opens", "no_open_password",
+                   "within_size_limits", "extraction_permitted", "structural_integrity", "text_yield", null]
+        }
+      }
+    }
+  }
+}
