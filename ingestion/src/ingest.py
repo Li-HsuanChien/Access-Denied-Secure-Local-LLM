@@ -32,6 +32,7 @@ from .validation import (Check, CheckStatus, IngestionPolicy, Outcome,
 VALIDATOR_VERSION = 'e2-validate-2.0.0'
 EXTRACTOR = f'pymupdf/{getattr(pymupdf, "__version__", "unknown")}'
 PDF_MAGIC = b'%PDF-'
+_HASH_BLOCK = 1 << 20                        # bytes read at a time when hashing a file
 
 
 # ---------------------------------------------------------------------------
@@ -754,6 +755,18 @@ def validate(path: str | Path, policy: IngestionPolicy | None = None, *,
     return _validate(path, policy, source_filename=source_filename)
 
 
+def _hash_file(path: Path) -> tuple[str, int, bytes]:
+    """The file's SHA-256, size and first 8 bytes, read in blocks rather than whole."""
+    digest, size, head = hashlib.sha256(), 0, b''
+    with open(path, 'rb') as handle:
+        while block := handle.read(_HASH_BLOCK):
+            if not head:
+                head = block[:8]
+            digest.update(block)
+            size += len(block)
+    return digest.hexdigest(), size, head
+
+
 def _validate(path: str | Path, policy: IngestionPolicy | None = None, *,
               source_filename: str | None = None, checksum_sha256: str | None = None,
               byte_size: int | None = None, sort: bool = True, strip_boilerplate: bool = True,
@@ -770,9 +783,7 @@ def _validate(path: str | Path, policy: IngestionPolicy | None = None, *,
     policy = policy or IngestionPolicy()
     path = Path(path)
     if checksum_sha256 is None or byte_size is None:
-        raw = path.read_bytes()
-        byte_size, checksum_sha256, head = len(raw), hashlib.sha256(raw).hexdigest(), raw[:8]
-        del raw
+        checksum_sha256, byte_size, head = _hash_file(path)
     else:
         with open(path, 'rb') as handle:
             head = handle.read(8)
@@ -1283,7 +1294,7 @@ def chunks(path: str | Path, config: ChunkerConfig | None = None,
     """
     config = config or ChunkerConfig()
     path = Path(path)
-    document_id = document_id or Document.make_id(path.read_bytes())
+    document_id = document_id or Document.id_from_checksum(_hash_file(path)[0])
 
     text, pages, doc = extract(path, sort=config.sorted_reading_order,
                                strip_boilerplate=config.strip_running_headers)
