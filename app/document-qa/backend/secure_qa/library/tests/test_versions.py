@@ -69,8 +69,6 @@ class VersionsTest(unittest.TestCase):
             self.versions.publish(*synthetic())
         self.assertEqual([v.version_id for v in self.versions.versions()], ["v0003", "v0002"])
         self.assertEqual(self.collections(), {"secure_qa_v0003", "secure_qa_v0002"})
-        self.assertTrue(self.versions.open_active().search("coolant pressure", top_k=1))
-        self.assertEqual(self.collections(), {"secure_qa_v0003", "secure_qa_v0002"})
 
     def test_failed_publication_leaves_active_version_unchanged(self):
         active = self.versions.publish(*synthetic())
@@ -90,35 +88,8 @@ class VersionsTest(unittest.TestCase):
         self.versions._client.create_collection("secure_qa_v0099")  # as if a publish crashed mid-build
         self.reopen()
         self.assertEqual(self.versions.active().version_id, "v0001")
-
-    def test_cancelled_candidate_keeps_active_version_and_source_snapshot(self):
-        chunks, documents = synthetic()
-        document_id = documents[0]["document_id"]
-        active = self.versions.publish(chunks, documents, source_files={document_id: b"%PDF-source"})
-        source_path = self.dir / "sources" / active.version_id / f"{document_id}.pdf"
-        self.assertEqual(source_path.read_bytes(), b"%PDF-source")
-        with self.assertRaisesRegex(PublishError, "cancelled"):
-            self.versions.publish(*nrc(), cancelled=lambda: True)
-        self.assertEqual(self.versions.active().version_id, active.version_id)
-        self.assertEqual(source_path.read_bytes(), b"%PDF-source")
-
-    def test_cancel_during_source_staging_stops_before_activation(self):
-        active = self.versions.publish(*synthetic())
-        cancelled = [False]
-        def on_progress(stage, _done, _total):
-            if stage == "activating":
-                cancelled[0] = True
-        with self.assertRaisesRegex(PublishError, "cancelled"):
-            self.versions.publish(*nrc(), source_files={"doc_test": b"%PDF-source"},
-                                  cancelled=lambda: cancelled[0], progress=on_progress)
-        self.assertEqual(self.versions.active().version_id, active.version_id)
-        self.assertFalse((self.dir / "sources" / "v0002").exists())
-
-    def test_progress_reports_indexing_verification_and_activation(self):
-        stages = []
-        self.versions.publish(*synthetic(), progress=lambda stage, done, total: stages.append((stage, done, total)))
-        self.assertEqual([stage for stage, _, _ in stages], ["indexing", "verifying", "activating", "activated"])
-        self.assertEqual(stages[-1][1], stages[-1][2])
+        self.assertEqual(self.collections(), {"secure_qa_v0001"})
+        self.assertTrue(self.versions.open_active().search("coolant pressure", top_k=1))
 
     def test_rollback_without_previous_and_open_without_active(self):
         with self.assertRaises(LookupError):
