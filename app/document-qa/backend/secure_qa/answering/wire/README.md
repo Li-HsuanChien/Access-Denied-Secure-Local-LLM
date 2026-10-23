@@ -14,10 +14,16 @@ GET  /health
 
 POST /v1/requests
   {"request_id": "<client id>", "operation": "answering.ask",
-   "payload": {"question": "<text>", "general_knowledge": true}}           # general_knowledge optional
+   "payload": {"question": "<text>", "general_knowledge": true,           # general_knowledge optional
+               "conversation_id": "<thread id>"}}                          # conversation_id optional -> multi-turn memory
   200 {"request_id", "operation", "result": <answer.schema.json>}          # includes status "failed" with error
   4xx {"request_id", "error": {"code", "message", "hint"}}                 # invalid_json, invalid_request, host/origin refused, no_active_collection
 ```
+
+When `conversation_id` is present the host appends the user and assistant turns to that thread and
+maintains its running summary; the answering workflow rewrites the follow-up into a standalone
+retrieval query and supplies the summary plus recent turns to the model as non-citable context
+(SDD §4.2, [ADR 0005](../../../../../../docs/architecture/decisions/0005-per-conversation-context-management.md)).
 
 Unknown operations, envelope fields and payload fields are rejected. Requests must carry a loopback `Host` header. A browser `Origin` must be `http://localhost:*`, `http://127.0.0.1:*`, `tauri://`, `app://` or `null`, and those origins get CORS headers. Only one question runs at a time; a second concurrent ask gets `result.status = "failed"` with `error.code = "busy"`.
 

@@ -3,6 +3,8 @@
 	import Modal from '$lib/components/common/Modal.svelte';
 	import Tooltip from '$lib/components/common/Tooltip.svelte';
 	import Markdown from '$lib/components/chat/Messages/Markdown.svelte';
+	import PDFViewer from '$lib/components/common/PDFViewer.svelte';
+	import { createAnsweringClient } from '$lib/features/answering/answeringClient';
 	import { WEBUI_API_BASE_URL } from '$lib/constants';
 	import { settings, config } from '$lib/stores';
 	import { injectCsp } from '$lib/utils/csp';
@@ -40,7 +42,41 @@
 		return 'bg-red-200 dark:bg-red-800 text-red-800 dark:text-red-200';
 	}
 
+	// Local source-PDF viewer state (ADR 0006): keyed by document index within this citation.
+	let pdfView: { idx: number; data: ArrayBuffer; page: number; highlight: any } | null = null;
+	let pdfLoadingIdx: number | null = null;
+	let pdfError = '';
+	let pdfRequest = 0;
+
+	async function openInPdf(document: any, idx: number) {
+		const meta = document?.metadata ?? {};
+		if (!meta.document_id) return;
+		const request = ++pdfRequest;
+		pdfError = '';
+		pdfView = null;
+		pdfLoadingIdx = idx;
+		try {
+			const data = await createAnsweringClient().fetchSource(meta.document_id, meta.version ?? undefined);
+			if (request !== pdfRequest) return;
+			pdfView = { idx, data, page: (meta.highlight?.page ?? (meta.page ?? 0) + 1), highlight: meta.highlight ?? null };
+		} catch (error) {
+			if (request !== pdfRequest) return;
+			pdfError =
+				error instanceof Error ? error.message : 'The source document could not be opened.';
+		} finally {
+			if (request === pdfRequest) pdfLoadingIdx = null;
+		}
+	}
+
+	function resetPdf() {
+		pdfRequest += 1;
+		pdfLoadingIdx = null;
+		pdfView = null;
+		pdfError = '';
+	}
+
 	$: if (citation) {
+		resetPdf();
 		expandedDocs = new Set();
 		mergedDocuments = (citation.document ?? []).map((c, i) => {
 			return {
@@ -55,6 +91,12 @@
 				(a, b) => (b.distance ?? Infinity) - (a.distance ?? Infinity)
 			);
 		}
+	}
+
+	$: if (show && citation) openInitialPdf(citation);
+	function openInitialPdf(value: any) {
+		const idx = (value.metadata ?? []).findIndex((meta: any) => meta?.document_id);
+		if (idx >= 0) openInPdf({ metadata: value.metadata[idx] }, idx);
 	}
 
 	const decodeString = (str: string) => {
@@ -211,7 +253,34 @@
 										{document.metadata.page + 1})
 									</span>
 								{/if}
+
+								{#if document?.metadata?.document_id}
+									<button
+										class="text-sm underline text-gray-600 hover:text-gray-900 dark:text-gray-300 dark:hover:text-white disabled:opacity-50"
+										disabled={pdfLoadingIdx === documentIdx}
+										on:click={() => openInPdf(document, documentIdx)}
+									>
+										{pdfLoadingIdx === documentIdx
+											? $i18n.t('Opening…')
+											: $i18n.t('View in source PDF')}
+									</button>
+								{/if}
 							</div>
+
+							{#if pdfView && pdfView.idx === documentIdx}
+								<div class="w-full mb-2 rounded-lg overflow-hidden border border-gray-100 dark:border-gray-800">
+									<PDFViewer
+										data={pdfView.data}
+										singlePage={true}
+										targetPage={pdfView.page}
+										highlight={pdfView.highlight}
+										className="w-full h-[60vh]"
+									/>
+								</div>
+							{/if}
+							{#if pdfError && pdfView === null && document?.metadata?.document_id}
+								<div class="text-sm text-red-600 dark:text-red-400 mb-2" role="alert">{pdfError}</div>
+							{/if}
 
 							{#if document.metadata?.html}
 								<iframe

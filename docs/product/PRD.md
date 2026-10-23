@@ -13,12 +13,12 @@ The MVP is a chatbot-style research assistant that runs entirely on one air-gapp
 An analyst asks questions about a permanent collection of approved documents. The system finds relevant evidence and returns:
 
 - A document-backed answer with document and page citations
-- The source passages and pages used
+- The source passages and pages used, where each citation opens the cached source PDF at the cited page with the supporting sentence highlighted
 - Interpretation of relevant diagrams, charts, tables, or schematics
 - Clearly labeled general model knowledge
 - Warnings when evidence is missing, conflicting, or uncertain
 
-Conversation history remains encrypted on the laptop.
+Conversations are multi-turn: each chat thread keeps its own memory of earlier turns (a running summary plus recent messages) so follow-up questions are understood in context, while every document-supported claim still cites retrieved evidence. Saved threads appear in the sidebar and reopen as complete conversations that can be resumed, with source PDF citations available on earlier answers. Conversation history remains encrypted on the laptop.
 
 ### Users
 

@@ -3,6 +3,8 @@
 	import { toast } from 'svelte-sonner';
 
 	import { getContext, onDestroy, onMount, tick } from 'svelte';
+	import { createHistoryClient } from '$lib/features/history/historyClient';
+	import { restoreConversation } from '$lib/features/history/restoreConversation';
 	import { fade } from 'svelte/transition';
 	const i18n: Writable<i18nType> = getContext('i18n');
 
@@ -2267,6 +2269,23 @@ import { workspaceVoice } from '$lib/features/personality/presentation';
 	};
 
 	const loadChat = async () => {
+		if ($models.some((model) => model.id === SECURE_QA_MODEL_ID)) {
+			try {
+				const saved = await createHistoryClient().open(chatIdProp);
+				if (!saved) throw new Error('This conversation is no longer available.');
+				history = restoreConversation(saved);
+				chatId.set(chatIdProp);
+				chatTitle.set(String(saved.title || 'Chat'));
+				selectedModels = [SECURE_QA_MODEL_ID];
+				autoScroll = true;
+				return true;
+			} catch (error) {
+				toast.error(error instanceof Error ? error.message : 'Could not open conversation.');
+				await goto('/');
+				return false;
+			}
+		}
+
 		noteChatDebug('loadChat start');
 		// chatIdProp is empty for chats started from the home page (URL set via replaceState)
 		chatId.set(chatIdProp || $chatId);
@@ -3325,7 +3344,7 @@ import { workspaceVoice } from '$lib/features/personality/presentation';
 				chatFiles = mergeFiles(chatFiles, createdChat?.chat?.files ?? []);
 				await onSelectEmbeddedChat?.(_chatId);
 			} else if ($temporaryChatEnabled) {
-				_chatId = createTemporaryChatId($socket?.id);
+				_chatId = selectedModels.includes(SECURE_QA_MODEL_ID) ? crypto.randomUUID() : createTemporaryChatId($socket?.id);
 				await chatId.set(_chatId);
 			}
 			await tick();
@@ -3463,10 +3482,12 @@ import { workspaceVoice } from '$lib/features/personality/presentation';
 			try {
 				const { answer, historyWarning } = await createOpenWebUIAnsweringAdapter().ask(
 					String(userMessage?.content ?? ''),
-					get(secureQaGeneralKnowledge)
+					get(secureQaGeneralKnowledge),
+					_chatId || undefined
 				);
 				responseMessage.content = formatAnswerForChat(answer) + (historyWarning ? `\n\n> ${historyWarning}` : '');
 				responseMessage.citations = toOpenWebUICitations(answer);
+				window.dispatchEvent(new Event('secure-qa-history-changed'));
 				if (answer.status === 'failed') {
 					responseMessage.error = { content: answer.error?.message ?? 'The local workflow failed.' };
 				}

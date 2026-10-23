@@ -70,6 +70,7 @@ class CorpusReview:
     validator_version: str
     extractor: str
     elapsed_s: float
+    source_paths: dict[str, Path] = field(default_factory=dict)  # document_id -> original PDF path, for source caching (ADR 0006)
 
     @property
     def accepted(self) -> list[FileReview]:
@@ -146,6 +147,7 @@ def ingest_corpus(paths: Iterable[str | Path], *, keep_text: bool = False) -> Co
     chunks: list[Chunk] = []
     documents: list[dict] = []
     sources: dict[str, SourceText] = {}
+    source_paths: dict[str, Path] = {}
     validator = extractor = ""
 
     for path in sorted((Path(p) for p in paths), key=lambda p: (p.name, str(p))):
@@ -169,6 +171,7 @@ def ingest_corpus(paths: Iterable[str | Path], *, keep_text: bool = False) -> Co
         file_chunks = [Chunk.from_dict(c.to_dict()) for c in ingest.chunks(path, config, document["document_id"])]
         review.chunks = len(file_chunks)
         documents.append(document)
+        source_paths[document["document_id"]] = path
         chunks += file_chunks
         if keep_text:
             text, pages, pdf = ingest.extract(path, sort=config.sorted_reading_order, strip_boilerplate=config.strip_running_headers)
@@ -185,6 +188,7 @@ def ingest_corpus(paths: Iterable[str | Path], *, keep_text: bool = False) -> Co
         validator_version=validator,
         extractor=extractor,
         elapsed_s=round(time.perf_counter() - started, 2),
+        source_paths=source_paths,
     )
 
 

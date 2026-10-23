@@ -1,5 +1,5 @@
-import { describe, expect, it } from 'vitest';
-import { formatAnswerForChat, toOpenWebUICitations } from './openWebUIChatAdapter';
+import { describe, expect, it, vi } from 'vitest';
+import { createOpenWebUIAnsweringAdapter, formatAnswerForChat, toOpenWebUICitations } from './openWebUIChatAdapter';
 import { workspaceVoice } from '../personality/presentation';
 
 const base = {
@@ -14,7 +14,7 @@ describe('Open WebUI answering adapter', () => {
 	it('keeps evidence, citations, general knowledge, limitations, and warnings visible', () => {
 		const markdown = formatAnswerForChat(base);
 		expect(markdown).toContain('### From your documents');
-		expect(markdown).toContain('Supported claim. [^source-1]');
+		expect(markdown).toContain('Supported claim. [1]');
 		expect(markdown).toContain('### General model knowledge');
 		expect(markdown).toContain(`### ${workspaceVoice.uncertaintyLabel}`);
 		expect(markdown).toContain('Only one source was available.');
@@ -30,5 +30,43 @@ describe('Open WebUI answering adapter', () => {
 			.toContain('There is not enough evidence');
 		expect(formatAnswerForChat({ ...base, status: 'failed', documents: [], error: { code: 'busy', message: 'Busy', hint: 'Try later.' } }))
 			.toContain('Try later.');
+	});
+
+	it('emits source locators and highlight geometry for the PDF viewer', () => {
+		const answer = {
+			...base,
+			collection_version: 'v0003',
+			citations: [{
+				citation_id: 'source-1', document_id: 'doc_abc', document_title: 'Manual', source_filename: 'manual.pdf',
+				page_start: 4, page_end: 4, quote: 'Supporting text.',
+				pages: [{ page_number: 4, highlight_rects: [[10, 20, 110, 32]], coordinates_reliable: true, page_width: 612, page_height: 792 }]
+			}]
+		};
+		const [out] = toOpenWebUICitations(answer);
+		const meta = out.metadata[0];
+		expect(meta.document_id).toBe('doc_abc');
+		expect(meta.version).toBe('v0003');
+		expect(meta.page).toBe(3); // 0-based
+		expect(meta.highlight).toMatchObject({ page: 4, reliable: true, rects: [[10, 20, 110, 32]], quote: 'Supporting text.' });
+	});
+
+	it('passes the conversation id to the client and lets the host own persistence', async () => {
+		const client = { ask: vi.fn().mockResolvedValue(base) };
+		const history = { save: vi.fn().mockResolvedValue(true) };
+		const adapter = createOpenWebUIAnsweringAdapter(client, history);
+
+		const { historyWarning } = await adapter.ask('And for workers?', true, 'room-7');
+		expect(client.ask).toHaveBeenCalledWith('And for workers?', true, 'room-7');
+		expect(history.save).not.toHaveBeenCalled(); // backend appends the turns for a thread
+		expect(historyWarning).toBeNull();
+	});
+
+	it('still saves one-off questions locally when there is no conversation id', async () => {
+		const client = { ask: vi.fn().mockResolvedValue(base) };
+		const history = { save: vi.fn().mockResolvedValue(true) };
+		const adapter = createOpenWebUIAnsweringAdapter(client, history);
+
+		await adapter.ask('Why?', true);
+		expect(history.save).toHaveBeenCalledTimes(1);
 	});
 });

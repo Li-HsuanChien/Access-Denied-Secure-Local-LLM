@@ -9,8 +9,8 @@
 	let notice = '';
 	async function refresh() { try { rows = await client.list(); enabled = await client.enabled(); } catch (e) { error = e instanceof Error ? e.message : 'History is unavailable.'; } }
 	async function open(id: string) { try { selected = await client.open(id); } catch (e) { error = e instanceof Error ? e.message : 'Could not open this conversation.'; } }
-	async function remove(id: string) { try { await client.remove(id); if (selected?.conversation_id === id) selected = null; notice = 'Conversation deleted.'; await refresh(); } catch (e) { error = e instanceof Error ? e.message : 'Could not delete this conversation.'; } }
-	async function clear() { if (!rows.length || !window.confirm('Delete all saved conversations from this computer?')) return; try { await client.clear(); selected = null; notice = 'Saved history cleared.'; await refresh(); } catch (e) { error = e instanceof Error ? e.message : 'Could not clear saved history.'; } }
+	async function remove(id: string) { try { await client.remove(id); if (selected?.conversation_id === id) selected = null; window.dispatchEvent(new Event('secure-qa-history-changed')); notice = 'Conversation deleted.'; await refresh(); } catch (e) { error = e instanceof Error ? e.message : 'Could not delete this conversation.'; } }
+	async function clear() { if (!rows.length || !window.confirm('Delete all saved conversations from this computer?')) return; try { await client.clear(); selected = null; window.dispatchEvent(new Event('secure-qa-history-changed')); notice = 'Saved history cleared.'; await refresh(); } catch (e) { error = e instanceof Error ? e.message : 'Could not clear saved history.'; } }
 	async function persistence(event: Event) { const value = (event.currentTarget as HTMLInputElement).checked; try { enabled = await client.setEnabled(value); notice = enabled ? 'New answers will be saved.' : 'New answers will not be saved.'; } catch (e) { error = e instanceof Error ? e.message : 'Could not update history setting.'; } }
 	onMount(refresh);
 	$: answer = selected?.answer as Record<string, unknown> | undefined;
@@ -41,6 +41,7 @@
 	{#if selected && answer}
 		<section class="panel" aria-labelledby="opened-title">
 			<h2 id="opened-title">{selected.title}</h2>
+			<a class="btn" href={`/conversation/${encodeURIComponent(String(selected.conversation_id))}`}>Resume conversation and view sources</a>
 			<p class="hint">Model {selected.model_id || 'unknown'} · Collection {selected.collection_version || 'unknown'}</p>
 			<p><strong>Question:</strong> {answer.question}</p>
 			{#if Array.isArray(answer.documents)}<div data-evidence-kind="document" class="evidence"><h3>From your documents</h3>{#each answer.documents as claim}<p>{claim.text} {#each claim.citation_ids || [] as id}<span class="cite">{id}</span>{/each}</p>{/each}</div>{/if}

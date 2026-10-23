@@ -1,5 +1,6 @@
 <script lang="ts">
 	import { toast } from 'svelte-sonner';
+	import ConversationList from '$lib/features/history/ConversationList.svelte';
 	import { v4 as uuidv4 } from 'uuid';
 	import Sortable from 'sortablejs';
 
@@ -1462,6 +1463,7 @@
 						</SidebarSection>
 					{/if}
 
+					{#if localMode}<ConversationList onSelect={closeMobileSidebar} />{/if}
 					{#if !localMode}
 					<SidebarSection
 						id="sidebar-chats"

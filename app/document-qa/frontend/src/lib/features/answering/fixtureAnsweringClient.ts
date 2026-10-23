@@ -24,6 +24,9 @@ export function createFixtureAnsweringClient({ delay = 180, degraded = false }: 
 			if (/unknown|no evidence/i.test(question)) return { ...base, status: 'insufficient_evidence', evidence_mode: 'none', documents: [], citations: [], limitations: ['The fixture library has no supporting passage for this question.'] };
 			if (/warning/i.test(question)) return { ...base, warnings: [{ code: 'citation_validation', message: 'Some unsupported claims were withheld after citation validation.' }] };
 			return base;
+		},
+		async fetchSource(): Promise<ArrayBuffer> {
+			return new TextEncoder().encode('%PDF-1.4\n% fixture source\n').buffer;
 		}
 	};
 }

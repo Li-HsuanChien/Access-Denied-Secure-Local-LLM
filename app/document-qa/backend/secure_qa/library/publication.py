@@ -69,11 +69,15 @@ class Publisher:
 
     def publish(self, paths: Sequence[str | Path], *, confirm_rejects: bool = False,
                 smoke_query: str | None = None) -> PublicationOutcome:
+        return self.publish_review(self.review(paths), confirm_rejects=confirm_rejects, smoke_query=smoke_query)
+
+    def publish_review(self, review: CorpusReview, *, confirm_rejects: bool = False,
+                       smoke_query: str | None = None) -> PublicationOutcome:
+        """Publish an already-computed review (e.g. from a browser upload). One job at a time."""
         if not self._job.acquire(blocking=False):
             return PublicationOutcome(BUSY, message="Another publication is still running. Wait for it to finish.")
         started = time.perf_counter()
         try:
-            review = self.review(paths)
             if not review.accepted:
                 return PublicationOutcome(NOTHING_TO_PUBLISH, review, message="None of the files can be published. "
                                           "Review the rejection reasons and choose different files.")
@@ -82,7 +86,8 @@ class Publisher:
                     f"{len(review.rejected)} of {len(review.files)} files were rejected. "
                     "Confirm to publish the valid remainder, or choose different files."))
             try:
-                version = self.versions.publish(review.chunks, review.documents, smoke_query=smoke_query)
+                version = self.versions.publish(review.chunks, review.documents, smoke_query=smoke_query,
+                                                sources=review.source_paths)
             except PublishError as exc:
                 return PublicationOutcome(FAILED, review, message=f"{exc}. The active collection is unchanged.")
             integrity = self.versions.check_integrity(version)

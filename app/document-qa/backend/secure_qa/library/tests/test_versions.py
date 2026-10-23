@@ -52,6 +52,30 @@ class VersionsTest(unittest.TestCase):
         top = store.search("annual occupational dose limit", top_k=1)[0]
         self.assertEqual(store.document(top.chunk.document_id)["source_filename"], "synthetic/radiation_protection_handbook.pdf")
 
+    def test_caches_source_pdfs_and_serves_them_only_for_manifest_documents(self):
+        chunks, docs = synthetic()
+        sources = {d["document_id"]: b"%PDF-1.4\n" + d["document_id"].encode() for d in docs}
+        version = self.versions.publish(chunks, docs, sources=sources)
+        for doc_id, data in sources.items():
+            path = self.versions.source_path(doc_id)
+            self.assertIsNotNone(path, doc_id)
+            self.assertEqual(path.read_bytes(), data)
+        # Unknown and traversal-style ids are not documents of the version -> no path.
+        self.assertIsNone(self.versions.source_path("doc_does_not_exist"))
+        self.assertIsNone(self.versions.source_path("../secret"))
+        # Survives reopen.
+        self.reopen()
+        self.assertIsNotNone(self.versions.source_path(next(iter(sources))))
+
+    def test_retention_drops_source_dirs_for_versions_that_fall_out(self):
+        chunks, docs = synthetic()
+        sources = {d["document_id"]: b"%PDF-1.4\n" for d in docs}
+        v1 = self.versions.publish(chunks, docs, sources=sources)
+        self.versions.publish(chunks, docs, sources=sources)
+        self.versions.publish(chunks, docs, sources=sources)  # v1 now falls out of active+previous retention
+        self.assertFalse((self.dir / "sources" / v1.version_id).exists())
+        self.assertIsNone(self.versions.source_path(next(iter(sources)), version_id=v1.version_id))
+
     def test_second_publish_keeps_the_first_as_rollback_and_rollback_restores_it(self):
         first = self.versions.publish(*synthetic())
         second = self.versions.publish(*nrc())

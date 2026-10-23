@@ -62,12 +62,31 @@ export function createAnsweringClient({ baseUrl = DEFAULT_BASE_URL, fetchImpl = 
 	}
 	return {
 		async health() { return healthStatus(await send('/health', { method: 'GET', signal: AbortSignal.timeout(10_000) })); },
-		async ask(question, generalKnowledge = true) {
+		async ask(question, generalKnowledge = true, conversationId?: string) {
 			const requestId = createRequestId();
-			const envelope = { request_id: requestId, operation: 'answering.ask', payload: { question, general_knowledge: generalKnowledge } };
+			const payload: Record<string, unknown> = { question, general_knowledge: generalKnowledge };
+			if (conversationId) payload.conversation_id = conversationId;
+			const envelope = { request_id: requestId, operation: 'answering.ask', payload };
 			const response = await send('/v1/requests', { method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(envelope) });
 			if (response.request_id !== requestId || response.operation !== envelope.operation || !validateAnswer(response.result) || response.result.request_id !== requestId) throw invalidResponse();
 			return response.result;
+		},
+		async fetchSource(documentId, version) {
+			const query = new URLSearchParams({ document_id: documentId });
+			if (version) query.set('version', version);
+			let response: Response;
+			try {
+				response = await fetchImpl(`${base}/v1/source?${query.toString()}`, {
+					method: 'GET', cache: 'no-store', redirect: 'error', credentials: 'omit', signal: AbortSignal.timeout(10_000)
+				});
+			} catch {
+				throw new ClientError('unreachable', 'The local QA service could not be reached.', 'Start the local service, then try again.');
+			}
+			if (!response.ok) {
+				throw new ClientError('source_unavailable', 'The source document could not be opened.',
+					'It may not have been cached; republish the collection with its PDFs available.');
+			}
+			return response.arrayBuffer();
 		}
 	};
 }

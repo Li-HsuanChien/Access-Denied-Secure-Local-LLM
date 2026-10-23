@@ -96,14 +96,19 @@ def assemble(
     ctx_size: int,
     max_answer_tokens: int,
     general_knowledge: bool = True,
+    conversation_context: str | None = None,
 ) -> AssembledContext:
     """Build the chat messages for `question` from ranked `results`.
 
     `documents(document_id)` returns the Library's document record (E2 Document
-    fields) or None; titles fall back to the document id.
+    fields) or None; titles fall back to the document id. `conversation_context`
+    is an optional, already-rendered memory block (summary + recent turns); it is
+    context only and never a citable passage (SDD §7.3), and its tokens come out
+    of the budget before passages are packed so the passages still fit.
     """
     system = system_prompt(general_knowledge)
-    framing = f"Passages:\n\n\n\nQuestion: {question}\n\nAnswer using the rules above."
+    conv_prefix = f"{conversation_context}\n\n" if conversation_context else ""
+    framing = f"{conv_prefix}Passages:\n\n\n\nQuestion: {question}\n\nAnswer using the rules above."
     budget = ctx_size - max_answer_tokens - SAFETY_MARGIN_TOKENS - estimate_tokens(system) - estimate_tokens(framing)
     if budget <= 0:
         raise ValueError("The question is too long to fit in the model's context window")
@@ -127,7 +132,7 @@ def assemble(
         used += cost
 
     body = "\n\n".join(p.render() for p in passages)
-    user = f"Passages:\n\n{body}\n\nQuestion: {_one_line(question)}\n\nAnswer using the rules above."
+    user = f"{conv_prefix}Passages:\n\n{body}\n\nQuestion: {_one_line(question)}\n\nAnswer using the rules above."
     return AssembledContext(
         messages=[{"role": "system", "content": system}, {"role": "user", "content": user}],
         passages=passages,

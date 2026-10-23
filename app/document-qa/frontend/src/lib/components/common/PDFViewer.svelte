@@ -14,6 +14,14 @@
 	export let singlePage = false;
 	export let itemLabel = 'Page';
 	export let onPageChange: ((page: number) => void) | null = null;
+	// Optional citation highlight: box the cited sentence on `page` using PDF-point rects
+	// (top-left origin) when `reliable`, else fall back to matching the `quote` in the text layer.
+	export let highlight: {
+		page: number;
+		rects?: number[][];
+		reliable?: boolean;
+		quote?: string;
+	} | null = null;
 
 	type PdfDocument = import('pdfjs-dist').PDFDocumentProxy;
 	type PdfTextLayer = InstanceType<typeof import('pdfjs-dist').TextLayer>;
@@ -252,6 +260,59 @@
 		return Math.min(1, availableWidth / viewport.width, availableHeight / viewport.height);
 	};
 
+	const addHighlightBox = (wrapper: HTMLElement, left: number, top: number, width: number, height: number) => {
+		const el = document.createElement('div');
+		el.className = 'pdf-citation-highlight';
+		el.style.cssText =
+			`position:absolute;left:${left}px;top:${top}px;width:${Math.max(2, width)}px;height:${Math.max(2, height)}px;` +
+			'background:rgba(250,204,21,0.38);mix-blend-mode:multiply;pointer-events:none;border-radius:2px;z-index:2;';
+		wrapper.appendChild(el);
+	};
+
+	// Best-effort: box the run of text spans that cover the quote's opening words.
+	const quoteSpanRect = (container: HTMLElement, quote: string) => {
+		const spans = Array.from(container.querySelectorAll('span')) as HTMLElement[];
+		if (!spans.length) return null;
+		const norm = (s: string) => s.toLowerCase().replace(/\s+/g, ' ').trim();
+		const words = norm(quote).split(' ').filter((w) => w.length > 2).slice(0, 6);
+		if (!words.length) return null;
+		for (let i = 0; i < spans.length; i++) {
+			if (!norm(spans[i].textContent || '').includes(words[0])) continue;
+			const group: HTMLElement[] = [];
+			let combined = '';
+			for (let j = i; j < spans.length && j < i + 40; j++) {
+				group.push(spans[j]);
+				combined = norm(`${combined} ${spans[j].textContent || ''}`);
+				if (words.every((w) => combined.includes(w))) {
+					let L = Infinity, T = Infinity, R = -Infinity, B = -Infinity;
+					for (const g of group) {
+						L = Math.min(L, g.offsetLeft); T = Math.min(T, g.offsetTop);
+						R = Math.max(R, g.offsetLeft + g.offsetWidth); B = Math.max(B, g.offsetTop + g.offsetHeight);
+					}
+					return R > L && B > T ? { left: L, top: T, width: R - L, height: B - T } : null;
+				}
+			}
+		}
+		return null;
+	};
+
+	const drawHighlight = (wrapper: HTMLElement, textLayerDiv: HTMLElement, cssScale: number) => {
+		if (!highlight) return;
+		const rects = highlight.rects ?? [];
+		if (highlight.reliable && rects.length) {
+			for (const r of rects) {
+				if (!Array.isArray(r) || r.length < 4) continue;
+				const [x0, y0, x1, y1] = r;
+				addHighlightBox(wrapper, x0 * cssScale, y0 * cssScale, (x1 - x0) * cssScale, (y1 - y0) * cssScale);
+			}
+			return;
+		}
+		if (highlight.quote) {
+			const box = quoteSpanRect(textLayerDiv, highlight.quote);
+			if (box) addHighlightBox(wrapper, box.left, box.top, box.width, box.height);
+		}
+	};
+
 	const renderAllPages = async () => {
 		if (!pdfDoc || !sceneElement) return;
 		const token = ++renderToken;
@@ -328,6 +389,10 @@
 			await textLayer.render();
 			if (token !== renderToken) return;
 			textLayerInstances.push(textLayer);
+
+			if (highlight && highlight.page === i) {
+				drawHighlight(wrapper, textLayerDiv, cssScale);
+			}
 
 			wrappers.push(wrapper);
 		}

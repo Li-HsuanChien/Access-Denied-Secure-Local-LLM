@@ -21,8 +21,9 @@ from __future__ import annotations
 import hashlib
 import json
 import os
+import shutil
 import threading
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
 from pathlib import Path
@@ -33,6 +34,7 @@ from .embedding import Embedder
 
 CATALOG_SCHEMA = "secure-qa-collections/1"
 COLLECTION_PREFIX = "secure_qa_"
+SOURCES_DIR = "sources"  # <root>/sources/<version_id>/<document_id>.pdf — cached originals for citation viewing (ADR 0006)
 
 
 class PublishError(RuntimeError):
@@ -192,12 +194,18 @@ class CollectionVersions:
 
     # --- publication -------------------------------------------------------------------
 
-    def publish(self, chunks: Sequence[Chunk], documents: Iterable[dict], *, smoke_query: str | None = None) -> CollectionVersion:
+    def publish(self, chunks: Sequence[Chunk], documents: Iterable[dict], *, smoke_query: str | None = None,
+                sources: Mapping[str, str | Path | bytes] | None = None) -> CollectionVersion:
         """Build, verify and atomically activate a new version. Returns it.
 
         On any failure the candidate is deleted, `PublishError` is raised and the
         active version is unchanged. The former active version becomes the
         rollback version; the one before it is deleted.
+
+        `sources` maps `document_id -> PDF path or bytes`; those originals are
+        cached under `<root>/sources/<version_id>/<document_id>.pdf` so citations
+        can be opened in the source PDF later (ADR 0006). It is best-effort:
+        documents without a provided source are simply not cached.
         """
         chunks = list(chunks)
         records = {d["document_id"]: dict(d) for d in documents}
@@ -234,6 +242,13 @@ class CollectionVersions:
                 integrity_sha256=integrity,
                 documents={k: records[k] for k in sorted({c.document_id for c in chunks})},
             )
+            if sources:
+                try:
+                    self._stage_sources(version_id, set(version.documents), sources)
+                except Exception as exc:
+                    self._drop(name)
+                    self._drop_sources(version_id)
+                    raise PublishError(f"Caching sources for {version_id} failed: {exc}") from exc
             old_active = catalog["active"]
             versions = {version_id: asdict(version)}
             if old_active:
@@ -270,8 +285,48 @@ class CollectionVersions:
             if collection.name.startswith(COLLECTION_PREFIX) and collection.name not in keep:
                 self._drop(collection.name)
                 removed.append(collection.name)
+        keep_ids = {v for v in (catalog["active"], catalog["previous"]) if v}
+        sources_root = self.root / SOURCES_DIR
+        if sources_root.is_dir():
+            for child in sources_root.iterdir():
+                if child.is_dir() and child.name not in keep_ids:
+                    shutil.rmtree(child, ignore_errors=True)
         self.root.joinpath("catalog.json.tmp").unlink(missing_ok=True)
         return removed
+
+    # --- source PDFs (ADR 0006) --------------------------------------------------------
+
+    def source_path(self, document_id: str, *, version_id: str | None = None) -> Path | None:
+        """The cached source PDF for a document in a version (the active one by default).
+
+        Returns the path only when `document_id` is a document of that version
+        (so an id from a client can't escape the version's own folder) and the
+        file is present; otherwise None.
+        """
+        catalog = self._read_catalog()
+        vid = version_id or catalog["active"]
+        if not vid or vid not in catalog["versions"]:
+            return None
+        version = self._version(catalog, vid)
+        if version is None or document_id not in version.documents:
+            return None
+        path = self.root / SOURCES_DIR / version.version_id / f"{document_id}.pdf"
+        return path if path.is_file() else None
+
+    def _stage_sources(self, version_id: str, document_ids: set[str], sources: Mapping[str, str | Path | bytes]) -> None:
+        dest = self.root / SOURCES_DIR / version_id
+        dest.mkdir(parents=True, exist_ok=True)
+        for document_id in sorted(document_ids):
+            src = sources.get(document_id)
+            if src is None:
+                continue
+            if "/" in document_id or "\\" in document_id or document_id in ("", ".", ".."):
+                raise ValueError(f"unsafe document id {document_id!r}")
+            data = bytes(src) if isinstance(src, (bytes, bytearray)) else Path(src).read_bytes()
+            (dest / f"{document_id}.pdf").write_bytes(data)
+
+    def _drop_sources(self, version_id: str) -> None:
+        shutil.rmtree(self.root / SOURCES_DIR / version_id, ignore_errors=True)
 
     def close(self) -> None:
         self._client.close()

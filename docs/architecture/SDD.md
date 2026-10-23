@@ -45,9 +45,9 @@ A pinned Open WebUI fork supplies the SvelteKit interface and Python/FastAPI hos
 
 #### 4.1 Collection Library
 
-**Interface:** Review selected PDFs (named from the configured document folder) and return accepted files, every rejection reason, and warnings; publish only after explicit confirmation when any file is rejected; report the active, previous, and listed versions; re-verify a published version's stored counts and checksums against its manifest; and roll back to the previous version.
+**Interface:** Review selected PDFs (uploaded from the browser as base64, staged to a temp directory) and return accepted files, every rejection reason, and warnings; publish only after explicit confirmation when any file is rejected; list published versions; re-verify a published version's stored counts and checksums against its manifest; and roll back to the previous version. The host exposes the browser-upload wire (`library.review` → `library.publish {review_id, confirmed}`, `library.versions`, `library.cancel`, `library.status`, `library.rollback`, `library.integrity`) over E2's real ingestion pipeline (see [ADR 0004](decisions/0004-e3-document-store-on-e2-ingestion.md) as superseded for the wire).
 
-The module hides PDF validation, extraction, chunking (E2's real ingestion pipeline), embedding, indexing, manifest creation, integrity checks, atomic activation, rollback, and cleanup. A failed or unconfirmed build leaves the active version untouched. The local host exposes versioned `library.review`, `library.publish`, `library.status`, `library.rollback`, and `library.integrity` operations; publication acquires a single-job lock and reports `busy` if another is running. Review state is local and temporary; rejected files remain visible until the user confirms the accepted remainder or starts another review. Progress events and cancellation (below) are not implemented yet; publication completes in one request.
+The module hides PDF validation, extraction, chunking (E2's real ingestion pipeline), embedding, indexing, manifest creation, integrity checks, atomic activation, rollback, and cleanup. Publication also caches each published document's source PDF under `sources/<version_id>/<document_id>.pdf` so citations can be opened in the source later ([ADR 0006](decisions/0006-cache-source-pdfs-for-citation-viewing.md)); cached sources follow the same active+previous retention as versions. A failed or unconfirmed build leaves the active version untouched. The local host exposes versioned `library.review`, `library.publish`, `library.status`, `library.rollback`, and `library.integrity` operations; publication acquires a single-job lock and reports `busy` if another is running. Review state is local and temporary; rejected files remain visible until the user confirms the accepted remainder or starts another review. Progress events and cancellation (below) are not implemented yet; publication completes in one request.
 
 **Invariants:**
 
@@ -57,24 +57,26 @@ The module hides PDF validation, extraction, chunking (E2's real ingestion pipel
 
 #### 4.2 Question Answering
 
-**Interface:** Accept a question and active collection version and return a structured answer containing document-supported sections, general-knowledge sections, citations, warnings, evidence mode, model version, collection version, and timing.
+**Interface:** Accept a question, a retrieval source, and optional conversation memory, and return a structured answer containing document-supported sections, general-knowledge sections, citations, warnings, evidence mode, model version, collection version, and timing.
 
-The module hides retrieval, relevance filtering, visual-evidence selection, page rendering, prompt construction, inference, and citation validation.
+The module hides retrieval, relevance filtering, visual-evidence selection, page rendering, prompt construction, inference, citation validation, and — for a multi-turn thread — follow-up query rewriting and running-summary maintenance (see [ADR 0005](decisions/0005-per-conversation-context-management.md)).
 
 **Invariants:**
 
 - Every claim labeled as document-supported cites retrieved evidence.
 - General model knowledge is visibly labeled and never receives document citations.
 - No more than two page images are supplied for automatic visual analysis.
+- Conversation memory (running summary and recent turns) is supplied to the model as delimited context only; it is never a citable passage, and citation validation is unchanged. Memory is bounded to a token budget so one turn costs at most one extra small generation (§12).
 
 #### 4.3 Conversation History
 
-**Interface:** Save, list, load, delete, clear, and disable conversation persistence. The module hides the SQLite schema and migrations. The local host exposes versioned `history.save`, `history.list`, `history.open`, `history.delete`, `history.clear`, `history.enabled`, and `history.set_enabled` operations. Each saved answer stores its model ID and collection version alongside the answer payload. A save error is reported separately and does not remove the answer already shown in Chat.
+**Interface:** Persist conversations as threads — an ordered list of user and assistant turns plus a running `summary` — and save, list, load, rename, delete, clear, and disable persistence. The module hides the SQLite schema and migrations (including the upgrade from the earlier one-answer-per-row schema). The local host exposes versioned `history.save`, `history.list`, `history.open`, `history.delete`, `history.clear`, `history.enabled`, and `history.set_enabled` operations; `history.open` returns the thread's ordered `messages` and `summary` (and, for the legacy contract, the latest `answer`). Turn-level writes (`append_turn`, `recent_turns`, `get_summary`/`set_summary`) back the answering module's conversation memory ([ADR 0005](decisions/0005-per-conversation-context-management.md)). An assistant turn stores its model ID and collection version alongside the answer payload. A save error is reported separately and does not remove the answer already shown in Chat.
 
 **Invariants:**
 
-- Disabling persistence prevents new conversations from being written.
-- Each saved answer records the collection version and model version that produced it.
+- Disabling persistence prevents new turns and conversations from being written.
+- Each assistant turn records the collection version and model version that produced it.
+- A conversation is one thread addressed by a stable `conversation_id`; turns append to it rather than creating a new record per message.
 
 #### 4.4 Local Settings
 
@@ -98,7 +100,7 @@ The host exposes `settings.get` and `settings.update`. The frontend uses the His
 
 #### 4.7 Frontend-to-Host HTTP Contract
 
-The Svelte frontend sends versioned local HTTP requests to the Python host, with a request ID, operation name, and validated payload. Each request returns one result or error associated with that request ID. The host also serves `history.*` and `settings.*` operations. Publication completes within its request and returns the resulting version and integrity report; progress events and cancellation are a planned addition, not yet implemented. Schemas reject unknown operations or fields. The Python host and llama.cpp listener bind only to 127.0.0.1, and the Tauri shell manages their lifecycle. No listener binds to a non-loopback address, and the application does not support a standalone browser workflow.
+The Svelte frontend sends versioned local HTTP requests to the Python host, with a request ID, operation name, and validated payload. Each request returns one result or error associated with that request ID. `answering.ask` carries an optional `conversation_id`; when present, the host threads the turn into that conversation's memory ([ADR 0005](decisions/0005-per-conversation-context-management.md)). The host also serves `history.*` and `settings.*` operations, and a read-only `GET /v1/source?document_id=…&version=…` route that streams a cached source PDF for citation viewing ([ADR 0006](decisions/0006-cache-source-pdfs-for-citation-viewing.md)) — the only non-envelope route besides `GET /health`, behind the same loopback/origin guard. Publication completes within its request and returns the resulting version and integrity report; progress events and cancellation are a planned addition, not yet implemented. Schemas reject unknown operations or fields. The Python host and llama.cpp listener bind only to 127.0.0.1, and the Tauri shell manages their lifecycle. No listener binds to a non-loopback address, and the application does not support a standalone browser workflow.
 
 #### 4.8 Feature UI QA Harness
 
@@ -126,8 +128,8 @@ A collection is a searchable snapshot of approved PDFs' derived data. Each versi
 - **Collection version:** Version ID, status, creation time, document manifest, embedding-model version, chunking configuration, and integrity checksum.
 - **Document:** Stable ID derived from file checksum, display title, original filename, page count, and import warnings.
 - **Chunk:** Stable ID, document ID, page number, chunk order, extracted text, text coordinates when reliable, and embedding.
-- **Conversation:** Conversation ID, title, creation and update times, collection version, and persistence setting.
-- **Message:** Question or answer, timestamp, model version, latency, evidence mode, and warnings.
+- **Conversation:** Conversation ID, title, creation and update times, collection version, persistence setting, and a running memory summary of earlier turns.
+- **Message:** An ordered turn within a conversation — role (user or assistant), text content, timestamp, and, for assistant turns, the full answer payload (model version, latency, evidence mode, citations, and warnings).
 - **Citation:** Document ID, page number, supporting chunk IDs, and text or visual evidence classification.  Note that citation payload carries page range plus per-page spans. Allow page ranges and add hyperlink to first page of page range
 - **Operational event:** Event type, timestamp, duration, version identifiers, evidence IDs, and sanitized error details.
 
@@ -179,7 +181,7 @@ General model knowledge is enabled by default and may be disabled by the user. E
 - **General model knowledge:** Uncited content explicitly labeled as not verified against the document collection.
 - **Limitations and uncertainty:** Missing, conflicting, weak, or visually inaccessible evidence.
 
-Every citation identifies the document and page and expands into an on-demand rendering of the source page. When reliable text coordinates are available, the supporting passage is highlighted. Page images are rendered locally and cached rather than duplicated for the full collection.
+Every citation identifies the document and page and expands into an on-demand rendering of the source page. When reliable text coordinates are available, the supporting passage is highlighted. Source pages are rendered client-side by the bundled pdf.js from the cached source PDF (fetched over the loopback `GET /v1/source` route), rather than rasterized to page images on the server ([ADR 0006](decisions/0006-cache-source-pdfs-for-citation-viewing.md)); the cited sentence is boxed from the stored `highlight_rects` when `coordinates_reliable`, else by matching the quote in the rendered text layer.
 
 After generation, the application verifies that document citations refer to evidence actually supplied to the model. Invalid or missing citations trigger one corrective generation attempt. If validation still fails, unsupported document claims are withheld and the interface explains the failure; correctly labeled general knowledge may remain.
 
@@ -221,7 +223,7 @@ Errors shown to users use plain language and include an actionable next step. Op
 - The Open WebUI host and llama.cpp runtime bind to `127.0.0.1` only. They are reachable to local processes within the operating-system trust model, but are not exposed on a network interface.
 - Release manifests list file checksums and are digitally signed on the connected staging machine.
 - The installed verification key validates the signature before installation; the private signing key never enters the air-gapped laptop.
-- Source PDFs and retrieved content are treated as untrusted data, delimited from model instructions, and cannot grant tools or system access.
+- Source PDFs and retrieved content are treated as untrusted data, delimited from model instructions, and cannot grant tools or system access. Cached source PDFs served over `GET /v1/source` are rendered only by the in-canvas pdf.js viewer (never an `<iframe>`/`<embed>`), and a requested `document_id` is validated and must belong to the named version, so it cannot traverse outside that version's cached-sources folder.
 - The model receives no browser, shell, network, file-modification, or autonomous action capability.
 - Full-disk encryption is required and the user is responsible for locking or powering off the laptop when unattended.
 
@@ -333,3 +335,7 @@ Architectural changes must update this SDD or a linked architecture decision rec
 - Pause and resume for collection publication.
 - Self-updating behavior, multi-device deployment, and live sensitive-system integration.
 - Simultaneous implementation of multiple document stores or answering models.
+
+#### Local conversation presentation
+
+The local sidebar lists saved threads through `history.list`. `/conversation/[id]` loads ordered messages through `history.open` and adapts them to the native Open WebUI Chat message tree, preserving structured-answer citations and collection versions. Follow-ups send the same stable conversation ID to `answering.ask`; new local chats use UUIDs. Upstream Open WebUI persistence stays disabled; workflow History owns storage and its enabled setting. Successful answers and deletions refresh the sidebar. History provides a resume link into the same chat view. Opening a citation automatically fetches its cached PDF in the existing modal; failed source fetches leave the supporting quotation visible and permit retry.
