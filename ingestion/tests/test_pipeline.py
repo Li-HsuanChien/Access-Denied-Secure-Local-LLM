@@ -647,6 +647,37 @@ def test_same_bytes_under_two_names_is_one_document():
             f'recorded as aliases')
 
 
+def test_a_duplicate_is_never_parsed():
+    """A second copy is recognised by its checksum while it is copied, before the parser sees it."""
+    work = fresh('dup-parse-src')
+    work.mkdir(parents=True)
+    shutil.copy(NORMAL, work / 'again.pdf')
+    shutil.copy(NOT_PDF, work / 'again_not_a.pdf')
+    parsed: list[str] = []
+    real = P.process
+
+    def counted(path, *args, **kwargs):
+        parsed.append(kwargs.get('source_filename'))
+        return real(path, *args, **kwargs)
+
+    P.process = counted
+    try:
+        review = P.prepare([NORMAL, work / 'again.pdf', NOT_PDF, work / 'again_not_a.pdf'],
+                           fresh('dup-parse'))
+    finally:
+        P.process = real
+    assert sorted(parsed) == sorted([NORMAL.name, NOT_PDF.name]), parsed
+    assert [c.disposition for c in review.candidates] == ['accepted', 'duplicate', 'rejected', 'duplicate']
+    (r,) = review.rejected
+    assert r['source_filename'] == 'again_not_a.pdf' and r['aliases'] == [NOT_PDF.name], r
+    assert r['times_supplied'] == 2 and review.totals['duplicates'] == 2, (r, review.totals)
+    assert sorted(p.name for p in (review.partial_dir / 'sources').iterdir()) == [
+        f'{review.documents[0]["document_id"]}.pdf']
+    P.discard(review)
+    return ('4 files, 2 parsed: a second copy of an accepted file and of a rejected one are both '
+            'matched by checksum and recorded as names on the first')
+
+
 def test_two_files_with_one_name_are_two_documents():
     work = fresh('clash-src')
     (work / 'a').mkdir(parents=True)
