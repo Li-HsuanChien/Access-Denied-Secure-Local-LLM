@@ -1,3 +1,4 @@
+import { AppProviders, createAppRuntime, createDefaultServices } from "../../../../react/providers";
 import { initReactI18n } from "@/react/i18n";
 import { afterEach, beforeAll, describe, expect, it, vi } from "vitest";
 import {
@@ -151,7 +152,12 @@ describe("native chat renderer", () => {
     );
     const save = vi.fn();
     const original = JSON.stringify(answer);
-    render(
+    const services = createDefaultServices();
+    services.settings.read = vi.fn(async () => ({ general_knowledge: true }));
+    services.history.enabled = vi.fn(async () => true);
+    services.answering.fetchSource = vi.fn(() => new Promise(() => {}));
+    const runtime = createAppRuntime(services);
+    render(<AppProviders runtime={runtime}>
       <AssistantMessageView
         message={{ ...message, answer }}
         branch={{ index: 1, count: 1 }}
@@ -163,7 +169,7 @@ describe("native chat renderer", () => {
         onDelete={vi.fn()}
         canRegenerate
         canDelete={false}
-      />,
+      /></AppProviders>,
     );
     fireEvent.click(screen.getByRole("button", { name: "Toggle 1 source" }));
     fireEvent.click(

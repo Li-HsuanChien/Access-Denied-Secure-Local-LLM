@@ -52,10 +52,24 @@ export function createLibrary(services: AppServices) {
 			poll = setTimeout(() => { void pollStatus(requestId); }, 700);
 		}
 	}
+ async function mutateDocument(action: () => Promise<unknown>, notice: string) {
+  if (store.getSnapshot().busy) return;
+  versionRead += 1;
+  store.update(s => ({ ...s, busy: true, error: '', notice: '' }));
+  try { await action(); store.update(s => ({ ...s, notice })); }
+  catch (e) { fail(e); }
+  finally { await refresh(); store.update(s => ({ ...s, busy: false })); }
+ }
 	return {
 		...store, refresh,
+  setDocumentEnabled(versionId: string, documentId: string, enabled: boolean) {
+   return mutateDocument(() => services.library.setDocumentEnabled(versionId, documentId, enabled), enabled ? 'PDF is on for future answers.' : 'PDF is off for future answers. Preview remains available.');
+  },
+  deleteDocument(versionId: string, documentId: string) {
+   return mutateDocument(() => services.library.deleteDocument(versionId, documentId, true), 'PDF was deleted from the library.');
+  },
 		select(files: readonly SelectedPdf[]) {
-			if (!store.getSnapshot().busy) store.update((s) => ({ ...s, selected: [...files] }));
+			if (!store.getSnapshot().busy) store.update((s) => ({ ...s, selected: [...files], review: null, confirmed: false, attempted: false }));
 		},
 		confirm(value: boolean) { store.update((s) => ({ ...s, confirmed: value })); },
 		async review() {
@@ -82,7 +96,7 @@ export function createLibrary(services: AppServices) {
 			try {
 				const result = await services.library.publish(state.review.review_id, state.confirmed, requestId);
 				store.update((s) => ({ ...s, review: null, selected: [],
-					notice: `Collection ${result.version_id} is active · ${result.document_count} PDFs · ${result.chunk_count} passages.` }));
+					notice: `Library updated · ${result.document_count} PDFs · ${result.chunk_count} passages.` }));
 				finish(requestId);
 				await refresh();
 			} catch (e) {

@@ -14,6 +14,7 @@ function mount() {
  services.answering.health = vi.fn(async () => ({ ready: true, library: { document_count: 1, chunk_count: 2 }, answering: {} } as any));
  services.settings.read = vi.fn(async () => ({ general_knowledge: true }));
  services.settings.update = vi.fn(async value => value);
+ services.history.list = vi.fn(async () => []);
  services.history.enabled = vi.fn(async () => true);
  const runtime = createAppRuntime(services, window);
  render(<AppProviders runtime={runtime}><AppShell><p>Feature content</p></AppShell></AppProviders>);
@@ -22,7 +23,7 @@ function mount() {
 it('renders health and refreshes through the shared service', async () => {
  const runtime = mount();
  await screen.findByText('1 document · 2 passages · local model ready');
- fireEvent.click(screen.getByText('Refresh'));
+ fireEvent.click(screen.getByRole('button', { name: 'Refresh' }));
  await waitFor(() => expect(runtime.services.answering.health).toHaveBeenCalledTimes(2));
  expect(screen.getByText('Feature content')).toBeTruthy();
 });
@@ -65,7 +66,7 @@ it('applies stored theme and closes the sidebar on entering the mobile breakpoin
 it('reports degraded health using the local error message', async () => {
  const runtime = mount(); await screen.findByText('1 document · 2 passages · local model ready');
  runtime.services.answering.health = vi.fn(async () => { throw new Error('Local service unavailable'); });
- fireEvent.click(screen.getByText('Refresh'));
+ fireEvent.click(screen.getByRole('button', { name: 'Refresh' }));
  await screen.findByText('Workspace needs attention');
  expect(screen.getByText('Local service unavailable')).toBeTruthy();
 });
@@ -76,4 +77,12 @@ it('opens with a horizontal mobile swipe and excludes input targets', async () =
  expect(screen.queryByRole('button', { name: 'Close Sidebar' })).toBeNull();
  touch('touchstart',25,200);touch('touchmove',230,200);touch('touchend',230,200);
  await waitFor(() => expect(screen.getByRole('button', { name: 'Close Sidebar' })).toBeTruthy());
+});
+it('presents an empty Library as a normal first-run state when the model is ready', async () => {
+ const runtime = mount();
+ await screen.findByText('1 document · 2 passages · local model ready');
+ runtime.services.answering.health = vi.fn(async () => ({ ready: false, answering: { ready: true }, library: { ready: false, document_count: 0, chunk_count: 0 } } as any));
+ fireEvent.click(screen.getByRole('button', { name: 'Refresh' }));
+ await screen.findByText('Local model ready — publish documents to your Library to start asking questions.');
+ expect(screen.queryByText('Workspace needs attention')).toBeNull();
 });

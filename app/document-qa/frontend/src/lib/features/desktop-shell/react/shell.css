@@ -28,3 +28,13 @@
 .react-desktop-shell .shell-expanded { transition: width 250ms cubic-bezier(0.22, 1, 0.36, 1); }
 .react-desktop-shell .shell-backdrop { position: fixed; inset: 0; z-index: 40; background: black; }
 @media(max-width:767px){.react-desktop-shell #sidebar{will-change:transform;touch-action:pan-y;}}
+
+.saved-chats { padding: 12px 8px; font-size: 13px; }
+.saved-chats .heading, .saved-chats li { display: flex; align-items: center; gap: 8px; }
+.saved-chats .heading { justify-content: space-between; margin-bottom: 8px; }
+.saved-chats h2 { font-weight: 600; }
+.saved-chats p, .saved-chats .heading button { color: var(--workspace-ink-muted); font-size: 12px; }
+.saved-chats li a { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 8px; border-radius: 8px; }
+.saved-chats li a:hover, .saved-chats a[aria-current='page'] { background: var(--workspace-hover); }
+.saved-chats li button { padding: 6px 8px; border-radius: 6px; }
+.saved-chats button:focus-visible, .saved-chats a:focus-visible { outline: 2px solid var(--workspace-accent); }

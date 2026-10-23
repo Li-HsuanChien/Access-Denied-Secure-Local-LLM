@@ -40,6 +40,7 @@ class ChromaStore(DocumentStore):
         create: bool = True,
         version_id: str | None = None,
         documents: dict[str, dict] | None = None,
+        enabled_documents: frozenset[str] | None = None,
     ) -> None:
         super().__init__(embedder)
         self.path = Path(path)
@@ -49,6 +50,7 @@ class ChromaStore(DocumentStore):
         self._create = create
         self._version_id = version_id
         self._documents = documents or {}
+        self._enabled_documents = enabled_documents
         self._collection = None
 
     @property
@@ -101,8 +103,37 @@ class ChromaStore(DocumentStore):
                 metadatas=[c.to_metadata() for c in part],
             )
 
+    def search(self, query: str, top_k: int = 5, min_score: float | None = None) -> list[SearchResult]:
+        if top_k < 1:
+            raise ValueError("top_k must be >= 1")
+        if self._enabled_documents == frozenset():
+            return []
+        return super().search(query, top_k, min_score)
+
+    def copy_documents_from(self, source: ChromaStore, document_ids: set[str]) -> list[Chunk]:
+        """Copy persisted vectors without re-embedding unchanged documents."""
+        chunks = []
+        if not document_ids:
+            return chunks
+        batch = min(500, self._client.get_max_batch_size())
+        offset = 0
+        while True:
+            got = source.collection.get(where={"document_id": {"$in": sorted(document_ids)}},
+                                        include=["documents", "metadatas", "embeddings"], limit=batch, offset=offset)
+            if not got["ids"]:
+                break
+            self.collection.upsert(ids=got["ids"], documents=got["documents"],
+                                   metadatas=got["metadatas"], embeddings=got["embeddings"])
+            chunks.extend(Chunk.from_metadata(text, meta) for text, meta in zip(got["documents"], got["metadatas"]))
+            offset += len(got["ids"])
+        return chunks
+
     def _query(self, vector, top_k: int) -> list[SearchResult]:
+        filters = {} if self._enabled_documents is None else {
+            "where": {"document_id": {"$in": sorted(self._enabled_documents)}}
+        }
         res = self.collection.query(
+            **filters,
             query_embeddings=[vector],
             n_results=top_k,
             include=["documents", "metadatas", "distances"],

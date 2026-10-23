@@ -155,6 +155,7 @@ export function AssistantMessageView({
                 messageId={message.id}
                 content={message.content}
                 citations={message.answer?.citations ?? []}
+                collectionVersion={message.answer?.collection_version}
                 onNavigate={onNavigate}
                 onSaveContent={(content) => onSaveEdit(content, false)}
               />

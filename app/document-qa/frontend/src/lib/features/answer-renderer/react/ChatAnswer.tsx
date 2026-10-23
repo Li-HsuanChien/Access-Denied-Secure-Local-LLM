@@ -204,8 +204,10 @@ export function MarkdownContent({
   onSaveContent,
   onPreview,
   className = "markdown-prose",
+  onCitation,
 }: {
   className?: string;
+  onCitation?: (index: number) => void;
   content: string;
   onNavigate: ChatAnswerProps["onNavigate"];
   onSaveContent: ChatAnswerProps["onSaveContent"];
@@ -245,6 +247,9 @@ export function MarkdownContent({
           break;
         case "inlineKatex":
           rendered = <MathToken token={token} />;
+          break;
+        case "citation":
+          rendered = <>{(token.ids as number[] ?? []).map(id => <button key={id} type="button" className="citation-ref" aria-label={`View citation ${id}`} onClick={() => onCitation?.(id)}>[{id}]</button>)}</>;
           break;
         case "footnote":
           rendered = (
@@ -521,10 +526,12 @@ export function ChatAnswer({
   messageId,
   content,
   citations,
+  collectionVersion,
   onNavigate,
   onSaveContent,
 }: ChatAnswerProps) {
   const tooltipRoot = useTooltips<HTMLDivElement>();
+  const [openCitation, setOpenCitation] = useState<number | null>(null);
   const [expanded, setExpanded] = useState(false),
     [preview, setPreview] = useState<{
       kind: "html" | "svg";
@@ -541,9 +548,13 @@ export function ChatAnswer({
         onNavigate={onNavigate}
         onSaveContent={onSaveContent}
         onPreview={(kind, source) => setPreview({ kind, source })}
+        onCitation={index => { if (citations[index - 1]) setOpenCitation(index); }}
       />
       <SourcePanel
         citations={citations}
+        collectionVersion={collectionVersion}
+        openCitation={openCitation}
+        onCloseCitation={() => setOpenCitation(null)}
         expanded={expanded}
         onExpandedChange={setExpanded}
       />

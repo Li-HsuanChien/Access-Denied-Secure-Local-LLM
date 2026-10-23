@@ -33,6 +33,7 @@ OUT = ROOT / 'walkthrough' / 'text'
 DEFAULTS = [
     ROOT / 'fixtures/normal/normal_nrc_reactor_concepts_ch01.pdf',
     ROOT / 'fixtures/large/large_doe_nuclear_physics_v1.pdf',
+    ROOT / 'fixtures/large/large_doe_nuclear_physics_v1_original.pdf',
     ROOT / 'fixtures/layout/layout_arxiv_two_column_2112.11583.pdf',
 ]
 

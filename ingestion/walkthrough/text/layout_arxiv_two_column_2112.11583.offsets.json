@@ -1,8 +1,8 @@
 {
   "source_pdf": "fixtures/layout/layout_arxiv_two_column_2112.11583.pdf",
-  "total_chars": 43067,
+  "total_chars": 43088,
   "page_count": 13,
-  "chars_per_page_mean": 3312.8,
+  "chars_per_page_mean": 3314.5,
   "note": "Offsets index into <stem>.text.txt. The .pages.txt copy inserts markers for reading and its offsets do not match.",
   "pages": [
     {
@@ -48,17 +48,17 @@
     {
       "page_number": 5,
       "char_start": 17047,
-      "char_end": 17977,
-      "chars": 930,
+      "char_end": 17979,
+      "chars": 932,
       "has_text": true,
-      "span_count": 245,
+      "span_count": 246,
       "width": 612.0,
       "height": 792.0
     },
     {
       "page_number": 6,
-      "char_start": 17977,
-      "char_end": 21837,
+      "char_start": 17979,
+      "char_end": 21839,
       "chars": 3860,
       "has_text": true,
       "span_count": 967,
@@ -67,8 +67,8 @@
     },
     {
       "page_number": 7,
-      "char_start": 21837,
-      "char_end": 23519,
+      "char_start": 21839,
+      "char_end": 23521,
       "chars": 1682,
       "has_text": true,
       "span_count": 405,
@@ -77,8 +77,8 @@
     },
     {
       "page_number": 8,
-      "char_start": 23519,
-      "char_end": 26344,
+      "char_start": 23521,
+      "char_end": 26346,
       "chars": 2825,
       "has_text": true,
       "span_count": 753,
@@ -87,8 +87,8 @@
     },
     {
       "page_number": 9,
-      "char_start": 26344,
-      "char_end": 27566,
+      "char_start": 26346,
+      "char_end": 27568,
       "chars": 1222,
       "has_text": true,
       "span_count": 290,
@@ -97,8 +97,8 @@
     },
     {
       "page_number": 10,
-      "char_start": 27566,
-      "char_end": 31047,
+      "char_start": 27568,
+      "char_end": 31049,
       "chars": 3481,
       "has_text": true,
       "span_count": 975,
@@ -107,18 +107,18 @@
     },
     {
       "page_number": 11,
-      "char_start": 31047,
-      "char_end": 35149,
-      "chars": 4102,
+      "char_start": 31049,
+      "char_end": 35170,
+      "chars": 4121,
       "has_text": true,
-      "span_count": 1034,
+      "span_count": 1042,
       "width": 612.0,
       "height": 792.0
     },
     {
       "page_number": 12,
-      "char_start": 35149,
-      "char_end": 40678,
+      "char_start": 35170,
+      "char_end": 40699,
       "chars": 5529,
       "has_text": true,
       "span_count": 1363,
@@ -127,8 +127,8 @@
     },
     {
       "page_number": 13,
-      "char_start": 40678,
-      "char_end": 43067,
+      "char_start": 40699,
+      "char_end": 43088,
       "chars": 2389,
       "has_text": true,
       "span_count": 685,

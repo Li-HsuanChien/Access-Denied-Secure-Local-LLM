@@ -20,7 +20,7 @@ const answer: Answer = {
 function services(): AppServices {
 	return {
 		createId: () => 'publication-1', now: () => Date.now(),
-		answering: { health: vi.fn(), ask: vi.fn(async () => answer) },
+		answering: { fetchSource: vi.fn(), health: vi.fn(), ask: vi.fn(async () => answer) },
 		settings: { read: vi.fn(async () => ({ general_knowledge: true })), update: vi.fn(async (v) => v) },
 		history: {
 			list: vi.fn(async () => []), open: vi.fn(async () => null), save: vi.fn(async () => true),
@@ -28,7 +28,7 @@ function services(): AppServices {
 			enabled: vi.fn(async () => true), setEnabled: vi.fn(async (v) => v)
 		},
 		library: {
-			review: vi.fn(async () => ({ review_id: 'review-1', accepted: [{ name: 'a.pdf', size: 10 }],
+			setDocumentEnabled: vi.fn(), deleteDocument: vi.fn(), review: vi.fn(async () => ({ review_id: 'review-1', accepted: [{ name: 'a.pdf', size: 10 }],
 				rejected: [], warning: null, requires_confirmation: false })),
 			publish: vi.fn(), status: vi.fn(async () => ({ status: 'running', stage: 'indexing', done: 1, total: 2 })),
 			cancel: vi.fn(async () => true), versions: vi.fn(async () => ({ active: null, versions: [] })),
@@ -191,7 +191,7 @@ describe('app lifetime library', () => {
 		response.resolve({ version_id: 'v1', document_count: 1, chunk_count: 2 });
 		await publication;
 		expect(library.getSnapshot().publication).toBeNull();
-		expect(library.getSnapshot().notice).toContain('v1');
+		expect(library.getSnapshot().notice).toContain('Library updated');
 		library.dispose();
 	});
 	it('retains a lost publication response until terminal polling confirms outcome', async () => {

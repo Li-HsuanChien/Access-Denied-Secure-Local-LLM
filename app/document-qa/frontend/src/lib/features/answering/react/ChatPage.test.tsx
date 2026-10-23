@@ -136,7 +136,7 @@ describe("rendered Chat page controller integration", () => {
     );
     expect(x.requests).toEqual(["Summarize the key points of "]);
     await act(async () => x.finish());
-    expect(x.saves).toEqual(["Summarize the key points of "]);
+    expect(x.saves).toEqual([]);
   });
   it("focuses the composer on global Escape before an opened dropdown restores focus", () => {
     setup();
@@ -184,7 +184,7 @@ describe("rendered Chat page controller integration", () => {
     });
     fireEvent.click(screen.getByText("Save", { exact: true }));
     expect(x.requests).toEqual(["original"]);
-    expect(x.saves).toEqual(["original"]);
+    expect(x.saves).toEqual([]);
     fireEvent.click(screen.getByLabelText("Chat actions"));
     fireEvent.click(document.getElementById("chat-copy-button")!);
     expect(clipboard.mock.calls.at(-1)?.[0]).toContain(
@@ -199,7 +199,7 @@ describe("rendered Chat page controller integration", () => {
     expect(screen.queryByText("old session")).toBeNull();
     await act(async () => x.finish());
     expect(x.requests).toEqual(["old session"]);
-    expect(x.saves).toEqual(["old session"]);
+    expect(x.saves).toEqual([]);
     expect(screen.queryByTestId("assistant")).toBeNull();
     expect(screen.getByText("Suggested")).toBeTruthy();
   });

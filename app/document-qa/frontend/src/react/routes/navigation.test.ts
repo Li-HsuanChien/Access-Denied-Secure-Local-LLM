@@ -34,3 +34,11 @@ it('opens a fresh local-model chat with the original query and clears it on ordi
 	navigation.navigate('/library', { localModel: true });
 	expect(window.location.pathname + window.location.search).toBe('/library');
 });
+it('preserves direct conversation routes and remounts when selecting another thread', () => {
+ window.history.replaceState(null, '', '/conversation/room-1');
+ const navigation = createNavigation(window);
+ expect(navigation.getSnapshot().path).toBe('/conversation/room-1');
+ navigation.navigate('/conversation/room-2');
+ expect(navigation.getSnapshot().chatEpoch).toBe(1);
+ expect(window.location.pathname).toBe('/conversation/room-2');
+});

@@ -45,36 +45,38 @@ The target architecture pairs the React/TypeScript interface preserving the obse
 
 #### 4.1 Collection Library
 
-**Interface:** Review selected PDFs and return accepted files, every rejection reason, warnings, and a review ID; publish only after explicit confirmation when any file is rejected; report publication status and accept cancellation; list available versions, return the active version, and roll back to the previous version.
+**Interface:** Review selected PDFs (uploaded from the browser as base64, staged to a temp directory) and return accepted files, every rejection reason, and warnings; publish only after explicit confirmation when any file is rejected; add accepted PDFs to the existing library; list individual PDFs with persistent retrieval on/off state; delete a PDF only with explicit confirmation; re-verify a published version's stored counts and checksums against its manifest; and retain snapshot identifiers internally for citation provenance. The host exposes the browser-upload wire (`library.review` → `library.publish {review_id, confirmed}`, `library.versions`, `library.cancel`, `library.status`, `library.rollback`, `library.integrity`) over E2's real ingestion pipeline (see [ADR 0004](decisions/0004-e3-document-store-on-e2-ingestion.md) as superseded for the wire).
 
-The module hides PDF validation, extraction, chunking, embedding, indexing, staging, manifest creation, integrity checks, atomic activation, rollback, and cleanup. Indexing checks cancellation between bounded chunk batches. Source PDFs are staged into the candidate version before the active catalog pointer changes, so an activated collection always has its source files and a failed build leaves the active version untouched. The local host exposes versioned `library.review`, `library.publish`, `library.status`, `library.cancel`, `library.versions`, and `library.rollback` operations. Review state is local and temporary; rejected files remain visible until the user confirms the accepted remainder or starts another review. Progress and cancellation are associated with the publication request ID.
+The module hides PDF validation, extraction, chunking (E2's real ingestion pipeline), embedding, indexing, manifest creation, integrity checks, atomic activation, rollback, and cleanup. Publication also caches each published document's source PDF under `sources/<version_id>/<document_id>.pdf` so citations can be opened in the source later ([ADR 0006](decisions/0006-cache-source-pdfs-for-citation-viewing.md)); cached sources follow the same active+previous retention as versions. A failed or unconfirmed build leaves the active version untouched. The local host exposes versioned `library.review`, `library.publish`, `library.status`, `library.rollback`, and `library.integrity` operations; publication acquires a single-job lock and reports `busy` if another is running. Review state is local and temporary; rejected files remain visible until the user confirms the accepted remainder or starts another review. Progress events and cancellation (below) are not implemented yet; publication completes in one request.
 
 **Invariants:**
 
 - A failed or cancelled publication never changes the active collection.
-- Only the active and immediately previous collection versions are retained.
+- The UI manages individual PDFs. Internal active and previous snapshots are normally retained; confirmed deletion prunes previous snapshots so removed PDFs cannot be restored through rollback.
 - Rejected files are never silently omitted; the user reviews them before publishing the valid remainder.
 
 #### 4.2 Question Answering
 
-**Interface:** Accept a question and active collection version and return a structured answer containing document-supported sections, general-knowledge sections, citations, warnings, evidence mode, model version, collection version, and timing.
+**Interface:** Accept a question, a retrieval source, and optional conversation memory, and return a structured answer containing document-supported sections, general-knowledge sections, citations, warnings, evidence mode, model version, collection version, and timing.
 
-The module hides retrieval, relevance filtering, visual-evidence selection, page rendering, prompt construction, inference, and citation validation.
+The module hides retrieval, relevance filtering, visual-evidence selection, page rendering, prompt construction, inference, citation validation, and — for a multi-turn thread — follow-up query rewriting and running-summary maintenance (see [ADR 0005](decisions/0005-per-conversation-context-management.md)).
 
 **Invariants:**
 
 - Every claim labeled as document-supported cites retrieved evidence.
 - General model knowledge is visibly labeled and never receives document citations.
 - No more than two page images are supplied for automatic visual analysis.
+- Conversation memory (running summary and recent turns) is supplied to the model as delimited context only; it is never a citable passage, and citation validation is unchanged. Memory is bounded to a token budget so one turn costs at most one extra small generation (§12).
 
 #### 4.3 Conversation History
 
-**Interface:** Save, list, load, delete, clear, and disable conversation persistence. The module hides the SQLite schema and migrations. The local host exposes versioned `history.save`, `history.list`, `history.open`, `history.delete`, `history.clear`, `history.enabled`, and `history.set_enabled` operations. Each saved answer stores its model ID and collection version alongside the answer payload. A save error is reported separately and does not remove the answer already shown in Chat.
+**Interface:** Persist conversations as threads — an ordered list of user and assistant turns plus a running `summary` — and save, list, load, rename, delete, clear, and disable persistence. The module hides the SQLite schema and migrations (including the upgrade from the earlier one-answer-per-row schema). The local host exposes versioned `history.save`, `history.list`, `history.open`, `history.delete`, `history.clear`, `history.enabled`, and `history.set_enabled` operations; `history.open` returns the thread's ordered `messages` and `summary` (and, for the legacy contract, the latest `answer`). Turn-level writes (`append_turn`, `recent_turns`, `get_summary`/`set_summary`) back the answering module's conversation memory ([ADR 0005](decisions/0005-per-conversation-context-management.md)). An assistant turn stores its model ID and collection version alongside the answer payload. A save error is reported separately and does not remove the answer already shown in Chat.
 
 **Invariants:**
 
-- Disabling persistence prevents new conversations from being written.
-- Each saved answer records the collection version and model version that produced it.
+- Disabling persistence prevents new turns and conversations from being written.
+- Each assistant turn records the collection version and model version that produced it.
+- A conversation is one thread addressed by a stable `conversation_id`; turns append to it rather than creating a new record per message.
 
 #### 4.4 Local Settings
 
@@ -98,7 +100,7 @@ The host exposes `settings.get` and `settings.update`. The frontend uses the His
 
 #### 4.7 Frontend-to-Host HTTP Contract
 
-The React frontend sends versioned local HTTP requests to the Python host, with a request ID, operation name, and validated payload. Each request returns one result or error associated with that request ID. Long library publication requests are accompanied by `library.status` polling, and cancellation targets the publication request ID. Schemas reject unknown operations or fields. The Python host and llama.cpp listener bind only to 127.0.0.1; the developer launcher manages their lifecycle today, while the Tauri shell lifecycle remains planned. No listener binds to a non-loopback address, and the application does not support a standalone browser workflow.
+The React frontend sends versioned local HTTP requests to the Python host, with a request ID, operation name, and validated payload. Each request returns one result or error associated with that request ID. `answering.ask` carries an optional `conversation_id`; when present, the host threads the turn into that conversation's memory ([ADR 0005](decisions/0005-per-conversation-context-management.md)). The host also serves `history.*` and `settings.*` operations, and a read-only `GET /v1/source?document_id=…&version=…` route that streams a cached source PDF for citation viewing ([ADR 0006](decisions/0006-cache-source-pdfs-for-citation-viewing.md)) — the only non-envelope route besides `GET /health`, behind the same loopback/origin guard. Publication completes within its request and returns the resulting version and integrity report; progress events and cancellation are a planned addition, not yet implemented. Schemas reject unknown operations or fields. The Python host and llama.cpp listener bind only to 127.0.0.1, and the developer launcher manages their lifecycle (Tauri production lifecycle remains planned). No listener binds to a non-loopback address, and the application does not support a standalone browser workflow.
 
 #### 4.8 Frontend Composition and QA Harness
 
@@ -122,15 +124,15 @@ The original Open WebUI license/branding conditions remain recorded in frontend 
 
 ### 5. Data Design
 
-A collection is a complete searchable snapshot of approved PDFs and their derived data. Each version contains the source PDFs, manifest, extraction metadata, chunks, embeddings, document index, and import report.
+A collection is a searchable snapshot of approved PDFs' derived data. Each version contains the manifest, extraction metadata, chunks, embeddings, document index, and import report. The source PDFs themselves live in the user's document folder (the host's `--corpus`), referenced by file name and checksum; they are not copied into the version (see [ADR 0004](decisions/0004-e3-document-store-on-e2-ingestion.md)).
 
 #### 5.1 Persistent Records
 
 - **Collection version:** Version ID, status, creation time, document manifest, embedding-model version, chunking configuration, and integrity checksum.
 - **Document:** Stable ID derived from file checksum, display title, original filename, page count, and import warnings.
 - **Chunk:** Stable ID, document ID, page number, chunk order, extracted text, text coordinates when reliable, and embedding.
-- **Conversation:** Conversation ID, title, creation and update times, collection version, and persistence setting.
-- **Message:** Question or answer, timestamp, model version, latency, evidence mode, and warnings.
+- **Conversation:** Conversation ID, title, creation and update times, collection version, persistence setting, and a running memory summary of earlier turns.
+- **Message:** An ordered turn within a conversation — role (user or assistant), text content, timestamp, and, for assistant turns, the full answer payload (model version, latency, evidence mode, citations, and warnings).
 - **Citation:** Document ID, page number, supporting chunk IDs, and text or visual evidence classification.  Note that citation payload carries page range plus per-page spans. Allow page ranges and add hyperlink to first page of page range
 - **Operational event:** Event type, timestamp, duration, version identifiers, evidence IDs, and sanitized error details.
 
@@ -152,9 +154,9 @@ For accepted files, the application extracts page text and text coordinates, cre
 
 The active collection remains available throughout this work. Only one publication job may run at a time. The interface shows the current phase, completed files, processed pages, warnings, and elapsed time.
 
-#### 6.3 Publish, Cancel, and Roll Back
+#### 6.3 Apply Document Changes
 
-Successful publication atomically activates the candidate, moves the former active version to rollback status, and removes versions older than the rollback version. Cancellation or failure records the outcome, discards incomplete staging data, and leaves the active collection unchanged.
+Successful publication adds reviewed PDFs to the existing library and atomically activates a verified combined snapshot. Unchanged vectors and cached sources are copied; incoming PDFs are embedded. Matching document IDs replace the same PDF. On/off state is atomically stored separately from immutable manifests and filters retrieval before top-k. Delete requires explicit confirmation and activates a verified snapshot without the PDF, then prunes previous snapshots, cached sources, and obsolete reports. Deleting the final PDF leaves an empty library. Failed builds leave the current library unchanged. Snapshot IDs remain internal; the UI has no rollback control. See [document management and retrieval selection](retrieval-selection-design.md).
 
 Publication supports cancel and restart. Pause and resume are outside the MVP. The application warns before shutdown while publication is active.
 
@@ -164,7 +166,7 @@ Publication supports cancel and restart. Pause and resume are outside the MVP. T
 
 #### 7.1 Retrieval
 
-Each question is searched against the active collection. The retriever returns ranked text chunks and their document, page, and coordinate metadata. A configurable minimum relevance threshold excludes weak evidence. The benchmark dataset is used to tune the threshold, which is frozen for the final release.
+Each question is searched against enabled documents in the active collection, using a fixed selection captured at question start. An empty enabled set skips embedding and vector search and returns no evidence. The retriever returns ranked text chunks and their document, page, and coordinate metadata. A configurable minimum relevance threshold excludes weak evidence. The benchmark dataset is used to tune the threshold, which is frozen for the final release.
 
 If no chunk meets the threshold, the application states that the collection lacks sufficient evidence and produces no document-supported section. General model knowledge may still be shown.
 
@@ -182,7 +184,7 @@ General model knowledge is enabled by default and may be disabled by the user. E
 - **General model knowledge:** Uncited content explicitly labeled as not verified against the document collection.
 - **Limitations and uncertainty:** Missing, conflicting, weak, or visually inaccessible evidence.
 
-Every citation identifies the document and page and expands into an on-demand rendering of the source page. When reliable text coordinates are available, the supporting passage is highlighted. Page images are rendered locally and cached rather than duplicated for the full collection.
+Every citation identifies the document and page and expands into an on-demand rendering of the source page. When reliable text coordinates are available, the supporting passage is highlighted. Source pages are rendered client-side by the bundled pdf.js from the cached source PDF (fetched over the loopback `GET /v1/source` route), rather than rasterized to page images on the server ([ADR 0006](decisions/0006-cache-source-pdfs-for-citation-viewing.md)); the cited sentence is boxed from the stored `highlight_rects` when `coordinates_reliable`, else by matching the quote in the rendered text layer.
 
 After generation, the application verifies that document citations refer to evidence actually supplied to the model. Invalid or missing citations trigger one corrective generation attempt. If validation still fails, unsupported document claims are withheld and the interface explains the failure; correctly labeled general knowledge may remain.
 
@@ -224,7 +226,7 @@ Errors shown to users use plain language and include an actionable next step. Op
 - The retained Python host and llama.cpp runtime bind to `127.0.0.1` only. They are reachable to local processes within the operating-system trust model, but are not exposed on a network interface.
 - Release manifests list file checksums and are digitally signed on the connected staging machine.
 - The installed verification key validates the signature before installation; the private signing key never enters the air-gapped laptop.
-- Source PDFs and retrieved content are treated as untrusted data, delimited from model instructions, and cannot grant tools or system access.
+- Source PDFs and retrieved content are treated as untrusted data, delimited from model instructions, and cannot grant tools or system access. Cached source PDFs served over `GET /v1/source` are rendered only by the in-canvas pdf.js viewer (never an `<iframe>`/`<embed>`), and a requested `document_id` is validated and must belong to the named version, so it cannot traverse outside that version's cached-sources folder.
 - The model receives no browser, shell, network, file-modification, or autonomous action capability.
 - Full-disk encryption is required and the user is responsible for locking or powering off the laptop when unattended.
 
@@ -336,3 +338,19 @@ Architectural changes must update this SDD or a linked architecture decision rec
 - Pause and resume for collection publication.
 - Self-updating behavior, multi-device deployment, and live sensitive-system integration.
 - Simultaneous implementation of multiple document stores or answering models.
+
+#### Local conversation presentation
+
+The local sidebar lists saved threads through `history.list`. `/conversation/[id]` loads ordered messages through `history.open` and adapts them to the native Open WebUI Chat message tree, preserving structured-answer citations and collection versions. Follow-ups send the same stable conversation ID to `answering.ask`; new local chats use UUIDs. Upstream Open WebUI persistence stays disabled; workflow History owns storage and its enabled setting. Successful answers and deletions refresh the sidebar. History provides a resume link into the same chat view. Opening a citation automatically fetches its cached PDF in the existing modal; failed source fetches leave the supporting quotation visible and permit retry.
+
+
+#### Library PDF previews and retrieval selection design
+
+Library review lists accepted filenames as buttons that open the selected local PDF bytes in the same in-canvas pdf.js viewer used by Sources. Changing the file selection invalidates the review; selection is disabled during review/publication so the preview always refers to the reviewed bytes. No preview is uploaded or published by opening it. The Knowledge Collections section lists each retained snapshot's PDF filenames as preview buttons. `library.versions` includes `documents` entries containing `document_id`, `source_filename`, `display_title`, and `page_count`, projected through the Library's public summary. Published previews use the existing guarded `/v1/source` route with both document and version IDs. Internal version IDs remain unchanged for citations, rollback, and storage. Multiple PDFs in one snapshot retain separate filename buttons. Publication atomically replaces the internal active snapshot with a combined library that retains existing PDFs.
+
+The implemented per-document on/off, confirmed deletion, and additive upload architecture is documented in [retrieval selection design](retrieval-selection-design.md).
+
+
+#### Document management update (supersedes snapshot UI behavior in sections 4.1 and 6.3)
+
+Knowledge Collections now manages individual PDFs with persistent retrieval switches and confirmed deletion, and uploads are additive. Internal snapshots remain an implementation detail; rollback controls are removed from the UI. The current implemented storage, wire, job-gate, retention, deletion, and retrieval rules are specified in [document management and retrieval selection](retrieval-selection-design.md), superseding the earlier design-only extension above.

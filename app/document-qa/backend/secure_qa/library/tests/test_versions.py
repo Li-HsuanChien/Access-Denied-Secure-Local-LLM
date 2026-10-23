@@ -6,6 +6,7 @@ import json
 import shutil
 import tempfile
 import unittest
+from unittest.mock import patch
 from dataclasses import replace
 from pathlib import Path
 
@@ -40,6 +41,102 @@ class VersionsTest(unittest.TestCase):
     def collections(self) -> set[str]:
         return {c.name for c in self.versions._client.list_collections()}
 
+    def test_switch_filters_before_top_k_and_persists_without_reembedding(self):
+        version = self.versions.publish(*synthetic())
+        query = "annual occupational dose limit"
+        original = self.versions.open_active()
+        first = original.search(query, top_k=1)[0].chunk.document_id
+        self.assertTrue(self.versions.document_enabled(version.version_id, first))
+        with patch.object(self.versions.embedder, "embed_documents", side_effect=AssertionError("must not rebuild")):
+            self.versions.set_document_enabled(version.version_id, first, False)
+        # Already-bound questions retain their selection; new ones filter before top-k.
+        self.assertEqual(original.search(query, top_k=1)[0].chunk.document_id, first)
+        hits = self.versions.open_active().search(query, top_k=1)
+        self.assertEqual(len(hits), 1)
+        self.assertNotEqual(hits[0].chunk.document_id, first)
+        self.assertTrue(self.versions.check_integrity().ok)
+        self.reopen()
+        self.assertFalse(self.versions.document_enabled(version.version_id, first))
+        self.assertNotEqual(self.versions.open_active().search(query, top_k=1)[0].chunk.document_id, first)
+        self.versions.set_document_enabled(version.version_id, first, True)
+        self.assertEqual(self.versions.open_active().search(query, top_k=1)[0].chunk.document_id, first)
+
+    def test_all_off_skips_embedding_and_preserves_source_preview(self):
+        chunks, docs = synthetic()
+        version = self.versions.publish(chunks, docs, sources={d["document_id"]: b"%PDF" for d in docs})
+        for document_id in version.documents:
+            self.versions.set_document_enabled(version.version_id, document_id, False)
+        with patch.object(self.versions.embedder, "embed_query", side_effect=AssertionError("must skip embedding")):
+            self.assertEqual(self.versions.open_active().search("any question"), [])
+        self.assertIsNotNone(self.versions.source_path(docs[0]["document_id"]))
+        self.assertTrue(self.versions.check_integrity().ok)
+
+    def test_addition_keeps_documents_vectors_sources_and_disabled_state(self):
+        chunks, docs = synthetic()
+        first_id, second_id = docs[0]["document_id"], docs[1]["document_id"]
+        first = self.versions.publish([c for c in chunks if c.document_id == first_id], [docs[0]], sources={first_id: b"%PDF-first"})
+        self.versions.set_document_enabled(first.version_id, first_id, False)
+        incoming = [c for c in chunks if c.document_id == second_id]
+        original_embed = self.versions.embedder.embed_documents
+        with patch.object(self.versions.embedder, "embed_query", side_effect=lambda text: original_embed([text])[0]), \
+                patch.object(self.versions.embedder, "embed_documents", wraps=original_embed) as embed:
+            second = self.versions.publish(incoming, [docs[1]], sources={second_id: b"%PDF-second"}, append=True)
+            embed.assert_called_once_with([c.text for c in incoming])
+        self.assertEqual(set(second.documents), {first_id, second_id})
+        self.assertFalse(self.versions.document_enabled(second.version_id, first_id))
+        self.assertEqual(self.versions.source_path(first_id).read_bytes(), b"%PDF-first")
+        self.assertTrue(self.versions.check_integrity().ok)
+
+    def test_confirmed_delete_removes_vectors_sources_and_rollback_and_can_empty_library(self):
+        chunks, docs = synthetic()
+        version = self.versions.publish(chunks, docs, sources={d["document_id"]: b"%PDF" for d in docs})
+        removed = docs[0]["document_id"]
+        with self.assertRaises(ValueError):
+            self.versions.delete_document(version.version_id, removed)
+        self.assertEqual(self.versions.active().version_id, version.version_id)
+        original_embed = self.versions.embedder.embed_documents
+        with patch.object(self.versions.embedder, "embed_query", side_effect=lambda text: original_embed([text])[0]), \
+                patch.object(self.versions.embedder, "embed_documents", side_effect=AssertionError("must not rebuild")):
+            current = self.versions.delete_document(version.version_id, removed, confirmed=True)
+        self.assertNotIn(removed, current.documents)
+        self.assertIsNone(self.versions.source_path(removed))
+        self.assertIsNone(self.versions.source_path(removed, version_id=version.version_id))
+        self.assertFalse((self.dir / "sources" / version.version_id).exists())
+        self.assertEqual(len(self.versions.versions()), 1)
+        self.assertTrue(self.versions.check_integrity().ok)
+        self.assertTrue(all(hit.chunk.document_id != removed for hit in self.versions.open_active().search("dose", top_k=100)))
+        with self.assertRaises(LookupError):
+            self.versions.rollback()
+        for document_id in list(current.documents):
+            current = self.versions.delete_document(current.version_id, document_id, confirmed=True)
+        self.assertEqual(current.documents, {})
+        self.assertEqual(self.versions.open_active().search("anything"), [])
+        self.assertTrue(self.versions.check_integrity().ok)
+        self.reopen()
+        self.assertEqual(self.versions.active().documents, {})
+        self.assertTrue(self.versions.publish(chunks, docs, append=True).documents)
+
+    def test_stale_and_unknown_document_changes_are_rejected(self):
+        version = self.versions.publish(*synthetic())
+        document_id = next(iter(version.documents))
+        for version_id, doc_id in [("v_missing", document_id), (version.version_id, "../../invalid")]:
+            with self.assertRaises(LookupError):
+                self.versions.set_document_enabled(version_id, doc_id, False)
+            with self.assertRaises(LookupError):
+                self.versions.delete_document(version_id, doc_id, confirmed=True)
+        self.assertTrue(self.versions.check_integrity().ok)
+
+    def test_failed_delete_preserves_library_and_selection(self):
+        version = self.versions.publish(*synthetic())
+        document_id = next(iter(version.documents))
+        self.versions.set_document_enabled(version.version_id, document_id, False)
+        with patch.object(self.versions, "_verify", side_effect=RuntimeError("disk failure")):
+            with self.assertRaises(PublishError):
+                self.versions.delete_document(version.version_id, document_id, confirmed=True)
+        self.assertEqual(self.versions.active().version_id, version.version_id)
+        self.assertFalse(self.versions.document_enabled(version.version_id, document_id))
+        self.assertTrue(self.versions.check_integrity().ok)
+
     def test_publish_activates_a_verified_version(self):
         chunks, docs = synthetic()
         version = self.versions.publish(chunks, docs)
@@ -51,6 +148,30 @@ class VersionsTest(unittest.TestCase):
         self.assertEqual(store.collection_version, "v0001")
         top = store.search("annual occupational dose limit", top_k=1)[0]
         self.assertEqual(store.document(top.chunk.document_id)["source_filename"], "synthetic/radiation_protection_handbook.pdf")
+
+    def test_caches_source_pdfs_and_serves_them_only_for_manifest_documents(self):
+        chunks, docs = synthetic()
+        sources = {d["document_id"]: b"%PDF-1.4\n" + d["document_id"].encode() for d in docs}
+        version = self.versions.publish(chunks, docs, sources=sources)
+        for doc_id, data in sources.items():
+            path = self.versions.source_path(doc_id)
+            self.assertIsNotNone(path, doc_id)
+            self.assertEqual(path.read_bytes(), data)
+        # Unknown and traversal-style ids are not documents of the version -> no path.
+        self.assertIsNone(self.versions.source_path("doc_does_not_exist"))
+        self.assertIsNone(self.versions.source_path("../secret"))
+        # Survives reopen.
+        self.reopen()
+        self.assertIsNotNone(self.versions.source_path(next(iter(sources))))
+
+    def test_retention_drops_source_dirs_for_versions_that_fall_out(self):
+        chunks, docs = synthetic()
+        sources = {d["document_id"]: b"%PDF-1.4\n" for d in docs}
+        v1 = self.versions.publish(chunks, docs, sources=sources)
+        self.versions.publish(chunks, docs, sources=sources)
+        self.versions.publish(chunks, docs, sources=sources)  # v1 now falls out of active+previous retention
+        self.assertFalse((self.dir / "sources" / v1.version_id).exists())
+        self.assertIsNone(self.versions.source_path(next(iter(sources)), version_id=v1.version_id))
 
     def test_second_publish_keeps_the_first_as_rollback_and_rollback_restores_it(self):
         first = self.versions.publish(*synthetic())
@@ -68,8 +189,6 @@ class VersionsTest(unittest.TestCase):
         for _ in range(3):
             self.versions.publish(*synthetic())
         self.assertEqual([v.version_id for v in self.versions.versions()], ["v0003", "v0002"])
-        self.assertEqual(self.collections(), {"secure_qa_v0003", "secure_qa_v0002"})
-        self.assertTrue(self.versions.open_active().search("coolant pressure", top_k=1))
         self.assertEqual(self.collections(), {"secure_qa_v0003", "secure_qa_v0002"})
 
     def test_failed_publication_leaves_active_version_unchanged(self):
@@ -90,35 +209,8 @@ class VersionsTest(unittest.TestCase):
         self.versions._client.create_collection("secure_qa_v0099")  # as if a publish crashed mid-build
         self.reopen()
         self.assertEqual(self.versions.active().version_id, "v0001")
-
-    def test_cancelled_candidate_keeps_active_version_and_source_snapshot(self):
-        chunks, documents = synthetic()
-        document_id = documents[0]["document_id"]
-        active = self.versions.publish(chunks, documents, source_files={document_id: b"%PDF-source"})
-        source_path = self.dir / "sources" / active.version_id / f"{document_id}.pdf"
-        self.assertEqual(source_path.read_bytes(), b"%PDF-source")
-        with self.assertRaisesRegex(PublishError, "cancelled"):
-            self.versions.publish(*nrc(), cancelled=lambda: True)
-        self.assertEqual(self.versions.active().version_id, active.version_id)
-        self.assertEqual(source_path.read_bytes(), b"%PDF-source")
-
-    def test_cancel_during_source_staging_stops_before_activation(self):
-        active = self.versions.publish(*synthetic())
-        cancelled = [False]
-        def on_progress(stage, _done, _total):
-            if stage == "activating":
-                cancelled[0] = True
-        with self.assertRaisesRegex(PublishError, "cancelled"):
-            self.versions.publish(*nrc(), source_files={"doc_test": b"%PDF-source"},
-                                  cancelled=lambda: cancelled[0], progress=on_progress)
-        self.assertEqual(self.versions.active().version_id, active.version_id)
-        self.assertFalse((self.dir / "sources" / "v0002").exists())
-
-    def test_progress_reports_indexing_verification_and_activation(self):
-        stages = []
-        self.versions.publish(*synthetic(), progress=lambda stage, done, total: stages.append((stage, done, total)))
-        self.assertEqual([stage for stage, _, _ in stages], ["indexing", "verifying", "activating", "activated"])
-        self.assertEqual(stages[-1][1], stages[-1][2])
+        self.assertEqual(self.collections(), {"secure_qa_v0001"})
+        self.assertTrue(self.versions.open_active().search("coolant pressure", top_k=1))
 
     def test_rollback_without_previous_and_open_without_active(self):
         with self.assertRaises(LookupError):

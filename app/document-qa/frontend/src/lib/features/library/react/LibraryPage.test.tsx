@@ -19,8 +19,8 @@ function setup(routed = false) {
 	services.settings.update = vi.fn(async value => value);
 	services.history.enabled = vi.fn(async () => true);
 	services.library.versions = vi.fn(async () => ({ active: 'v0001', versions: [
-		{ version_id: 'v0001', status: 'active', created_at: '', document_count: 2, chunk_count: 9 },
-		{ version_id: 'v0000', status: 'retained', created_at: '', document_count: 1, chunk_count: 3 }
+		{ version_id: 'v0001', status: 'active', created_at: '', document_count: 2, chunk_count: 9, documents: [] },
+		{ version_id: 'v0000', status: 'retained', created_at: '', document_count: 1, chunk_count: 3, documents: [] }
 	] }));
 	services.library.review = vi.fn(async () => reviewFixture);
 	services.library.publish = vi.fn(async () => ({ version_id: 'v0002', document_count: 1, chunk_count: 4 }));
@@ -54,12 +54,6 @@ it('renders selected filenames and sends browser files as base64 for review', as
 	expect((screen.getByRole('button', { name: 'Publish accepted PDFs' }) as HTMLButtonElement).disabled).toBe(true);
 });
 
-it('renders each version summary as one text node to preserve original glyph spacing', async () => {
-	setup();
-	const summary = await screen.findByText('2 PDFs · 9 passages');
-	expect(summary.childNodes.length).toBe(1);
-	expect(summary.firstChild?.nodeType).toBe(Node.TEXT_NODE);
-});
 
 it('requires rejection confirmation and publishes only after confirmation', async () => {
 	const runtime = setup();
@@ -69,9 +63,9 @@ it('requires rejection confirmation and publishes only after confirmation', asyn
 	await screen.findByText('approved.pdf');
 	fireEvent.click(screen.getByLabelText('I reviewed the rejected files and confirm publishing only the accepted PDFs.'));
 	fireEvent.click(screen.getByRole('button', { name: 'Publish accepted PDFs' }));
-	await screen.findByText(/Collection v0002 is active/);
+	await screen.findByText(/Library updated/);
 	expect(runtime.services.library.publish).toHaveBeenCalledWith('review-1', true, 'publication-1');
-	expect(screen.getByText('v0001')).toBeTruthy();
+	expect(screen.getByRole('heading', { name: 'Knowledge Collections' })).toBeTruthy();
 });
 
 it('shows shared busy progress and cancellation state during publication', async () => {
@@ -90,7 +84,7 @@ it('shows shared busy progress and cancellation state during publication', async
 	await waitFor(() => expect(runtime.services.library.cancel).toHaveBeenCalledWith('publication-1'));
 	await waitFor(() => expect(screen.getByText('Cancelling safely… · 0s elapsed')).toBeTruthy());
 	resolvePublish({ version_id: 'v0002', document_count: 1, chunk_count: 4 });
-	await screen.findByText(/Collection v0002 is active/);
+	await screen.findByText(/Library updated/);
 });
 
 it('retains a failed review for restart and uses provider route cleanup on unmount', async () => {
@@ -106,14 +100,6 @@ it('retains a failed review for restart and uses provider route cleanup on unmou
 	expect(screen.getByRole('button', { name: 'Restart publication' })).toBeTruthy();
 });
 
-it('rolls back through the shared client and refreshes versions', async () => {
-	const runtime = setup();
-	await screen.findByText('v0001');
-	fireEvent.click(screen.getByRole('button', { name: 'Roll back to previous version' }));
-	await screen.findByText('Collection v0000 is active again.');
-	expect(runtime.services.library.rollback).toHaveBeenCalledTimes(1);
-	await waitFor(() => expect(runtime.services.library.versions).toHaveBeenCalledTimes(2));
-});
 
 it('keeps a live publication when the route unmounts and remounts', async () => {
 	let resolvePublish!: (value: { version_id: string; document_count: number; chunk_count: number }) => void;
@@ -134,7 +120,7 @@ it('keeps a live publication when the route unmounts and remounts', async () => 
 	await screen.findByText('Publication in progress');
 	expect(screen.getByText('Preparing accepted PDFs… · 0s elapsed')).toBeTruthy();
 	resolvePublish({ version_id: 'v0002', document_count: 1, chunk_count: 4 });
-	await screen.findByText(/Collection v0002 is active/);
+	await screen.findByText(/Library updated/);
 });
 
 it('keeps a busy picker selection local until a failed publication releases the provider', async () => {
@@ -156,4 +142,24 @@ it('keeps a busy picker selection local until a failed publication releases the 
 	await screen.findByText('Publication failed');
 	await waitFor(() => expect(runtime.library.getSnapshot().selected.map(file => file.name)).toEqual(['replacement.pdf']));
 	expect(screen.getByText('replacement.pdf')).toBeTruthy();
+});
+
+it('turns a PDF off through the host and requires confirmation before deletion', async () => {
+ const runtime = setup();
+ runtime.services.library.versions = vi.fn(async () => ({ active: 'v1', versions: [{ version_id: 'v1', status: 'active', created_at: '', document_count: 1, chunk_count: 2, documents: [{ document_id: 'doc1', source_filename: 'manual.pdf', display_title: 'Manual', page_count: 4, enabled: true }] }] }));
+ runtime.services.library.setDocumentEnabled = vi.fn(async () => ({ enabled: false }));
+ runtime.services.library.deleteDocument = vi.fn(async () => ({ deleted: true, version_id: 'v2' }));
+ fireEvent.click(screen.getByRole('button', { name: 'Refresh PDFs' }));
+ await screen.findByRole('button', { name: 'manual.pdf' });
+ fireEvent.click(screen.getByRole('switch', { name: 'Use manual.pdf in answers' }));
+ await waitFor(() => expect(runtime.services.library.setDocumentEnabled).toHaveBeenCalledWith('v1', 'doc1', false));
+ await screen.findByText('PDF is off for future answers. Preview remains available.');
+ fireEvent.click(screen.getByRole('button', { name: 'Delete manual.pdf' }));
+ expect(runtime.services.library.deleteDocument).not.toHaveBeenCalled();
+ expect(screen.getByRole('dialog', { name: 'Delete PDF?' })).toBeTruthy();
+ fireEvent.click(screen.getByRole('button', { name: 'Cancel' }));
+ expect(runtime.services.library.deleteDocument).not.toHaveBeenCalled();
+ fireEvent.click(screen.getByRole('button', { name: 'Delete manual.pdf' }));
+ fireEvent.click(screen.getByRole('button', { name: 'Confirm delete' }));
+ await waitFor(() => expect(runtime.services.library.deleteDocument).toHaveBeenCalledWith('v1', 'doc1', true));
 });

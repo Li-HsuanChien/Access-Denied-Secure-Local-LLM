@@ -1,6 +1,6 @@
 import type { AnsweringClient, ConversationHistoryClient, LibraryClient, SettingsClient } from './wire';
 
-export type AppPath = '/' | '/qa' | '/library' | '/history' | '/settings';
+export type AppPath = `/conversation/${string}` | '/' | '/qa' | '/library' | '/history' | '/settings';
 export interface RouteState { readonly path: AppPath; readonly chatEpoch: number }
 export interface NavigationOptions {
 	replace?: boolean;

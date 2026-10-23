@@ -29,6 +29,7 @@ export interface ChatSession {
 }
 export interface AnswerRequest {
 	readonly sessionId: SessionId;
+	readonly conversationId?: string;
 	readonly question: string;
 	readonly generalKnowledge: boolean;
 }

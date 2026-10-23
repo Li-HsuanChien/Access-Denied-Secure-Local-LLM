@@ -3,13 +3,14 @@ import { createStore } from '../providers/store';
 
 const paths = new Set<string>(['/', '/qa', '/library', '/history', '/settings']);
 export function appPath(pathname: string): AppPath | null {
-	return paths.has(pathname) ? pathname as AppPath : null;
+	return (paths.has(pathname) || /^\/conversation\/[^/]+$/.test(pathname)) ? pathname as AppPath : null;
 }
-export const isChatPath = (path: AppPath) => path === '/' || path === '/qa';
+export const isChatPath = (path: AppPath) => path === '/' || path === '/qa' || path.startsWith('/conversation/');
 
 /** No upstream chat lookup or router dependency. Unknown routes settle at root. */
 export function createNavigation(browser: Window) {
 	function currentPath() {
+  try { decodeURIComponent(browser.location.pathname); } catch { browser.history.replaceState(null, "", "/"); }
 		const known = appPath(browser.location.pathname);
 		if (known) return known;
 		browser.history.replaceState(null, '', '/');

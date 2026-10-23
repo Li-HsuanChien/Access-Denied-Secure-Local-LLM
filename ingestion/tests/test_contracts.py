@@ -16,23 +16,26 @@ import json
 import shutil
 import sys
 import tempfile
+import zlib
 from pathlib import Path
 
 ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
+import pymupdf
 from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
-from src.ingest import _boundaries, chunks, extract, validate
+from src.ingest import _merge_rects, chunks, extract, process, validate
 from src.schema import ChunkerConfig, Document, citation_targets
 from src.validation import CheckStatus, IngestionPolicy, Outcome, RejectReason
 
 FIX = ROOT / 'fixtures'
 NORMAL = FIX / 'normal' / 'normal_nrc_reactor_concepts_ch01.pdf'
 LARGE = FIX / 'large' / 'large_doe_nuclear_physics_v1.pdf'
+ORIGINAL = FIX / 'large' / 'large_doe_nuclear_physics_v1_original.pdf'
 ARXIV = FIX / 'layout' / 'layout_arxiv_two_column_2112.11583.pdf'
-ACCEPTING = [NORMAL, LARGE, ARXIV]
+ACCEPTING = [NORMAL, LARGE, ORIGINAL, ARXIV]
 
 
 def _registry():
@@ -51,6 +54,104 @@ def validator_for(name):
     return Draft202012Validator(schema, registry=REGISTRY)
 
 
+# MuPDF prints its diagnostics straight to the terminal. The damaged files
+# below draw plenty; the tests read them through the library instead.
+pymupdf.TOOLS.mupdf_display_errors(False)
+pymupdf.TOOLS.mupdf_display_warnings(False)
+
+
+# ---------------------------------------------------------------------------
+# hand-built PDFs, for damage no fixture file carries
+# ---------------------------------------------------------------------------
+def _raw_pdf(objects: list[bytes]) -> bytes:
+    """A PDF with a correct xref table from object bodies numbered 1, 2, 3..."""
+    out, offsets = bytearray(b'%PDF-1.4\n'), []
+    for number, body in enumerate(objects, 1):
+        offsets.append(len(out))
+        out += b'%d 0 obj\n' % number + body + b'\nendobj\n'
+    xref = len(out)
+    out += b'xref\n0 %d\n0000000000 65535 f \n' % (len(objects) + 1)
+    for offset in offsets:
+        out += b'%010d 00000 n \n' % offset
+    out += b'trailer\n<< /Size %d /Root 1 0 R >>\nstartxref\n%d\n%%%%EOF\n' % (len(objects) + 1, xref)
+    return bytes(out)
+
+
+def _pdf_stream(data: bytes) -> bytes:
+    return b'<< /Length %d >>\nstream\n' % len(data) + data + b'\nendstream'
+
+
+_HELVETICA = b'<< /Type /Font /Subtype /Type1 /BaseFont /Helvetica /Encoding /WinAnsiEncoding >>'
+
+
+def _prose(page: int) -> bytes:
+    lines = b''.join(b'(Page %d line %d. The primary loop carries heat to the steam generator.) Tj T* '
+                     % (page, n) for n in range(1, 13))
+    return b'BT /F1 11 Tf 72 720 Td 14 TL ' + lines + b'ET'
+
+
+def _pdf_claiming(real: int, claimed: int) -> bytes:
+    """`real` pages of text under a page tree whose /Count says `claimed`."""
+    kids = b' '.join(b'%d 0 R' % (4 + 2 * i) for i in range(real))
+    objects = [b'<< /Type /Catalog /Pages 2 0 R >>',
+               b'<< /Type /Pages /Kids [' + kids + b'] /Count %d >>' % claimed, _HELVETICA]
+    for i in range(real):
+        objects.append(b'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources '
+                       b'<< /Font << /F1 3 0 R >> >> /Contents %d 0 R >>' % (5 + 2 * i))
+        objects.append(_pdf_stream(_prose(i + 1)))
+    return _raw_pdf(objects)
+
+
+def _pdf_with_special_page(pages: int, special: int | None, content: bytes) -> bytes:
+    """`pages` pages of prose; page `special` (1-based) has `content` instead. A
+    Type3 font with made-up glyph names and no ToUnicode map is on hand as /T3."""
+    def glyph(width: int) -> bytes:
+        return _pdf_stream(b'600 0 50 0 550 700 d1 50 0 %d 700 re f' % width)
+    type3 = (b'<< /Type /Font /Subtype /Type3 /FontBBox [0 0 600 700] '
+             b'/FontMatrix [0.001 0 0 0.001 0 0] '
+             b'/CharProcs << /glyphA 7 0 R /glyphB 8 0 R /glyphC 9 0 R >> '
+             b'/Encoding << /Type /Encoding /Differences [1 /glyphA /glyphB /glyphC] >> '
+             b'/FirstChar 1 /LastChar 3 /Widths [600 600 600] /Resources << >> >>')
+    kids = b' '.join(b'%d 0 R' % (10 + i) for i in range(pages))
+    objects = [b'<< /Type /Catalog /Pages 2 0 R >>',
+               b'<< /Type /Pages /Kids [' + kids + b'] /Count %d >>' % pages,
+               _HELVETICA, type3, _pdf_stream(_prose(0)), _pdf_stream(content),
+               glyph(500), glyph(300), glyph(150)]
+    for i in range(pages):
+        objects.append(b'<< /Type /Page /Parent 2 0 R /MediaBox [0 0 612 792] /Resources '
+                       b'<< /Font << /F1 3 0 R /T3 4 0 R >> >> /Contents %d 0 R >>'
+                       % (6 if i + 1 == special else 5))
+    return _raw_pdf(objects)
+
+
+_UNNAMED_GLYPHS = (b'BT /T3 16 Tf 72 720 Td 22 TL '
+                   + b'<01020301020302010302010302010203> Tj T* ' * 20 + b'ET')
+
+
+def _listing_pdf(path: Path, pages: int, header: str | None = None, rows: int = 46) -> list[str]:
+    """Pages of same-shaped rows from the top margin down, optionally under a
+    running header set at the same leading. Returns the rows written."""
+    doc, written = pymupdf.open(), []
+    for p in range(pages):
+        page, y = doc.new_page(), 72
+        if header is not None:
+            page.insert_text((72, y), f'{header}   Page {p + 1}', fontsize=10)
+            y += 14
+        for r in range(rows):
+            n = p * rows + r
+            written.append(f'Run {6300 + n} completed in {(n * 37 % 990) / 10 + 1:4.1f} s '
+                           f'with {n % 4} errors.')
+            page.insert_text((72, y + 14 * r), written[-1], fontsize=10)
+    doc.save(path)
+    doc.close()
+    return written
+
+
+def _failing(result):
+    """The check a rejection rests on."""
+    return [c for c in result.checks if c.status is CheckStatus.FAIL][-1]
+
+
 # ---------------------------------------------------------------------------
 def test_chunks_conform_to_schema():
     v = validator_for('chunk')
@@ -67,10 +168,16 @@ def test_validation_results_conform_to_schema():
     v = validator_for('validation_result')
     n = 0
     for path in sorted(FIX.rglob('*.pdf')):
-        errors = sorted(v.iter_errors(validate(path).to_dict()), key=lambda e: e.path)
+        result = validate(path)
+        errors = sorted(v.iter_errors(result.to_dict()), key=lambda e: e.path)
         assert not errors, f'{path.name}: {errors[0].message}'
+        # A verdict on a labelled fixture has to come from a check that
+        # decided, never from the catch-all that turns a crash into "corrupt".
+        crashed = [c.check_id for c in result.checks
+                   if isinstance(c.observed, dict) and c.observed.get('unguarded')]
+        assert not crashed, f'{path.name}: verdict came from the backstop, not from a check'
         n += 1
-    return f'{n} validation results conform'
+    return f'{n} validation results conform, none decided by the catch-all'
 
 
 def test_same_file_and_config_yield_same_ids():
@@ -209,19 +316,187 @@ def test_truncation_is_caught_despite_correct_page_count():
     assert healthy.document['page_count'] == 24
     assert broken.outcome == Outcome.REJECTED
     assert broken.reject_reason.value == 'corrupt'
+    # Rejected by the check that looks for truncation, for the reason it gives,
+    # and not by anything that merely happened to fail.
+    check = _failing(broken)
+    assert check.check_id == 'structural_integrity', check.check_id
+    assert check.observed['repaired'] and check.observed['unreadable_pages'], check.observed
+    assert check.observed['pages_with_text'] == 3 and check.observed['pages'] == 24, check.observed
     # And confirm the page count really was identical, which is the trap.
-    import pymupdf
-    assert pymupdf.open(truncated).page_count == 24
-    return 'truncated file rejected despite reporting a full 24-page count'
+    reopened = pymupdf.open(truncated)
+    count = reopened.page_count
+    reopened.close()
+    assert count == 24
+    return ('truncated file rejected despite reporting a full 24-page count: '
+            '3 of 24 pages came back with text')
+
+
+def test_a_truncated_document_is_rejected_however_dense_it_is():
+    """
+    Average characters per page cannot be the truncation test. A text-dense
+    document keeps a healthy average after losing most of its pages: the first
+    30% of the DOE reflow is 20 pages of 96 and still 490 characters per page
+    overall. It used to be accepted with the message "text recovery looks
+    complete". A rebuilt document with pages that came back empty is rejected,
+    and the recoverable kind of damage (every page still has its text) is not.
+    """
+    work = Path(tempfile.mkdtemp(prefix='e2-truncated-'))
+    try:
+        raw, seen = LARGE.read_bytes(), []
+        for share in (30, 50, 80, 97):
+            cut = work / f'dense_{share}.pdf'
+            cut.write_bytes(raw[:len(raw) * share // 100])
+            result = validate(cut)
+            assert result.outcome is Outcome.REJECTED and result.reject_reason is RejectReason.CORRUPT, (
+                f'first {share}% of the DOE reflow: {result.outcome.value}')
+            check = _failing(result)
+            assert check.check_id == 'structural_integrity' and check.observed['unreadable_pages'], (
+                f'{share}%: rejected by {check.check_id} {check.observed}')
+            assert result.document is None and process(cut).chunks is None
+            seen.append(f'{share}%: {check.observed["pages_with_text"]} of 96 pages')
+        nearly = work / 'dense_99.pdf'
+        nearly.write_bytes(raw[:len(raw) * 99 // 100])       # only the xref table is gone
+        kept = validate(nearly)
+        assert kept.outcome is Outcome.ACCEPTED_WITH_WARNINGS, kept.outcome.value
+        assert [w['code'] for w in kept.warnings] == ['structure_repaired']
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    return f'rejected at {"; ".join(seen)}. With only the xref lost, accepted with a warning'
+
+
+def test_declared_page_count_must_match_the_pages_read():
+    """
+    The page count is read before any page is. A file whose page index says 20
+    over 12 real pages used to be accepted as a clean 20-page document, and one
+    whose index says 3 as a clean 3-page document with nine pages of text
+    silently dropped. Neither file is "repaired" as far as the parser is
+    concerned, so nothing else catches them.
+    """
+    work = Path(tempfile.mkdtemp(prefix='e2-count-'))
+    try:
+        for claimed in (20, 3):
+            path = work / f'claims_{claimed}.pdf'
+            path.write_bytes(_pdf_claiming(12, claimed))
+            result = validate(path)
+            assert result.outcome is Outcome.REJECTED and result.reject_reason is RejectReason.CORRUPT, (
+                f'12 pages under /Count {claimed}: {result.outcome.value}')
+            assert _failing(result).check_id == 'structural_integrity'
+            assert 'unguarded' not in _failing(result).observed
+        honest = work / 'claims_12.pdf'
+        honest.write_bytes(_pdf_claiming(12, 12))
+        result = validate(honest)
+        assert result.outcome is Outcome.ACCEPTED and result.document['page_count'] == 12
+        text, pages, doc = extract(honest)
+        doc.close()
+        assert len(pages) == 12 and 'Page 12 line 12.' in text
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    return 'a page index that overstates or understates the pages is rejected as corrupt; an honest one is accepted'
+
+
+def test_a_page_of_unnamed_glyphs_is_not_called_blank():
+    """
+    A page set in a font with no Unicode map yields lines of U+FFFD, which the
+    stream leaves out. The page is visible to a reader and invisible to search,
+    so it must be named, not counted among the blank pages.
+    """
+    work = Path(tempfile.mkdtemp(prefix='e2-glyphs-'))
+    try:
+        mixed = work / 'page_15_unnamed.pdf'
+        mixed.write_bytes(_pdf_with_special_page(30, 15, _UNNAMED_GLYPHS))
+        result = validate(mixed)
+        observed = next(c for c in result.checks if c.check_id == 'text_yield').observed
+        assert result.outcome is Outcome.ACCEPTED_WITH_WARNINGS, result.outcome.value
+        assert observed['unreadable_pages'] == [15] and observed['blank_pages'] == [], observed
+        assert result.warnings[0]['code'] == 'pages_without_text' and result.warnings[0]['pages'] == [15]
+
+        alone = work / 'only_unnamed.pdf'
+        alone.write_bytes(_pdf_with_special_page(1, 1, _UNNAMED_GLYPHS))
+        result = validate(alone)
+        assert result.outcome is Outcome.REJECTED and 'are blank' not in result.reject_detail, (
+            result.reject_detail)
+
+        empty = work / 'page_15_empty.pdf'
+        empty.write_bytes(_pdf_with_special_page(30, 15, b''))
+        result = validate(empty)
+        observed = next(c for c in result.checks if c.check_id == 'text_yield').observed
+        assert result.outcome is Outcome.ACCEPTED and observed['blank_pages'] == [15], observed
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    return 'a page of glyphs with no names warns as unreadable; a page with nothing on it is still blank'
+
+
+def test_a_damaged_page_that_kept_some_text_is_named():
+    """
+    A page whose content stream ends half way yields some text, so it counts as
+    a page with text, and the file is not "repaired": its xref is fine. What
+    the parser said about that page is the only evidence, and it used to be
+    read only for pages that came back empty.
+    """
+    work = Path(tempfile.mkdtemp(prefix='e2-damaged-'))
+    try:
+        def build(path: Path, damage: int | None) -> None:
+            doc = pymupdf.open()
+            for p in range(1, 9):
+                page = doc.new_page()
+                for n in range(1, 41):
+                    page.insert_text((54, 56 + 16 * n), f'The reactor coolant pump {p} line {n} '
+                                     f'maintains flow through the core.', fontsize=8)
+            for page in doc:
+                page.clean_contents()
+            if damage is not None:
+                xref = doc[damage - 1].get_contents()[0]
+                packed = zlib.compress(doc.xref_stream(xref))
+                doc.update_stream(xref, packed[:len(packed) // 2], compress=False)
+                doc.xref_set_key(xref, 'Filter', '/FlateDecode')
+            doc.save(path, garbage=0, deflate=False)
+            doc.close()
+
+        build(work / 'intact.pdf', None)
+        build(work / 'page_5_cut.pdf', 5)
+        intact, cut = validate(work / 'intact.pdf'), validate(work / 'page_5_cut.pdf')
+        assert intact.outcome is Outcome.ACCEPTED and intact.warnings == []
+        assert cut.outcome is Outcome.ACCEPTED_WITH_WARNINGS, cut.outcome.value
+        assert [(w['code'], w['pages']) for w in cut.warnings] == [('pages_damaged', [5])], cut.warnings
+        observed = next(c for c in cut.checks if c.check_id == 'text_yield').observed
+        assert observed['damaged_pages'] == [5] and observed['empty_pages'] == []
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    return 'a page cut off part-way is accepted with a pages_damaged warning naming it; its intact twin is clean'
+
+
+def test_settings_are_checked_when_they_are_made():
+    """
+    A misspelt policy value used to select the permissive branch without a
+    word, and a chunk size of zero produced almost no chunks without an error.
+    """
+    refused = 0
+    for make in (lambda: IngestionPolicy(repaired_document='rejcet'),
+                 lambda: IngestionPolicy(extraction_restricted='deny'),
+                 lambda: IngestionPolicy(min_pages_with_text_ratio_warn=95),
+                 lambda: IngestionPolicy(max_pages=-1),
+                 lambda: ChunkerConfig(target_chars=0),
+                 lambda: ChunkerConfig(target_chars=-5),
+                 lambda: ChunkerConfig(overlap_chars=-1),
+                 lambda: ChunkerConfig(min_chunk_chars=1.5)):
+        try:
+            make()
+        except ValueError:
+            refused += 1
+    assert refused == 8, f'{8 - refused} nonsense settings were accepted'
+    # A file refused for its size in bytes says so, and does not quote the page limit.
+    result = validate(NORMAL, IngestionPolicy(max_bytes=1000))
+    assert result.reject_reason is RejectReason.OVERSIZED
+    assert 'bytes' in result.reject_detail and 'page' not in result.reject_detail, result.reject_detail
+    return '8 nonsense settings raise ValueError; a byte-size rejection names the byte limit'
 
 
 # ---------------------------------------------------------------------------
 # Week 2  "chunk size/overlap behavior is testable"
 #
-# The chunker is naive on purpose, but naive is not the same as unspecified.
-# These pin the two knobs E3 will tune against, so replacing the chunker with a
-# sentence-aware one cannot quietly change what target_chars and overlap_chars
-# mean.
+# These pin what target_chars, overlap_chars and min_chunk_chars mean, so a
+# change to how boundaries are chosen cannot quietly change the knobs E3 tunes
+# against. Where the boundaries fall is tested in test_chunking.py.
 # ---------------------------------------------------------------------------
 SIZE_CONFIGS = [
     ChunkerConfig(),
@@ -258,34 +533,33 @@ def test_chunk_size_respects_the_target():
     return f'{checked} chunks stay within target across {len(SIZE_CONFIGS)} configs'
 
 
-def test_overlap_covers_the_configured_window():
+def test_overlap_is_bounded_and_shared_verbatim():
     """
-    Overlap is now sentence-aligned, so it is a floor rather than an exact
-    figure: the chunk starts at the sentence boundary at or before
-    (previous_end - overlap_chars), which can only reach further back, never
-    less far. The shared region is still the same characters in both - the tail
-    of one, the head of the next - because retrieval dedupes against it.
-
-    The window is also capped at half the previous chunk. Without that, a chunk
-    shorter than overlap_chars would step back as far as it stepped forward and
-    the cursor would crawl one character at a time.
+    overlap_chars is the most text adjacent chunks share, in whole sentences.
+    When the last sentence is itself longer than that window, that one sentence
+    is shared rather than nothing, so the overlap can exceed overlap_chars; it
+    never exceeds half the chunk. Whatever is shared is the same characters in
+    both chunks - the tail of one, the head of the next - because retrieval
+    dedupes against it.
     """
     text = _stream(NORMAL)
-    pairs = 0
+    pairs = shared = 0
     for cfg in SIZE_CONFIGS:
         cs = chunks(NORMAL, cfg)
         for a, b in zip(cs, cs[1:]):
             overlap = a.char_end - b.char_start
-            floor = min(cfg.overlap_chars, (a.char_end - a.char_start) // 2)
-            assert overlap >= floor, (
-                f'chunks {a.ordinal}->{b.ordinal} overlap {overlap}, floor {floor}')
-            assert b.char_start > a.char_start, 'chunker failed to advance'
+            assert 0 <= overlap <= (a.char_end - a.char_start) // 2, (
+                f'chunks {a.ordinal}->{b.ordinal} overlap {overlap} of a '
+                f'{a.char_end - a.char_start}-char chunk')
+            assert b.char_start > a.char_start and b.char_end > a.char_end, 'chunker failed to advance'
+            assert cfg.overlap_chars or overlap == 0, 'overlap with overlap_chars=0'
             if overlap:
-                shared = text[b.char_start:a.char_end]
-                assert a.text.endswith(shared), 'overlap is not the tail of the earlier chunk'
-                assert b.text.startswith(shared), 'overlap is not the head of the later chunk'
+                piece = text[b.char_start:a.char_end]
+                assert a.text.endswith(piece), 'overlap is not the tail of the earlier chunk'
+                assert b.text.startswith(piece), 'overlap is not the head of the later chunk'
+                shared += 1
             pairs += 1
-    return f'{pairs} adjacent pairs overlap by at least the configured window'
+    return f'{pairs} adjacent pairs, {shared} share text, none more than half a chunk'
 
 
 def test_zero_overlap_produces_a_clean_partition():
@@ -340,27 +614,83 @@ def test_chunker_progresses_when_overlap_exceeds_chunk_size():
 # ---------------------------------------------------------------------------
 def test_normal_pdfs_extract_page_text():
     """
-    Every page of an accepted document contributes text, and the per-page
-    offsets tile the canonical stream exactly. A page that silently extracts to
-    nothing is the failure mode behind the truncated fixture, so absence of text
-    is never allowed to pass unnoticed on a document we accept.
+    Every page of an accepted document that has something on it contributes
+    text, and the per-page offsets tile the canonical stream exactly. A page
+    that silently extracts to nothing is the failure mode behind the truncated
+    fixture, so a page without text must be blank in the PDF itself: no image
+    on it either. The original DOE handbook has six such pages.
     """
-    total_pages = 0
+    total_pages = blank_pages = 0
     for path in ACCEPTING:
         text, pages, doc = extract(path)
         page_count = doc.page_count
         doc.close()
         assert len(pages) == page_count, (
             f'{path.name}: extracted {len(pages)} pages, PDF reports {page_count}')
+        lost = [p.number for p in pages if not p.has_text and p.images]
+        assert not lost, f'{path.name}: pages that draw an image but yielded no text: {lost}'
+        assert validate(path).warnings == [], f'{path.name}: accepted with warnings'
         blank = [p.number for p in pages if not p.has_text]
-        assert not blank, f'{path.name}: pages with no extracted text: {blank}'
         assert pages[0].char_start == 0, f'{path.name}: stream does not start at page one'
         assert pages[-1].char_end == len(text), f'{path.name}: stream ends before the last page'
         for a, b in zip(pages, pages[1:]):
             assert b.char_start == a.char_end, (
                 f'{path.name}: page offsets leave a gap at page {b.number}')
         total_pages += len(pages)
-    return f'{total_pages} pages across {len(ACCEPTING)} documents all yield text'
+        blank_pages += len(blank)
+    return (f'{total_pages - blank_pages} of {total_pages} pages across {len(ACCEPTING)} documents '
+            f'yield text; the other {blank_pages} are blank in the PDF')
+
+
+def test_pages_without_text_are_always_on_record():
+    """
+    Nothing is lost silently. The text_yield check lists every page without
+    text whatever its verdict, says so in its message, and warns whenever such
+    a page draws an image, because that page exists for a reader and not for
+    search.
+    """
+    result = validate(ORIGINAL)
+    check = next(c for c in result.checks if c.check_id == 'text_yield')
+    assert check.observed['empty_pages'] == [4, 6, 8, 10, 12, 94], check.observed
+    assert check.observed['blank_pages'] == [4, 6, 8, 10, 12, 94], check.observed
+    assert check.observed['image_only_pages'] == check.observed['unreadable_pages'] == []
+    assert check.status is CheckStatus.PASS and 'blank' in check.message, check.message
+    assert 'All pages' not in check.message, 'blank pages reported as having text'
+    assert result.outcome is Outcome.ACCEPTED
+
+    # The same six blank pages are a warning once they are more of the document
+    # than the policy tolerates.
+    strict = validate(ORIGINAL, IngestionPolicy(min_pages_with_text_ratio_warn=0.99))
+    assert strict.outcome is Outcome.ACCEPTED_WITH_WARNINGS
+    assert strict.warnings[0]['pages'] == [4, 6, 8, 10, 12, 94]
+
+    mixed = validate(FIX / 'scanned' / 'scanned_mixed_text_and_image_pages.pdf')
+    check = next(c for c in mixed.checks if c.check_id == 'text_yield')
+    assert check.status is CheckStatus.WARN
+    assert check.observed['image_only_pages'] == check.observed['empty_pages'] == [2, 6, 10, 14, 18, 22]
+    assert check.observed['blank_pages'] == []
+    assert mixed.warnings[0]['pages'] == [2, 6, 10, 14, 18, 22]
+
+    # One scanned page in a long document is under any ratio threshold, and
+    # still has to be named.
+    import pymupdf
+    with tempfile.TemporaryDirectory() as td:
+        src = pymupdf.open(ORIGINAL)
+        scan = src[24].get_pixmap(dpi=50)
+        page = src[24]
+        page.clean_contents()
+        for xref in page.get_contents():
+            src.update_stream(xref, b'')
+        page.insert_image(page.rect, pixmap=scan)
+        one = Path(td) / 'one_scanned_page.pdf'
+        src.save(one)
+        src.close()
+        result = validate(one)
+    check = next(c for c in result.checks if c.check_id == 'text_yield')
+    assert check.observed['image_only_pages'] == [25], check.observed
+    assert check.status is CheckStatus.WARN and result.outcome is Outcome.ACCEPTED_WITH_WARNINGS
+    assert 25 in result.warnings[0]['pages']
+    return 'blank pages are counted, image-only pages always warn, both are listed'
 
 
 def test_rejections_carry_an_explicit_reason_and_detail():
@@ -374,7 +704,10 @@ def test_rejections_carry_an_explicit_reason_and_detail():
     data, not an exception.
     """
     manifest = json.loads((ROOT / 'manifest.json').read_text())
-    vocabulary = {r.value for r in RejectReason}
+    # The vocabulary E4 renders from is the one in the published schema.
+    schema = json.loads((ROOT / 'schemas' / 'validation_result.schema.json').read_text())
+    vocabulary = {r for r in schema['properties']['reject_reason']['enum'] if r}
+    assert vocabulary == {r.value for r in RejectReason}, 'schema and RejectReason disagree'
     rejected = 0
     for f in manifest['fixtures']:
         result = validate(ROOT / f['path'])
@@ -450,23 +783,6 @@ def test_chunks_never_split_a_word():
     return 'no chunk begins or ends inside a word, across all three documents'
 
 
-def test_chunks_begin_on_sentence_boundaries():
-    """
-    Chunk starts land on a sentence or paragraph boundary wherever the text has
-    one. Blocks with no sentence structure at all - a column of figure labels,
-    a table - fall back to the word boundary, so this is a strong majority
-    rather than an absolute.
-    """
-    for path in ACCEPTING:
-        text = _stream(path)
-        allowed = set(_boundaries(text))
-        cs = chunks(path)
-        on = sum(1 for c in cs if c.char_start in allowed)
-        assert on / len(cs) >= 0.9, (
-            f'{path.name}: only {on}/{len(cs)} chunks start on a sentence boundary')
-    return 'at least 90% of chunks start on a sentence or paragraph boundary'
-
-
 def test_running_headers_are_stripped():
     """
     The repeated header and footer are removed from the canonical stream.
@@ -503,6 +819,85 @@ def test_reading_order_follows_the_page():
     footer = page1.index('USNRC Technical Training Center')
     assert body < footer, 'footer still precedes the body text on page 1'
     return 'body text precedes the page footer in the extracted stream'
+
+
+def test_rows_of_a_listing_are_not_stripped_as_headers():
+    """
+    Digits collapse to '#' when lines are compared across pages, so every row
+    of a log or a numeric table has one key, and the first three rows of each
+    page of a header-less listing used to be removed as a "running header".
+    A header's text does not also fill the page behind it.
+    """
+    work = Path(tempfile.mkdtemp(prefix='e2-listing-'))
+    try:
+        bare = work / 'listing.pdf'
+        rows = _listing_pdf(bare, 5)
+        text, _, doc = extract(bare)
+        doc.close()
+        kept = [line for line in text.split('\n') if line.strip()]
+        assert kept == rows, f'{len(rows) - len(kept)} of {len(rows)} listing rows were stripped'
+
+        # A real running header set at the same leading as the rows under it:
+        # the header goes, and takes no row with it.
+        headed = work / 'headed_listing.pdf'
+        rows = _listing_pdf(headed, 5, header='Facility Operations Log')
+        text, _, doc = extract(headed)
+        doc.close()
+        kept = [line for line in text.split('\n') if line.strip()]
+        assert kept == rows, (f'{len(rows) - len([r for r in rows if r in kept])} rows lost, '
+                              f'{sum("Facility" in k for k in kept)} header lines kept')
+    finally:
+        shutil.rmtree(work, ignore_errors=True)
+    return '230 rows of a header-less listing all survive; under a real header only the 5 header lines go'
+
+
+def test_highlights_cover_every_span_of_the_chunk():
+    """
+    A highlight has to cover the text it cites. Merging span boxes into one box
+    per line used to drop whatever lay to the left when two spans of a line
+    differed in height by a fraction of a point: 25 spans on the NRC fixture,
+    including the first 309 points of a body line.
+    """
+    assert _merge_rects([[54.0, 587.9, 363.1, 601.2], [363.1, 587.8, 380.0, 601.2]]) == [
+        [54.0, 587.8, 380.0, 601.2]], 'two spans of one line did not merge into one box'
+    assert len(_merge_rects([[82.1, 162.8, 107.8, 170.3], [347.1, 161.5, 372.7, 170.5]])) == 2, (
+        'two labels across a figure were bridged into one box')
+    spans_seen = boxes = 0
+    for path in ACCEPTING:
+        _, pages, doc = extract(path)
+        doc.close()
+        by_number = {p.number: p for p in pages}
+        for c in chunks(path):
+            for ps in c.page_spans:
+                boxes += len(ps.highlight_rects)
+                for span in by_number[ps.page_number].spans:
+                    if span.start < ps.char_end and span.end > ps.char_start:
+                        spans_seen += 1
+                        assert any(r[0] - .02 <= span.bbox[0] and r[1] - .02 <= span.bbox[1]
+                                   and r[2] + .02 >= span.bbox[2] and r[3] + .02 >= span.bbox[3]
+                                   for r in ps.highlight_rects), (
+                            f'{path.name} chunk {c.ordinal} page {ps.page_number}: '
+                            f'a span at {span.bbox} is outside every highlight box')
+    return f'{spans_seen} spans across {len(ACCEPTING)} documents each lie inside one of {boxes} highlight boxes'
+
+
+def test_a_sparse_page_follows_the_columns_of_its_document():
+    """
+    Page 5 of the two-column paper is mostly figures: four lines of text in its
+    left column, too few to prove a gutter by themselves. Read top to bottom,
+    the sentence that runs over from page 4 came out with its end before its
+    middle. Such a page borrows the gutter the rest of the document uses.
+    """
+    text, pages, doc = extract(ARXIV)
+    doc.close()
+    page5 = text[pages[4].char_start:pages[4].char_end]
+    middle, end = page5.find('Szilard in real-'), page5.find('izing 2n neutron production')
+    assert 0 <= middle < end, f'page 5 is still read across its columns ({middle}, {end})'
+    # A one-column document has no gutter to lend, and is left exactly as sorted.
+    plain, _, doc = extract(NORMAL)
+    doc.close()
+    assert plain.index('The purpose of a nuclear power plant') < plain.index('HYDROELECTRIC PLANT')
+    return 'on the figure page the carried-over sentence reads middle, then end'
 
 
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith('test_')]

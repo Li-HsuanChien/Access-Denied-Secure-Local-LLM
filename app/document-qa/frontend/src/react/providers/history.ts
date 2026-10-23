@@ -4,6 +4,10 @@ import type { Answer, SavedAnswerRecord } from '../../lib/features/react-contrac
 import { ClientError } from '../../lib/features/answering/answeringClient';
 
 const validate = new Ajv2020({ strict: false }).compile<Answer>(schema);
+export function readAnswer(value: unknown): Answer {
+ if (!validate(value)) throw new ClientError('invalid_response', 'The local service returned an incompatible response.');
+ return structuredClone(value);
+}
 /** history.open still uses the existing client. Validate before exposing its stored answer. */
 export function readSavedAnswer(record: Record<string, unknown> | null): SavedAnswerRecord | null {
 	if (record === null) return null;

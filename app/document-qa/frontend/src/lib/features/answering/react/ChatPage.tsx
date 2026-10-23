@@ -48,7 +48,7 @@ const suggestions = [
     content: "Compare what my documents say about ",
   },
 ];
-function useChatController() {
+function useChatController(initialSession?: ChatSession) {
   const answering = useAnswering(),
     preferences = usePreferences(),
     services = useServices();
@@ -56,6 +56,7 @@ function useChatController() {
   current.current = { answering, preferences };
   const [controller] = useState(() =>
     createChatController({
+      initialSession,
       createId: services.createId,
       now: services.now,
       ask: (request) => current.current.answering.ask(request),
@@ -77,14 +78,14 @@ function useChatController() {
   }, [controller, answering.state.pending]);
   return { controller, session, pending: !!answering.state.pending };
 }
-export function ChatPage() {
+export function ChatPage({ initialSession }: { initialSession?: ChatSession }) {
   const { t } = useI18n();
   const [isWebKit] = useState(
     () =>
       navigator.vendor === "Apple Computer, Inc." ||
       /^((?!chrome|android).)*safari/i.test(navigator.userAgent),
   );
-  const { controller, session, pending } = useChatController(),
+  const { controller, session, pending } = useChatController(initialSession),
     { navigate } = useNavigation();
   useLayoutEffect(() => {
     document.title = "Access Denied";
@@ -212,7 +213,7 @@ export function ChatPage() {
           </div>
           {!empty && (
             <div className="w-full text-center text-xs text-gray-500">
-              {t("Temporary Chat")}
+              {"Local conversation"}
             </div>
           )}
         </nav>
@@ -226,12 +227,12 @@ export function ChatPage() {
                 <Tooltip
                   className="w-full flex justify-center mb-0.5"
                   content={t(
-                    "This chat won't appear in history and your messages will not be saved.",
+                    "Conversations are saved locally when history is enabled.",
                   )}
                 >
                   <div className="flex items-center gap-1.5 text-gray-500 text-xs my-1 w-fit">
                     <Icon name="eye" className="size-3.5" />
-                    {t("Temporary Chat")}
+                    {"Local conversation"}
                   </div>
                 </Tooltip>
                 <div className="w-full text-3xl text-gray-800 dark:text-gray-100 text-center flex items-center gap-4">

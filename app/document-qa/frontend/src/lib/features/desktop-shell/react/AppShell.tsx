@@ -5,6 +5,7 @@ import type { HealthStatus } from '../../answering/types';
 import tippy from 'tippy.js';
 import './shell.css';
 import { useMobileSwipe } from './useMobileSwipe';
+import { ConversationList } from '../../history/react/ConversationList';
 import { PinnedModelSection } from './PinnedModel';
 import { useI18n } from '@/react/i18n';
 
@@ -43,7 +44,8 @@ export function AppShell({ children }: { children: ReactNode }) {
    const health: HealthStatus = await services.answering.health();
    const count = (n: number, noun: string) => `${n} ${noun}${n === 1 ? '' : 's'}`;
    setHealthMessage(health.ready ? `${count(health.library.document_count, 'document')} · ${count(health.library.chunk_count, 'passage')} · local model ready` : health.answering.error?.message ?? 'The local model or library is not ready.');
-   setHealthError(!health.ready);
+   if (!health.ready && health.answering.ready) setHealthMessage('Local model ready — publish documents to your Library to start asking questions.');
+   setHealthError(!health.answering.ready);
   } catch (error) { setHealthError(true); setHealthMessage(error instanceof Error ? error.message : 'The local service is unavailable.'); }
  }, [services]);
  useEffect(() => { void refreshHealth(); }, [refreshHealth]);
@@ -89,6 +91,7 @@ export function AppShell({ children }: { children: ReactNode }) {
       <div id="pinned-menu-items-list" />
      </div>
      <PinnedModelSection onSelect={go('/', true, true)} />
+     <ConversationList onSelect={() => { if (mobile) setOpen(false); }} />
     </div><div />
    </div>
   </div>}

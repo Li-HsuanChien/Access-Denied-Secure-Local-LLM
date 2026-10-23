@@ -6,6 +6,7 @@ export interface ChatAnswerProps {
 	readonly messageId: string;
 	readonly content: string;
 	readonly citations: readonly Immutable<Citation>[];
+ readonly collectionVersion?: string | null;
 	readonly onNavigate: (path: AppPath) => void;
 	/** Code Save rewrites the corresponding fence in transient message content only. */
 	readonly onSaveContent: (content: string) => void;
@@ -23,7 +24,10 @@ export type PreviewKind = 'html' | 'svg' | 'mermaid' | 'vega' | 'vega-lite';
 /** Renderer-owned result; never accepts caller-supplied trust/sanitized flags. */
 export interface InertPreview { readonly kind: PreviewKind; readonly source: string }
 export interface SourcePanelProps {
+ readonly openCitation?: number | null;
+ readonly onCloseCitation?: () => void;
 	readonly citations: readonly Immutable<Citation>[];
+ readonly collectionVersion?: string | null;
 	readonly expanded: boolean;
 	readonly onExpandedChange: (expanded: boolean) => void;
 }

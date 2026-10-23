@@ -31,6 +31,36 @@ describe('answering client', () => {
 		});
 	});
 
+	it('threads a conversation id into the envelope when one is given', async () => {
+		const answer = { ...await fixture.ask('q', false), request_id: 'qa-1' };
+		const fetchImpl = vi.fn().mockResolvedValue(jsonResponse({ request_id: 'qa-1', operation: 'answering.ask', result: answer }));
+		const client = createAnsweringClient({ baseUrl: 'http://127.0.0.1:8765', fetchImpl, createRequestId: () => 'qa-1' });
+
+		await client.ask('And for workers?', true, 'room-7');
+		expect(JSON.parse(fetchImpl.mock.calls[0][1].body).payload).toEqual({
+			question: 'And for workers?', general_knowledge: true, conversation_id: 'room-7'
+		});
+	});
+
+	it('fetches a cached source PDF with the document id and version in the query', async () => {
+		const bytes = new TextEncoder().encode('%PDF-1.4').buffer;
+		const fetchImpl = vi.fn().mockResolvedValue(new Response(bytes, { status: 200, headers: { 'Content-Type': 'application/pdf' } }));
+		const client = createAnsweringClient({ baseUrl: 'http://127.0.0.1:8765', fetchImpl });
+
+		const out = await client.fetchSource('doc_abc', 'v0003');
+		expect(new Uint8Array(out)).toEqual(new Uint8Array(bytes));
+		const url = fetchImpl.mock.calls[0][0];
+		expect(url).toContain('/v1/source?');
+		expect(url).toContain('document_id=doc_abc');
+		expect(url).toContain('version=v0003');
+	});
+
+	it('surfaces an actionable error when the source is unavailable', async () => {
+		const fetchImpl = vi.fn().mockResolvedValue(new Response('{}', { status: 404, headers: { 'Content-Type': 'application/json' } }));
+		const client = createAnsweringClient({ baseUrl: 'http://127.0.0.1:8765', fetchImpl });
+		await expect(client.fetchSource('doc_abc')).rejects.toMatchObject({ code: 'source_unavailable' });
+	});
+
 	it('rejects non-loopback destinations before sending a request', () => {
 		expect(() => createAnsweringClient({ baseUrl: 'https://example.com' })).toThrow(/loopback/i);
 	});

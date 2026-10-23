@@ -1,0 +1,22 @@
+import { cleanup, render, screen, act } from '@testing-library/react';
+import { afterEach, expect, it, vi } from 'vitest';
+import { AppProviders, createAppRuntime, createDefaultServices } from '../../../../react/providers';
+import { PdfSource } from './PdfSource';
+vi.mock('./PdfPreview', () => ({ PdfPreview: ({ data }: { data: ArrayBuffer }) => <p>PDF bytes: {new Uint8Array(data)[0]}</p> }));
+afterEach(cleanup);
+it('loads the cited document version and ignores a previous source response', async () => {
+ const services = createDefaultServices();
+ services.settings.read = vi.fn(async () => ({ general_knowledge: true }));
+ services.history.enabled = vi.fn(async () => true);
+ let resolveOld!: (data: ArrayBuffer) => void;
+ services.answering.fetchSource = vi.fn().mockImplementationOnce(() => new Promise(resolve => { resolveOld = resolve; })).mockResolvedValueOnce(new Uint8Array([2]).buffer);
+ const runtime = createAppRuntime(services);
+ const view = (id: string) => <AppProviders runtime={runtime}><PdfSource documentId={id} version="v1" /></AppProviders>;
+ const mounted = render(view('old'));
+ mounted.rerender(view('new'));
+ await screen.findByText('PDF bytes: 2');
+ await act(async () => { resolveOld(new Uint8Array([1]).buffer); });
+ expect(screen.queryByText('PDF bytes: 1')).toBeNull();
+ expect(services.answering.fetchSource).toHaveBeenNthCalledWith(1, 'old', 'v1');
+ expect(services.answering.fetchSource).toHaveBeenNthCalledWith(2, 'new', 'v1');
+});

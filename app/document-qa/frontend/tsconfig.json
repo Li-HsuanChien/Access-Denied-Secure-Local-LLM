@@ -34,5 +34,8 @@
 		"src/**/*.tsx",
 		"react/**/*.ts",
 		"react/**/*.tsx"
+	],
+	"exclude": [
+		"src/lib/apis"
 	]
 }

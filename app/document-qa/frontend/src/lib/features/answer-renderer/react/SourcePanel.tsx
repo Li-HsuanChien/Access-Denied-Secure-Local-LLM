@@ -1,7 +1,8 @@
 import { useI18n } from "@/react/i18n";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import type { SourcePanelProps } from "../../react-contracts/rendering";
 import type { Citation, Immutable } from "../../react-contracts/wire";
+import { PdfSource } from "../../library/react/PdfSource";
 import { Modal } from "./Modal";
 import { Icon } from "./Icon";
 import { MarkdownContent } from "./ChatAnswer";
@@ -14,11 +15,16 @@ function sourceName(citation: Immutable<Citation>): string {
 }
 export function SourcePanel({
   citations,
+  collectionVersion,
   expanded,
+  openCitation,
+  onCloseCitation,
   onExpandedChange,
 }: SourcePanelProps) {
   const { t } = useI18n();
   const [selected, setSelected] = useState<Immutable<Citation> | null>(null);
+  useEffect(() => { if (openCitation != null && citations[openCitation - 1]) setSelected(citations[openCitation - 1]); }, [openCitation, citations]);
+  const close = () => { setSelected(null); onCloseCitation?.(); };
   if (!citations.length) return null;
   return (
     <>
@@ -66,7 +72,7 @@ export function SourcePanel({
         </div>
       )}
       {selected && (
-        <Modal label={sourceName(selected)} onClose={() => setSelected(null)}>
+        <Modal label={sourceName(selected)} onClose={close}>
           <div>
             <div className="flex justify-between dark:text-gray-300 px-4.5 pt-3 pb-2">
               <div className="text-sm font-medium self-center flex items-center">
@@ -76,11 +82,12 @@ export function SourcePanel({
                 type="button"
                 aria-label={t("Close citation modal")}
                 className="self-center rounded-lg p-1 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                onClick={() => setSelected(null)}
+                onClick={close}
               >
                 <Icon name="close" strokeWidth={1.5} />
               </button>
             </div>
+            {collectionVersion !== undefined && <div className="px-5 pb-3"><PdfSource documentId={selected.document_id} version={collectionVersion} citation={selected} /></div>}
             <div className="flex flex-col md:flex-row w-full px-5 pb-5 md:space-x-4">
               <div className="flex flex-col w-full dark:text-gray-200 overflow-y-scroll max-h-[22rem] scrollbar-thin gap-1">
                 <div className="flex flex-col w-full">

@@ -21,6 +21,8 @@ from typing import Protocol
 
 from ..library import SearchResult
 from . import context as ctx_mod
+from . import memory as memory_mod
+from .memory import Conversation
 from .answer import (
     STATUS_ANSWERED,
     STATUS_FAILED,
@@ -80,9 +82,10 @@ class AnswerService:
         self._busy = threading.Lock()
 
     def answer(self, question: str, collection: Retriever, *, request_id: str | None = None,
-               general_knowledge: bool | None = None) -> Answer:
+               general_knowledge: bool | None = None, conversation: Conversation | None = None) -> Answer:
         run = _Run(self, question, collection, request_id or uuid.uuid4().hex,
-                   self.settings.general_knowledge if general_knowledge is None else general_knowledge)
+                   self.settings.general_knowledge if general_knowledge is None else general_knowledge,
+                   conversation)
         if not self._busy.acquire(blocking=False):
             return run.fail("busy", "Another question is still being answered", "Wait for the current answer, then ask again.")
         try:
@@ -96,13 +99,15 @@ class AnswerService:
 class _Run:
     """State for answering one question."""
 
-    def __init__(self, service: AnswerService, question: str, collection: Retriever, request_id: str, general: bool) -> None:
+    def __init__(self, service: AnswerService, question: str, collection: Retriever, request_id: str, general: bool,
+                 conversation: Conversation | None = None) -> None:
         self.s = service.settings
         self.runtime = service.runtime
         self.question = " ".join(question.split())
         self.collection = collection
         self.request_id = request_id
         self.general = general
+        self.conversation = conversation
         self.t0 = time.perf_counter()
         self.timing = Timing()
         self.warnings: list[Notice] = []
@@ -128,8 +133,10 @@ class _Run:
 
         try:
             self.version = self.collection.collection_version
+            # Follow-ups retrieve better as a standalone query built from the thread (SDD §7.1); no-history is a no-op.
+            retrieval_query = memory_mod.rewrite_query(self.runtime, self.question, self.conversation)
             t = time.perf_counter()
-            results = self.collection.search(self.question, top_k=self.s.top_k, min_score=self.s.min_score)
+            results = self.collection.search(retrieval_query, top_k=self.s.top_k, min_score=self.s.min_score)
             self.timing.retrieval_ms = _ms(t)
         except Exception as exc:  # RetrievalError, or the store couldn't be opened at all
             log.warning("retrieval_failed request=%s error=%s", self.request_id, type(exc.__cause__ or exc).__name__)
@@ -152,7 +159,8 @@ class _Run:
         while True:
             assembled = ctx_mod.assemble(self.question, results[:n], documents=self.collection.document,
                                          ctx_size=info.ctx_size, max_answer_tokens=self.s.max_answer_tokens,
-                                         general_knowledge=self.general)
+                                         general_knowledge=self.general,
+                                         conversation_context=memory_mod.context_block(self.conversation))
             if not assembled.passages:
                 raise ValueError("The question leaves no room for document passages in the model's context window")
             try:

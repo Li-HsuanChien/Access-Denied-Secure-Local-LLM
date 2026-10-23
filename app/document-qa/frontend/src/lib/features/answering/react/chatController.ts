@@ -16,10 +16,11 @@ interface Dependencies {
   ask: Answering["ask"];
   getPending(): Answering["state"]["pending"];
   getGeneralKnowledge(): boolean;
+  initialSession?: ChatSession;
 }
 /** Editable graph is mount-local; the answer and history-save lock is app-owned. */
 export function createChatController(deps: Dependencies) {
-  let session: ChatSession = {
+  let session: ChatSession = deps.initialSession ?? {
     id: deps.createId(),
     messages: {},
     currentId: null,
@@ -76,6 +77,7 @@ export function createChatController(deps: Dependencies) {
     try {
       const result = await deps.ask({
         sessionId,
+        conversationId: sessionId,
         question: user.content,
         generalKnowledge: deps.getGeneralKnowledge(),
       });
@@ -283,7 +285,7 @@ export function conversationText(session: ChatSession) {
 /** Ported formatter only; never calls the old adapter's request/save path. */
 export function formatAnswerForChat(answer: Immutable<Answer>): string {
   const sections: string[] = [];
-  const citations = new Map(answer.citations.map((c) => [c.citation_id, c]));
+  const citations = new Map(answer.citations.map((c, i) => [c.citation_id, i + 1]));
   if (answer.status === "failed") {
     sections.push(
       `> **The answer could not be completed.** ${answer.error?.message ?? "The local workflow failed."}`,
@@ -299,7 +301,7 @@ export function formatAnswerForChat(answer: Immutable<Answer>): string {
       `### From your documents\n\n${answer.documents
         .map((claim) => {
           const refs = claim.citation_ids
-            .map((id) => (citations.has(id) ? `[^${id}]` : ""))
+            .map((id) => (citations.has(id) ? `[${citations.get(id)}]` : ""))
             .filter(Boolean)
             .join(" ");
           return `${claim.text}${refs ? ` ${refs}` : ""}`;

@@ -77,14 +77,13 @@ describe('routed workflow lifetime', () => {
 		fireEvent.click(screen.getByRole('link', { name: 'New Chat' })); submit('new');
 		expect(runtime.services.answering.ask).toHaveBeenCalledTimes(1);
 		await act(async () => { first.resolve(answerFor('old')); });
-		expect(runtime.services.history.save).toHaveBeenCalledTimes(1);
-		expect(runtime.services.answering.ask).toHaveBeenCalledTimes(1);
+		expect(runtime.services.history.save).not.toHaveBeenCalled();
 		await act(async () => { saved.resolve(true); });
 		await screen.findByText('Answer for new');
 		expect(screen.queryByText('Answer for old')).toBeNull();
-		expect(runtime.services.answering.ask).toHaveBeenNthCalledWith(2, 'new', true);
+		expect(runtime.services.answering.ask).toHaveBeenNthCalledWith(2, 'new', true, expect.any(String));
 		expect(runtime.services.answering.ask).toHaveBeenCalledTimes(2);
-		expect(runtime.services.history.save).toHaveBeenCalledTimes(2);
+		expect(runtime.services.history.save).not.toHaveBeenCalled();
 	});
 	it('Header and Settings keep their committed preference while a write is pending or rejected', async () => {
 		window.history.replaceState({}, '', '/settings');
@@ -103,13 +102,13 @@ describe('routed workflow lifetime', () => {
 	});
 	it('a history save failure leaves the routed answer visible and permits the next question', async () => {
 		const runtime = runtimeFor(window);
-		runtime.services.history.save = vi.fn().mockRejectedValueOnce(new Error('disk')).mockResolvedValue(true);
+		runtime.services.answering.ask = vi.fn().mockResolvedValueOnce({ ...answerFor('retained'), warnings: [{ code: 'history_save_failed', message: 'This answer is available here, but could not be saved to local history.' }] }).mockImplementation(async (question: string) => answerFor(question));
 		render(<App runtime={runtime} />); submit('retained');
 		await screen.findByText('Answer for retained');
 		expect(screen.getAllByText(/This answer is available here, but could not be saved/).length).toBeGreaterThan(0);
 		submit('recovery'); await screen.findByText('Answer for recovery');
 		expect(runtime.services.answering.ask).toHaveBeenCalledTimes(2);
-		expect(runtime.services.history.save).toHaveBeenCalledTimes(2);
+		expect(runtime.services.history.save).not.toHaveBeenCalled();
 	});
 });
 

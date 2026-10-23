@@ -1,3 +1,4 @@
+import { ConversationPage } from '../lib/features/history/react/ConversationPage';
 import { AppProviders, useNavigation, type AppRuntime } from './providers';
 import { AppShell } from '../lib/features/desktop-shell/react/AppShell';
 import { ChatPage } from '../lib/features/answering/react/ChatPage';
@@ -11,7 +12,9 @@ function RoutedPages() {
 		case '/library': return <LibraryPage />;
 		case '/history': return <HistoryPage />;
 		case '/settings': return <SettingsPage />;
-		default: return <ChatPage key={route.chatEpoch} />;
+		default: return route.path.startsWith('/conversation/')
+			? <ConversationPage key={route.path + route.chatEpoch} id={decodeURIComponent(route.path.slice('/conversation/'.length))} />
+			: <ChatPage key={route.chatEpoch} />;
 	}
 }
 

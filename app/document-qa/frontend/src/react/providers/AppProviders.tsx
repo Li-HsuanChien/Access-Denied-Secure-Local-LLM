@@ -56,7 +56,7 @@ export function useLibrary(): Library {
 	const library = useRuntime().library;
 	const state = useSyncExternalStore(library.subscribe, library.getSnapshot);
 	return { state, select: library.select, confirm: library.confirm, review: library.review,
-		publish: library.publish, cancel: library.cancel, refresh: library.refresh, rollback: library.rollback, leave: library.leave };
+		publish: library.publish, cancel: library.cancel, refresh: library.refresh, rollback: library.rollback, leave: library.leave, setDocumentEnabled: library.setDocumentEnabled, deleteDocument: library.deleteDocument };
 }
 export function useNavigation(): Navigation {
 	const navigation = useRuntime().navigation;

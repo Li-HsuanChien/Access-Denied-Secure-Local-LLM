@@ -24,6 +24,7 @@ async function mount(locale: string, collapsed = false, pinControl = false) {
  services.answering.health = vi.fn(async () => ({ ready: true, library: { document_count: 1, chunk_count: 2 }, answering: {} } as any));
  services.settings.read = vi.fn(async () => ({ general_knowledge: true }));
  services.settings.update = vi.fn(async value => value);
+ services.history.list = vi.fn(async () => []);
  services.history.enabled = vi.fn(async () => true);
  const runtime = createAppRuntime(services, window);
  render(<AppProviders runtime={runtime}><AppShell><p>Feature content</p>{pinControl && <PinControl />}</AppShell></AppProviders>);
@@ -41,7 +42,7 @@ it.each([
  for(const label of ['Library', 'History', 'Settings']) expect(screen.getByRole('link', { name: label })).toBeTruthy();
  expect(screen.getByText('Local workspace')).toBeTruthy();
  expect(screen.getByText('Include general model knowledge')).toBeTruthy();
- expect(screen.getByText('Refresh')).toBeTruthy();
+ expect(screen.getByRole('button', { name: 'Refresh' })).toBeTruthy();
  await screen.findByText('1 document · 2 passages · local model ready');
  fireEvent.click(link);
  expect(runtime.navigation.getSnapshot()).toEqual({ path: '/', chatEpoch: 1 });

@@ -28,6 +28,8 @@ export interface Library {
 	cancel(): Promise<void>;
 	refresh(): Promise<void>;
 	rollback(): Promise<void>;
+ setDocumentEnabled(versionId: string, documentId: string, enabled: boolean): Promise<void>;
+ deleteDocument(versionId: string, documentId: string): Promise<void>;
 	/** Reset non-job route state on exit; never removes an active publication. */
 	leave(): void;
 }

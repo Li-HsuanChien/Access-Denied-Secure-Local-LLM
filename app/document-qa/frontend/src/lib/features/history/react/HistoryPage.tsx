@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useRef, useState } from 'react';
 import type { Answer, SavedAnswerRecord, SavedConversation } from '../../react-contracts';
 import './history.css';
-import { readSavedAnswer, usePreferences, useServices } from '../../../../react/providers';
+import { readSavedAnswer, usePreferences, useServices, useNavigation, useAnswering } from '../../../../react/providers';
 
 function failure(error: unknown, fallback: string) {
 	return error instanceof Error ? error.message : fallback;
@@ -9,6 +9,8 @@ function failure(error: unknown, fallback: string) {
 
 export function HistoryPage() {
 	const services = useServices();
+ const { state: answeringState } = useAnswering();
+ const { navigate } = useNavigation();
 	const preferences = usePreferences();
 	const [rows, setRows] = useState<SavedConversation[]>([]);
 	const [selected, setSelected] = useState<SavedAnswerRecord | null>(null);
@@ -63,12 +65,14 @@ export function HistoryPage() {
 	}
 
 	async function remove(id: string) {
+  if (answeringState.pending?.sessionId === id) return;
 		mutationGeneration.current += 1;
 		listRequest.current += 1;
 		openRequest.current += 1;
 		deletingIds.current.add(id);
 		try {
 			await services.history.remove(id);
+   window.dispatchEvent(new Event('secure-qa-history-changed'));
 			deletingIds.current.delete(id);
 			deletedIds.current.add(id);
 			if (!mounted.current) return;
@@ -82,13 +86,14 @@ export function HistoryPage() {
 	}
 
 	async function clear() {
-		if (!rows.length || !window.confirm('Delete all saved conversations from this computer?')) return;
+		if (answeringState.pending || !rows.length || !window.confirm('Delete all saved conversations from this computer?')) return;
 		mutationGeneration.current += 1;
 		listRequest.current += 1;
 		openRequest.current += 1;
 		clearing.current = true;
 		try {
 			await services.history.clear();
+   window.dispatchEvent(new Event('secure-qa-history-changed'));
 			clearing.current = false;
 			for (const row of rows) deletedIds.current.add(row.conversation_id);
 			if (!mounted.current) return;
@@ -123,16 +128,16 @@ export function HistoryPage() {
 				{rows.length ? <>
 					<ul className="rows">{rows.map((row) => <li className={`row${selected?.conversation_id === row.conversation_id ? ' current' : ''}`} key={row.conversation_id}>
 						<button className="open grow" type="button" onClick={() => void open(row.conversation_id)}><span className="name">{row.title}</span><span className="meta">{`${row.updated_at} · model ${row.model_id || 'unknown'} · collection ${row.collection_version || 'unknown'}`}</span></button>
-						<button className="btn danger delete" type="button" aria-label={`Delete ${row.title}`} onClick={() => void remove(row.conversation_id)}>Delete</button>
+						<button className="btn danger delete" type="button" aria-label={`Delete ${row.title}`} disabled={answeringState.pending?.sessionId === row.conversation_id} onClick={() => void remove(row.conversation_id)}>Delete</button>
 					</li>)}</ul>
-					<div className="actions"><button className="btn danger" type="button" onClick={() => void clear()}>Clear all history</button></div>
+					<div className="actions"><button className="btn danger" type="button" disabled={!!answeringState.pending} onClick={() => void clear()}>Clear all history</button></div>
 				</> : <p className="empty">No saved conversations yet.</p>}
 			</section>
 			{notice && <p role="status" className="message notice">{notice}</p>}
 			{error && <p role="alert" className="message error">{error}</p>}
 
 			{selected && answer && <section className="panel" aria-labelledby="opened-title">
-				<h2 id="opened-title">{selected.title}</h2>
+				<h2 id="opened-title">{selected.title}</h2><button className="btn" type="button" onClick={() => navigate(`/conversation/${encodeURIComponent(selected.conversation_id)}`)}>Continue conversation</button>
 				<p className="hint">{`Model ${selected.model_id || 'unknown'} · Collection ${selected.collection_version || 'unknown'}`}</p>
 				<p><strong>Question:</strong> {answer.question}</p>
 				{Array.isArray(answer.documents) && <div data-evidence-kind="document" className="evidence"><h3>From your documents</h3>{(answer.documents as Answer['documents']).map((claim, index) => <p key={index}>{claim.text}{' '}{(claim.citation_ids || []).map((id: string, citationIndex: number) => <span className="cite" key={`${id}-${citationIndex}`}>{id}</span>)}</p>)}</div>}

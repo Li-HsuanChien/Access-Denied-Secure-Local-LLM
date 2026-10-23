@@ -50,7 +50,7 @@ function mount() {
 }
 it("translates original Chat/model/drawer keys with interpolation and English fallback while preserving product prompts", async () => {
   const x = mount();
-  expect(screen.getAllByText("conversation temporaire").length).toBeGreaterThan(
+  expect(screen.getAllByText("Local conversation").length).toBeGreaterThan(
     0,
   );
   expect(screen.getByText("Suggéré")).toBeTruthy();

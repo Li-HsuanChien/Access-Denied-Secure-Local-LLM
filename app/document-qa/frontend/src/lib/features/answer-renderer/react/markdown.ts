@@ -9,6 +9,7 @@ import { disableSingleTilde } from "./baseline-strikethrough-extension";
 export interface RichToken {
   type: string;
   raw: string;
+  ids?: number[];
   text?: string;
   tokens?: RichToken[];
   lang?: string;

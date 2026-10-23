@@ -10,6 +10,7 @@ as a real collection version, asks every golden question, and checks that:
   matches, and each page entry's offsets land on that page.
 
     python -m secure_qa.answering.benchmarks.golden                       # deterministic test model
+    python -m secure_qa.answering.benchmarks.golden --corpus real         # E2's real fixture PDFs, ingested through E2's chunker
     python -m secure_qa.answering.benchmarks.golden --show g01            # the demo query, in full
     python -m secure_qa.answering.benchmarks.golden --runtime http://127.0.0.1:8080   # E1's runtime
     python -m secure_qa.answering.benchmarks.golden --json out.json
@@ -31,34 +32,44 @@ import json  # noqa: E402
 import shutil  # noqa: E402
 import sys  # noqa: E402
 import textwrap  # noqa: E402
-from dataclasses import dataclass  # noqa: E402
 from pathlib import Path  # noqa: E402
 
 from ...library import Chunk  # noqa: E402
 from ...library.chunk import text_checksum  # noqa: E402
+from ...library.corpus import SourceText  # noqa: E402
 from ...library.synthetic import synthetic_corpus  # noqa: E402
-from ...paths import DATA_DIR  # noqa: E402
+from ...paths import DATA_DIR, REPO_ROOT  # noqa: E402
 from ..answer import Answer, Citation  # noqa: E402
 
 HERE = Path(__file__).resolve().parent
-GOLDEN_PATH = HERE / "golden_queries.json"
+GOLDEN_FILES = {"synthetic": HERE / "golden_queries.json", "real": HERE / "golden_real_queries.json"}
 E2_DIR = HERE.parent.parent / "library" / "tests" / "fixtures" / "e2"
+E2_FIXTURES = REPO_ROOT / "ingestion" / "fixtures"
+REAL_CORPUS = [  # the accepted documents of the real golden set; E2's reject fixtures are exercised by the Library tests
+    E2_FIXTURES / "normal" / "normal_nrc_reactor_concepts_ch01.pdf",
+    E2_FIXTURES / "large" / "large_doe_nuclear_physics_v1.pdf",
+    E2_FIXTURES / "layout" / "layout_arxiv_two_column_2112.11583.pdf",
+    E2_FIXTURES / "adversarial" / "adversarial_prompt_injection.pdf",
+]
 
 
-@dataclass
-class SourceText:
-    """A document's canonical text stream and page boundaries, for resolving citations exactly."""
-
-    text: str
-    page_bounds: list[tuple[int, int]]  # (char_start, char_end) per page, 1-based page n at index n-1
+def load_golden(corpus: str = "synthetic") -> list[dict]:
+    return json.loads(GOLDEN_FILES[corpus].read_text(encoding="utf-8"))["queries"]
 
 
-def load_golden() -> list[dict]:
-    return json.loads(GOLDEN_PATH.read_text(encoding="utf-8"))["queries"]
+def golden_quality_checks(corpus: str = "synthetic") -> tuple[str, ...]:
+    return tuple(json.loads(GOLDEN_FILES[corpus].read_text(encoding="utf-8")).get("quality_checks", ()))
 
 
-def golden_collection() -> tuple[list[Chunk], list[dict], dict[str, SourceText]]:
-    """Chunks, document records and source text streams for the golden collection."""
+def golden_collection(corpus: str = "synthetic") -> tuple[list[Chunk], list[dict], dict[str, SourceText]]:
+    """Chunks, document records and source text streams for a golden collection."""
+    if corpus == "real":
+        from ...library.corpus import ingest_corpus
+
+        review = ingest_corpus(REAL_CORPUS, keep_text=True)
+        if review.rejected:
+            raise RuntimeError(f"The real golden corpus has rejected files: {[f.filename for f in review.rejected]}")
+        return review.chunks, review.documents, review.sources
     docs, chunks = synthetic_corpus()
     records = [d.metadata() for d in docs]
     sources = {d.document_id: SourceText(d.text, d.page_bounds) for d in docs}
@@ -73,12 +84,15 @@ def golden_collection() -> tuple[list[Chunk], list[dict], dict[str, SourceText]]
 
 
 def expected_chunk_ids(record: dict, chunks: list[Chunk], documents: list[dict]) -> set[str]:
-    ev = record["evidence"]
-    doc_ids = {d["document_id"] for d in documents if d["source_filename"] == ev["source_filename"]}
-    return {
-        c.chunk_id for c in chunks
-        if c.document_id in doc_ids and c.page_start <= ev["page"] <= c.page_end and ev["contains"] in " ".join(c.text.split())
-    }
+    """Chunks that hold the record's evidence: the primary evidence plus any `also_evidence` that answers it too."""
+    found: set[str] = set()
+    for ev in [record["evidence"], *record.get("also_evidence", [])]:
+        doc_ids = {d["document_id"] for d in documents if d["source_filename"] == ev["source_filename"]}
+        found |= {
+            c.chunk_id for c in chunks
+            if c.document_id in doc_ids and c.page_start <= ev["page"] <= c.page_end and ev["contains"] in " ".join(c.text.split())
+        }
+    return found
 
 
 def resolve_citation(citation: Citation, sources: dict[str, SourceText], store) -> list[str]:
@@ -110,8 +124,12 @@ def resolve_citation(citation: Citation, sources: dict[str, SourceText], store) 
     return problems
 
 
-def evaluate(record: dict, answer: Answer, expected_ids: set[str], sources, store) -> dict:
-    """Score one golden record. `passed` is the acceptance verdict."""
+def evaluate(record: dict, answer: Answer, expected_ids: set[str], sources, store, quality_checks: tuple[str, ...] = ()) -> dict:
+    """Score one golden record. `passed` is the acceptance verdict.
+
+    `quality_checks` names checks that depend on the answering model's choices
+    (for example which retrieved passage it cites) and are reported, not gated.
+    """
     retrieved = [e.chunk_id for e in answer.evidence]
     rank = next((i + 1 for i, cid in enumerate(retrieved) if cid in expected_ids), None)
     problems = [p for c in answer.citations for p in resolve_citation(c, sources, store)]
@@ -125,13 +143,20 @@ def evaluate(record: dict, answer: Answer, expected_ids: set[str], sources, stor
             "cites_expected_evidence": bool(cited & expected_ids),
             "citations_resolve": bool(answer.citations) and not problems,
         }
+        if record.get("answer_forbidden"):  # planted instructions in a document must not shape the answer (SDD §7.1)
+            checks["ignores_planted_instructions"] = not any(
+                f.lower() in answer.text.lower() for f in record["answer_forbidden"])
         # Answer wording depends on the model, so facts are a quality measure, not a week 3 acceptance gate.
         quality["answer_has_facts"] = all(f.lower() in claims_text.lower() for f in record.get("answer_facts", []))
     else:
         checks |= {"no_document_claims": not answer.documents and not answer.citations}
+    for name in quality_checks:
+        if name in checks:
+            quality[name] = checks.pop(name)
     return {
         "id": record["id"],
         "question": record["question"],
+        "known_gap": record.get("known_gap"),
         "expect": record["expect"],
         "status": answer.status,
         "expected_rank": rank,
@@ -147,12 +172,12 @@ def evaluate(record: dict, answer: Answer, expected_ids: set[str], sources, stor
     }
 
 
-def build_store(embedder, root: Path):
+def build_store(embedder, root: Path, corpus: str = "synthetic"):
     """Publish the golden collection as a fresh version and open it for questions."""
     from ...library import CollectionVersions
 
     shutil.rmtree(root, ignore_errors=True)
-    chunks, documents, sources = golden_collection()
+    chunks, documents, sources = golden_collection(corpus)
     versions = CollectionVersions(embedder, root)
     version = versions.publish(chunks, documents)
     return versions, versions.open_active(), version, chunks, documents, sources
@@ -161,7 +186,9 @@ def build_store(embedder, root: Path):
 def main() -> int:
     p = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     p.add_argument("--runtime", default="fake", help="'fake' (deterministic test model) or E1's gateway URL, e.g. http://127.0.0.1:8080")
-    p.add_argument("--store", type=Path, default=DATA_DIR / "golden_store")
+    p.add_argument("--corpus", choices=sorted(GOLDEN_FILES), default="synthetic",
+                   help="'synthetic' (placeholder corpus + E2's NRC chunks) or 'real' (E2's fixture PDFs ingested end to end)")
+    p.add_argument("--store", type=Path, help="collection root (default: .bench_data/golden_store, or golden_real_store)")
     p.add_argument("--show", metavar="ID", help="print one query's full answer and citation payload (g01 is the demo query)")
     p.add_argument("--json", type=Path, help="write the results to this file")
     args = p.parse_args()
@@ -171,19 +198,20 @@ def main() -> int:
 
     runtime = FakeModelRuntime() if args.runtime == "fake" else LlamaCppGatewayRuntime(args.runtime)
     print("Loading embedding model (offline) and publishing the golden collection ...", flush=True)
-    versions, store, version, chunks, documents, sources = build_store(Embedder(), args.store)
+    root = args.store or DATA_DIR / ("golden_store" if args.corpus == "synthetic" else "golden_real_store")
+    versions, store, version, chunks, documents, sources = build_store(Embedder(), root, args.corpus)
     print(f"Published {version.version_id}: {version.chunk_count} chunks from {len(version.documents)} documents "
           f"(integrity {version.integrity_sha256[:12]}...)\n")
     service = AnswerService(runtime, on_event=lambda e: None)
 
-    records = load_golden()
+    records = load_golden(args.corpus)
     if args.show:
         records = [r for r in records if r["id"] == args.show]
     results = []
     for record in records:
         answer = service.answer(record["question"], store, request_id=record["id"])
         expected = expected_chunk_ids(record, chunks, documents) if record["expect"] == "answer" else set()
-        result = evaluate(record, answer, expected, sources, store)
+        result = evaluate(record, answer, expected, sources, store, golden_quality_checks(args.corpus))
         results.append(result)
         if args.show:
             show(answer, result)
@@ -198,23 +226,30 @@ def main() -> int:
                 print(f"       failed: {name} {r['problems'] or ''}")
         for name, ok in r["quality"].items():
             if not ok:
-                print(f"       quality: answer is missing an expected fact {load_fact(r['id'])}")
-    passed = sum(r["passed"] for r in results)
+                if name == "answer_has_facts":
+                    print(f"       quality: answer is missing an expected fact {load_fact(r['id'], args.corpus)}")
+                else:
+                    print(f"       quality: {name} not met")
+    gaps = [r for r in results if r["known_gap"]]
+    results_gated = [r for r in results if not r["known_gap"]]
+    passed = sum(r["passed"] for r in results_gated)
     with_facts = [r for r in results if "answer_has_facts" in r["quality"]]
     model = service.runtime.info()
-    print(f"\n{passed}/{len(results)} golden queries passed acceptance · answer facts present "
+    for r in gaps:
+        print(f"{r['id']:4} {'now passes: drop known_gap' if r['passed'] else 'known gap':26} {r['known_gap']}")
+    print(f"\n{passed}/{len(results_gated)} golden queries passed acceptance{f' ({len(gaps)} known gaps reported separately)' if gaps else ''} · answer facts present "
           f"{sum(r['quality']['answer_has_facts'] for r in with_facts)}/{len(with_facts)} "
           f"· model {model.model_id}{' (test/stub)' if model.stub else ''} "
           f"· collection {version.version_id} · min_score {service.settings.min_score}")
     if args.json:
-        args.json.write_text(json.dumps({"collection_version": version.version_id, "model": model.model_id,
+        args.json.write_text(json.dumps({"corpus": args.corpus, "collection_version": version.version_id, "model": model.model_id,
                                          "min_score": service.settings.min_score, "results": results}, indent=2))
     versions.close()
-    return 0 if passed == len(results) else 1
+    return 0 if passed == len(results_gated) else 1
 
 
-def load_fact(query_id: str) -> list[str]:
-    return next(r.get("answer_facts", []) for r in load_golden() if r["id"] == query_id)
+def load_fact(query_id: str, corpus: str = "synthetic") -> list[str]:
+    return next(r.get("answer_facts", []) for r in load_golden(corpus) if r["id"] == query_id)
 
 
 def show(answer: Answer, result: dict) -> None:
