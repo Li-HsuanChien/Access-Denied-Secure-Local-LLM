@@ -678,6 +678,33 @@ def test_a_duplicate_is_never_parsed():
             'matched by checksum and recorded as names on the first')
 
 
+def test_the_import_root_keeps_only_runs_the_lock_and_the_journal():
+    """No temporary file outlives the import, whatever its ending."""
+    def left(root: Path) -> list[str]:
+        sealed = set(P.list_runs(root))         # a sealed run and everything in it is meant to stay
+        return sorted(p.relative_to(root).as_posix() for p in root.rglob('*')
+                      if not (len(p.relative_to(root).parts) > 1 and p.relative_to(root).parts[1] in sealed))
+
+    expected = ['ingest.lock', 'journal.jsonl', 'runs']
+    endings = {}
+    root = fresh('tidy-sealed')
+    review = P.prepare([NORMAL, NORMAL, NOT_PDF, TRUNCATED], root)
+    run = P.commit(review, acknowledge_rejections=review.confirmation_token)
+    endings['sealed with rejects and a duplicate'] = (left(root), expected)
+    again = P.ingest([NORMAL, NORMAL, NOT_PDF, TRUNCATED], root, acknowledge_rejections=True)
+    assert again.reused and P.list_runs(root) == [run.run_id], P.list_runs(root)
+    endings['the same inputs again, run reused'] = (left(root), expected)
+    root = fresh('tidy-declined')
+    P.discard(P.prepare([NORMAL, NOT_PDF], root))
+    endings['declined at review'] = (left(root), expected)
+    root = fresh('tidy-none')
+    P.discard(P.prepare([NOT_PDF, LOCKED], root), 'nothing_accepted')
+    endings['nothing accepted'] = (left(root), expected)
+    for ending, (found, want) in endings.items():
+        assert found == want, f'{ending}: left {found}'
+    return f'{len(endings)} endings ({", ".join(endings)}): nothing left but runs/, ingest.lock and journal.jsonl'
+
+
 def test_two_files_with_one_name_are_two_documents():
     work = fresh('clash-src')
     (work / 'a').mkdir(parents=True)
