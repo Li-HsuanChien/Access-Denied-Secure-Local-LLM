@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { localTemporaryChat } from '$lib/features/answering/localChatMode';
 	import { getContext } from 'svelte';
 	import { toast } from 'svelte-sonner';
 
@@ -261,9 +262,9 @@
 		</div>
 	</div>
 
-	{#if $temporaryChatEnabled && isTemporaryChatId($chatId)}
+	{#if $localTemporaryChat}
 		<div class=" w-full z-30 text-center">
-			<div class="text-xs text-gray-500">{$i18n.t('Temporary Chat')}</div>
+			<div class="text-xs text-gray-500">{$i18n.t('Temporary Chat')} ? not saved; follow-up memory unavailable</div>
 		</div>
 	{/if}
 

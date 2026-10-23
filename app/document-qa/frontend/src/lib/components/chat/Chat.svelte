@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { localTemporaryChat } from '$lib/features/answering/localChatMode';
 	import { v4 as uuidv4 } from 'uuid';
 	import { toast } from 'svelte-sonner';
 
@@ -2271,6 +2272,7 @@ import { workspaceVoice } from '$lib/features/personality/presentation';
 	const loadChat = async () => {
 		if ($models.some((model) => model.id === SECURE_QA_MODEL_ID)) {
 			try {
+				localTemporaryChat.set(false);
 				const saved = await createHistoryClient().open(chatIdProp);
 				if (!saved) throw new Error('This conversation is no longer available.');
 				history = restoreConversation(saved);
@@ -3483,7 +3485,8 @@ import { workspaceVoice } from '$lib/features/personality/presentation';
 				const { answer, historyWarning } = await createOpenWebUIAnsweringAdapter().ask(
 					String(userMessage?.content ?? ''),
 					get(secureQaGeneralKnowledge),
-					_chatId || undefined
+					_chatId || undefined,
+					get(localTemporaryChat)
 				);
 				responseMessage.content = formatAnswerForChat(answer) + (historyWarning ? `\n\n> ${historyWarning}` : '');
 				responseMessage.citations = toOpenWebUICitations(answer);

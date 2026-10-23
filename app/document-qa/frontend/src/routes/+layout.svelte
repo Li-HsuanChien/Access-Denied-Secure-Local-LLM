@@ -1,4 +1,6 @@
 <script lang="ts">
+	import { page } from '$app/stores';
+	import { localTemporaryChat, syncLocalChatMode } from '$lib/features/answering/localChatMode';
 	import { onMount, setContext } from 'svelte';
 	import '../tailwind.css';
 	import '../app.css';
@@ -39,7 +41,9 @@
 		}
 	} as any);
 	showSidebar.set(true);
+	// Bypass upstream storage; local history is controlled separately.
 	temporaryChatEnabled.set(true);
+	$: syncLocalChatMode($page.url);
 	tools.set([]);
 	functions.set([]);
 	skills.set([]);
@@ -131,6 +135,7 @@
 			<span class="status-mark" aria-hidden="true"></span>
 			<div class="status-text"><strong>{healthError ? 'Workspace needs attention' : 'Local workspace'}</strong><span title={healthMessage}>{healthMessage}</span></div>
 			<label class="workspace-switch"><input type="checkbox" role="switch" checked={$secureQaGeneralKnowledge} on:change={saveKnowledge} /><span>Include general model knowledge</span></label>
+			<a class="status-action" data-sveltekit-reload href={$localTemporaryChat ? "/" : "/?local-temporary=true"}>{$localTemporaryChat ? "Start saved chat" : "Start temporary chat"}</a>
 			<button type="button" class="status-action" on:click={refreshHealth}>Refresh</button>
 		</div>
 		{#if preferenceError}<p class="preference-error" role="alert">{preferenceError}</p>{/if}

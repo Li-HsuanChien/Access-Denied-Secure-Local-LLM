@@ -78,12 +78,12 @@ export function createOpenWebUIAnsweringAdapter(
     history: Pick<ConversationHistoryClient, 'save'> = createHistoryClient()
 ) {
     return {
-        async ask(question: string, generalKnowledge: boolean, conversationId?: string) {
-            const answer = await client.ask(question, generalKnowledge, conversationId);
+        async ask(question: string, generalKnowledge: boolean, conversationId?: string, temporary = false) {
+            const answer = await client.ask(question, generalKnowledge, temporary ? undefined : conversationId);
             let historyWarning: string | null = null;
             // With a conversation id the host appends the turns itself (thread memory);
             // only the legacy one-off path saves from here.
-            if (!conversationId) {
+            if (!temporary && !conversationId) {
                 try {
                     await history.save(answer.request_id, question, answer as unknown as Record<string, unknown>);
                 } catch {

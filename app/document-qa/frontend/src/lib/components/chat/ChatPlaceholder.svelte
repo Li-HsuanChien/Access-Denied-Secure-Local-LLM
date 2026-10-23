@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { localTemporaryChat } from '$lib/features/answering/localChatMode';
 	import { marked } from 'marked';
 	import DOMPurify from 'dompurify';
 
@@ -92,9 +93,9 @@
 			</div>
 		</div>
 
-		{#if $temporaryChatEnabled}
+		{#if $localTemporaryChat}
 			<Tooltip
-				content={$i18n.t("This chat won't appear in history and your messages will not be saved.")}
+				content={$i18n.t("This chat won't appear in history. Messages are kept only in this view; follow-up memory is unavailable.")}
 				className="w-full flex justify-start mb-0.5"
 				placement="top"
 			>

@@ -61,6 +61,15 @@ describe('Open WebUI answering adapter', () => {
 		expect(historyWarning).toBeNull();
 	});
 
+	it('temporary mode sends no persistent thread and never saves a one-off answer', async () => {
+        const client = { ask: vi.fn().mockResolvedValue(base) };
+        const history = { save: vi.fn() };
+        const result = await createOpenWebUIAnsweringAdapter(client, history).ask('Private?', true, 'saved-thread', true);
+        expect(client.ask).toHaveBeenCalledWith('Private?', true, undefined);
+        expect(history.save).not.toHaveBeenCalled();
+        expect(result.historyWarning).toBeNull();
+    });
+
 	it('still saves one-off questions locally when there is no conversation id', async () => {
 		const client = { ask: vi.fn().mockResolvedValue(base) };
 		const history = { save: vi.fn().mockResolvedValue(true) };

@@ -351,3 +351,9 @@ The implemented per-document on/off, confirmed deletion, and additive upload arc
 #### Document management update (supersedes snapshot UI behavior in sections 4.1 and 6.3)
 
 Knowledge Collections now manages individual PDFs with persistent retrieval switches and confirmed deletion, and uploads are additive. Internal snapshots remain an implementation detail; rollback controls are removed from the UI. The current implemented storage, wire, job-gate, retention, deletion, and retrieval rules are specified in [document management and retrieval selection](retrieval-selection-design.md), superseding the earlier design-only extension above.
+
+#### Local chat privacy flag
+
+The frontend `localTemporaryChat` flag defaults to false and is independent of Open WebUI's `temporaryChatEnabled` storage bypass, which remains enabled to prevent upstream API calls. The shell starts a fresh temporary chat through `/?local-temporary=true` and a saved chat through `/`, using full navigation to isolate in-memory messages. Local placeholder and navbar labels reflect only the product privacy flag. The answering adapter snapshots this flag per submission: temporary requests omit `conversation_id` (so the host does not read or append history) and skip the one-off `history.save` fallback. Temporary chats currently have no follow-up memory; this limitation is shown in the chat UI. Opening a saved history thread clears the privacy flag. No backend contract or global persistence setting changes.
+
+The local privacy flag is reconciled reactively from the SvelteKit page URL on every navigation, including New Chat and browser back/forward. Only `/` and `/qa` with `local-temporary=true` enable temporary mode; navigating to a normal new chat, saved thread, or another workflow clears it. The same store drives labels and answering persistence behavior.

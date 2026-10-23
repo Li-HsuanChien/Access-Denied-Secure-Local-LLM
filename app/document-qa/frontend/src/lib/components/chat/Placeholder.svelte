@@ -1,4 +1,5 @@
 <script lang="ts">
+	import { localTemporaryChat } from '$lib/features/answering/localChatMode';
 	import { workspaceVoice } from '$lib/features/personality/presentation';
 	import { toast } from 'svelte-sonner';
 	import { marked } from 'marked';
@@ -113,9 +114,9 @@
 </script>
 
 <div class="m-auto w-full max-w-[58rem] px-1 @2xl:px-20 translate-y-6 py-24 text-center">
-	{#if $temporaryChatEnabled}
+	{#if $localTemporaryChat}
 		<Tooltip
-			content={$i18n.t("This chat won't appear in history and your messages will not be saved.")}
+			content={$i18n.t("This chat won't appear in history. Messages are kept only in this view; follow-up memory is unavailable.")}
 			className="w-full flex justify-center mb-0.5"
 			placement="top"
 		>
