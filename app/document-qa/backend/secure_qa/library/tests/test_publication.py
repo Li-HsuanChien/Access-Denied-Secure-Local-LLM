@@ -113,7 +113,7 @@ class PublisherTest(unittest.TestCase):
         second = self.publisher.publish([NRC, ADVERSARIAL]).version
         self.assertTrue(first_ids < ids(second), "the NRC chunks must keep their ids in the new version")
         third = self.publisher.publish([NRC]).version  # v0001 falls out of retention here
-        self.assertEqual(ids(third), first_ids)
+        self.assertEqual(ids(third), ids(second))  # uploads retain earlier PDFs
         self.assertEqual(sorted(p.name for p in (self.dir / "reports").glob("*.json")), ["v0002.json", "v0003.json"])
 
     def test_rollback_restores_the_previous_version_and_its_integrity(self):

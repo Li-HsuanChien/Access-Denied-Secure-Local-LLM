@@ -72,6 +72,8 @@ OPERATIONS = {
     "library.cancel": ({"target_request_id": str}, ("target_request_id",)),
     "library.status": ({"target_request_id": str}, ("target_request_id",)),  # publication progress (synchronous here)
     "library.versions": ({}, ()),
+    "library.set_document_enabled": ({"version_id": str, "document_id": str, "enabled": bool}, ("version_id", "document_id", "enabled")),
+    "library.delete_document": ({"version_id": str, "document_id": str, "confirmed": bool}, ("version_id", "document_id", "confirmed")),
     "library.rollback": ({}, ()),
     "library.integrity": ({}, ()),
     "history.save": ({"conversation_id": str, "title": str, "answer": dict}, ("conversation_id", "title", "answer")),
@@ -99,6 +101,7 @@ class DevHost(ThreadingHTTPServer):
         self.versions = versions
         self.corpus = corpus
         self.publisher = Publisher(versions)
+        self.library_job = threading.Lock()
         # Ephemeral upload state: a review id -> (CorpusReview, staged temp dir). Not durable workflow state.
         self._reviews: dict = {}
         self._reviews_lock = threading.Lock()
@@ -188,12 +191,7 @@ class DevHost(ThreadingHTTPServer):
                                   "Review the selected files and try again.", status=status)
 
     def versions_listing(self) -> dict:
-        found = self.versions.versions()
-        return {
-            "active": found[0].version_id if found else None,
-            "versions": [{"version_id": v.version_id, "status": v.status, "created_at": v.created_at,
-                          "document_count": len(v.documents), "chunk_count": v.chunk_count} for v in found],
-        }
+        return self.versions.listing()
 
     def library_health(self) -> dict:
         active = self.versions.active()
@@ -313,13 +311,14 @@ class Handler(BaseHTTPRequestHandler):
         if not _SOURCE_ID.match(document_id):
             return self._error(400, None, "invalid_request", "A valid document_id is required", "Open the citation again.")
         try:
-            source = self.server.versions.source_path(document_id, version_id=version)
+            path = self.server.versions.source_path(document_id, version_id=version)
+            source = path.read_bytes() if path is not None else None
         except Exception:
             source = None
         if source is None:
             return self._error(404, None, "not_found", "No cached source PDF for this citation",
                                "The document may not be cached; republish the collection with its PDFs available.")
-        self._send_bytes(200, source.read_bytes(), "application/pdf", {"Content-Disposition": "inline"})
+        self._send_bytes(200, source, "application/pdf", {"Content-Disposition": "inline"})
 
     def _send_bytes(self, status: int, data: bytes, content_type: str, extra: dict | None = None) -> None:
         self.send_response(status)
@@ -351,6 +350,17 @@ class Handler(BaseHTTPRequestHandler):
         request_id, problem = validate(body)
         if problem:
             return self._error(400, request_id, "invalid_request", problem, "See the request envelope in dev_host.py.")
+        exclusive = body["operation"] in {"answering.ask", "library.publish", "library.rollback",
+                                            "library.set_document_enabled", "library.delete_document"}
+        if exclusive and not self.server.library_job.acquire(blocking=False):
+            return self._error(409, request_id, "busy", "Another library or answer job is running.", "Wait for it to finish and try again.")
+        try:
+            return self._dispatch(request_id, body)
+        finally:
+            if exclusive:
+                self.server.library_job.release()
+
+    def _dispatch(self, request_id, body):
         payload = body["payload"]
         operation = body["operation"]
         if operation.startswith("library."):
@@ -421,6 +431,20 @@ class Handler(BaseHTTPRequestHandler):
                 result = {"stage": "", "done": 0, "total": 0}
             elif operation == "library.versions":
                 result = host.versions_listing()
+            elif operation == "library.set_document_enabled":
+                try:
+                    enabled = host.versions.set_document_enabled(payload["version_id"], payload["document_id"], payload["enabled"])
+                except LookupError as exc:
+                    raise LibraryRequestError("stale_document", str(exc), "Refresh Knowledge Collections and try again.") from None
+                result = {"enabled": enabled}
+            elif operation == "library.delete_document":
+                if not payload["confirmed"]:
+                    raise LibraryRequestError("confirmation_required", "Confirm deletion before removing this PDF.", "Review the PDF name and confirm Delete.")
+                try:
+                    version = host.publisher.delete_document(payload["version_id"], payload["document_id"], confirmed=True)
+                except LookupError as exc:
+                    raise LibraryRequestError("stale_document", str(exc), "Refresh Knowledge Collections and try again.") from None
+                result = {"deleted": True, "version_id": version.version_id}
             elif operation == "library.rollback":
                 try:
                     version = host.publisher.rollback()

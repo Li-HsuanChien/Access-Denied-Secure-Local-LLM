@@ -32,6 +32,8 @@ The initial collection will contain approximately 2,000–5,000 pages of public 
 
 A collection of up to 10,000 pages may be used for stress testing.
 
+In Library, users can preview accepted PDFs before confirming publication. The same tab shows Knowledge Collections with clickable PDF filenames for previewing published documents.
+
 Documents enter the laptop through controlled removable media. Documents attached directly to chats are outside the MVP.
 
 ### Constraints
@@ -80,3 +82,5 @@ Several local multimodal models and compression levels may be evaluated. The dep
 - OCR for scanned-only documents
 - Multi-device deployment
 - Integration with live sensitive systems
+
+In Knowledge Collections, uploads add PDFs to the library. Each PDF has a persistent on/off control for use in future answers and a Delete action requiring explicit confirmation. Disabled PDFs remain available for preview; deleting removes the PDF and its searchable content. Snapshot rollback is no longer a user-facing library workflow.

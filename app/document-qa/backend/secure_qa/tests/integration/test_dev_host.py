@@ -234,6 +234,58 @@ class _Base:
         return self.call({"request_id": request_id, "operation": operation, "payload": payload or {}})
 
 
+class DevHostDocumentManagementTest(_Base, unittest.TestCase):
+    def setUp(self):
+        self.dir = Path(tempfile.mkdtemp(prefix="document-management-"))
+        self.versions = CollectionVersions(FakeEmbedder(), self.dir)
+        docs, chunks = synthetic_corpus()
+        self.version = self.versions.publish(chunks, [d.metadata() for d in docs],
+                                            sources={d.document_id: b"%PDF" for d in docs})
+        self.server = DevHost(0, AnswerService(FakeModelRuntime(), AnswerSettings(min_score=0.2), on_event=lambda e: None), self.versions)
+        threading.Thread(target=self.server.serve_forever, daemon=True).start()
+        self.port = self.server.server_port
+
+    def tearDown(self):
+        self.server.shutdown()
+        self.server.server_close()
+        self.versions.close()
+        shutil.rmtree(self.dir, ignore_errors=True)
+
+    def test_switches_and_confirmed_deletion_through_wire(self):
+        version_id = self.version.version_id
+        documents = self.op("library.versions")[1]["result"]["versions"][0]["documents"]
+        for document in documents:
+            self.assertTrue(document["enabled"])
+            status, body = self.op("library.set_document_enabled", {"version_id": version_id, "document_id": document["document_id"], "enabled": False})
+            self.assertEqual((status, body["result"]["enabled"]), (200, False))
+        answer = self.op("answering.ask", {"question": "annual occupational dose limit", "general_knowledge": False})[1]["result"]
+        self.assertEqual(answer["citations"], [])
+        self.assertEqual(answer["status"], "insufficient_evidence")
+        listed = self.op("library.versions")[1]["result"]["versions"][0]["documents"]
+        self.assertTrue(all(not d["enabled"] for d in listed))
+        target = {"version_id": version_id, "document_id": documents[0]["document_id"]}
+        self.assertEqual(self.op("library.delete_document", target | {"confirmed": False})[1]["error"]["code"], "confirmation_required")
+        self.assertIn(target["document_id"], self.versions.active().documents)
+        self.assertEqual(self.op("library.set_document_enabled", target | {"enabled": True})[1]["result"], {"enabled": True})
+        self.assertEqual(self.op("library.delete_document", target | {"confirmed": True})[1]["result"]["deleted"], True)
+        self.assertNotIn(target["document_id"], self.versions.active().documents)
+        self.assertIsNone(self.versions.source_path(target["document_id"], version_id=version_id))
+        self.assertEqual(self.op("library.set_document_enabled", target | {"enabled": True})[1]["error"]["code"], "stale_document")
+        self.assertEqual(self.op("library.delete_document", target | {"confirmed": True})[1]["error"]["code"], "stale_document")
+
+    def test_job_gate_rejects_mutations_and_answers_and_releases_on_error(self):
+        target = {"version_id": self.version.version_id, "document_id": next(iter(self.version.documents))}
+        with self.server.library_job:
+            for operation, payload in [("library.set_document_enabled", target | {"enabled": False}),
+                                       ("library.delete_document", target | {"confirmed": True}),
+                                       ("answering.ask", {"question": "test"}),
+                                       ("library.publish", {"review_id": "unknown"})]:
+                self.assertEqual(self.op(operation, payload)[1]["error"]["code"], "busy")
+        self.assertEqual(self.op("library.set_document_enabled", target | {"enabled": "false"})[0], 400)
+        self.assertEqual(self.op("library.delete_document", target | {"confirmed": False})[0], 409)
+        self.assertEqual(self.op("library.set_document_enabled", target | {"enabled": False})[0], 200)
+
+
 @unittest.skipUnless(CORPUS_FILES[0].exists(), "needs E2's fixture PDFs")
 class DevHostLibraryTest(_Base, unittest.TestCase):
     """What E4's Library screen calls: upload review, publish with confirmation, versions, rollback, integrity."""
@@ -289,6 +341,11 @@ class DevHostLibraryTest(_Base, unittest.TestCase):
 
         listing = self.op("library.versions")[1]["result"]
         self.assertEqual(listing["active"], "v0001")
+        documents = listing["versions"][0]["documents"]
+        self.assertEqual(len(documents), 1)
+        self.assertTrue(documents[0]["source_filename"].endswith(".pdf"))
+        self.assertTrue(documents[0]["document_id"])
+        self.assertGreater(documents[0]["page_count"], 0)
         self.assertEqual([v["version_id"] for v in listing["versions"]], ["v0001"])
         self.assertEqual(self.op("answering.ask", {"question": "How long are the fuel rods?"})[1]["result"]["collection_version"], "v0001")
 

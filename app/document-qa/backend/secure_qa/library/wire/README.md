@@ -1,25 +1,25 @@
 # Library messages
 
-The Collection Library operations the frontend calls through the host's SDD §4.6 envelope (`{"request_id", "operation", "payload"}`). The development host (`dev_host.py`) serves them today; the Open WebUI adapter will carry the same shapes. Unknown operations and fields are rejected. Chunk text, highlight data and the user's questions never appear in these results. See the [Collection Library interface](../../../../../../docs/architecture/SDD.md#41-collection-library).
+The local host accepts `{request_id, operation, payload}` and returns `{request_id, operation, result}`. Errors return `{request_id, error: {code, message, hint}}` with a non-2xx status. Unknown operations/fields and incorrect types are rejected. All operations remain behind loopback and origin checks.
 
 | Operation | Payload | Result |
 |---|---|---|
-| `library.status` | `{}` | `{active, previous, versions: [Version]}` |
-| `library.review` | `{files?: [name]}` | Import review. Nothing is published or changed. |
-| `library.publish` | `{files?: [name], confirm_rejects?: bool}` | `{status, message, elapsed_s, review, version, integrity, library}` |
-| `library.rollback` | `{}` | `{active, previous, versions}` |
-| `library.integrity` | `{}` | The active version re-read from the store and compared with its manifest |
+| `library.review` | `{files: [{name, data}]}` (base64 PDF bytes) | `{review_id, accepted: [{name, size}], rejected: [{name, reason}], warning, requires_confirmation}` |
+| `library.publish` | `{review_id, confirmed?: boolean}` | `{version_id, document_count, chunk_count}` for the combined library |
+| `library.versions` | `{}` | `{active, versions: [{version_id, status, created_at, document_count, chunk_count, documents}]}` |
+| `library.set_document_enabled` | `{version_id, document_id, enabled: boolean}` | `{enabled: boolean}` |
+| `library.delete_document` | `{version_id, document_id, confirmed: boolean}` | `{deleted: true, version_id}` |
+| `library.integrity` | `{}` | `{version_id, ok, expected_chunks, stored_chunks, expected_documents, stored_documents, expected_integrity_sha256, stored_integrity_sha256, problems}` |
+| `library.rollback` | `{}` | `{version_id}` (legacy compatibility; no UI control) |
+| `library.status` | `{target_request_id}` | `{stage, done, total}` (no incremental progress yet) |
+| `library.cancel` | `{target_request_id}` | `{cancelled: false}` (not yet supported) |
 
-Files are named by file name only and must be PDFs in the host's document folder (`--corpus`); anything else is `unknown_file`. Omitting `files` means every PDF in the folder.
+Document summaries are `{document_id, source_filename, display_title, page_count, enabled}`. Knowledge Collections displays only the active library's individual documents, not snapshot versions. The Library owns the mutable enabled state, and all files default to enabled on first import. Cached PDF previews use the existing read-only `GET /v1/source?document_id=...&version=...` route; toggles do not affect preview access.
 
-**`library.publish` status:** `published`, `needs_confirmation` (some files were rejected; show the review and ask, then resend with `confirm_rejects: true`; SDD §6.1), `nothing_to_publish` (every file was rejected), `busy` (another publication is running; one at a time, SDD §6.2) or `failed` (the active version is unchanged). These are 200 results, not transport errors.
+Uploads add to the active library; they do not remove existing PDFs. Matching content IDs replace the same document rather than adding a duplicate. Unchanged document vectors and cached sources are copied without regenerating their embeddings. Failure leaves the active snapshot and selection unchanged.
 
-**Import review** (`review`): `summary {files, accepted, accepted_with_warnings, rejected, pages, chunks, manifest_sha256}` and `files: [{filename, outcome, reject_reason, reject_detail, warnings, checksum_sha256, byte_size, document_id, pages, chunks}]`. `outcome` is `accepted`, `accepted_with_warnings` or `rejected`. `reject_reason` is `password_protected`, `corrupt`, `scanned_only`, `oversized` or `non_pdf` (SDD §6.1), with a plain-language `reject_detail`. `manifest_sha256` is the same for the same files and chunker.
+Selection and deletion require a current snapshot ID and manifest document ID. An outdated snapshot or unknown document returns HTTP 409 `stale_document`; refresh before retrying. Delete requires `confirmed: true` or returns HTTP 409 `confirmation_required`. Invalid types/missing fields return HTTP 400 `invalid_request`. Publication, mutation, rollback, and answering share a nonblocking job gate; overlapping operations return HTTP 409 `busy`. The gate always releases on error.
 
-**Version:** `{version_id, status: "active" | "previous", created_at, activated_at, chunk_count, embedding_model, chunker_config_ids, integrity_sha256, documents: [{document_id, display_title, source_filename, page_count}]}`.
+Deletion atomically activates a verified snapshot without the target PDF, then prunes prior snapshots, cached PDFs, and obsolete import reports so rollback cannot restore the removed document. History text is not deleted. Cached previews tied to pruned versions become unavailable. Deleting the final PDF leaves an empty library ready for future uploads. These are application deletion semantics, not secure disk erasure.
 
-**Integrity:** `{version_id, ok, expected_chunks, stored_chunks, expected_documents, stored_documents, expected_integrity_sha256, stored_integrity_sha256, problems}`. `ok` means the stored counts, document set, chunk ids and text checksums match the version's manifest.
-
-**Errors** (HTTP 409, `{request_id, error: {code, message, hint}}`): `no_corpus` (host started without `--corpus`), `unknown_file`, `no_previous_version`, `no_active_collection`.
-
-Not built yet: progress events while a publication runs, and cancellation by request ID (SDD §4.6). `library.publish` returns once, when it finishes.
+See [document management and retrieval selection](../../../../../../docs/architecture/retrieval-selection-design.md) for storage and retrieval rules. Publication is synchronous; progress and cancellation remain planned work.

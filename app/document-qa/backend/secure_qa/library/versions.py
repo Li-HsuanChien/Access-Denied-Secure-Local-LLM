@@ -108,7 +108,7 @@ class CollectionVersions:
         self.root.mkdir(parents=True, exist_ok=True)
         self._catalog_path = self.root / "catalog.json"
         self._client = open_client(self.root / "chroma")
-        self._lock = threading.Lock()  # one publication at a time (SDD §6.2)
+        self._lock = threading.RLock()  # one publication at a time (SDD §6.2)
         self.recover()
 
     # --- reading -----------------------------------------------------------------------
@@ -122,18 +122,73 @@ class CollectionVersions:
         catalog = self._read_catalog()
         return [v for v in (self._version(catalog, catalog["active"]), self._version(catalog, catalog["previous"])) if v]
 
+    def listing(self) -> dict:
+        """Return a consistent document list and selection from one catalog read."""
+        with self._lock:
+            catalog = self._read_catalog()
+            versions = []
+            for version_id in (catalog["active"], catalog["previous"]):
+                if not version_id:
+                    continue
+                version = self._version(catalog, version_id)
+                disabled = set(catalog.get("disabled_documents", {}).get(version_id, []))
+                versions.append({
+                    "version_id": version_id, "status": version.status, "created_at": version.created_at,
+                    "document_count": len(version.documents), "chunk_count": version.chunk_count,
+                    "documents": [document | {"enabled": document["document_id"] not in disabled}
+                                  for document in version.summary()["documents"]],
+                })
+            return {"active": catalog["active"], "versions": versions}
+
     def open_active(self) -> ChromaStore:
         """A read-only store bound to the version that is active now.
 
         Bind once per question: publishing a new version later doesn't change
         the store a question is already using, and the answer records this version.
         """
-        version = self.active()
-        if version is None:
-            raise LookupError(f"No active collection at {self.root}; publish one first")
-        return self.open(version)
+        with self._lock:
+            catalog = self._read_catalog()
+            version = self._version(catalog, catalog["active"])
+            if version is None:
+                raise LookupError("No active collection")
+            allowed = frozenset(version.documents) - frozenset(catalog.get("disabled_documents", {}).get(version.version_id, []))
+            return self.open(version, enabled_documents=allowed)
 
-    def open(self, version: CollectionVersion) -> ChromaStore:
+    def document_enabled(self, version_id: str, document_id: str) -> bool:
+        catalog = self._read_catalog()
+        version = self._version(catalog, version_id) if version_id in catalog["versions"] else None
+        if version is None or document_id not in version.documents:
+            raise LookupError("Document is no longer in the library")
+        return document_id not in catalog.get("disabled_documents", {}).get(version_id, [])
+
+    def set_document_enabled(self, version_id: str, document_id: str, enabled: bool) -> bool:
+        if type(enabled) is not bool:
+            raise ValueError("enabled must be a boolean")
+        with self._lock:
+            catalog = self._read_catalog()
+            self._require_current_document(catalog, version_id, document_id)
+            selections = catalog.get("disabled_documents", {})
+            disabled = set(selections.get(version_id, []))
+            if enabled:
+                disabled.discard(document_id)
+            else:
+                disabled.add(document_id)
+            self._write_catalog(catalog | {"disabled_documents": selections | {version_id: sorted(disabled)}})
+            return enabled
+
+    def delete_document(self, version_id: str, document_id: str, *, confirmed: bool = False) -> CollectionVersion:
+        if confirmed is not True:
+            raise ValueError("Confirm deletion before removing a document")
+        with self._lock:
+            self._require_current_document(self._read_catalog(), version_id, document_id)
+            return self.publish([], [], append=True, remove_document=document_id)
+
+    @staticmethod
+    def _require_current_document(catalog: dict, version_id: str, document_id: str) -> None:
+        if catalog["active"] != version_id or document_id not in catalog["versions"].get(version_id, {}).get("documents", {}):
+            raise LookupError("The library changed. Refresh and try again.")
+
+    def open(self, version: CollectionVersion, *, enabled_documents: frozenset[str] | None = None) -> ChromaStore:
         return ChromaStore(
             self.embedder,
             self.root / "chroma",
@@ -142,6 +197,7 @@ class CollectionVersions:
             create=False,
             version_id=version.version_id,
             documents=version.documents,
+            enabled_documents=enabled_documents,
         )
 
     def check_integrity(self, version: CollectionVersion | None = None) -> IntegrityReport:
@@ -195,12 +251,16 @@ class CollectionVersions:
     # --- publication -------------------------------------------------------------------
 
     def publish(self, chunks: Sequence[Chunk], documents: Iterable[dict], *, smoke_query: str | None = None,
-                sources: Mapping[str, str | Path | bytes] | None = None) -> CollectionVersion:
+                sources: Mapping[str, str | Path | bytes] | None = None,
+                append: bool = False, remove_document: str | None = None) -> CollectionVersion:
         """Build, verify and atomically activate a new version. Returns it.
 
         On any failure the candidate is deleted, `PublishError` is raised and the
         active version is unchanged. The former active version becomes the
         rollback version; the one before it is deleted.
+        With append=True, unchanged records, vectors and sources are carried
+        forward. Confirmed deletion uses remove_document and retires every old
+        snapshot so rollback cannot restore removed content.
 
         `sources` maps `document_id -> PDF path or bytes`; those originals are
         cached under `<root>/sources/<version_id>/<document_id>.pdf` so citations
@@ -208,6 +268,7 @@ class CollectionVersions:
         documents without a provided source are simply not cached.
         """
         chunks = list(chunks)
+        incoming_chunks = list(chunks)
         records = {d["document_id"]: dict(d) for d in documents}
         with self._lock:
             catalog = self._read_catalog()
@@ -216,12 +277,21 @@ class CollectionVersions:
             self._drop(name)  # a leftover from an interrupted run with the same id
             store = ChromaStore(self.embedder, self.root / "chroma", name, client=self._client)
             try:
-                if not chunks:
+                if append and catalog["active"]:
+                    previous = self._version(catalog, catalog["active"])
+                    if (previous.embedding_model, previous.embedding_dim) != (self.embedder.model_name, self.embedder.dimension):
+                        raise PublishError("The library embedding model changed; use the original model to manage this library")
+                    retained = set(previous.documents) - set(records) - {remove_document}
+                    chunks = store.copy_documents_from(self.open(previous), retained) + chunks
+                    records = {key: previous.documents[key] for key in retained} | records
+                    sources = {key: path for key in retained
+                               if (path := self.source_path(key, version_id=previous.version_id)) is not None} | dict(sources or {})
+                if not chunks and remove_document is None:
                     raise PublishError("A collection needs at least one chunk")
                 missing = sorted({c.document_id for c in chunks} - records.keys())
                 if missing:
                     raise PublishError(f"No document record for {len(missing)} document(s), e.g. {missing[0]}")
-                store.index(chunks)
+                store.index(incoming_chunks)
                 integrity = self._verify(store, chunks, smoke_query)
             except Exception as exc:
                 self._drop(name)
@@ -249,12 +319,16 @@ class CollectionVersions:
                     self._drop(name)
                     self._drop_sources(version_id)
                     raise PublishError(f"Caching sources for {version_id} failed: {exc}") from exc
-            old_active = catalog["active"]
+            old_active = catalog["active"] if remove_document is None else None
             versions = {version_id: asdict(version)}
             if old_active:
                 versions[old_active] = catalog["versions"][old_active] | {"status": "previous"}
             self._write_catalog({
                 "schema": CATALOG_SCHEMA,
+                "disabled_documents": {
+                    **({old_active: catalog.get("disabled_documents", {}).get(old_active, [])} if old_active else {}),
+                    version_id: sorted(set(catalog.get("disabled_documents", {}).get(catalog["active"], [])) & set(version.documents)) if append else [],
+                },
                 "active": version_id,
                 "previous": old_active,
                 "next_seq": catalog["next_seq"] + 1,
@@ -277,6 +351,10 @@ class CollectionVersions:
             return self._version(self._read_catalog(), new_active)
 
     def recover(self) -> list[str]:
+        with self._lock:
+            return self._recover()
+
+    def _recover(self) -> list[str]:
         """Remove collections the catalog doesn't reference (interrupted publications, retired versions)."""
         catalog = self._read_catalog()
         keep = {COLLECTION_PREFIX + v for v in (catalog["active"], catalog["previous"]) if v}
@@ -345,6 +423,8 @@ class CollectionVersions:
             stored += [(cid, meta["text_checksum_sha256"]) for cid, meta in zip(got["ids"], got["metadatas"])]
         if _integrity(stored) != expected:
             raise PublishError("Candidate chunk ids or checksums don't match the chunks given")
+        if not chunks:
+            return expected
         if smoke_query is not None:
             if not store.search(smoke_query, top_k=1):
                 raise PublishError("Smoke-test search returned no results")

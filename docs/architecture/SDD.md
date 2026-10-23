@@ -45,14 +45,14 @@ A pinned Open WebUI fork supplies the SvelteKit interface and Python/FastAPI hos
 
 #### 4.1 Collection Library
 
-**Interface:** Review selected PDFs (uploaded from the browser as base64, staged to a temp directory) and return accepted files, every rejection reason, and warnings; publish only after explicit confirmation when any file is rejected; list published versions; re-verify a published version's stored counts and checksums against its manifest; and roll back to the previous version. The host exposes the browser-upload wire (`library.review` → `library.publish {review_id, confirmed}`, `library.versions`, `library.cancel`, `library.status`, `library.rollback`, `library.integrity`) over E2's real ingestion pipeline (see [ADR 0004](decisions/0004-e3-document-store-on-e2-ingestion.md) as superseded for the wire).
+**Interface:** Review selected PDFs (uploaded from the browser as base64, staged to a temp directory) and return accepted files, every rejection reason, and warnings; publish only after explicit confirmation when any file is rejected; add accepted PDFs to the existing library; list individual PDFs with persistent retrieval on/off state; delete a PDF only with explicit confirmation; re-verify a published version's stored counts and checksums against its manifest; and retain snapshot identifiers internally for citation provenance. The host exposes the browser-upload wire (`library.review` → `library.publish {review_id, confirmed}`, `library.versions`, `library.cancel`, `library.status`, `library.rollback`, `library.integrity`) over E2's real ingestion pipeline (see [ADR 0004](decisions/0004-e3-document-store-on-e2-ingestion.md) as superseded for the wire).
 
 The module hides PDF validation, extraction, chunking (E2's real ingestion pipeline), embedding, indexing, manifest creation, integrity checks, atomic activation, rollback, and cleanup. Publication also caches each published document's source PDF under `sources/<version_id>/<document_id>.pdf` so citations can be opened in the source later ([ADR 0006](decisions/0006-cache-source-pdfs-for-citation-viewing.md)); cached sources follow the same active+previous retention as versions. A failed or unconfirmed build leaves the active version untouched. The local host exposes versioned `library.review`, `library.publish`, `library.status`, `library.rollback`, and `library.integrity` operations; publication acquires a single-job lock and reports `busy` if another is running. Review state is local and temporary; rejected files remain visible until the user confirms the accepted remainder or starts another review. Progress events and cancellation (below) are not implemented yet; publication completes in one request.
 
 **Invariants:**
 
 - A failed or cancelled publication never changes the active collection.
-- Only the active and immediately previous collection versions are retained.
+- The UI manages individual PDFs. Internal active and previous snapshots are normally retained; confirmed deletion prunes previous snapshots so removed PDFs cannot be restored through rollback.
 - Rejected files are never silently omitted; the user reviews them before publishing the valid remainder.
 
 #### 4.2 Question Answering
@@ -151,9 +151,9 @@ For accepted files, the application extracts page text and text coordinates, cre
 
 The active collection remains available throughout this work. Only one publication job may run at a time. The interface shows the current phase, completed files, processed pages, warnings, and elapsed time.
 
-#### 6.3 Publish, Cancel, and Roll Back
+#### 6.3 Apply Document Changes
 
-Successful publication atomically activates the candidate, moves the former active version to rollback status, and removes versions older than the rollback version. Cancellation or failure records the outcome, discards incomplete staging data, and leaves the active collection unchanged.
+Successful publication adds reviewed PDFs to the existing library and atomically activates a verified combined snapshot. Unchanged vectors and cached sources are copied; incoming PDFs are embedded. Matching document IDs replace the same PDF. On/off state is atomically stored separately from immutable manifests and filters retrieval before top-k. Delete requires explicit confirmation and activates a verified snapshot without the PDF, then prunes previous snapshots, cached sources, and obsolete reports. Deleting the final PDF leaves an empty library. Failed builds leave the current library unchanged. Snapshot IDs remain internal; the UI has no rollback control. See [document management and retrieval selection](retrieval-selection-design.md).
 
 Publication supports cancel and restart. Pause and resume are outside the MVP. The application warns before shutdown while publication is active.
 
@@ -163,7 +163,7 @@ Publication supports cancel and restart. Pause and resume are outside the MVP. T
 
 #### 7.1 Retrieval
 
-Each question is searched against the active collection. The retriever returns ranked text chunks and their document, page, and coordinate metadata. A configurable minimum relevance threshold excludes weak evidence. The benchmark dataset is used to tune the threshold, which is frozen for the final release.
+Each question is searched against enabled documents in the active collection, using a fixed selection captured at question start. An empty enabled set skips embedding and vector search and returns no evidence. The retriever returns ranked text chunks and their document, page, and coordinate metadata. A configurable minimum relevance threshold excludes weak evidence. The benchmark dataset is used to tune the threshold, which is frozen for the final release.
 
 If no chunk meets the threshold, the application states that the collection lacks sufficient evidence and produces no document-supported section. General model knowledge may still be shown.
 
@@ -339,3 +339,15 @@ Architectural changes must update this SDD or a linked architecture decision rec
 #### Local conversation presentation
 
 The local sidebar lists saved threads through `history.list`. `/conversation/[id]` loads ordered messages through `history.open` and adapts them to the native Open WebUI Chat message tree, preserving structured-answer citations and collection versions. Follow-ups send the same stable conversation ID to `answering.ask`; new local chats use UUIDs. Upstream Open WebUI persistence stays disabled; workflow History owns storage and its enabled setting. Successful answers and deletions refresh the sidebar. History provides a resume link into the same chat view. Opening a citation automatically fetches its cached PDF in the existing modal; failed source fetches leave the supporting quotation visible and permit retry.
+
+
+#### Library PDF previews and retrieval selection design
+
+Library review lists accepted filenames as buttons that open the selected local PDF bytes in the same in-canvas pdf.js viewer used by Sources. Changing the file selection invalidates the review; selection is disabled during review/publication so the preview always refers to the reviewed bytes. No preview is uploaded or published by opening it. The Knowledge Collections section lists each retained snapshot's PDF filenames as preview buttons. `library.versions` includes `documents` entries containing `document_id`, `source_filename`, `display_title`, and `page_count`, projected through the Library's public summary. Published previews use the existing guarded `/v1/source` route with both document and version IDs. Internal version IDs remain unchanged for citations, rollback, and storage. Multiple PDFs in one snapshot retain separate filename buttons. Publication atomically replaces the internal active snapshot with a combined library that retains existing PDFs.
+
+The implemented per-document on/off, confirmed deletion, and additive upload architecture is documented in [retrieval selection design](retrieval-selection-design.md).
+
+
+#### Document management update (supersedes snapshot UI behavior in sections 4.1 and 6.3)
+
+Knowledge Collections now manages individual PDFs with persistent retrieval switches and confirmed deletion, and uploads are additive. Internal snapshots remain an implementation detail; rollback controls are removed from the UI. The current implemented storage, wire, job-gate, retention, deletion, and retrieval rules are specified in [document management and retrieval selection](retrieval-selection-design.md), superseding the earlier design-only extension above.

@@ -87,7 +87,7 @@ class Publisher:
                     "Confirm to publish the valid remainder, or choose different files."))
             try:
                 version = self.versions.publish(review.chunks, review.documents, smoke_query=smoke_query,
-                                                sources=review.source_paths)
+                                                sources=review.source_paths, append=True)
             except PublishError as exc:
                 return PublicationOutcome(FAILED, review, message=f"{exc}. The active collection is unchanged.")
             integrity = self.versions.check_integrity(version)
@@ -97,6 +97,12 @@ class Publisher:
         finally:
             self._job.release()
 
+    def delete_document(self, version_id: str, document_id: str, *, confirmed: bool = False) -> CollectionVersion:
+        """Delete a reviewed document and obsolete reports via Library-owned operations."""
+        version = self.versions.delete_document(version_id, document_id, confirmed=confirmed)
+        self.prune_reports()
+        return version
+
     def rollback(self) -> CollectionVersion:
         """Make the rollback version active again (SDD §6.3)."""
         return self.versions.rollback()
@@ -104,6 +110,9 @@ class Publisher:
     def _write_report(self, version: CollectionVersion, review: CorpusReview) -> None:
         self.reports_dir.mkdir(parents=True, exist_ok=True)
         review.write_report(self.reports_dir / f"{version.version_id}.json")
+        self.prune_reports()
+
+    def prune_reports(self) -> None:
         keep = {f"{v.version_id}.json" for v in self.versions.versions()}
         for stale in self.reports_dir.glob("v*.json"):
             if stale.name not in keep:
