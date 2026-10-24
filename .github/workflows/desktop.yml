@@ -4,8 +4,6 @@ on:
   push:
     branches:
       - main
-      # Temporary branch trigger for the first hosted integration run.
-      - ci/desktop-packaging-validation
     tags:
       - 'v*'
   pull_request:

@@ -37,10 +37,10 @@ is no release publication, deployment, auto-update or signing-key requirement.
 Production signing, trusted pre-install verification, network-isolated acceptance,
 cross-platform qualification and reference-hardware performance remain SDD gates.
 The user authorized an initial hosted integration test on a separate branch.
-`ci/desktop-packaging-validation` has a temporary explicit push trigger for that
-test because the workflow is not yet on the default branch. Remove this exception
-after validation; do not merge or push to `main` as part of this test. A hosted run
-must actually finish before claiming CI passed.
+`ci/desktop-packaging-validation` temporarily had an explicit push trigger because
+the workflow was not yet on the default branch. Hosted run 40046762577 passed on
+commit f766bac, including package acceptance and artifact upload; the temporary
+trigger was then removed. Remote `main` was not modified as part of this test.
 
 Frontend validation retains strict checking of the QA features, their global types
 and configuration. The checker reports but excludes diagnostics originating inside

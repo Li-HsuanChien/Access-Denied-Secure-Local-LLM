@@ -9,8 +9,28 @@ tests, optional real-model cases skipped), 12 release tests, asset downloads and
 the real Python freeze. The frontend build then failed because
 `src/lib/apis/models/index.ts` existed locally but was excluded by the root
 `models/` ignore rule. The rule now targets the actual weight directories, and
-the required upstream source module is included for clean checkouts. A subsequent
-hosted run is required before claiming the complete pipeline passed.
+the required upstream source module is included for clean checkouts.
+
+Subsequent run [40046762577](https://github.com/Li-HsuanChien/Access-Denied-Secure-Local-LLM/actions/runs/40046762577)
+passed completely on commit `f766bac`: 43 frontend tests, 118 backend tests with
+seven optional cases skipped, 12 release tests and two native lifecycle tests.
+Packaged Qwen generation, real MiniLM/PDF publication, an answer with one citation,
+native chat rendering, workflow calls, port-conflict rejection and shutdown cleanup
+all passed. The real-model artifact uploaded successfully and dependency/model
+caches saved. The temporary validation-branch push trigger was then removed;
+`main` was not changed.
+
+Artifact: `windows-x64-real-f766bacc6a84030e079a88b7c0ea7c8ae84ddfde`,
+ID `12541879001`, size 3,529,008,076 bytes. GitHub's archive SHA-256 is
+`fd2abd95ecdf6d861770dcf837891debd0b0a6d9f53b1f61c4af1cbe49764c50`.
+
+The artifact was downloaded and its complete ZIP SHA-256 matched GitHub's digest.
+Extraction verified the expected clean source commit, real profile, executable
+hash and payload-manifest hash. Local acceptance against the downloaded copy at
+`app/release/dist/hosted-f766bac` also passed: real Qwen generation, real embeddings,
+PDF publication, an answered question with one citation, native chat rendering,
+workflow calls, port-conflict rejection and process cleanup. Temporary test data
+was used. The retained ZIP is `app/release/build/hosted-f766bac.zip`.
 
 ## Follow-up lifecycle test stability
 
@@ -58,8 +78,9 @@ development provenance record. The previously user-tested package under
 `app/release/dist/Secure-Local-DocQA/` was preserved. Acceptance ran with temporary
 application data.
 
-No commit, push or hosted GitHub Actions run occurred. Clean hosted-run dependency
-setup and artifact upload remain untested until the user pushes the workflow.
+At this earlier local verification, no commit, push or hosted GitHub Actions run
+had occurred. Hosted dependency setup and artifact upload were pending; the
+subsequent hosted results are recorded above.
 This functional Windows test does not establish production signing, isolated-VM
 network qualification, reference-hardware performance or macOS/Linux compatibility.
 See [ADR 0008](../architecture/decisions/0008-real-model-push-packaging.md).
