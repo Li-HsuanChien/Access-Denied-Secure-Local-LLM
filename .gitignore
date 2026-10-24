@@ -45,7 +45,8 @@ dist/
 *.keystore
 
 # Model weights and local download/benchmark caches
-models/
+/models/
+/app/document-qa/backend/secure_qa/answering/llama_cpp/models/
 *.gguf
 *.safetensors
 .bench_data/

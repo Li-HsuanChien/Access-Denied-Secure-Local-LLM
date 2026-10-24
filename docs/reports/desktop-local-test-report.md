@@ -1,5 +1,17 @@
 # Windows desktop preview: local verification
 
+## First hosted integration run
+
+The user authorized a push to `ci/desktop-packaging-validation`; remote `main`
+was left unchanged. Run [40045844609](https://github.com/Li-HsuanChien/Access-Denied-Secure-Local-LLM/actions/runs/40045844609)
+passed dependency setup, QA checking, 43 frontend tests, the backend suite (118
+tests, optional real-model cases skipped), 12 release tests, asset downloads and
+the real Python freeze. The frontend build then failed because
+`src/lib/apis/models/index.ts` existed locally but was excluded by the root
+`models/` ignore rule. The rule now targets the actual weight directories, and
+the required upstream source module is included for clean checkouts. A subsequent
+hosted run is required before claiming the complete pipeline passed.
+
 ## Follow-up lifecycle test stability
 
 The user's fresh build exposed an intermittent readiness-test failure. Its mock
