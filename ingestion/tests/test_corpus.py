@@ -161,6 +161,25 @@ def test_the_check_command_exits_by_its_verdict():
     return '--check exits 0 against the committed output and 1, naming summary.json, after a hand edit'
 
 
+def test_the_ingest_keeps_only_the_run_it_sealed():
+    """corpus/runs/ holds one run: an earlier one, from other code or another corpus, is removed."""
+    saved = C.OUT, C.RUNS
+    with tempfile.TemporaryDirectory() as scratch:
+        C.OUT, C.RUNS = Path(scratch, 'out'), Path(scratch, 'runs')
+        try:
+            earlier = P.ingest([C.ROOT / CORPUS['documents'][0]['path']], C.RUNS).run_id
+            with contextlib.redirect_stdout(io.StringIO()) as out:
+                status = C.main([])
+            kept = P.list_runs(C.RUNS)
+            written = {name: (C.OUT / name).read_bytes() for name in COMMITTED}
+        finally:
+            C.OUT, C.RUNS = saved
+    assert status == 0, out.getvalue()[-400:]
+    assert kept == [SUMMARY['run_id']], f'{kept} left in corpus/runs/; the earlier run was {earlier}'
+    assert written == COMMITTED, 'the outputs written differ from corpus/out/'
+    return f'the earlier run {earlier} is removed; {SUMMARY["run_id"]} is the only run kept'
+
+
 TESTS = [v for k, v in sorted(globals().items()) if k.startswith('test_')]
 
 if __name__ == '__main__':

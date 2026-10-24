@@ -11,7 +11,9 @@ the corpus lists, as one batch, and writes:
   corpus/out/SUMMARY.md      the same, for reading
 
 The sealed run itself (staged PDFs, chunk files) goes to corpus/runs/, which is
-not committed: the command rebuilds it from the PDFs.
+not committed: the command rebuilds it from the PDFs. Only the run just sealed
+is kept there; earlier ones, from before a change to the code or the corpus,
+are removed.
 
 Nothing in the outputs depends on the machine, the folder or the time, so the
 same corpus, code and settings always produce the same bytes. --check proves
@@ -304,6 +306,7 @@ def main(argv: list[str] | None = None) -> int:
                 fresh = outputs(corpus, Path(scratch))
         else:
             fresh = outputs(corpus, RUNS)
+            stale = P.prune(RUNS, keep=[json.loads(fresh['summary.json'])['run_id']])
     except CorpusError as exc:
         print(f'error: {exc}')
         return 1
@@ -321,6 +324,8 @@ def main(argv: list[str] | None = None) -> int:
     for name, data in fresh.items():
         (OUT / name).write_bytes(data)
     print(f'\nwrote corpus/out/: {", ".join(fresh)}')
+    if stale:
+        print(f'removed {len(stale)} earlier run(s) from corpus/runs/: {", ".join(stale)}')
     return 0
 
 
