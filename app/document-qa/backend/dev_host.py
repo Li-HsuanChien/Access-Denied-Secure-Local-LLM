@@ -249,6 +249,8 @@ class Handler(BaseHTTPRequestHandler):
         origin = self.headers.get("Origin")
         if origin is None or origin == "null" or origin.startswith(_LOCAL_ORIGIN_SCHEMES):
             return True
+        if origin in {"http://tauri.localhost", "https://tauri.localhost"}:
+            return True
         url = urlsplit(origin)
         return url.scheme == "http" and is_loopback(url.hostname or "")
 

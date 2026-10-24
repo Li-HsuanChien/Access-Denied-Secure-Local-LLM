@@ -9,7 +9,7 @@
 		"build": "node --max-old-space-size=6144 ./node_modules/vite/bin/vite.js build",
 		"build:watch": "vite build --watch",
 		"preview": "vite preview --host 127.0.0.1",
-		"check": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.qa.json",
+		"check": "svelte-kit sync && node scripts/check-features.mjs",
 		"check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch",
 		"lint": "npm run lint:frontend ; npm run lint:types ; npm run lint:backend",
 		"lint:frontend": "eslint . --fix",

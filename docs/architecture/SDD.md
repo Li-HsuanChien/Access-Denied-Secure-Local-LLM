@@ -281,6 +281,15 @@ Model quality is evaluated with the benchmark suite rather than ordinary unit te
 
 ### 14. Packaging, Release, and Cross-Platform Verification
 
+The initial Windows desktop shell and development CI implementation are described in
+[ADR 0007](decisions/0007-desktop-build-and-ci.md). Demo CI artifacts are development
+previews, not qualified signed production releases.
+
+[ADR 0008](decisions/0008-real-model-push-packaging.md) supersedes the demo-only CI
+flow with a shared source-to-real-model-package command, pinned build asset
+preparation and push-triggered Windows artifacts. These remain development previews
+until the production qualification gates below are complete.
+
 The build process produces separate release bundles for Windows x86-64, macOS on Apple silicon, and Ubuntu Linux x86-64. Each bundle contains the pinned Open WebUI source revision and built Svelte assets, Tauri shell, platform-matching Python host, llama.cpp binary, model, embedding model, dependencies, verification key, manifest, signature, version, supported-platform identifier, and installation instructions.
 
 Application updates occur outside the running application. The user closes the application and runs the verified installer from controlled removable media.

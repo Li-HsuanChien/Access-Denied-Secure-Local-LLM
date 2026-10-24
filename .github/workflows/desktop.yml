@@ -1,0 +1,82 @@
+name: Package desktop
+
+on:
+  push:
+    branches:
+      - main
+      # Temporary branch trigger for the first hosted integration run.
+      - ci/desktop-packaging-validation
+    tags:
+      - 'v*'
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+concurrency:
+  group: desktop-${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  windows:
+    name: Windows x64 real-model package
+    runs-on: windows-2022
+    timeout-minutes: 90
+    env:
+      HF_HUB_OFFLINE: '1'
+      TRANSFORMERS_OFFLINE: '1'
+      ANONYMIZED_TELEMETRY: 'False'
+      CYPRESS_INSTALL_BINARY: '0'
+      PYTHONUTF8: '1'
+    defaults:
+      run:
+        shell: pwsh
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.11'
+          cache: pip
+          cache-dependency-path: |
+            requirements.txt
+            app/release/requirements-build.txt
+            app/release/requirements-real.txt
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '22'
+          cache: npm
+          cache-dependency-path: |
+            app/desktop/package-lock.json
+            app/document-qa/frontend/package-lock.json
+      - name: Set up Rust
+        run: rustup update stable --no-self-update
+      - uses: swatinem/rust-cache@v2
+        with:
+          workspaces: app/desktop/src-tauri -> target
+      - name: Cache pinned public model assets
+        if: github.event_name != 'pull_request'
+        uses: actions/cache@v4
+        with:
+          path: app/release/build/asset-cache
+          key: docqa-windows-assets-${{ hashFiles('app/release/assets.lock.json') }}
+      - name: Project checks (pull requests)
+        if: github.event_name == 'pull_request'
+        run: ./app/release/package.ps1 -ChecksOnly
+      - name: Source to tested real-model desktop package
+        if: github.event_name != 'pull_request'
+        run: ./app/release/package.ps1
+      - uses: actions/upload-artifact@v4
+        if: github.event_name != 'pull_request' && success()
+        with:
+          name: windows-x64-real-${{ github.sha }}
+          path: app/release/dist/Secure-Local-DocQA/
+          if-no-files-found: error
+          compression-level: 0
+          retention-days: 7
+      - uses: actions/upload-artifact@v4
+        if: failure()
+        with:
+          name: desktop-build-diagnostics-${{ github.run_id }}
+          path: app/release/build/docqa-service/warn-docqa-service.txt
+          if-no-files-found: ignore

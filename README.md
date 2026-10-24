@@ -2,7 +2,7 @@
 
 Develop and evaluate a locally deployed AI platform for organizations that cannot use public AI services because of sensitive, proprietary, export-controlled, security-related, privacy-protected, or otherwise restricted information.
 
-The repository contains the product and architecture specifications and a working local build of the document-QA interface: the pinned Open WebUI chat, the Library, History, and Settings views, and the Python host and workflow modules behind them. The Tauri desktop shell and release packages are not built yet, so the app currently runs as two loopback-only development processes.
+The repository contains the product and architecture specifications and a working local build of the document-QA interface: the pinned Open WebUI chat, the Library, History, and Settings views, and the Python host and workflow modules behind them. It also includes a Tauri desktop shell and a Windows development-preview packaging workflow. See the [desktop build instructions](app/release/README.md) to build the real-model portable app and configure push builds. Production signing and offline release qualification remain pending.
 
 ## Run it locally
 
