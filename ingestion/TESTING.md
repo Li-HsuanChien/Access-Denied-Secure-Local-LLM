@@ -4,34 +4,36 @@ E2 turns candidate PDFs into validated, chunked, traceable text for the document
 store. This page describes how that work is tested and gives the numbers from
 one full run of the test suite.
 
-Measured on 20 October 2026 on branch `E2-Chunking` (commit `29291a7` plus the
-week 5 changes), with Python 3.14.4 and PyMuPDF 1.28.2 on macOS.
+Measured on 27 October 2026 on branch `E2-Chunking` (commit `1c18893` plus the
+week 6 changes), with Python 3.14.4 and PyMuPDF 1.28.2 on macOS. Code coverage
+was last measured on 20 October, before the week 6 changes.
 
 ## Summary
 
 | Metric | Result |
 |---|---|
-| Automated tests | 88 |
-| Passed | 86 |
+| Automated tests | 92 |
+| Passed | 90 |
 | Failed | 0 |
 | Skipped | 2 (they need a checkout of the E3 document store) |
-| Statement coverage | 87.0% (1,885 of 2,166 statements) |
-| Branch coverage | 84.8% (619 of 730 branches) |
+| Statement coverage | 87.0% (1,885 of 2,166 statements), as of 20 October |
+| Branch coverage | 84.8% (619 of 730 branches), as of 20 October |
 | Fixture PDFs exercised | 16, in 9 categories |
 | Sample corpus | 3 documents, 179 pages, 262 chunks; 7 bad files rejected, each with its reason |
 | Chunks checked end to end | 3,915, each traced back to its page and offsets |
 | Rerun consistency | A fresh corpus ingest reproduces the committed manifest and summary byte for byte |
-| Test code | 2,555 lines, against 4,047 lines of source |
+| Corpus import | 1.12 s and a 9.3 MB Python heap peak, down from 1.37 s and 12.0 MB, with identical output |
+| Test code | 2,665 lines, against 4,085 lines of source |
 | Time for the whole suite | about 2 minutes on a laptop |
 
 ## The four test suites
 
 | Suite | Tests | What it covers | Time |
 |---|---|---|---|
-| `tests/test_contracts.py` | 33 | Schemas, stable IDs, provenance, validation verdicts, damaged files | 72 s |
-| `tests/test_chunking.py` | 11 | Where chunks begin and end | 4 s |
-| `tests/test_pipeline.py` | 36 (34 run, 2 skipped) | The import flow from files to a sealed, verified run | 32 s |
-| `tests/test_corpus.py` | 8 | The corpus ingest: rejects, counts, checksums, rerun consistency | 18 s |
+| `tests/test_contracts.py` | 34 | Schemas, stable IDs, provenance, validation verdicts, damaged files | 62 s |
+| `tests/test_chunking.py` | 11 | Where chunks begin and end | 3 s |
+| `tests/test_pipeline.py` | 38 (36 run, 2 skipped) | The import flow from files to a sealed, verified run | 29 s |
+| `tests/test_corpus.py` | 9 | The corpus ingest: rejects, counts, checksums, rerun consistency | 16 s |
 
 Each suite is a plain Python script with no test framework. Every test prints
 one line of evidence when it passes, so the output is a record of what was
@@ -135,9 +137,28 @@ none remain in the 4 accepted documents, and 1,123 fi, ff and fl pairs read as
 letters. The 1,200-page fixture is accepted under the settled 2,000-page cap,
 so 13 fixtures now have a fixed expected outcome instead of 12.
 
+### Week 6: profiling and the first optimization
+
+The same five targets were imported with the code before and after the change,
+each in a fresh process, medians of 3 runs: the three corpus documents, the
+1,200-page fixture and the whole corpus batch. The full comparison is in
+`perf/REPORT.md`.
+
+| Criterion | Evidence from the run |
+|---|---|
+| Time, peak RAM and chunk counts are recorded | Normal (24 pages, 18 chunks): 0.13 s → 0.10 s, heap peak 3.4 MB → 3.4 MB. Large (142 pages, 194 chunks): 1.01 s → 0.83 s, 11.9 MB → 9.3 MB. 1,200 pages (3,409 chunks): 7.70 s → 7.49 s, 69.2 MB → 56.0 MB, peak RSS 170 MB → 154 MB |
+| Repeated parsing is reduced | Text pages built: 2 per page before, 1 per page after, plus 1 for each page with no text (454 → 278 over the corpus); each document is still opened once |
+| Deterministic IDs and citation provenance are intact | All 5 targets give the same run ID before and after, so the same manifest, chunk IDs, text, offsets, pages and highlight rectangles; deep verification passes 19 of 19 checks on each |
+| Invalid files fail clearly | The 7 corpus rejects are identical before and after, each with its reason, failed check and detail |
+| Duplicate files are handled | Of 4 files, a second copy of an accepted file and of a rejected file are matched by checksum and never parsed; each is recorded as another name for the first |
+| Temporary files are cleaned up | After a seal with rejects and a duplicate, a reused run, a decline at review and an import with nothing accepted, the import root holds only `runs/`, `ingest.lock` and `journal.jsonl` |
+| Stale corpus runs are removed | An ingest after an earlier run leaves `run_1474c5fc384c4b66` as the only run under `corpus/runs/` |
+| Each page is read once | 24 text pages for 24 pages, 148 for 142 (6 without text) and 30 for 24 (6 scanned); the scanned pages still report their images |
+
 ## Code coverage
 
-Measured with coverage.py 7.16.2 over all four suites.
+Measured with coverage.py 7.16.2 over all four suites on 20 October, at the
+end of week 5. It has not been measured since the week 6 changes.
 
 | Module | Role | Statements | Statement coverage | Branch coverage |
 |---|---|---|---|---|
@@ -188,5 +209,7 @@ deliberately corrupt fixtures.
   can be switched by configuration, not which setting is right.
 - **Other platforms.** The run above is on macOS only, and E2 has no
   continuous integration yet, so the suites run when someone runs them.
-- **Speed and memory.** Nothing measures throughput or peak memory on large
-  batches.
+- **Speed and memory at scale.** `tools/profile_ingest.py` measures one machine
+  and files up to 1,200 pages, not a batch at the 2,000 to 5,000 pages the PRD
+  expects. The test suites do not time anything, so a slowdown fails no test;
+  it shows only when the profile is rerun and compared.
