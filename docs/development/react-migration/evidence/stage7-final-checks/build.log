@@ -1,0 +1,318 @@
+
+> access-denied-document-qa@0.11.4 build
+> vite build
+
+vite v5.4.21 building for production...
+transforming...
+✓ 2914 modules transformed.
+rendering chunks...
+computing gzip size...
+../build/index.html                                           0.99 kB │ gzip:   0.52 kB
+../build/assets/KaTeX_Size3-Regular-CTq5MqoE.woff             4.42 kB
+../build/assets/KaTeX_Size4-Regular-Dl5lxZxV.woff2            4.93 kB
+../build/assets/KaTeX_Size2-Regular-Dy4dx90m.woff2            5.21 kB
+../build/assets/KaTeX_Size1-Regular-mCD8mA8B.woff2            5.47 kB
+../build/assets/KaTeX_Size4-Regular-BF-4gkZK.woff             5.98 kB
+../build/assets/KaTeX_Size2-Regular-oD1tc_U0.woff             6.19 kB
+../build/assets/KaTeX_Size1-Regular-C195tn64.woff             6.50 kB
+../build/assets/KaTeX_Caligraphic-Regular-Di6jR-x-.woff2      6.91 kB
+../build/assets/KaTeX_Caligraphic-Bold-Dq_IR9rO.woff2         6.91 kB
+../build/assets/KaTeX_Size3-Regular-DgpXs0kz.ttf              7.59 kB
+../build/assets/KaTeX_Caligraphic-Regular-CTRA-rTL.woff       7.66 kB
+../build/assets/KaTeX_Caligraphic-Bold-BEiXGLvX.woff          7.72 kB
+../build/assets/KaTeX_Script-Regular-D3wIWfF6.woff2           9.64 kB
+../build/assets/KaTeX_SansSerif-Regular-DDBCnlJ7.woff2       10.34 kB
+../build/assets/KaTeX_Size4-Regular-DWFBv043.ttf             10.36 kB
+../build/assets/KaTeX_Script-Regular-D5yQViql.woff           10.59 kB
+../build/assets/KaTeX_Fraktur-Regular-CTYiF6lA.woff2         11.32 kB
+../build/assets/KaTeX_Fraktur-Bold-CL6g_b3V.woff2            11.35 kB
+../build/assets/KaTeX_Size2-Regular-B7gKUWhC.ttf             11.51 kB
+../build/assets/KaTeX_SansSerif-Italic-C3H0VqGB.woff2        12.03 kB
+../build/assets/KaTeX_SansSerif-Bold-D1sUS0GD.woff2          12.22 kB
+../build/assets/KaTeX_Size1-Regular-Dbsnue_I.ttf             12.23 kB
+../build/assets/KaTeX_SansSerif-Regular-CS6fqUqJ.woff        12.32 kB
+../build/assets/KaTeX_Caligraphic-Regular-wX97UBjC.ttf       12.34 kB
+../build/assets/KaTeX_Caligraphic-Bold-ATXxdsX0.ttf          12.37 kB
+../build/assets/KaTeX_Fraktur-Regular-Dxdc4cR9.woff          13.21 kB
+../build/assets/KaTeX_Fraktur-Bold-BsDP51OF.woff             13.30 kB
+../build/assets/KaTeX_Typewriter-Regular-CO6r4hn1.woff2      13.57 kB
+../build/assets/KaTeX_SansSerif-Italic-DN2j7dab.woff         14.11 kB
+../build/assets/KaTeX_SansSerif-Bold-DbIhKOiC.woff           14.41 kB
+../build/assets/KaTeX_Typewriter-Regular-C0xS9mPB.woff       16.03 kB
+../build/assets/KaTeX_Math-BoldItalic-CZnvNsCZ.woff2         16.40 kB
+../build/assets/KaTeX_Math-Italic-t53AETM-.woff2             16.44 kB
+../build/assets/KaTeX_Script-Regular-C5JkGWo-.ttf            16.65 kB
+../build/assets/KaTeX_Main-BoldItalic-DxDJ3AOS.woff2         16.78 kB
+../build/assets/KaTeX_Main-Italic-NWA7e6Wa.woff2             16.99 kB
+../build/assets/KaTeX_Math-BoldItalic-iY-2wyZ7.woff          18.67 kB
+../build/assets/KaTeX_Math-Italic-DA0__PXp.woff              18.75 kB
+../build/assets/KaTeX_Main-BoldItalic-SpSLRI95.woff          19.41 kB
+../build/assets/KaTeX_SansSerif-Regular-BNo7hRIc.ttf         19.44 kB
+../build/assets/KaTeX_Fraktur-Regular-CB_wures.ttf           19.57 kB
+../build/assets/KaTeX_Fraktur-Bold-BdnERNNW.ttf              19.58 kB
+../build/assets/KaTeX_Main-Italic-BMLOBm91.woff              19.68 kB
+../build/assets/KaTeX_SansSerif-Italic-YYjJ1zSn.ttf          22.36 kB
+../build/assets/KaTeX_SansSerif-Bold-CFMepnvq.ttf            24.50 kB
+../build/assets/KaTeX_Main-Bold-Cx986IdX.woff2               25.32 kB
+../build/assets/KaTeX_Main-Regular-B22Nviop.woff2            26.27 kB
+../build/assets/KaTeX_Typewriter-Regular-D3Ib7_Hf.ttf        27.56 kB
+../build/assets/KaTeX_AMS-Regular-BQhdFMY1.woff2             28.08 kB
+../build/assets/KaTeX_Main-Bold-Jm3AIy58.woff                29.91 kB
+../build/assets/KaTeX_Main-Regular-Dr94JaBh.woff             30.77 kB
+../build/assets/KaTeX_Math-BoldItalic-B3XSjfu4.ttf           31.20 kB
+../build/assets/KaTeX_Math-Italic-flOr_0UB.ttf               31.31 kB
+../build/assets/KaTeX_Main-BoldItalic-DzxPMmG6.ttf           32.97 kB
+../build/assets/KaTeX_AMS-Regular-DMm9YOAa.woff              33.52 kB
+../build/assets/KaTeX_Main-Italic-3WenGoN9.ttf               33.58 kB
+../build/assets/KaTeX_Main-Bold-waoOVXN0.ttf                 51.34 kB
+../build/assets/KaTeX_Main-Regular-ypZvNtVU.ttf              53.58 kB
+../build/assets/KaTeX_AMS-Regular-DRggAlZN.ttf               63.63 kB
+../build/assets/index-D7qluYef.css                          269.29 kB │ gzip:  35.80 kB
+../build/assets/colors-Cc3OSVma.js                            0.15 kB │ gzip:   0.16 kB │ map:     0.59 kB
+../build/assets/channel-BEgJPeQy.js                           0.16 kB │ gzip:   0.17 kB │ map:     0.53 kB
+../build/assets/range-OtVwhkKS.js                             0.22 kB │ gzip:   0.21 kB │ map:     0.90 kB
+../build/assets/chunk-QZHKN3VN-BbkBicxm.js                    0.25 kB │ gzip:   0.21 kB │ map:     0.84 kB
+../build/assets/chunk-55IACEB6-1JKGsX4B.js                    0.29 kB │ gzip:   0.26 kB │ map:     1.07 kB
+../build/assets/chunk-4BX2VUAB-CMK0YOkY.js                    0.35 kB │ gzip:   0.25 kB │ map:     0.94 kB
+../build/assets/diff-DbItnlRl.js                              0.35 kB │ gzip:   0.27 kB │ map:     1.22 kB
+../build/assets/chunk-FMBD7UC4-BUSCkKq-.js                    0.42 kB │ gzip:   0.32 kB │ map:     0.82 kB
+../build/assets/init-Dmth1JHB.js                              0.42 kB │ gzip:   0.23 kB │ map:     1.34 kB
+../build/assets/stateDiagram-v2-BHNVJYJU-BEW2-Yc_.js          0.48 kB │ gzip:   0.35 kB │ map:     1.52 kB
+../build/assets/classDiagram-4FO5ZUOK-ClxVCRbg.js             0.55 kB │ gzip:   0.38 kB │ map:     1.57 kB
+../build/assets/classDiagram-v2-Q7XG4LA2-ClxVCRbg.js          0.56 kB │ gzip:   0.38 kB │ map:     1.58 kB
+../build/assets/chunk-2J33WTMH-FoAjxP87.js                    0.58 kB │ gzip:   0.43 kB │ map:     2.32 kB
+../build/assets/brainfuck-C4LP7Hcl.js                         0.65 kB │ gzip:   0.37 kB │ map:     2.36 kB
+../build/assets/infoDiagram-5YYISTIA-DaxAYlu4.js              0.67 kB │ gzip:   0.46 kB │ map:     2.27 kB
+../build/assets/properties-C78fOPTZ.js                        0.72 kB │ gzip:   0.39 kB │ map:     2.53 kB
+../build/assets/cmake-BQqOBYOt.js                             0.83 kB │ gzip:   0.50 kB │ map:     3.33 kB
+../build/assets/asciiarmor-Df11BRmG.js                        0.83 kB │ gzip:   0.44 kB │ map:     2.75 kB
+../build/assets/http-DBlCnlav.js                              0.89 kB │ gzip:   0.45 kB │ map:     3.43 kB
+../build/assets/protobuf-ChK-085T.js                          0.90 kB │ gzip:   0.56 kB │ map:     2.69 kB
+../build/assets/solr-DehyRSwq.js                              0.91 kB │ gzip:   0.49 kB │ map:     3.46 kB
+../build/assets/troff-wAsdV37c.js                             1.00 kB │ gzip:   0.48 kB │ map:     3.30 kB
+../build/assets/toml-Bm5Em-hy.js                              1.18 kB │ gzip:   0.58 kB │ map:     3.90 kB
+../build/assets/spreadsheet-BCZA_wO0.js                       1.19 kB │ gzip:   0.58 kB │ map:     3.94 kB
+../build/assets/mbox-CNhZ1qSd.js                              1.44 kB │ gzip:   0.70 kB │ map:     5.21 kB
+../build/assets/ordinal-BeghXfj9.js                           1.52 kB │ gzip:   0.65 kB │ map:     5.51 kB
+../build/assets/sieve-C3Gn_uJK.js                             1.66 kB │ gzip:   0.81 kB │ map:     6.22 kB
+../build/assets/rpm-CTu-6PCP.js                               1.66 kB │ gzip:   0.87 kB │ map:     4.70 kB
+../build/assets/factor-kuTfRLto.js                            1.72 kB │ gzip:   0.65 kB │ map:     4.45 kB
+../build/assets/z80-Hz9HOZM7.js                               1.79 kB │ gzip:   0.85 kB │ map:     4.83 kB
+../build/assets/eiffel-CnydiIhH.js                            1.85 kB │ gzip:   0.96 kB │ map:     5.45 kB
+../build/assets/chunk-ND2GUHAM-CgW4dYUp.js                    1.91 kB │ gzip:   0.87 kB │ map:     6.92 kB
+../build/assets/elm-vLlmbW-K.js                               1.93 kB │ gzip:   0.86 kB │ map:     7.93 kB
+../build/assets/mathematica-DTrFuWx2.js                       1.97 kB │ gzip:   0.85 kB │ map:     7.08 kB
+../build/assets/dockerfile-BKs6k2Af.js                        2.00 kB │ gzip:   0.71 kB │ map:     6.63 kB
+../build/assets/turtle-B1tBg_DP.js                            2.02 kB │ gzip:   0.93 kB │ map:     7.18 kB
+../build/assets/ebnf-CDyGwa7X.js                              2.03 kB │ gzip:   0.85 kB │ map:     6.72 kB
+../build/assets/smalltalk-CnHTOXQT.js                         2.05 kB │ gzip:   0.88 kB │ map:     6.98 kB
+../build/assets/dtd-DF_7sFjM.js                               2.10 kB │ gzip:   0.91 kB │ map:     7.34 kB
+../build/assets/mumps-BT43cFF4.js                             2.11 kB │ gzip:   1.02 kB │ map:     7.23 kB
+../build/assets/fcl-Kvtd6kyn.js                               2.12 kB │ gzip:   0.99 kB │ map:     6.99 kB
+../build/assets/ntriples-BfvgReVJ.js                          2.15 kB │ gzip:   0.78 kB │ map:     8.06 kB
+../build/assets/apl-B4CMkyY2.js                               2.16 kB │ gzip:   1.27 kB │ map:     6.46 kB
+../build/assets/yacas-BJ4BC0dw.js                             2.20 kB │ gzip:   1.13 kB │ map:     7.61 kB
+../build/assets/isString-D_FA-9ax.js                          2.20 kB │ gzip:   1.14 kB │ map:    11.28 kB
+../build/assets/simple-mode-GW_nhZxv.js                       2.33 kB │ gzip:   1.13 kB │ map:     8.39 kB
+../build/assets/octave-Ck1zUtKM.js                            2.34 kB │ gzip:   1.13 kB │ map:     6.60 kB
+../build/assets/pascal--L3eBynH.js                            2.35 kB │ gzip:   1.23 kB │ map:     5.99 kB
+../build/assets/commonlisp-DBKNyK5s.js                        2.37 kB │ gzip:   1.14 kB │ map:     6.98 kB
+../build/assets/tcl-DVfN8rqt.js                               2.40 kB │ gzip:   1.26 kB │ map:     6.86 kB
+../build/assets/index-4ctqrhcA.js                             2.46 kB │ gzip:   1.53 kB │ map:     5.92 kB
+../build/assets/webidl-ZXfAyPTL.js                            2.56 kB │ gzip:   1.29 kB │ map:     8.43 kB
+../build/assets/pig-CevX1Tat.js                               2.58 kB │ gzip:   1.42 kB │ map:     6.95 kB
+../build/assets/forth-Ffai-XNe.js                             2.59 kB │ gzip:   1.36 kB │ map:     6.45 kB
+../build/assets/puppet-DMA9R1ak.js                            2.59 kB │ gzip:   1.23 kB │ map:     9.34 kB
+../build/assets/shell-CjFT_Tl9.js                             2.61 kB │ gzip:   1.25 kB │ map:     8.77 kB
+../build/assets/index-BW-LFCRq.js                             2.67 kB │ gzip:   1.54 kB │ map:     5.26 kB
+../build/assets/velocity-D8B20fx6.js                          2.72 kB │ gzip:   1.15 kB │ map:     8.83 kB
+../build/assets/tiddlywiki-DO-Gjzrf.js                        2.83 kB │ gzip:   1.11 kB │ map:    11.72 kB
+../build/assets/modelica-Dc1JOy9r.js                          2.83 kB │ gzip:   1.32 kB │ map:     8.53 kB
+../build/assets/diagram-5GNKFQAL-S_Gxx_Mm.js                  2.84 kB │ gzip:   1.42 kB │ map:    10.65 kB
+../build/assets/oz-BzwKVEFT.js                                2.94 kB │ gzip:   1.32 kB │ map:    10.03 kB
+../build/assets/r-DUYO_cvP.js                                 2.97 kB │ gzip:   1.40 kB │ map:    10.59 kB
+../build/assets/stex-C3f8Ysf7.js                              3.17 kB │ gzip:   1.24 kB │ map:    11.90 kB
+../build/assets/tiki-DGYXhP31.js                              3.29 kB │ gzip:   1.30 kB │ map:    13.16 kB
+../build/assets/vhdl-lSbBsy5d.js                              3.39 kB │ gzip:   1.55 kB │ map:    10.34 kB
+../build/assets/lua-BgMRiT3U.js                               3.44 kB │ gzip:   1.48 kB │ map:     8.86 kB
+../build/assets/index-ztWlH_JO.js                             3.44 kB │ gzip:   1.76 kB │ map:     7.33 kB
+../build/assets/arc-BN3pgcLk.js                               3.46 kB │ gzip:   1.49 kB │ map:    16.94 kB
+../build/assets/mscgen-BA5vi2Kp.js                            3.55 kB │ gzip:   1.02 kB │ map:     9.95 kB
+../build/assets/sparql-DkYu6x3z.js                            3.59 kB │ gzip:   1.66 kB │ map:    10.56 kB
+../build/assets/cypher-C_CwsFkJ.js                            3.61 kB │ gzip:   1.55 kB │ map:     9.91 kB
+../build/assets/d-pRatUO7H.js                                 3.76 kB │ gzip:   1.72 kB │ map:    11.71 kB
+../build/assets/coffeescript-S37ZYGWr.js                      3.92 kB │ gzip:   1.73 kB │ map:    14.67 kB
+../build/assets/vb-CmGdzxic.js                                3.94 kB │ gzip:   1.83 kB │ map:    13.12 kB
+../build/assets/swift-BzpIVaGY.js                             4.00 kB │ gzip:   1.82 kB │ map:    12.02 kB
+../build/assets/asn1-EdZsLKOL.js                              4.02 kB │ gzip:   1.99 kB │ map:    11.63 kB
+../build/assets/q-pXgVlZs6.js                                 4.07 kB │ gzip:   1.71 kB │ map:    11.10 kB
+../build/assets/dylan-DwRh75JA.js                             4.09 kB │ gzip:   1.69 kB │ map:    14.60 kB
+../build/assets/ttcn-cfg-B9xdYoR4.js                          4.10 kB │ gzip:   1.75 kB │ map:    11.65 kB
+../build/assets/livescript-BwQOo05w.js                        4.14 kB │ gzip:   1.67 kB │ map:    10.31 kB
+../build/assets/groovy-D9Dt4D0W.js                            4.18 kB │ gzip:   1.81 kB │ map:    13.62 kB
+../build/assets/haskell-BWDZoCOh.js                           4.21 kB │ gzip:   1.92 kB │ map:    12.49 kB
+../build/assets/diagram-LMA3HP47-DH3wOUaX.js                  4.33 kB │ gzip:   1.92 kB │ map:    13.64 kB
+../build/assets/asterisk-B-8jnY81.js                          4.53 kB │ gzip:   1.81 kB │ map:    10.62 kB
+../build/assets/gas-Bneqetm1.js                               4.61 kB │ gzip:   1.31 kB │ map:    14.12 kB
+../build/assets/fortran-DYz_wnZ1.js                           4.70 kB │ gzip:   2.04 kB │ map:    12.12 kB
+../build/assets/defaultLocale-CzDG__Ur.js                     4.74 kB │ gzip:   2.23 kB │ map:    22.03 kB
+../build/assets/mllike-CXdrOF99.js                            4.83 kB │ gzip:   1.57 kB │ map:    13.09 kB
+../build/assets/ttcn-CfJYG6tj.js                              4.84 kB │ gzip:   2.16 kB │ map:    14.24 kB
+../build/assets/index-Bi7T_FA4.js                             4.90 kB │ gzip:   1.96 kB │ map:    22.63 kB
+../build/assets/index-gHwFFLIp.js                             5.11 kB │ gzip:   2.44 kB │ map:    11.59 kB
+../build/assets/ecl-Cabwm37j.js                               5.17 kB │ gzip:   2.34 kB │ map:    12.81 kB
+../build/assets/vega-interpreter-Dh_yu-yv.js                  5.17 kB │ gzip:   2.12 kB │ map:    17.15 kB
+../build/assets/crystal-SjHAIU92.js                           5.18 kB │ gzip:   2.11 kB │ map:    19.31 kB
+../build/assets/ruby-B2Rjki9n.js                              5.21 kB │ gzip:   2.19 kB │ map:    17.39 kB
+../build/assets/pieDiagram-4H26LBE5-B4SYWrYH.js               5.40 kB │ gzip:   2.42 kB │ map:    19.37 kB
+../build/assets/julia-DuME0IfC.js                             5.43 kB │ gzip:   2.18 kB │ map:    17.42 kB
+../build/assets/vbscript-BuJXcnF6.js                          5.86 kB │ gzip:   2.60 kB │ map:    19.65 kB
+../build/assets/mirc-CjQqDB4T.js                              5.96 kB │ gzip:   2.72 kB │ map:    11.78 kB
+../build/assets/linear-DCLTjozf.js                            6.04 kB │ gzip:   2.50 kB │ map:    27.63 kB
+../build/assets/diagram-2AECGRRQ-BgQJT2q1.js                  6.04 kB │ gzip:   2.57 kB │ map:    20.94 kB
+../build/assets/cobol-CWcv1MsR.js                             6.24 kB │ gzip:   3.00 kB │ map:    12.27 kB
+../build/assets/scheme-C41bIUwD.js                            6.41 kB │ gzip:   2.42 kB │ map:    16.71 kB
+../build/assets/python-BuPzkPfP.js                            6.52 kB │ gzip:   2.77 kB │ map:    23.24 kB
+../build/assets/xquery-CQfU5ijd.js                            6.67 kB │ gzip:   2.60 kB │ map:    23.45 kB
+../build/assets/pug-DukmZTjD.js                               6.72 kB │ gzip:   1.98 kB │ map:    21.27 kB
+../build/assets/textile-CnDTJFAw.js                           6.85 kB │ gzip:   2.47 kB │ map:    21.68 kB
+../build/assets/nsis-LdVXkNf5.js                              6.85 kB │ gzip:   3.02 kB │ map:     9.20 kB
+../build/assets/nginx-DdIZxoE0.js                             7.38 kB │ gzip:   2.76 kB │ map:    12.87 kB
+../build/assets/powershell-CFHJl5sT.js                        7.82 kB │ gzip:   3.37 kB │ map:    17.60 kB
+../build/assets/haxe-H-WmDvRZ.js                              7.94 kB │ gzip:   2.98 kB │ map:    29.91 kB
+../build/assets/gherkin-heZmZLOM.js                           8.01 kB │ gzip:   5.13 kB │ map:    12.09 kB
+../build/assets/erlang-BNw1qcRV.js                            8.11 kB │ gzip:   2.93 kB │ map:    29.36 kB
+../build/assets/verilog-C6RDOZhf.js                           8.29 kB │ gzip:   3.55 kB │ map:    31.56 kB
+../build/assets/sas-B4kiWyti.js                               9.38 kB │ gzip:   4.14 kB │ map:    18.41 kB
+../build/assets/perl-CdXCOZ3F.js                              9.80 kB │ gzip:   3.49 kB │ map:    44.60 kB
+../build/assets/stateDiagram-AJRCARHV-CNnU_6re.js            10.45 kB │ gzip:   3.68 kB │ map:    35.89 kB
+../build/assets/clojure-BMjYHr_A.js                          10.86 kB │ gzip:   4.03 kB │ map:    25.45 kB
+../build/assets/diagram-KO2AKTUF-DozscoXu.js                 10.90 kB │ gzip:   4.23 kB │ map:    38.75 kB
+../build/assets/diagram-OG6HWLK6-BZkD_4Jp.js                 11.26 kB │ gzip:   4.03 kB │ map:    38.37 kB
+../build/assets/dagre-BM42HDAG-CWlnMcfr.js                   11.48 kB │ gzip:   4.27 kB │ map:    47.15 kB
+../build/assets/idl-BEugSyMb.js                              11.67 kB │ gzip:   4.56 kB │ map:    20.35 kB
+../build/assets/index-BDkSvFjK.js                            12.74 kB │ gzip:   5.62 kB │ map:    34.05 kB
+../build/assets/index-c8LzRLgb.js                            14.83 kB │ gzip:   6.00 kB │ map:    37.67 kB
+../build/assets/index-CMLh1v86.js                            16.35 kB │ gzip:   7.47 kB │ map:    22.65 kB
+../build/assets/javascript-qCveANmP.js                       17.13 kB │ gzip:   5.79 kB │ map:    68.25 kB
+../build/assets/time-CW78aI_c.js                             17.61 kB │ gzip:   6.00 kB │ map:    78.99 kB
+../build/assets/ishikawaDiagram-YF4QCWOH-BftVqLZJ.js         17.65 kB │ gzip:   6.74 kB │ map:    63.33 kB
+../build/assets/kanban-definition-UN3LZRKU-D1npbKbl.js       20.78 kB │ gzip:   7.36 kB │ map:    68.64 kB
+../build/assets/index-Ba3dARZA.js                            20.97 kB │ gzip:   9.37 kB │ map:    36.86 kB
+../build/assets/index-BDJqlzHH.js                            21.25 kB │ gzip:   9.77 kB │ map:    39.08 kB
+../build/assets/clike-B9uivgTg.js                            22.35 kB │ gzip:   7.90 kB │ map:    59.67 kB
+../build/assets/index-D9dXJf-j.js                            23.10 kB │ gzip:  10.42 kB │ map:    39.43 kB
+../build/assets/sankeyDiagram-5OEKKPKP-CEPIcUz1.js           23.42 kB │ gzip:   8.61 kB │ map:    88.13 kB
+../build/assets/journeyDiagram-JHISSGLW-jyUmdCMH.js          23.67 kB │ gzip:   8.42 kB │ map:    80.68 kB
+../build/assets/mindmap-definition-RKZ34NQL-CfYTEDUu.js      23.72 kB │ gzip:   8.07 kB │ map:    77.56 kB
+../build/assets/graph-BlwPajkw.js                            23.99 kB │ gzip:   8.36 kB │ map:   200.97 kB
+../build/assets/stylus-B533Al4x.js                           25.84 kB │ gzip:   8.64 kB │ map:    64.41 kB
+../build/assets/index-C34gnyUX.js                            25.89 kB │ gzip:  11.64 kB │ map:    48.30 kB
+../build/assets/wardleyDiagram-YWT4CUSO-DjJG5fho.js          26.19 kB │ gzip:   6.99 kB │ map:    82.20 kB
+../build/assets/index-CUOvn311.js                            26.40 kB │ gzip:   8.83 kB │ map:   111.78 kB
+../build/assets/erDiagram-TEJ5UH35-BnAfa849.js               27.05 kB │ gzip:   9.43 kB │ map:    90.56 kB
+../build/assets/css-BnMrqG3P.js                              27.17 kB │ gzip:   8.51 kB │ map:    62.95 kB
+../build/assets/index-YLwASCGC.js                            28.73 kB │ gzip:  11.69 kB │ map:    76.10 kB
+../build/assets/gitGraphDiagram-PVQCEYII-BAbggqiG.js         30.02 kB │ gzip:   8.94 kB │ map:   119.75 kB
+../build/assets/index-DHK8hPpF.js                            30.83 kB │ gzip:  12.67 kB │ map:    45.17 kB
+../build/assets/requirementDiagram-4Y6WPE33-Bc7v8TjE.js      31.30 kB │ gzip:   9.87 kB │ map:    99.29 kB
+../build/assets/timeline-definition-PNZ67QCA-BVTbkePi.js     31.45 kB │ gzip:  10.50 kB │ map:   108.48 kB
+../build/assets/step-DYkdTxz9.js                             32.30 kB │ gzip:   9.75 kB │ map:   110.90 kB
+../build/assets/index-CboZBPiX.js                            32.36 kB │ gzip:  13.09 kB │ map:    72.47 kB
+../build/assets/quadrantDiagram-W4KKPZXB-DXjp8Ngo.js         34.58 kB │ gzip:  10.20 kB │ map:   111.75 kB
+../build/assets/layout-Boy8vhSP.js                           35.88 kB │ gzip:  12.90 kB │ map:   240.04 kB
+../build/assets/sql-D0XecflT.js                              37.09 kB │ gzip:  10.97 kB │ map:    55.97 kB
+../build/assets/chunk-AQP2D5EJ-CvZkFGWL.js                   37.60 kB │ gzip:  12.29 kB │ map:   124.29 kB
+../build/assets/xychartDiagram-2RQKCTM6-rA8ZgJHP.js          40.36 kB │ gzip:  11.54 kB │ map:   133.51 kB
+../build/assets/index-CPTvucOc.js                            40.77 kB │ gzip:  16.78 kB │ map:    46.07 kB
+../build/assets/vennDiagram-CIIHVFJN-CCfLWiju.js             41.92 kB │ gzip:  15.64 kB │ map:   186.63 kB
+../build/assets/index-CE0lmxRJ.js                            44.20 kB │ gzip:  15.35 kB │ map:   179.73 kB
+../build/assets/index-CPKF_DJk.js                            45.14 kB │ gzip:  19.19 kB │ map:    75.51 kB
+../build/assets/chunk-727SXJPM-CD4RoBfL.js                   49.14 kB │ gzip:  15.80 kB │ map:   152.33 kB
+../build/assets/ganttDiagram-6RSMTGT7-BStf2O25.js            52.25 kB │ gzip:  17.91 kB │ map:   168.75 kB
+../build/assets/flowDiagram-I6XJVG4X-BnQZYD2I.js             61.26 kB │ gzip:  19.58 kB │ map:   190.54 kB
+../build/assets/c4Diagram-AAUBKEIU-D89ukw9p.js               70.03 kB │ gzip:  19.70 kB │ map:   203.82 kB
+../build/assets/index-BB64Bf1C.js                            70.85 kB │ gzip:  25.87 kB │ map:    79.61 kB
+../build/assets/blockDiagram-GPEHLZMM-CWWL4cfG.js            75.19 kB │ gzip:  21.66 kB │ map:   260.15 kB
+../build/assets/cose-bilkent-S5V4N54A-2KTs1Ys9.js            81.63 kB │ gzip:  22.50 kB │ map:   305.42 kB
+../build/assets/index-DPHWHpiI.js                            87.01 kB │ gzip:  34.53 kB │ map:   121.50 kB
+../build/assets/index-BMN7tHUf.js                            97.90 kB │ gzip:  28.48 kB │ map:   114.23 kB
+../build/assets/index-BeypI7AU.js                           100.59 kB │ gzip:  33.66 kB │ map:   110.69 kB
+../build/assets/sequenceDiagram-3UESZ5HK-T8qOu-Hi.js        117.37 kB │ gzip:  31.23 kB │ map:   351.79 kB
+../build/assets/translation-Ci6R2QNF.js                     146.61 kB │ gzip:  35.66 kB │ map:     0.10 kB
+../build/assets/translation-u3QP38Os.js                     146.73 kB │ gzip:  37.32 kB │ map:     0.11 kB
+../build/assets/translation-fMKelJOo.js                     146.90 kB │ gzip:  37.04 kB │ map:     0.10 kB
+../build/assets/translation-Cdi0Bfs3.js                     149.02 kB │ gzip:  36.78 kB │ map:     0.10 kB
+../build/assets/architectureDiagram-3BPJPVTR-D4LWHwNO.js    149.64 kB │ gzip:  42.34 kB │ map:   594.46 kB
+../build/assets/translation-D3TRSNs9.js                     151.22 kB │ gzip:  41.45 kB │ map:     0.11 kB
+../build/assets/translation-DDE8-Axp.js                     151.64 kB │ gzip:  40.87 kB │ map:     0.11 kB
+../build/assets/translation-DaGGRHIB.js                     151.81 kB │ gzip:  41.74 kB │ map:     0.11 kB
+../build/assets/translation-DU_pIaQd.js                     155.63 kB │ gzip:  40.72 kB │ map:     0.11 kB
+../build/assets/translation-BlD3aEag.js                     157.16 kB │ gzip:  41.49 kB │ map:     0.11 kB
+../build/assets/translation-DBd0q7uz.js                     157.48 kB │ gzip:  44.45 kB │ map:     0.11 kB
+../build/assets/translation-bSemjypK.js                     160.30 kB │ gzip:  46.11 kB │ map:     0.11 kB
+../build/assets/translation-3jAmqOR2.js                     164.69 kB │ gzip:  45.50 kB │ map:     0.11 kB
+../build/assets/translation-DSvH5z8U.js                     165.84 kB │ gzip:  44.80 kB │ map:     0.11 kB
+../build/assets/translation-ve4pY0fK.js                     168.66 kB │ gzip:  49.44 kB │ map:     0.11 kB
+../build/assets/translation-DP84UNvi.js                     169.01 kB │ gzip:  46.48 kB │ map:     0.11 kB
+../build/assets/translation-DvqChohv.js                     173.84 kB │ gzip:  47.58 kB │ map:     0.11 kB
+../build/assets/translation-D1h0Il2H.js                     174.16 kB │ gzip:  50.32 kB │ map:     0.11 kB
+../build/assets/translation-B9zysbjG.js                     175.16 kB │ gzip:  45.79 kB │ map:     0.10 kB
+../build/assets/translation-Ccwja8PS.js                     178.59 kB │ gzip:  52.81 kB │ map:     0.11 kB
+../build/assets/translation-C1WDJbDA.js                     178.60 kB │ gzip:  72.53 kB │ map:     0.11 kB
+../build/assets/translation-DpFCJ8Dn.js                     178.93 kB │ gzip:  51.05 kB │ map:     0.11 kB
+../build/assets/translation-C6Icr2lI.js                     179.73 kB │ gzip:  74.08 kB │ map:     0.11 kB
+../build/assets/translation-CJnDSR_5.js                     180.07 kB │ gzip:  54.50 kB │ map:     0.11 kB
+../build/assets/translation-Btz4RjBa.js                     182.64 kB │ gzip:  66.67 kB │ map:     0.11 kB
+../build/assets/translation-D7e41wCc.js                     182.74 kB │ gzip:  55.93 kB │ map:     0.11 kB
+../build/assets/translation-pCU4q-w_.js                     183.42 kB │ gzip:  50.75 kB │ map:     0.11 kB
+../build/assets/translation-BWfQVCvf.js                     186.14 kB │ gzip:  57.85 kB │ map:     0.11 kB
+../build/assets/translation-Bpr4Zacl.js                     186.28 kB │ gzip:  50.70 kB │ map:     0.11 kB
+../build/assets/translation-DyuNa49w.js                     187.10 kB │ gzip:  59.98 kB │ map:     0.11 kB
+../build/assets/translation-Byq_tqRh.js                     188.45 kB │ gzip:  51.70 kB │ map:     0.11 kB
+../build/assets/translation-2LQJRuxH.js                     195.56 kB │ gzip:  76.44 kB │ map:     0.11 kB
+../build/assets/translation-C1EkGdYR.js                     196.56 kB │ gzip:  56.47 kB │ map:     0.11 kB
+../build/assets/translation-3IhE5gG2.js                     199.40 kB │ gzip:  57.19 kB │ map:     0.11 kB
+../build/assets/translation-ndJXyKvm.js                     204.58 kB │ gzip:  58.56 kB │ map:     0.11 kB
+../build/assets/translation-BuQx4adn.js                     205.49 kB │ gzip:  57.28 kB │ map:     0.11 kB
+../build/assets/translation-BkcS93BV.js                     206.89 kB │ gzip:  57.39 kB │ map:     0.11 kB
+../build/assets/translation-BFVmpm4v.js                     211.60 kB │ gzip:  67.22 kB │ map:     0.11 kB
+../build/assets/translation-CTPZZujQ.js                     219.10 kB │ gzip:  60.49 kB │ map:     0.11 kB
+../build/assets/translation-C0OM3ayb.js                     234.83 kB │ gzip:  69.88 kB │ map:     0.11 kB
+../build/assets/translation-B0u82q-J.js                     237.20 kB │ gzip:  62.46 kB │ map:     0.11 kB
+../build/assets/translation-Cb1Wg5D3.js                     238.04 kB │ gzip:  78.36 kB │ map:     0.11 kB
+../build/assets/translation-SXGk13ot.js                     238.08 kB │ gzip:  78.25 kB │ map:     0.11 kB
+../build/assets/translation-DjIXQI2B.js                     240.54 kB │ gzip:  70.91 kB │ map:     0.11 kB
+../build/assets/translation-BX2DDc0u.js                     240.86 kB │ gzip:  71.08 kB │ map:     0.11 kB
+../build/assets/translation-OAHwXEYT.js                     241.91 kB │ gzip:  69.98 kB │ map:     0.11 kB
+../build/assets/translation-svEP5XG_.js                     243.28 kB │ gzip:  82.03 kB │ map:     0.11 kB
+../build/assets/translation-BgFWWW_k.js                     244.36 kB │ gzip:  72.98 kB │ map:     0.11 kB
+../build/assets/translation-CeCGDwW5.js                     245.61 kB │ gzip:  72.57 kB │ map:     0.11 kB
+../build/assets/translation-BIy18owJ.js                     247.72 kB │ gzip:  72.35 kB │ map:     0.11 kB
+../build/assets/translation-RuIOO5hW.js                     248.58 kB │ gzip:  74.82 kB │ map:     0.11 kB
+../build/assets/translation-BdXHCJ4w.js                     248.65 kB │ gzip:  72.41 kB │ map:     0.11 kB
+../build/assets/translation-m2DIDpTv.js                     248.96 kB │ gzip:  71.05 kB │ map:     0.11 kB
+../build/assets/translation-ChWS8iF-.js                     249.52 kB │ gzip:  74.58 kB │ map:     0.11 kB
+../build/assets/translation-dZcNZMEu.js                     250.64 kB │ gzip:  71.19 kB │ map:     0.11 kB
+../build/assets/translation-TT6dynfB.js                     250.69 kB │ gzip:  82.05 kB │ map:     0.11 kB
+../build/assets/translation-C7aMWeAh.js                     252.42 kB │ gzip:  82.75 kB │ map:     0.11 kB
+../build/assets/translation-D8BcY0kk.js                     252.91 kB │ gzip:  71.64 kB │ map:     0.11 kB
+../build/assets/translation-DWHSR_NV.js                     253.01 kB │ gzip:  74.45 kB │ map:     0.11 kB
+../build/assets/translation-9qFGMt4v.js                     254.61 kB │ gzip:  84.37 kB │ map:     0.11 kB
+../build/assets/translation-CWpnnAz9.js                     255.79 kB │ gzip:  72.65 kB │ map:     0.11 kB
+../build/assets/translation-Nm_PlRoH.js                     255.79 kB │ gzip:  82.39 kB │ map:     0.11 kB
+../build/assets/index-B72Ncwws.js                           255.89 kB │ gzip:  82.52 kB │ map: 1,188.98 kB
+../build/assets/translation-BKrHNvr6.js                     256.95 kB │ gzip:  72.52 kB │ map:     0.11 kB
+../build/assets/translation-BoS9GpP_.js                     258.72 kB │ gzip:  73.00 kB │ map:     0.11 kB
+../build/assets/translation-DdrUnZ2K.js                     265.94 kB │ gzip:  70.15 kB │ map:     0.11 kB
+../build/assets/cytoscape.esm-CyJtwmzi.js                   442.46 kB │ gzip: 141.94 kB │ map: 1,864.95 kB
+../build/assets/vega.module-VtGJHXh6.js                     447.60 kB │ gzip: 162.75 kB │ map: 1,987.36 kB
+../build/assets/mermaid.core-D15cFO_Q.js                    560.78 kB │ gzip: 129.41 kB │ map: 1,716.88 kB
+../build/assets/wardley-L42UT6IY-BY6vHBgQ.js                615.24 kB │ gzip: 148.60 kB │ map: 2,044.17 kB
+../build/assets/index-LZVhepO3.js                         1,438.96 kB │ gzip: 458.48 kB │ map: 5,717.57 kB
+
+(!) Some chunks are larger than 500 kB after minification. Consider:
+- Using dynamic import() to code-split the application
+- Use build.rollupOptions.output.manualChunks to improve chunking: https://rollupjs.org/configuration-options/#output-manualchunks
+- Adjust chunk size limit for this warning via build.chunkSizeWarningLimit.
+✓ built in 13.02s

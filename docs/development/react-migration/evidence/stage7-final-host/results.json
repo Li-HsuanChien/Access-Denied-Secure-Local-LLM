@@ -1,0 +1,2797 @@
+{
+  "mode": "host",
+  "appOrigin": "http://127.0.0.1:4177",
+  "hostOrigin": "http://127.0.0.1:8766",
+  "browserExecutable": "/Users/evansinocchi/Library/Caches/ms-playwright/chromium-1234/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+  "browserVersion": "151.0.7922.34",
+  "reports": [
+    {
+      "name": "all four workflows through unchanged isolated Python API",
+      "mode": "host",
+      "requests": [
+        {
+          "operation": "health",
+          "request_id": null,
+          "payload": null,
+          "start": 1543.476958,
+          "end": 1634.933416,
+          "status": 200,
+          "result": {
+            "status": "ok",
+            "ready": true,
+            "api_version": "secure-qa-dev/1",
+            "answering": {
+              "ready": true,
+              "model_id": "fake-extractive",
+              "name": "Deterministic test model",
+              "quant": null,
+              "ctx_size": 4096,
+              "api_version": null,
+              "runtime_version": null,
+              "stub": true,
+              "error": null
+            },
+            "library": {
+              "ready": true,
+              "active_version": "v0001",
+              "chunk_count": 30,
+              "document_count": 6,
+              "embedding_model": "fake-hash-embedder",
+              "error": null
+            },
+            "preferences": {
+              "general_knowledge": true,
+              "history_enabled": true
+            }
+          }
+        },
+        {
+          "operation": "history.list",
+          "request_id": "974f88c9-bf7a-4857-a543-c150a870e1fe",
+          "payload": {},
+          "start": 1552.192625,
+          "end": 1628.759666,
+          "status": 200,
+          "result": {
+            "request_id": "974f88c9-bf7a-4857-a543-c150a870e1fe",
+            "operation": "history.list",
+            "result": {
+              "conversations": [
+                {
+                  "conversation_id": "stage4a-preexisting",
+                  "title": "Preexisting seeded answer",
+                  "updated_at": "2026-10-21 04:55:07",
+                  "model_id": "fake-extractive",
+                  "collection_version": "v0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "settings.get",
+          "request_id": "9d68edce-a942-4879-b18a-0ab57a2b30d1",
+          "payload": {},
+          "start": 1554.445083,
+          "end": 1643.7805,
+          "status": 200,
+          "result": {
+            "request_id": "9d68edce-a942-4879-b18a-0ab57a2b30d1",
+            "operation": "settings.get",
+            "result": {
+              "general_knowledge": true
+            }
+          }
+        },
+        {
+          "operation": "history.enabled",
+          "request_id": "02269593-5841-416d-b517-7afe0e3319fd",
+          "payload": {},
+          "start": 1554.618,
+          "end": 1635.508583,
+          "status": 200,
+          "result": {
+            "request_id": "02269593-5841-416d-b517-7afe0e3319fd",
+            "operation": "history.enabled",
+            "result": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "operation": "settings.get",
+          "request_id": "f6783628-4652-4bf7-98f2-b47ca82d9687",
+          "payload": {},
+          "start": 1586.937458,
+          "end": 1645.165541,
+          "status": 200,
+          "result": {
+            "request_id": "f6783628-4652-4bf7-98f2-b47ca82d9687",
+            "operation": "settings.get",
+            "result": {
+              "general_knowledge": true
+            }
+          }
+        },
+        {
+          "operation": "history.enabled",
+          "request_id": "c1719fdd-bd78-4ce5-b779-04dbf379b7a6",
+          "payload": {},
+          "start": 1587.412958,
+          "end": 1645.788625,
+          "status": 200,
+          "result": {
+            "request_id": "c1719fdd-bd78-4ce5-b779-04dbf379b7a6",
+            "operation": "history.enabled",
+            "result": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "operation": "history.open",
+          "request_id": "80856b0b-87b0-4419-bc59-426758d5c816",
+          "payload": {
+            "conversation_id": "stage4a-preexisting"
+          },
+          "start": 1718.981583,
+          "end": 1726.775833,
+          "status": 200,
+          "result": {
+            "request_id": "80856b0b-87b0-4419-bc59-426758d5c816",
+            "operation": "history.open",
+            "result": {
+              "conversation": {
+                "conversation_id": "stage4a-preexisting",
+                "title": "Preexisting seeded answer",
+                "updated_at": "2026-10-21 04:55:07",
+                "model_id": "fake-extractive",
+                "collection_version": "v0001",
+                "answer_json": "{\"request_id\": \"17184040-1a0e-44d6-8373-604ea5729fa0\", \"question\": \"What is the annual occupational dose limit?\", \"status\": \"answered\", \"evidence_mode\": \"text\", \"documents\": [{\"text\": \"Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years.\", \"citation_ids\": [\"S1\"]}], \"general_knowledge\": null, \"limitations\": [], \"citations\": [{\"citation_id\": \"S1\", \"document_id\": \"doc_2df64adde9fde7f722bc9ce6\", \"document_title\": \"Radiation Protection Handbook\", \"source_filename\": \"synthetic/radiation_protection_handbook.pdf\", \"page_start\": 1, \"page_end\": 2, \"pages\": [{\"page_number\": 1, \"page_char_start\": 0, \"page_char_end\": 207, \"highlight_rects\": [], \"coordinates_reliable\": false, \"page_width\": 612, \"page_height\": 792}, {\"page_number\": 2, \"page_char_start\": 0, \"page_char_end\": 192, \"highlight_rects\": [], \"coordinates_reliable\": false, \"page_width\": 612, \"page_height\": 792}], \"chunk_ids\": [\"chk_c3eeb000911d07715283441c\"], \"char_start\": 0, \"char_end\": 399, \"text_checksum_sha256\": \"fd0d9191983394e6e09b7944ede9f4580a647d43557766a460a9d6d635689689\", \"quote\": \"Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years. The ALARA principle requires exposures to be kept as low as reasonably achievable below these limits.\\nTime, distance and shielding are the three basic methods of reducing external dose. Doubling the distance from a point source reduces the dose rate to one quarter, following the inverse square\", \"evidence_type\": \"text\", \"score\": 0.4256, \"rank\": 1}], \"evidence\": [{\"citation_id\": \"S1\", \"chunk_id\": \"chk_c3eeb000911d07715283441c\", \"document_id\": \"doc_2df64adde9fde7f722bc9ce6\", \"page_start\": 1, \"page_end\": 2, \"score\": 0.4256, \"rank\": 1, \"cited\": true}, {\"citation_id\": \"S2\", \"chunk_id\": \"chk_2624eab5bb52f7e551ad462b\", \"document_id\": \"doc_72f2433a1e2f2e6340f14040\", \"page_start\": 19, \"page_end\": 21, \"score\": 0.4146, \"rank\": 2, \"cited\": false}, {\"citation_id\": \"S3\", \"chunk_id\": \"chk_db5f5e9612dbfa21247196fa\", \"document_id\": \"doc_fe3ef4048537ba2524ad310d\", \"page_start\": 2, \"page_end\": 3, \"score\": 0.4079, \"rank\": 3, \"cited\": false}, {\"citation_id\": \"S4\", \"chunk_id\": \"chk_739799964b91c84582d2cc64\", \"document_id\": \"doc_72f2433a1e2f2e6340f14040\", \"page_start\": 18, \"page_end\": 20, \"score\": 0.4032, \"rank\": 4, \"cited\": false}, {\"citation_id\": \"S5\", \"chunk_id\": \"chk_708973eb708de8dd578e918a\", \"document_id\": \"doc_72f2433a1e2f2e6340f14040\", \"page_start\": 21, \"page_end\": 23, \"score\": 0.3898, \"rank\": 5, \"cited\": false}], \"warnings\": [{\"code\": \"test_model\", \"message\": \"This answer came from a test model, not the answering model.\"}], \"model\": {\"model_id\": \"fake-extractive\", \"name\": \"Deterministic test model\", \"quant\": null, \"api_version\": null, \"runtime_version\": null, \"stub\": true}, \"collection_version\": \"v0001\", \"prompt_version\": \"e3-rag-2026-10-05.1\", \"timing\": {\"retrieval_ms\": 111.1, \"generation_ms\": 1.5, \"total_ms\": 115.1, \"attempts\": 1, \"prompt_tokens\": null, \"completion_tokens\": null}, \"error\": null, \"schema_version\": \"1.0.0\"}",
+                "answer": {
+                  "request_id": "17184040-1a0e-44d6-8373-604ea5729fa0",
+                  "question": "What is the annual occupational dose limit?",
+                  "status": "answered",
+                  "evidence_mode": "text",
+                  "documents": [
+                    {
+                      "text": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years.",
+                      "citation_ids": [
+                        "S1"
+                      ]
+                    }
+                  ],
+                  "general_knowledge": null,
+                  "limitations": [],
+                  "citations": [
+                    {
+                      "citation_id": "S1",
+                      "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                      "document_title": "Radiation Protection Handbook",
+                      "source_filename": "synthetic/radiation_protection_handbook.pdf",
+                      "page_start": 1,
+                      "page_end": 2,
+                      "pages": [
+                        {
+                          "page_number": 1,
+                          "page_char_start": 0,
+                          "page_char_end": 207,
+                          "highlight_rects": [],
+                          "coordinates_reliable": false,
+                          "page_width": 612,
+                          "page_height": 792
+                        },
+                        {
+                          "page_number": 2,
+                          "page_char_start": 0,
+                          "page_char_end": 192,
+                          "highlight_rects": [],
+                          "coordinates_reliable": false,
+                          "page_width": 612,
+                          "page_height": 792
+                        }
+                      ],
+                      "chunk_ids": [
+                        "chk_c3eeb000911d07715283441c"
+                      ],
+                      "char_start": 0,
+                      "char_end": 399,
+                      "text_checksum_sha256": "fd0d9191983394e6e09b7944ede9f4580a647d43557766a460a9d6d635689689",
+                      "quote": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years. The ALARA principle requires exposures to be kept as low as reasonably achievable below these limits.\nTime, distance and shielding are the three basic methods of reducing external dose. Doubling the distance from a point source reduces the dose rate to one quarter, following the inverse square",
+                      "evidence_type": "text",
+                      "score": 0.4256,
+                      "rank": 1
+                    }
+                  ],
+                  "evidence": [
+                    {
+                      "citation_id": "S1",
+                      "chunk_id": "chk_c3eeb000911d07715283441c",
+                      "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                      "page_start": 1,
+                      "page_end": 2,
+                      "score": 0.4256,
+                      "rank": 1,
+                      "cited": true
+                    },
+                    {
+                      "citation_id": "S2",
+                      "chunk_id": "chk_2624eab5bb52f7e551ad462b",
+                      "document_id": "doc_72f2433a1e2f2e6340f14040",
+                      "page_start": 19,
+                      "page_end": 21,
+                      "score": 0.4146,
+                      "rank": 2,
+                      "cited": false
+                    },
+                    {
+                      "citation_id": "S3",
+                      "chunk_id": "chk_db5f5e9612dbfa21247196fa",
+                      "document_id": "doc_fe3ef4048537ba2524ad310d",
+                      "page_start": 2,
+                      "page_end": 3,
+                      "score": 0.4079,
+                      "rank": 3,
+                      "cited": false
+                    },
+                    {
+                      "citation_id": "S4",
+                      "chunk_id": "chk_739799964b91c84582d2cc64",
+                      "document_id": "doc_72f2433a1e2f2e6340f14040",
+                      "page_start": 18,
+                      "page_end": 20,
+                      "score": 0.4032,
+                      "rank": 4,
+                      "cited": false
+                    },
+                    {
+                      "citation_id": "S5",
+                      "chunk_id": "chk_708973eb708de8dd578e918a",
+                      "document_id": "doc_72f2433a1e2f2e6340f14040",
+                      "page_start": 21,
+                      "page_end": 23,
+                      "score": 0.3898,
+                      "rank": 5,
+                      "cited": false
+                    }
+                  ],
+                  "warnings": [
+                    {
+                      "code": "test_model",
+                      "message": "This answer came from a test model, not the answering model."
+                    }
+                  ],
+                  "model": {
+                    "model_id": "fake-extractive",
+                    "name": "Deterministic test model",
+                    "quant": null,
+                    "api_version": null,
+                    "runtime_version": null,
+                    "stub": true
+                  },
+                  "collection_version": "v0001",
+                  "prompt_version": "e3-rag-2026-10-05.1",
+                  "timing": {
+                    "retrieval_ms": 111.1,
+                    "generation_ms": 1.5,
+                    "total_ms": 115.1,
+                    "attempts": 1,
+                    "prompt_tokens": null,
+                    "completion_tokens": null
+                  },
+                  "error": null,
+                  "schema_version": "1.0.0"
+                }
+              }
+            }
+          }
+        },
+        {
+          "operation": "health",
+          "request_id": null,
+          "payload": null,
+          "start": 1860.420166,
+          "end": 1873.072583,
+          "status": 200,
+          "result": {
+            "status": "ok",
+            "ready": true,
+            "api_version": "secure-qa-dev/1",
+            "answering": {
+              "ready": true,
+              "model_id": "fake-extractive",
+              "name": "Deterministic test model",
+              "quant": null,
+              "ctx_size": 4096,
+              "api_version": null,
+              "runtime_version": null,
+              "stub": true,
+              "error": null
+            },
+            "library": {
+              "ready": true,
+              "active_version": "v0001",
+              "chunk_count": 30,
+              "document_count": 6,
+              "embedding_model": "fake-hash-embedder",
+              "error": null
+            },
+            "preferences": {
+              "general_knowledge": true,
+              "history_enabled": true
+            }
+          }
+        },
+        {
+          "operation": "settings.get",
+          "request_id": "ce872790-ce67-47e8-b177-d02844c4cb0e",
+          "payload": {},
+          "start": 1865.728041,
+          "end": 1873.433041,
+          "status": 200,
+          "result": {
+            "request_id": "ce872790-ce67-47e8-b177-d02844c4cb0e",
+            "operation": "settings.get",
+            "result": {
+              "general_knowledge": true
+            }
+          }
+        },
+        {
+          "operation": "history.enabled",
+          "request_id": "45408900-236b-430d-854e-eb101fd3d7dd",
+          "payload": {},
+          "start": 1867.812333,
+          "end": 1877.089,
+          "status": 200,
+          "result": {
+            "request_id": "45408900-236b-430d-854e-eb101fd3d7dd",
+            "operation": "history.enabled",
+            "result": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "operation": "settings.update",
+          "request_id": "f7d10428-a971-4d87-b010-79034140e311",
+          "payload": {
+            "general_knowledge": false
+          },
+          "start": 1925.451208,
+          "end": 1933.995416,
+          "status": 200,
+          "result": {
+            "request_id": "f7d10428-a971-4d87-b010-79034140e311",
+            "operation": "settings.update",
+            "result": {
+              "general_knowledge": false
+            }
+          }
+        },
+        {
+          "operation": "history.set_enabled",
+          "request_id": "3ae007e0-a16e-4445-8586-2e3f5ece6d89",
+          "payload": {
+            "enabled": false
+          },
+          "start": 1986.737208,
+          "end": 1990.055125,
+          "status": 200,
+          "result": {
+            "request_id": "3ae007e0-a16e-4445-8586-2e3f5ece6d89",
+            "operation": "history.set_enabled",
+            "result": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "operation": "history.list",
+          "request_id": "c118b6ee-7cb2-4ce3-970e-d91c61ef1de5",
+          "payload": {},
+          "start": 2068.976666,
+          "end": 2077.265583,
+          "status": 200,
+          "result": {
+            "request_id": "c118b6ee-7cb2-4ce3-970e-d91c61ef1de5",
+            "operation": "history.list",
+            "result": {
+              "conversations": [
+                {
+                  "conversation_id": "stage4a-preexisting",
+                  "title": "Preexisting seeded answer",
+                  "updated_at": "2026-10-21 04:55:07",
+                  "model_id": "fake-extractive",
+                  "collection_version": "v0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "settings.get",
+          "request_id": "43bdb5c7-babb-428f-9634-9c031138ed4c",
+          "payload": {},
+          "start": 2069.491125,
+          "end": 2078.101166,
+          "status": 200,
+          "result": {
+            "request_id": "43bdb5c7-babb-428f-9634-9c031138ed4c",
+            "operation": "settings.get",
+            "result": {
+              "general_knowledge": false
+            }
+          }
+        },
+        {
+          "operation": "history.enabled",
+          "request_id": "2be0ec02-4636-4929-9968-4be2211daa4e",
+          "payload": {},
+          "start": 2069.965541,
+          "end": 2077.806458,
+          "status": 200,
+          "result": {
+            "request_id": "2be0ec02-4636-4929-9968-4be2211daa4e",
+            "operation": "history.enabled",
+            "result": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "operation": "answering.ask",
+          "request_id": "604637e5-471f-4f7f-a06f-809bfb48cfdf",
+          "payload": {
+            "question": "What is the annual occupational dose limit?",
+            "general_knowledge": false
+          },
+          "start": 2222.465916,
+          "end": 2234.003333,
+          "status": 200,
+          "result": {
+            "request_id": "604637e5-471f-4f7f-a06f-809bfb48cfdf",
+            "operation": "answering.ask",
+            "result": {
+              "request_id": "604637e5-471f-4f7f-a06f-809bfb48cfdf",
+              "question": "What is the annual occupational dose limit?",
+              "status": "answered",
+              "evidence_mode": "text",
+              "documents": [
+                {
+                  "text": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years.",
+                  "citation_ids": [
+                    "S1"
+                  ]
+                }
+              ],
+              "general_knowledge": null,
+              "limitations": [],
+              "citations": [
+                {
+                  "citation_id": "S1",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "document_title": "Radiation Protection Handbook",
+                  "source_filename": "synthetic/radiation_protection_handbook.pdf",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "pages": [
+                    {
+                      "page_number": 1,
+                      "page_char_start": 0,
+                      "page_char_end": 207,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    },
+                    {
+                      "page_number": 2,
+                      "page_char_start": 0,
+                      "page_char_end": 192,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    }
+                  ],
+                  "chunk_ids": [
+                    "chk_c3eeb000911d07715283441c"
+                  ],
+                  "char_start": 0,
+                  "char_end": 399,
+                  "text_checksum_sha256": "fd0d9191983394e6e09b7944ede9f4580a647d43557766a460a9d6d635689689",
+                  "quote": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years. The ALARA principle requires exposures to be kept as low as reasonably achievable below these limits.\nTime, distance and shielding are the three basic methods of reducing external dose. Doubling the distance from a point source reduces the dose rate to one quarter, following the inverse square",
+                  "evidence_type": "text",
+                  "score": 0.4256,
+                  "rank": 1
+                }
+              ],
+              "evidence": [
+                {
+                  "citation_id": "S1",
+                  "chunk_id": "chk_c3eeb000911d07715283441c",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "score": 0.4256,
+                  "rank": 1,
+                  "cited": true
+                },
+                {
+                  "citation_id": "S2",
+                  "chunk_id": "chk_2624eab5bb52f7e551ad462b",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 19,
+                  "page_end": 21,
+                  "score": 0.4146,
+                  "rank": 2,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S3",
+                  "chunk_id": "chk_db5f5e9612dbfa21247196fa",
+                  "document_id": "doc_fe3ef4048537ba2524ad310d",
+                  "page_start": 2,
+                  "page_end": 3,
+                  "score": 0.4079,
+                  "rank": 3,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S4",
+                  "chunk_id": "chk_739799964b91c84582d2cc64",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 18,
+                  "page_end": 20,
+                  "score": 0.4032,
+                  "rank": 4,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S5",
+                  "chunk_id": "chk_708973eb708de8dd578e918a",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 21,
+                  "page_end": 23,
+                  "score": 0.3898,
+                  "rank": 5,
+                  "cited": false
+                }
+              ],
+              "warnings": [
+                {
+                  "code": "test_model",
+                  "message": "This answer came from a test model, not the answering model."
+                }
+              ],
+              "model": {
+                "model_id": "fake-extractive",
+                "name": "Deterministic test model",
+                "quant": null,
+                "api_version": null,
+                "runtime_version": null,
+                "stub": true
+              },
+              "collection_version": "v0001",
+              "prompt_version": "e3-rag-2026-10-05.1",
+              "timing": {
+                "retrieval_ms": 6.1,
+                "generation_ms": 0.9,
+                "total_ms": 7.3,
+                "attempts": 1,
+                "prompt_tokens": null,
+                "completion_tokens": null
+              },
+              "error": null,
+              "schema_version": "1.0.0"
+            }
+          }
+        },
+        {
+          "operation": "history.save",
+          "request_id": "45e81c64-a921-4ca1-a607-67c473b2b465",
+          "payload": {
+            "conversation_id": "604637e5-471f-4f7f-a06f-809bfb48cfdf",
+            "title": "What is the annual occupational dose limit?",
+            "answer": {
+              "request_id": "604637e5-471f-4f7f-a06f-809bfb48cfdf",
+              "question": "What is the annual occupational dose limit?",
+              "status": "answered",
+              "evidence_mode": "text",
+              "documents": [
+                {
+                  "text": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years.",
+                  "citation_ids": [
+                    "S1"
+                  ]
+                }
+              ],
+              "general_knowledge": null,
+              "limitations": [],
+              "citations": [
+                {
+                  "citation_id": "S1",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "document_title": "Radiation Protection Handbook",
+                  "source_filename": "synthetic/radiation_protection_handbook.pdf",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "pages": [
+                    {
+                      "page_number": 1,
+                      "page_char_start": 0,
+                      "page_char_end": 207,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    },
+                    {
+                      "page_number": 2,
+                      "page_char_start": 0,
+                      "page_char_end": 192,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    }
+                  ],
+                  "chunk_ids": [
+                    "chk_c3eeb000911d07715283441c"
+                  ],
+                  "char_start": 0,
+                  "char_end": 399,
+                  "text_checksum_sha256": "fd0d9191983394e6e09b7944ede9f4580a647d43557766a460a9d6d635689689",
+                  "quote": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years. The ALARA principle requires exposures to be kept as low as reasonably achievable below these limits.\nTime, distance and shielding are the three basic methods of reducing external dose. Doubling the distance from a point source reduces the dose rate to one quarter, following the inverse square",
+                  "evidence_type": "text",
+                  "score": 0.4256,
+                  "rank": 1
+                }
+              ],
+              "evidence": [
+                {
+                  "citation_id": "S1",
+                  "chunk_id": "chk_c3eeb000911d07715283441c",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "score": 0.4256,
+                  "rank": 1,
+                  "cited": true
+                },
+                {
+                  "citation_id": "S2",
+                  "chunk_id": "chk_2624eab5bb52f7e551ad462b",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 19,
+                  "page_end": 21,
+                  "score": 0.4146,
+                  "rank": 2,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S3",
+                  "chunk_id": "chk_db5f5e9612dbfa21247196fa",
+                  "document_id": "doc_fe3ef4048537ba2524ad310d",
+                  "page_start": 2,
+                  "page_end": 3,
+                  "score": 0.4079,
+                  "rank": 3,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S4",
+                  "chunk_id": "chk_739799964b91c84582d2cc64",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 18,
+                  "page_end": 20,
+                  "score": 0.4032,
+                  "rank": 4,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S5",
+                  "chunk_id": "chk_708973eb708de8dd578e918a",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 21,
+                  "page_end": 23,
+                  "score": 0.3898,
+                  "rank": 5,
+                  "cited": false
+                }
+              ],
+              "warnings": [
+                {
+                  "code": "test_model",
+                  "message": "This answer came from a test model, not the answering model."
+                }
+              ],
+              "model": {
+                "model_id": "fake-extractive",
+                "name": "Deterministic test model",
+                "quant": null,
+                "api_version": null,
+                "runtime_version": null,
+                "stub": true
+              },
+              "collection_version": "v0001",
+              "prompt_version": "e3-rag-2026-10-05.1",
+              "timing": {
+                "retrieval_ms": 6.1,
+                "generation_ms": 0.9,
+                "total_ms": 7.3,
+                "attempts": 1,
+                "prompt_tokens": null,
+                "completion_tokens": null
+              },
+              "error": null,
+              "schema_version": "1.0.0"
+            }
+          },
+          "start": 2237.128291,
+          "end": 2238.996041,
+          "status": 200,
+          "result": {
+            "request_id": "45e81c64-a921-4ca1-a607-67c473b2b465",
+            "operation": "history.save",
+            "result": {
+              "saved": false
+            }
+          }
+        },
+        {
+          "operation": "settings.update",
+          "request_id": "16c92e44-6afe-4d74-8a96-64c680dbec4c",
+          "payload": {
+            "general_knowledge": true
+          },
+          "start": 2286.484875,
+          "end": 2289.7795,
+          "status": 200,
+          "result": {
+            "request_id": "16c92e44-6afe-4d74-8a96-64c680dbec4c",
+            "operation": "settings.update",
+            "result": {
+              "general_knowledge": true
+            }
+          }
+        },
+        {
+          "operation": "health",
+          "request_id": null,
+          "payload": null,
+          "start": 2366.464083,
+          "end": 2371.44975,
+          "status": 200,
+          "result": {
+            "status": "ok",
+            "ready": true,
+            "api_version": "secure-qa-dev/1",
+            "answering": {
+              "ready": true,
+              "model_id": "fake-extractive",
+              "name": "Deterministic test model",
+              "quant": null,
+              "ctx_size": 4096,
+              "api_version": null,
+              "runtime_version": null,
+              "stub": true,
+              "error": null
+            },
+            "library": {
+              "ready": true,
+              "active_version": "v0001",
+              "chunk_count": 30,
+              "document_count": 6,
+              "embedding_model": "fake-hash-embedder",
+              "error": null
+            },
+            "preferences": {
+              "general_knowledge": true,
+              "history_enabled": false
+            }
+          }
+        },
+        {
+          "operation": "settings.get",
+          "request_id": "ef75755b-24c2-4bf0-a8b2-3c3367238f4e",
+          "payload": {},
+          "start": 2369.335416,
+          "end": 2374.919333,
+          "status": 200,
+          "result": {
+            "request_id": "ef75755b-24c2-4bf0-a8b2-3c3367238f4e",
+            "operation": "settings.get",
+            "result": {
+              "general_knowledge": true
+            }
+          }
+        },
+        {
+          "operation": "history.enabled",
+          "request_id": "1994f98f-41fb-4a15-a81b-145cd7ddae7d",
+          "payload": {},
+          "start": 2369.622541,
+          "end": 2373.052125,
+          "status": 200,
+          "result": {
+            "request_id": "1994f98f-41fb-4a15-a81b-145cd7ddae7d",
+            "operation": "history.enabled",
+            "result": {
+              "enabled": false
+            }
+          }
+        },
+        {
+          "operation": "history.set_enabled",
+          "request_id": "ca8aab17-2d3b-404f-bedf-9daa38d887c2",
+          "payload": {
+            "enabled": true
+          },
+          "start": 2403.176458,
+          "end": 2406.838666,
+          "status": 200,
+          "result": {
+            "request_id": "ca8aab17-2d3b-404f-bedf-9daa38d887c2",
+            "operation": "history.set_enabled",
+            "result": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "operation": "answering.ask",
+          "request_id": "36ec64d1-d47f-4347-b1cf-db1a5329597f",
+          "payload": {
+            "question": "What is the annual occupational dose limit? old session",
+            "general_knowledge": true
+          },
+          "start": 2501.72275,
+          "end": 2626.880291,
+          "status": 200,
+          "result": {
+            "request_id": "36ec64d1-d47f-4347-b1cf-db1a5329597f",
+            "operation": "answering.ask",
+            "result": {
+              "request_id": "36ec64d1-d47f-4347-b1cf-db1a5329597f",
+              "question": "What is the annual occupational dose limit? old session",
+              "status": "answered",
+              "evidence_mode": "text",
+              "documents": [
+                {
+                  "text": "the top for the collection of any gases that are produced by the fission process.",
+                  "citation_ids": [
+                    "S1"
+                  ]
+                }
+              ],
+              "general_knowledge": null,
+              "limitations": [],
+              "citations": [
+                {
+                  "citation_id": "S1",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "document_title": "normal_nrc_reactor_concepts_ch01",
+                  "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+                  "page_start": 10,
+                  "page_end": 10,
+                  "pages": [
+                    {
+                      "page_number": 10,
+                      "page_char_start": 572,
+                      "page_char_end": 1769,
+                      "highlight_rects": [
+                        [
+                          54,
+                          219.53,
+                          540.01,
+                          232.81
+                        ],
+                        [
+                          54,
+                          233.69,
+                          539.99,
+                          246.97
+                        ],
+                        [
+                          54,
+                          247.85,
+                          95.1,
+                          261.13
+                        ],
+                        [
+                          54,
+                          276.17,
+                          540.07,
+                          289.45
+                        ],
+                        [
+                          54,
+                          290.33,
+                          540.01,
+                          303.61
+                        ],
+                        [
+                          54,
+                          304.49,
+                          540.06,
+                          317.77
+                        ],
+                        [
+                          54,
+                          318.65,
+                          263.7,
+                          331.93
+                        ],
+                        [
+                          54,
+                          346.97,
+                          540.03,
+                          360.25
+                        ],
+                        [
+                          54,
+                          361.13,
+                          540.14,
+                          374.41
+                        ],
+                        [
+                          54,
+                          375.29,
+                          540.03,
+                          388.57
+                        ],
+                        [
+                          54,
+                          389.45,
+                          540.13,
+                          402.73
+                        ],
+                        [
+                          54,
+                          403.61,
+                          340.15,
+                          416.89
+                        ],
+                        [
+                          54,
+                          431.93,
+                          540,
+                          445.21
+                        ],
+                        [
+                          54,
+                          446.09,
+                          540.01,
+                          459.37
+                        ]
+                      ],
+                      "coordinates_reliable": true,
+                      "page_width": 612,
+                      "page_height": 792
+                    }
+                  ],
+                  "chunk_ids": [
+                    "chk_0eddd2c4b9efdd1d76e90ab5"
+                  ],
+                  "char_start": 5940,
+                  "char_end": 7137,
+                  "text_checksum_sha256": "e8fa686a39d60d733097c456ef0caf307566e309ae104f8469c400221325ebd2",
+                  "quote": " the top for the collection of any gases that are produced by the fission process.  These rods are\narranged in a square matrix ranging from 17 x 17 for pressurized water reactors to 8 x 8 for boiling water\nreactors.\n\nThe spacer grids separate the individual rods with pieces of sprung metal.  This provides the rigidity of\nthe assemblies and allows the coolant to flow freely up through the assemblies and around the fuel rods.\nSome spacer grids may have flow mixing vanes that are used to promote mixing of the coolant as it\nflows around and though the fuel assembly.\n\nThe upper and lower end fittings serve as the upper and lower structural elements of the assemblies.  The\nlower fitting (or bottom nozzle) will direct the coolant flow to the assembly through several small holes\nmachined into the fitting.  There are also holes drilled in the upper fitting to allow the coolant flow to\nexit the fuel assembly.  The upper end fitting will also have a connecting point for the refueling\nequipment to attach for the moving of the fuel with a crane.\n\nFor pressurized water reactor fuel, there will also be guide tubes in which the control rods travel.  The\nguide tubes will be welded to the spacer ",
+                  "evidence_type": "text",
+                  "score": 0.5223,
+                  "rank": 1
+                }
+              ],
+              "evidence": [
+                {
+                  "citation_id": "S1",
+                  "chunk_id": "chk_0eddd2c4b9efdd1d76e90ab5",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 10,
+                  "page_end": 10,
+                  "score": 0.5223,
+                  "rank": 1,
+                  "cited": true
+                },
+                {
+                  "citation_id": "S2",
+                  "chunk_id": "chk_108736b91619de4214e70fdc",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 13,
+                  "page_end": 14,
+                  "score": 0.5019,
+                  "rank": 2,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S3",
+                  "chunk_id": "chk_708973eb708de8dd578e918a",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 21,
+                  "page_end": 23,
+                  "score": 0.5007,
+                  "rank": 3,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S4",
+                  "chunk_id": "chk_2624eab5bb52f7e551ad462b",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 19,
+                  "page_end": 21,
+                  "score": 0.4974,
+                  "rank": 4,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S5",
+                  "chunk_id": "chk_16f13547571ce355dcaa8eb4",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 9,
+                  "page_end": 10,
+                  "score": 0.4919,
+                  "rank": 5,
+                  "cited": false
+                }
+              ],
+              "warnings": [
+                {
+                  "code": "test_model",
+                  "message": "This answer came from a test model, not the answering model."
+                }
+              ],
+              "model": {
+                "model_id": "fake-extractive",
+                "name": "Deterministic test model",
+                "quant": null,
+                "api_version": null,
+                "runtime_version": null,
+                "stub": true
+              },
+              "collection_version": "v0001",
+              "prompt_version": "e3-rag-2026-10-05.1",
+              "timing": {
+                "retrieval_ms": 3,
+                "generation_ms": 0.8,
+                "total_ms": 4.2,
+                "attempts": 1,
+                "prompt_tokens": null,
+                "completion_tokens": null
+              },
+              "error": null,
+              "schema_version": "1.0.0"
+            }
+          }
+        },
+        {
+          "operation": "library.versions",
+          "request_id": "2120f498-67f8-481d-ab36-62befe35010a",
+          "payload": {},
+          "start": 2566.8795,
+          "end": 2572.735083,
+          "status": 200,
+          "result": {
+            "request_id": "2120f498-67f8-481d-ab36-62befe35010a",
+            "operation": "library.versions",
+            "result": {
+              "active": "v0001",
+              "versions": [
+                {
+                  "version_id": "v0001",
+                  "status": "active",
+                  "created_at": "2026-10-20T17:48:59+00:00",
+                  "document_count": 6,
+                  "chunk_count": 30
+                },
+                {
+                  "version_id": "v0003",
+                  "status": "previous",
+                  "created_at": "2026-10-21T00:13:45+00:00",
+                  "document_count": 1,
+                  "chunk_count": 1
+                }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "history.save",
+          "request_id": "22a60d90-a495-4d32-bcac-ef7c58a43079",
+          "payload": {
+            "conversation_id": "36ec64d1-d47f-4347-b1cf-db1a5329597f",
+            "title": "What is the annual occupational dose limit? old session",
+            "answer": {
+              "request_id": "36ec64d1-d47f-4347-b1cf-db1a5329597f",
+              "question": "What is the annual occupational dose limit? old session",
+              "status": "answered",
+              "evidence_mode": "text",
+              "documents": [
+                {
+                  "text": "the top for the collection of any gases that are produced by the fission process.",
+                  "citation_ids": [
+                    "S1"
+                  ]
+                }
+              ],
+              "general_knowledge": null,
+              "limitations": [],
+              "citations": [
+                {
+                  "citation_id": "S1",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "document_title": "normal_nrc_reactor_concepts_ch01",
+                  "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+                  "page_start": 10,
+                  "page_end": 10,
+                  "pages": [
+                    {
+                      "page_number": 10,
+                      "page_char_start": 572,
+                      "page_char_end": 1769,
+                      "highlight_rects": [
+                        [
+                          54,
+                          219.53,
+                          540.01,
+                          232.81
+                        ],
+                        [
+                          54,
+                          233.69,
+                          539.99,
+                          246.97
+                        ],
+                        [
+                          54,
+                          247.85,
+                          95.1,
+                          261.13
+                        ],
+                        [
+                          54,
+                          276.17,
+                          540.07,
+                          289.45
+                        ],
+                        [
+                          54,
+                          290.33,
+                          540.01,
+                          303.61
+                        ],
+                        [
+                          54,
+                          304.49,
+                          540.06,
+                          317.77
+                        ],
+                        [
+                          54,
+                          318.65,
+                          263.7,
+                          331.93
+                        ],
+                        [
+                          54,
+                          346.97,
+                          540.03,
+                          360.25
+                        ],
+                        [
+                          54,
+                          361.13,
+                          540.14,
+                          374.41
+                        ],
+                        [
+                          54,
+                          375.29,
+                          540.03,
+                          388.57
+                        ],
+                        [
+                          54,
+                          389.45,
+                          540.13,
+                          402.73
+                        ],
+                        [
+                          54,
+                          403.61,
+                          340.15,
+                          416.89
+                        ],
+                        [
+                          54,
+                          431.93,
+                          540,
+                          445.21
+                        ],
+                        [
+                          54,
+                          446.09,
+                          540.01,
+                          459.37
+                        ]
+                      ],
+                      "coordinates_reliable": true,
+                      "page_width": 612,
+                      "page_height": 792
+                    }
+                  ],
+                  "chunk_ids": [
+                    "chk_0eddd2c4b9efdd1d76e90ab5"
+                  ],
+                  "char_start": 5940,
+                  "char_end": 7137,
+                  "text_checksum_sha256": "e8fa686a39d60d733097c456ef0caf307566e309ae104f8469c400221325ebd2",
+                  "quote": " the top for the collection of any gases that are produced by the fission process.  These rods are\narranged in a square matrix ranging from 17 x 17 for pressurized water reactors to 8 x 8 for boiling water\nreactors.\n\nThe spacer grids separate the individual rods with pieces of sprung metal.  This provides the rigidity of\nthe assemblies and allows the coolant to flow freely up through the assemblies and around the fuel rods.\nSome spacer grids may have flow mixing vanes that are used to promote mixing of the coolant as it\nflows around and though the fuel assembly.\n\nThe upper and lower end fittings serve as the upper and lower structural elements of the assemblies.  The\nlower fitting (or bottom nozzle) will direct the coolant flow to the assembly through several small holes\nmachined into the fitting.  There are also holes drilled in the upper fitting to allow the coolant flow to\nexit the fuel assembly.  The upper end fitting will also have a connecting point for the refueling\nequipment to attach for the moving of the fuel with a crane.\n\nFor pressurized water reactor fuel, there will also be guide tubes in which the control rods travel.  The\nguide tubes will be welded to the spacer ",
+                  "evidence_type": "text",
+                  "score": 0.5223,
+                  "rank": 1
+                }
+              ],
+              "evidence": [
+                {
+                  "citation_id": "S1",
+                  "chunk_id": "chk_0eddd2c4b9efdd1d76e90ab5",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 10,
+                  "page_end": 10,
+                  "score": 0.5223,
+                  "rank": 1,
+                  "cited": true
+                },
+                {
+                  "citation_id": "S2",
+                  "chunk_id": "chk_108736b91619de4214e70fdc",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 13,
+                  "page_end": 14,
+                  "score": 0.5019,
+                  "rank": 2,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S3",
+                  "chunk_id": "chk_708973eb708de8dd578e918a",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 21,
+                  "page_end": 23,
+                  "score": 0.5007,
+                  "rank": 3,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S4",
+                  "chunk_id": "chk_2624eab5bb52f7e551ad462b",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 19,
+                  "page_end": 21,
+                  "score": 0.4974,
+                  "rank": 4,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S5",
+                  "chunk_id": "chk_16f13547571ce355dcaa8eb4",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 9,
+                  "page_end": 10,
+                  "score": 0.4919,
+                  "rank": 5,
+                  "cited": false
+                }
+              ],
+              "warnings": [
+                {
+                  "code": "test_model",
+                  "message": "This answer came from a test model, not the answering model."
+                }
+              ],
+              "model": {
+                "model_id": "fake-extractive",
+                "name": "Deterministic test model",
+                "quant": null,
+                "api_version": null,
+                "runtime_version": null,
+                "stub": true
+              },
+              "collection_version": "v0001",
+              "prompt_version": "e3-rag-2026-10-05.1",
+              "timing": {
+                "retrieval_ms": 3,
+                "generation_ms": 0.8,
+                "total_ms": 4.2,
+                "attempts": 1,
+                "prompt_tokens": null,
+                "completion_tokens": null
+              },
+              "error": null,
+              "schema_version": "1.0.0"
+            }
+          },
+          "start": 2636.403458,
+          "end": 2638.947791,
+          "status": 200,
+          "result": {
+            "request_id": "22a60d90-a495-4d32-bcac-ef7c58a43079",
+            "operation": "history.save",
+            "result": {
+              "saved": true
+            }
+          }
+        },
+        {
+          "operation": "answering.ask",
+          "request_id": "e4916016-7337-45ca-b09a-b445c4fe0425",
+          "payload": {
+            "question": "What is the annual occupational dose limit? new session",
+            "general_knowledge": true
+          },
+          "start": 2644.846958,
+          "end": 2657.636333,
+          "status": 200,
+          "result": {
+            "request_id": "e4916016-7337-45ca-b09a-b445c4fe0425",
+            "operation": "answering.ask",
+            "result": {
+              "request_id": "e4916016-7337-45ca-b09a-b445c4fe0425",
+              "question": "What is the annual occupational dose limit? new session",
+              "status": "answered",
+              "evidence_mode": "text",
+              "documents": [
+                {
+                  "text": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years.",
+                  "citation_ids": [
+                    "S5"
+                  ]
+                }
+              ],
+              "general_knowledge": null,
+              "limitations": [],
+              "citations": [
+                {
+                  "citation_id": "S5",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "document_title": "Radiation Protection Handbook",
+                  "source_filename": "synthetic/radiation_protection_handbook.pdf",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "pages": [
+                    {
+                      "page_number": 1,
+                      "page_char_start": 0,
+                      "page_char_end": 207,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    },
+                    {
+                      "page_number": 2,
+                      "page_char_start": 0,
+                      "page_char_end": 192,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    }
+                  ],
+                  "chunk_ids": [
+                    "chk_c3eeb000911d07715283441c"
+                  ],
+                  "char_start": 0,
+                  "char_end": 399,
+                  "text_checksum_sha256": "fd0d9191983394e6e09b7944ede9f4580a647d43557766a460a9d6d635689689",
+                  "quote": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years. The ALARA principle requires exposures to be kept as low as reasonably achievable below these limits.\nTime, distance and shielding are the three basic methods of reducing external dose. Doubling the distance from a point source reduces the dose rate to one quarter, following the inverse square",
+                  "evidence_type": "text",
+                  "score": 0.487,
+                  "rank": 5
+                }
+              ],
+              "evidence": [
+                {
+                  "citation_id": "S1",
+                  "chunk_id": "chk_708973eb708de8dd578e918a",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 21,
+                  "page_end": 23,
+                  "score": 0.5359,
+                  "rank": 1,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S2",
+                  "chunk_id": "chk_0eddd2c4b9efdd1d76e90ab5",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 10,
+                  "page_end": 10,
+                  "score": 0.5223,
+                  "rank": 2,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S3",
+                  "chunk_id": "chk_108736b91619de4214e70fdc",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 13,
+                  "page_end": 14,
+                  "score": 0.5217,
+                  "rank": 3,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S4",
+                  "chunk_id": "chk_2624eab5bb52f7e551ad462b",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 19,
+                  "page_end": 21,
+                  "score": 0.4894,
+                  "rank": 4,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S5",
+                  "chunk_id": "chk_c3eeb000911d07715283441c",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "score": 0.487,
+                  "rank": 5,
+                  "cited": true
+                }
+              ],
+              "warnings": [
+                {
+                  "code": "test_model",
+                  "message": "This answer came from a test model, not the answering model."
+                }
+              ],
+              "model": {
+                "model_id": "fake-extractive",
+                "name": "Deterministic test model",
+                "quant": null,
+                "api_version": null,
+                "runtime_version": null,
+                "stub": true
+              },
+              "collection_version": "v0001",
+              "prompt_version": "e3-rag-2026-10-05.1",
+              "timing": {
+                "retrieval_ms": 3.6,
+                "generation_ms": 0.8,
+                "total_ms": 4.5,
+                "attempts": 1,
+                "prompt_tokens": null,
+                "completion_tokens": null
+              },
+              "error": null,
+              "schema_version": "1.0.0"
+            }
+          }
+        },
+        {
+          "operation": "history.save",
+          "request_id": "e528aac3-4ede-4db3-8581-e25b61392e83",
+          "payload": {
+            "conversation_id": "e4916016-7337-45ca-b09a-b445c4fe0425",
+            "title": "What is the annual occupational dose limit? new session",
+            "answer": {
+              "request_id": "e4916016-7337-45ca-b09a-b445c4fe0425",
+              "question": "What is the annual occupational dose limit? new session",
+              "status": "answered",
+              "evidence_mode": "text",
+              "documents": [
+                {
+                  "text": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years.",
+                  "citation_ids": [
+                    "S5"
+                  ]
+                }
+              ],
+              "general_knowledge": null,
+              "limitations": [],
+              "citations": [
+                {
+                  "citation_id": "S5",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "document_title": "Radiation Protection Handbook",
+                  "source_filename": "synthetic/radiation_protection_handbook.pdf",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "pages": [
+                    {
+                      "page_number": 1,
+                      "page_char_start": 0,
+                      "page_char_end": 207,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    },
+                    {
+                      "page_number": 2,
+                      "page_char_start": 0,
+                      "page_char_end": 192,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    }
+                  ],
+                  "chunk_ids": [
+                    "chk_c3eeb000911d07715283441c"
+                  ],
+                  "char_start": 0,
+                  "char_end": 399,
+                  "text_checksum_sha256": "fd0d9191983394e6e09b7944ede9f4580a647d43557766a460a9d6d635689689",
+                  "quote": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years. The ALARA principle requires exposures to be kept as low as reasonably achievable below these limits.\nTime, distance and shielding are the three basic methods of reducing external dose. Doubling the distance from a point source reduces the dose rate to one quarter, following the inverse square",
+                  "evidence_type": "text",
+                  "score": 0.487,
+                  "rank": 5
+                }
+              ],
+              "evidence": [
+                {
+                  "citation_id": "S1",
+                  "chunk_id": "chk_708973eb708de8dd578e918a",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 21,
+                  "page_end": 23,
+                  "score": 0.5359,
+                  "rank": 1,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S2",
+                  "chunk_id": "chk_0eddd2c4b9efdd1d76e90ab5",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 10,
+                  "page_end": 10,
+                  "score": 0.5223,
+                  "rank": 2,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S3",
+                  "chunk_id": "chk_108736b91619de4214e70fdc",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 13,
+                  "page_end": 14,
+                  "score": 0.5217,
+                  "rank": 3,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S4",
+                  "chunk_id": "chk_2624eab5bb52f7e551ad462b",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 19,
+                  "page_end": 21,
+                  "score": 0.4894,
+                  "rank": 4,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S5",
+                  "chunk_id": "chk_c3eeb000911d07715283441c",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "score": 0.487,
+                  "rank": 5,
+                  "cited": true
+                }
+              ],
+              "warnings": [
+                {
+                  "code": "test_model",
+                  "message": "This answer came from a test model, not the answering model."
+                }
+              ],
+              "model": {
+                "model_id": "fake-extractive",
+                "name": "Deterministic test model",
+                "quant": null,
+                "api_version": null,
+                "runtime_version": null,
+                "stub": true
+              },
+              "collection_version": "v0001",
+              "prompt_version": "e3-rag-2026-10-05.1",
+              "timing": {
+                "retrieval_ms": 3.6,
+                "generation_ms": 0.8,
+                "total_ms": 4.5,
+                "attempts": 1,
+                "prompt_tokens": null,
+                "completion_tokens": null
+              },
+              "error": null,
+              "schema_version": "1.0.0"
+            }
+          },
+          "start": 2659.642833,
+          "end": 2661.428625,
+          "status": 200,
+          "result": {
+            "request_id": "e528aac3-4ede-4db3-8581-e25b61392e83",
+            "operation": "history.save",
+            "result": {
+              "saved": true
+            }
+          }
+        },
+        {
+          "operation": "answering.ask",
+          "request_id": "6c15599d-bf4a-4732-b1fc-eb29a19027cc",
+          "payload": {
+            "question": "What is the annual occupational dose limit? retained after failed save",
+            "general_knowledge": true
+          },
+          "start": 2678.400875,
+          "end": 2686.576041,
+          "status": 200,
+          "result": {
+            "request_id": "6c15599d-bf4a-4732-b1fc-eb29a19027cc",
+            "operation": "answering.ask",
+            "result": {
+              "request_id": "6c15599d-bf4a-4732-b1fc-eb29a19027cc",
+              "question": "What is the annual occupational dose limit? retained after failed save",
+              "status": "answered",
+              "evidence_mode": "text",
+              "documents": [
+                {
+                  "text": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years.",
+                  "citation_ids": [
+                    "S2"
+                  ]
+                }
+              ],
+              "general_knowledge": null,
+              "limitations": [],
+              "citations": [
+                {
+                  "citation_id": "S2",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "document_title": "Radiation Protection Handbook",
+                  "source_filename": "synthetic/radiation_protection_handbook.pdf",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "pages": [
+                    {
+                      "page_number": 1,
+                      "page_char_start": 0,
+                      "page_char_end": 207,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    },
+                    {
+                      "page_number": 2,
+                      "page_char_start": 0,
+                      "page_char_end": 192,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    }
+                  ],
+                  "chunk_ids": [
+                    "chk_c3eeb000911d07715283441c"
+                  ],
+                  "char_start": 0,
+                  "char_end": 399,
+                  "text_checksum_sha256": "fd0d9191983394e6e09b7944ede9f4580a647d43557766a460a9d6d635689689",
+                  "quote": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years. The ALARA principle requires exposures to be kept as low as reasonably achievable below these limits.\nTime, distance and shielding are the three basic methods of reducing external dose. Doubling the distance from a point source reduces the dose rate to one quarter, following the inverse square",
+                  "evidence_type": "text",
+                  "score": 0.4427,
+                  "rank": 2
+                }
+              ],
+              "evidence": [
+                {
+                  "citation_id": "S1",
+                  "chunk_id": "chk_2624eab5bb52f7e551ad462b",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 19,
+                  "page_end": 21,
+                  "score": 0.4894,
+                  "rank": 1,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S2",
+                  "chunk_id": "chk_c3eeb000911d07715283441c",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "score": 0.4427,
+                  "rank": 2,
+                  "cited": true
+                },
+                {
+                  "citation_id": "S3",
+                  "chunk_id": "chk_e230524a6ec524a3f7c3c566",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 23,
+                  "page_end": 24,
+                  "score": 0.4404,
+                  "rank": 3,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S4",
+                  "chunk_id": "chk_db5f5e9612dbfa21247196fa",
+                  "document_id": "doc_fe3ef4048537ba2524ad310d",
+                  "page_start": 2,
+                  "page_end": 3,
+                  "score": 0.4242,
+                  "rank": 4,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S5",
+                  "chunk_id": "chk_739799964b91c84582d2cc64",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 18,
+                  "page_end": 20,
+                  "score": 0.4091,
+                  "rank": 5,
+                  "cited": false
+                }
+              ],
+              "warnings": [
+                {
+                  "code": "test_model",
+                  "message": "This answer came from a test model, not the answering model."
+                }
+              ],
+              "model": {
+                "model_id": "fake-extractive",
+                "name": "Deterministic test model",
+                "quant": null,
+                "api_version": null,
+                "runtime_version": null,
+                "stub": true
+              },
+              "collection_version": "v0001",
+              "prompt_version": "e3-rag-2026-10-05.1",
+              "timing": {
+                "retrieval_ms": 2.5,
+                "generation_ms": 0.3,
+                "total_ms": 3.3,
+                "attempts": 1,
+                "prompt_tokens": null,
+                "completion_tokens": null
+              },
+              "error": null,
+              "schema_version": "1.0.0"
+            }
+          }
+        },
+        {
+          "operation": "history.save",
+          "request_id": "df0cc332-cd50-4d77-8ae2-19ec069661f3",
+          "payload": {
+            "conversation_id": "6c15599d-bf4a-4732-b1fc-eb29a19027cc",
+            "title": "What is the annual occupational dose limit? retained after failed save",
+            "answer": {
+              "request_id": "6c15599d-bf4a-4732-b1fc-eb29a19027cc",
+              "question": "What is the annual occupational dose limit? retained after failed save",
+              "status": "answered",
+              "evidence_mode": "text",
+              "documents": [
+                {
+                  "text": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years.",
+                  "citation_ids": [
+                    "S2"
+                  ]
+                }
+              ],
+              "general_knowledge": null,
+              "limitations": [],
+              "citations": [
+                {
+                  "citation_id": "S2",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "document_title": "Radiation Protection Handbook",
+                  "source_filename": "synthetic/radiation_protection_handbook.pdf",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "pages": [
+                    {
+                      "page_number": 1,
+                      "page_char_start": 0,
+                      "page_char_end": 207,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    },
+                    {
+                      "page_number": 2,
+                      "page_char_start": 0,
+                      "page_char_end": 192,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    }
+                  ],
+                  "chunk_ids": [
+                    "chk_c3eeb000911d07715283441c"
+                  ],
+                  "char_start": 0,
+                  "char_end": 399,
+                  "text_checksum_sha256": "fd0d9191983394e6e09b7944ede9f4580a647d43557766a460a9d6d635689689",
+                  "quote": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years. The ALARA principle requires exposures to be kept as low as reasonably achievable below these limits.\nTime, distance and shielding are the three basic methods of reducing external dose. Doubling the distance from a point source reduces the dose rate to one quarter, following the inverse square",
+                  "evidence_type": "text",
+                  "score": 0.4427,
+                  "rank": 2
+                }
+              ],
+              "evidence": [
+                {
+                  "citation_id": "S1",
+                  "chunk_id": "chk_2624eab5bb52f7e551ad462b",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 19,
+                  "page_end": 21,
+                  "score": 0.4894,
+                  "rank": 1,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S2",
+                  "chunk_id": "chk_c3eeb000911d07715283441c",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "score": 0.4427,
+                  "rank": 2,
+                  "cited": true
+                },
+                {
+                  "citation_id": "S3",
+                  "chunk_id": "chk_e230524a6ec524a3f7c3c566",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 23,
+                  "page_end": 24,
+                  "score": 0.4404,
+                  "rank": 3,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S4",
+                  "chunk_id": "chk_db5f5e9612dbfa21247196fa",
+                  "document_id": "doc_fe3ef4048537ba2524ad310d",
+                  "page_start": 2,
+                  "page_end": 3,
+                  "score": 0.4242,
+                  "rank": 4,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S5",
+                  "chunk_id": "chk_739799964b91c84582d2cc64",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 18,
+                  "page_end": 20,
+                  "score": 0.4091,
+                  "rank": 5,
+                  "cited": false
+                }
+              ],
+              "warnings": [
+                {
+                  "code": "test_model",
+                  "message": "This answer came from a test model, not the answering model."
+                }
+              ],
+              "model": {
+                "model_id": "fake-extractive",
+                "name": "Deterministic test model",
+                "quant": null,
+                "api_version": null,
+                "runtime_version": null,
+                "stub": true
+              },
+              "collection_version": "v0001",
+              "prompt_version": "e3-rag-2026-10-05.1",
+              "timing": {
+                "retrieval_ms": 2.5,
+                "generation_ms": 0.3,
+                "total_ms": 3.3,
+                "attempts": 1,
+                "prompt_tokens": null,
+                "completion_tokens": null
+              },
+              "error": null,
+              "schema_version": "1.0.0"
+            }
+          },
+          "start": 2688.855208,
+          "end": 2688.874375,
+          "status": 503,
+          "result": {
+            "request_id": "df0cc332-cd50-4d77-8ae2-19ec069661f3",
+            "error": {
+              "code": "history_unavailable",
+              "message": "Controlled history storage failure.",
+              "hint": "Try again."
+            }
+          }
+        },
+        {
+          "operation": "answering.ask",
+          "request_id": "783176c9-4c11-4737-b703-4056d768a624",
+          "payload": {
+            "question": "What is the annual occupational dose limit? after recovery",
+            "general_knowledge": true
+          },
+          "start": 2716.975458,
+          "end": 2723.107958,
+          "status": 200,
+          "result": {
+            "request_id": "783176c9-4c11-4737-b703-4056d768a624",
+            "operation": "answering.ask",
+            "result": {
+              "request_id": "783176c9-4c11-4737-b703-4056d768a624",
+              "question": "What is the annual occupational dose limit? after recovery",
+              "status": "answered",
+              "evidence_mode": "text",
+              "documents": [
+                {
+                  "text": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years.",
+                  "citation_ids": [
+                    "S3"
+                  ]
+                }
+              ],
+              "general_knowledge": null,
+              "limitations": [],
+              "citations": [
+                {
+                  "citation_id": "S3",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "document_title": "Radiation Protection Handbook",
+                  "source_filename": "synthetic/radiation_protection_handbook.pdf",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "pages": [
+                    {
+                      "page_number": 1,
+                      "page_char_start": 0,
+                      "page_char_end": 207,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    },
+                    {
+                      "page_number": 2,
+                      "page_char_start": 0,
+                      "page_char_end": 192,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    }
+                  ],
+                  "chunk_ids": [
+                    "chk_c3eeb000911d07715283441c"
+                  ],
+                  "char_start": 0,
+                  "char_end": 399,
+                  "text_checksum_sha256": "fd0d9191983394e6e09b7944ede9f4580a647d43557766a460a9d6d635689689",
+                  "quote": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years. The ALARA principle requires exposures to be kept as low as reasonably achievable below these limits.\nTime, distance and shielding are the three basic methods of reducing external dose. Doubling the distance from a point source reduces the dose rate to one quarter, following the inverse square",
+                  "evidence_type": "text",
+                  "score": 0.4331,
+                  "rank": 3
+                }
+              ],
+              "evidence": [
+                {
+                  "citation_id": "S1",
+                  "chunk_id": "chk_2624eab5bb52f7e551ad462b",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 19,
+                  "page_end": 21,
+                  "score": 0.4623,
+                  "rank": 1,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S2",
+                  "chunk_id": "chk_db5f5e9612dbfa21247196fa",
+                  "document_id": "doc_fe3ef4048537ba2524ad310d",
+                  "page_start": 2,
+                  "page_end": 3,
+                  "score": 0.4381,
+                  "rank": 2,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S3",
+                  "chunk_id": "chk_c3eeb000911d07715283441c",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "score": 0.4331,
+                  "rank": 3,
+                  "cited": true
+                },
+                {
+                  "citation_id": "S4",
+                  "chunk_id": "chk_708973eb708de8dd578e918a",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 21,
+                  "page_end": 23,
+                  "score": 0.3986,
+                  "rank": 4,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S5",
+                  "chunk_id": "chk_e230524a6ec524a3f7c3c566",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 23,
+                  "page_end": 24,
+                  "score": 0.3973,
+                  "rank": 5,
+                  "cited": false
+                }
+              ],
+              "warnings": [
+                {
+                  "code": "test_model",
+                  "message": "This answer came from a test model, not the answering model."
+                }
+              ],
+              "model": {
+                "model_id": "fake-extractive",
+                "name": "Deterministic test model",
+                "quant": null,
+                "api_version": null,
+                "runtime_version": null,
+                "stub": true
+              },
+              "collection_version": "v0001",
+              "prompt_version": "e3-rag-2026-10-05.1",
+              "timing": {
+                "retrieval_ms": 1.5,
+                "generation_ms": 0.8,
+                "total_ms": 2.5,
+                "attempts": 1,
+                "prompt_tokens": null,
+                "completion_tokens": null
+              },
+              "error": null,
+              "schema_version": "1.0.0"
+            }
+          }
+        },
+        {
+          "operation": "history.save",
+          "request_id": "63ea4ee0-34f8-4b0d-8407-6adbebd97eac",
+          "payload": {
+            "conversation_id": "783176c9-4c11-4737-b703-4056d768a624",
+            "title": "What is the annual occupational dose limit? after recovery",
+            "answer": {
+              "request_id": "783176c9-4c11-4737-b703-4056d768a624",
+              "question": "What is the annual occupational dose limit? after recovery",
+              "status": "answered",
+              "evidence_mode": "text",
+              "documents": [
+                {
+                  "text": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years.",
+                  "citation_ids": [
+                    "S3"
+                  ]
+                }
+              ],
+              "general_knowledge": null,
+              "limitations": [],
+              "citations": [
+                {
+                  "citation_id": "S3",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "document_title": "Radiation Protection Handbook",
+                  "source_filename": "synthetic/radiation_protection_handbook.pdf",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "pages": [
+                    {
+                      "page_number": 1,
+                      "page_char_start": 0,
+                      "page_char_end": 207,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    },
+                    {
+                      "page_number": 2,
+                      "page_char_start": 0,
+                      "page_char_end": 192,
+                      "highlight_rects": [],
+                      "coordinates_reliable": false,
+                      "page_width": 612,
+                      "page_height": 792
+                    }
+                  ],
+                  "chunk_ids": [
+                    "chk_c3eeb000911d07715283441c"
+                  ],
+                  "char_start": 0,
+                  "char_end": 399,
+                  "text_checksum_sha256": "fd0d9191983394e6e09b7944ede9f4580a647d43557766a460a9d6d635689689",
+                  "quote": "Occupational dose limits are 50 mSv in any single year and 100 mSv averaged over five consecutive years. The ALARA principle requires exposures to be kept as low as reasonably achievable below these limits.\nTime, distance and shielding are the three basic methods of reducing external dose. Doubling the distance from a point source reduces the dose rate to one quarter, following the inverse square",
+                  "evidence_type": "text",
+                  "score": 0.4331,
+                  "rank": 3
+                }
+              ],
+              "evidence": [
+                {
+                  "citation_id": "S1",
+                  "chunk_id": "chk_2624eab5bb52f7e551ad462b",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 19,
+                  "page_end": 21,
+                  "score": 0.4623,
+                  "rank": 1,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S2",
+                  "chunk_id": "chk_db5f5e9612dbfa21247196fa",
+                  "document_id": "doc_fe3ef4048537ba2524ad310d",
+                  "page_start": 2,
+                  "page_end": 3,
+                  "score": 0.4381,
+                  "rank": 2,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S3",
+                  "chunk_id": "chk_c3eeb000911d07715283441c",
+                  "document_id": "doc_2df64adde9fde7f722bc9ce6",
+                  "page_start": 1,
+                  "page_end": 2,
+                  "score": 0.4331,
+                  "rank": 3,
+                  "cited": true
+                },
+                {
+                  "citation_id": "S4",
+                  "chunk_id": "chk_708973eb708de8dd578e918a",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 21,
+                  "page_end": 23,
+                  "score": 0.3986,
+                  "rank": 4,
+                  "cited": false
+                },
+                {
+                  "citation_id": "S5",
+                  "chunk_id": "chk_e230524a6ec524a3f7c3c566",
+                  "document_id": "doc_72f2433a1e2f2e6340f14040",
+                  "page_start": 23,
+                  "page_end": 24,
+                  "score": 0.3973,
+                  "rank": 5,
+                  "cited": false
+                }
+              ],
+              "warnings": [
+                {
+                  "code": "test_model",
+                  "message": "This answer came from a test model, not the answering model."
+                }
+              ],
+              "model": {
+                "model_id": "fake-extractive",
+                "name": "Deterministic test model",
+                "quant": null,
+                "api_version": null,
+                "runtime_version": null,
+                "stub": true
+              },
+              "collection_version": "v0001",
+              "prompt_version": "e3-rag-2026-10-05.1",
+              "timing": {
+                "retrieval_ms": 1.5,
+                "generation_ms": 0.8,
+                "total_ms": 2.5,
+                "attempts": 1,
+                "prompt_tokens": null,
+                "completion_tokens": null
+              },
+              "error": null,
+              "schema_version": "1.0.0"
+            }
+          },
+          "start": 2734.669875,
+          "end": 2736.50525,
+          "status": 200,
+          "result": {
+            "request_id": "63ea4ee0-34f8-4b0d-8407-6adbebd97eac",
+            "operation": "history.save",
+            "result": {
+              "saved": true
+            }
+          }
+        },
+        {
+          "operation": "library.versions",
+          "request_id": "b236b743-28f9-4a86-b8be-c25f6b1bed45",
+          "payload": {},
+          "start": 2877.829833,
+          "end": 2883.814958,
+          "status": 200,
+          "result": {
+            "request_id": "b236b743-28f9-4a86-b8be-c25f6b1bed45",
+            "operation": "library.versions",
+            "result": {
+              "active": "v0001",
+              "versions": [
+                {
+                  "version_id": "v0001",
+                  "status": "active",
+                  "created_at": "2026-10-20T17:48:59+00:00",
+                  "document_count": 6,
+                  "chunk_count": 30
+                },
+                {
+                  "version_id": "v0003",
+                  "status": "previous",
+                  "created_at": "2026-10-21T00:13:45+00:00",
+                  "document_count": 1,
+                  "chunk_count": 1
+                }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "library.review",
+          "request_id": "edf0a99f-4f8a-42f2-b2ef-3f991e7bb375",
+          "payload": {
+            "files": [
+              {
+                "name": "stage4a-local.pdf",
+                "data": "JVBERi0xLjQKMSAwIG9iago8PCAvVHlwZSAvQ2F0YWxvZyAvUGFnZXMgMiAwIFIgPj4KZW5kb2JqCjIgMCBvYmoKPDwgL1R5cGUgL1BhZ2VzIC9LaWRzIFs0IDAgUl0gL0NvdW50IDEgPj4KZW5kb2JqCjMgMCBvYmoKPDwgL1R5cGUgL0ZvbnQgL1N1YnR5cGUgL1R5cGUxIC9CYXNlRm9udCAvSGVsdmV0aWNhID4+CmVuZG9iago0IDAgb2JqCjw8IC9UeXBlIC9QYWdlIC9QYXJlbnQgMiAwIFIgL01lZGlhQm94IFswIDAgNjEyIDc5Ml0gL1Jlc291cmNlcyA8PCAvRm9udCA8PCAvRjEgMyAwIFIgPj4gPj4gL0NvbnRlbnRzIDUgMCBSID4+CmVuZG9iago1IDAgb2JqCjw8IC9MZW5ndGggMTA4ID4+CnN0cmVhbQpCVCAvRjEgMTIgVGYgNTAgNzYwIFRkIChMb2NhbCBpbnRlZ3JhdGlvbiBmaXh0dXJlIHByZXNlcnZlcyBzb3VyY2UgZXZpZGVuY2UgYW5kIGFwcHJvdmVkIGRvc2UgbGltaXRzLikgVGogRVQKZW5kc3RyZWFtCmVuZG9iagp4cmVmCjAgNgowMDAwMDAwMDAwIDY1NTM1IGYgCjAwMDAwMDAwMDkgMDAwMDAgbiAKMDAwMDAwMDA1OCAwMDAwMCBuIAowMDAwMDAwMTE1IDAwMDAwIG4gCjAwMDAwMDAxODUgMDAwMDAgbiAKMDAwMDAwMDMxMSAwMDAwMCBuIAp0cmFpbGVyCjw8IC9TaXplIDYgL1Jvb3QgMSAwIFIgPj4Kc3RhcnR4cmVmCjQ3MAolJUVPRgo="
+              },
+              {
+                "name": "invalid.pdf",
+                "data": "VGhpcyBpcyBub3QgYSBQREYu"
+              }
+            ]
+          },
+          "start": 2941.193125,
+          "end": 2987.973333,
+          "status": 200,
+          "result": {
+            "request_id": "edf0a99f-4f8a-42f2-b2ef-3f991e7bb375",
+            "operation": "library.review",
+            "result": {
+              "review_id": "9a1ef0ca32a04aea8a6ab9a844ad991a",
+              "accepted": [
+                {
+                  "name": "stage4a-local.pdf",
+                  "size": 653
+                }
+              ],
+              "rejected": [
+                {
+                  "name": "invalid.pdf",
+                  "reason": "Only valid PDF files are accepted."
+                }
+              ],
+              "requires_confirmation": true,
+              "warning": "Rejected files will not be imported."
+            }
+          }
+        },
+        {
+          "operation": "library.publish",
+          "request_id": "7016b15f-4042-46ed-840a-aefb5725a6ad",
+          "payload": {
+            "review_id": "9a1ef0ca32a04aea8a6ab9a844ad991a",
+            "confirmed": true
+          },
+          "start": 3090.247125,
+          "end": 3858.689416,
+          "status": 200,
+          "result": {
+            "request_id": "7016b15f-4042-46ed-840a-aefb5725a6ad",
+            "operation": "library.publish",
+            "result": {
+              "version_id": "v0004",
+              "document_count": 1,
+              "chunk_count": 1
+            }
+          }
+        },
+        {
+          "operation": "health",
+          "request_id": null,
+          "payload": null,
+          "start": 3124.790291,
+          "end": 3146.48575,
+          "status": 200,
+          "result": {
+            "status": "ok",
+            "ready": true,
+            "api_version": "secure-qa-dev/1",
+            "answering": {
+              "ready": true,
+              "model_id": "fake-extractive",
+              "name": "Deterministic test model",
+              "quant": null,
+              "ctx_size": 4096,
+              "api_version": null,
+              "runtime_version": null,
+              "stub": true,
+              "error": null
+            },
+            "library": {
+              "ready": true,
+              "active_version": "v0001",
+              "chunk_count": 30,
+              "document_count": 6,
+              "embedding_model": "fake-hash-embedder",
+              "error": null
+            },
+            "preferences": {
+              "general_knowledge": true,
+              "history_enabled": true
+            }
+          }
+        },
+        {
+          "operation": "settings.get",
+          "request_id": "772867ee-47ed-4276-8725-ed9b490eead2",
+          "payload": {},
+          "start": 3127.103458,
+          "end": 3145.09425,
+          "status": 200,
+          "result": {
+            "request_id": "772867ee-47ed-4276-8725-ed9b490eead2",
+            "operation": "settings.get",
+            "result": {
+              "general_knowledge": true
+            }
+          }
+        },
+        {
+          "operation": "history.enabled",
+          "request_id": "60482ed9-2c1b-4a22-b920-59dddb00f594",
+          "payload": {},
+          "start": 3127.260791,
+          "end": 3139.418458,
+          "status": 200,
+          "result": {
+            "request_id": "60482ed9-2c1b-4a22-b920-59dddb00f594",
+            "operation": "history.enabled",
+            "result": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "operation": "library.versions",
+          "request_id": "ee946fa4-62ff-4aac-8473-957657bea247",
+          "payload": {},
+          "start": 3173.213875,
+          "end": 3230.751708,
+          "status": 200,
+          "result": {
+            "request_id": "ee946fa4-62ff-4aac-8473-957657bea247",
+            "operation": "library.versions",
+            "result": {
+              "active": "v0004",
+              "versions": [
+                {
+                  "version_id": "v0004",
+                  "status": "active",
+                  "created_at": "2026-10-21T04:55:09+00:00",
+                  "document_count": 1,
+                  "chunk_count": 1
+                },
+                {
+                  "version_id": "v0001",
+                  "status": "previous",
+                  "created_at": "2026-10-20T17:48:59+00:00",
+                  "document_count": 6,
+                  "chunk_count": 30
+                }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "library.status",
+          "request_id": "4adff093-d5a5-4ed7-b0d5-c4d498826f9b",
+          "payload": {
+            "target_request_id": "7016b15f-4042-46ed-840a-aefb5725a6ad"
+          },
+          "start": 3790.271,
+          "end": 3791.553666,
+          "status": 200,
+          "result": {
+            "request_id": "4adff093-d5a5-4ed7-b0d5-c4d498826f9b",
+            "operation": "library.status",
+            "result": {
+              "status": "complete",
+              "stage": "activated",
+              "done": 1,
+              "total": 1,
+              "version_id": "v0004"
+            }
+          }
+        },
+        {
+          "operation": "library.cancel",
+          "request_id": "03a5f2b0-356d-4301-be15-b5dcc4c1d873",
+          "payload": {
+            "target_request_id": "7016b15f-4042-46ed-840a-aefb5725a6ad"
+          },
+          "start": 3833.939625,
+          "end": 3835.364166,
+          "status": 200,
+          "result": {
+            "request_id": "03a5f2b0-356d-4301-be15-b5dcc4c1d873",
+            "operation": "library.cancel",
+            "result": {
+              "cancelled": false
+            }
+          }
+        },
+        {
+          "operation": "library.versions",
+          "request_id": "1ebeb33c-0f40-46ed-82ba-3d8dab234c17",
+          "payload": {},
+          "start": 3861.028416,
+          "end": 3863.486041,
+          "status": 200,
+          "result": {
+            "request_id": "1ebeb33c-0f40-46ed-82ba-3d8dab234c17",
+            "operation": "library.versions",
+            "result": {
+              "active": "v0004",
+              "versions": [
+                {
+                  "version_id": "v0004",
+                  "status": "active",
+                  "created_at": "2026-10-21T04:55:09+00:00",
+                  "document_count": 1,
+                  "chunk_count": 1
+                },
+                {
+                  "version_id": "v0001",
+                  "status": "previous",
+                  "created_at": "2026-10-20T17:48:59+00:00",
+                  "document_count": 6,
+                  "chunk_count": 30
+                }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "library.rollback",
+          "request_id": "17477e53-d930-4b37-a789-428079723cb1",
+          "payload": {},
+          "start": 3900.15225,
+          "end": 3902.125,
+          "status": 200,
+          "result": {
+            "request_id": "17477e53-d930-4b37-a789-428079723cb1",
+            "operation": "library.rollback",
+            "result": {
+              "version_id": "v0001"
+            }
+          }
+        },
+        {
+          "operation": "library.versions",
+          "request_id": "2ccffd85-c5d8-427e-903d-4320a5f1bcd3",
+          "payload": {},
+          "start": 3914.490416,
+          "end": 3915.934875,
+          "status": 200,
+          "result": {
+            "request_id": "2ccffd85-c5d8-427e-903d-4320a5f1bcd3",
+            "operation": "library.versions",
+            "result": {
+              "active": "v0001",
+              "versions": [
+                {
+                  "version_id": "v0001",
+                  "status": "active",
+                  "created_at": "2026-10-20T17:48:59+00:00",
+                  "document_count": 6,
+                  "chunk_count": 30
+                },
+                {
+                  "version_id": "v0004",
+                  "status": "previous",
+                  "created_at": "2026-10-21T04:55:09+00:00",
+                  "document_count": 1,
+                  "chunk_count": 1
+                }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "history.list",
+          "request_id": "d049c1e9-f3d7-4ad3-a443-fd5f387c3486",
+          "payload": {},
+          "start": 3955.991708,
+          "end": 3958.505208,
+          "status": 200,
+          "result": {
+            "request_id": "d049c1e9-f3d7-4ad3-a443-fd5f387c3486",
+            "operation": "history.list",
+            "result": {
+              "conversations": [
+                {
+                  "conversation_id": "36ec64d1-d47f-4347-b1cf-db1a5329597f",
+                  "title": "What is the annual occupational dose limit? old session",
+                  "updated_at": "2026-10-21 04:55:09",
+                  "model_id": "fake-extractive",
+                  "collection_version": "v0001"
+                },
+                {
+                  "conversation_id": "e4916016-7337-45ca-b09a-b445c4fe0425",
+                  "title": "What is the annual occupational dose limit? new session",
+                  "updated_at": "2026-10-21 04:55:09",
+                  "model_id": "fake-extractive",
+                  "collection_version": "v0001"
+                },
+                {
+                  "conversation_id": "783176c9-4c11-4737-b703-4056d768a624",
+                  "title": "What is the annual occupational dose limit? after recovery",
+                  "updated_at": "2026-10-21 04:55:09",
+                  "model_id": "fake-extractive",
+                  "collection_version": "v0001"
+                },
+                {
+                  "conversation_id": "stage4a-preexisting",
+                  "title": "Preexisting seeded answer",
+                  "updated_at": "2026-10-21 04:55:07",
+                  "model_id": "fake-extractive",
+                  "collection_version": "v0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "settings.get",
+          "request_id": "103d7383-792a-4c44-8abc-de9e7565fede",
+          "payload": {},
+          "start": 3956.1955,
+          "end": 3959.237541,
+          "status": 200,
+          "result": {
+            "request_id": "103d7383-792a-4c44-8abc-de9e7565fede",
+            "operation": "settings.get",
+            "result": {
+              "general_knowledge": true
+            }
+          }
+        },
+        {
+          "operation": "history.enabled",
+          "request_id": "c3628c8e-a2de-400c-9532-b6f12b88a457",
+          "payload": {},
+          "start": 3956.789875,
+          "end": 3958.885833,
+          "status": 200,
+          "result": {
+            "request_id": "c3628c8e-a2de-400c-9532-b6f12b88a457",
+            "operation": "history.enabled",
+            "result": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "operation": "history.delete",
+          "request_id": "4ebef0b8-4c66-462a-98e2-cf6506aa97d3",
+          "payload": {
+            "conversation_id": "stage4a-preexisting"
+          },
+          "start": 4017.865125,
+          "end": 4019.997708,
+          "status": 200,
+          "result": {
+            "request_id": "4ebef0b8-4c66-462a-98e2-cf6506aa97d3",
+            "operation": "history.delete",
+            "result": {
+              "deleted": true
+            }
+          }
+        },
+        {
+          "operation": "history.list",
+          "request_id": "3f55bd70-cb1a-4458-878e-255b36210ee8",
+          "payload": {},
+          "start": 4034.454416,
+          "end": 4041.224291,
+          "status": 200,
+          "result": {
+            "request_id": "3f55bd70-cb1a-4458-878e-255b36210ee8",
+            "operation": "history.list",
+            "result": {
+              "conversations": [
+                {
+                  "conversation_id": "36ec64d1-d47f-4347-b1cf-db1a5329597f",
+                  "title": "What is the annual occupational dose limit? old session",
+                  "updated_at": "2026-10-21 04:55:09",
+                  "model_id": "fake-extractive",
+                  "collection_version": "v0001"
+                },
+                {
+                  "conversation_id": "e4916016-7337-45ca-b09a-b445c4fe0425",
+                  "title": "What is the annual occupational dose limit? new session",
+                  "updated_at": "2026-10-21 04:55:09",
+                  "model_id": "fake-extractive",
+                  "collection_version": "v0001"
+                },
+                {
+                  "conversation_id": "783176c9-4c11-4737-b703-4056d768a624",
+                  "title": "What is the annual occupational dose limit? after recovery",
+                  "updated_at": "2026-10-21 04:55:09",
+                  "model_id": "fake-extractive",
+                  "collection_version": "v0001"
+                }
+              ]
+            }
+          }
+        },
+        {
+          "operation": "settings.get",
+          "request_id": "036a33a3-5dd0-49bb-94b0-e1e6f43b8508",
+          "payload": {},
+          "start": 4035.106666,
+          "end": 4041.91875,
+          "status": 200,
+          "result": {
+            "request_id": "036a33a3-5dd0-49bb-94b0-e1e6f43b8508",
+            "operation": "settings.get",
+            "result": {
+              "general_knowledge": true
+            }
+          }
+        },
+        {
+          "operation": "history.enabled",
+          "request_id": "f4a5b820-8ded-4057-b6bf-b72ad6a60a38",
+          "payload": {},
+          "start": 4035.299625,
+          "end": 4041.641708,
+          "status": 200,
+          "result": {
+            "request_id": "f4a5b820-8ded-4057-b6bf-b72ad6a60a38",
+            "operation": "history.enabled",
+            "result": {
+              "enabled": true
+            }
+          }
+        },
+        {
+          "operation": "history.clear",
+          "request_id": "9330830e-702b-4f27-a4da-0df4726ec8f4",
+          "payload": {},
+          "start": 4084.301666,
+          "end": 4087.065541,
+          "status": 200,
+          "result": {
+            "request_id": "9330830e-702b-4f27-a4da-0df4726ec8f4",
+            "operation": "history.clear",
+            "result": {
+              "cleared": true
+            }
+          }
+        },
+        {
+          "operation": "history.list",
+          "request_id": "0f974d31-7ddc-4816-97b6-2b4cc130a1b2",
+          "payload": {},
+          "start": 4097.321208,
+          "end": 4103.407166,
+          "status": 200,
+          "result": {
+            "request_id": "0f974d31-7ddc-4816-97b6-2b4cc130a1b2",
+            "operation": "history.list",
+            "result": {
+              "conversations": []
+            }
+          }
+        },
+        {
+          "operation": "settings.get",
+          "request_id": "b5ecbeda-ebcb-4ac2-8b3c-13d0ecdb5e93",
+          "payload": {},
+          "start": 4097.840041,
+          "end": 4103.782458,
+          "status": 200,
+          "result": {
+            "request_id": "b5ecbeda-ebcb-4ac2-8b3c-13d0ecdb5e93",
+            "operation": "settings.get",
+            "result": {
+              "general_knowledge": true
+            }
+          }
+        },
+        {
+          "operation": "history.enabled",
+          "request_id": "40954198-87eb-42a3-af2b-bae9dbffaa2f",
+          "payload": {},
+          "start": 4098.009416,
+          "end": 4103.855958,
+          "status": 200,
+          "result": {
+            "request_id": "40954198-87eb-42a3-af2b-bae9dbffaa2f",
+            "operation": "history.enabled",
+            "result": {
+              "enabled": true
+            }
+          }
+        }
+      ],
+      "errors": [],
+      "blocked": []
+    },
+    {
+      "name": "disposable host setup and final public API assertions",
+      "mode": "host",
+      "requests": [
+        {
+          "operation": "history.set_enabled",
+          "request_id": "5e87e2fb-65e0-4f40-9ec8-367c908e666b"
+        },
+        {
+          "operation": "settings.update",
+          "request_id": "574ce1f5-991f-4ed6-b222-0793694a8f12"
+        },
+        {
+          "operation": "history.clear",
+          "request_id": "ee61c5df-3243-40bd-8642-c1d62a00c6f6"
+        },
+        {
+          "operation": "answering.ask",
+          "request_id": "17184040-1a0e-44d6-8373-604ea5729fa0"
+        },
+        {
+          "operation": "history.save",
+          "request_id": "e4f3a41f-6efd-4895-8b50-6621c6d31215"
+        },
+        {
+          "operation": "history.list",
+          "request_id": "2185ad66-b085-4d7c-a423-ae3c64b65e3c"
+        },
+        {
+          "operation": "library.versions",
+          "request_id": "5716ac7f-9d6e-4740-b473-c8d6c4059e11"
+        },
+        {
+          "operation": "history.list",
+          "request_id": "bee9814c-defc-47a5-824a-22b5aeee369e"
+        }
+      ],
+      "errors": [],
+      "blocked": []
+    }
+  ]
+}

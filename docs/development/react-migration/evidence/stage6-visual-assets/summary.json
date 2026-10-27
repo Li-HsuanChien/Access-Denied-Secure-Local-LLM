@@ -1,0 +1,147 @@
+{
+  "response_count": 45,
+  "non200": [],
+  "external": [],
+  "page_errors": [],
+  "blocked": [],
+  "icons": [
+    {
+      "path": "/favicon.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 21666
+    },
+    {
+      "path": "/static/favicon.png",
+      "status": 200,
+      "mime": "image/png",
+      "bytes": 21666
+    }
+  ],
+  "images": [
+    {
+      "src": "http://127.0.0.1:4177/static/favicon.png",
+      "loaded": true,
+      "naturalWidth": 512,
+      "naturalHeight": 512
+    },
+    {
+      "src": "http://127.0.0.1:4177/static/favicon.png",
+      "loaded": true,
+      "naturalWidth": 512,
+      "naturalHeight": 512
+    }
+  ],
+  "fonts": [
+    {
+      "family": "Inter",
+      "status": "loaded",
+      "weight": "normal"
+    },
+    {
+      "family": "Vazirmatn",
+      "status": "loaded",
+      "weight": "normal"
+    },
+    {
+      "family": "KaTeX_AMS",
+      "status": "unloaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_Caligraphic",
+      "status": "unloaded",
+      "weight": "700"
+    },
+    {
+      "family": "KaTeX_Caligraphic",
+      "status": "unloaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_Fraktur",
+      "status": "unloaded",
+      "weight": "700"
+    },
+    {
+      "family": "KaTeX_Fraktur",
+      "status": "unloaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_Main",
+      "status": "unloaded",
+      "weight": "700"
+    },
+    {
+      "family": "KaTeX_Main",
+      "status": "unloaded",
+      "weight": "700"
+    },
+    {
+      "family": "KaTeX_Main",
+      "status": "unloaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_Main",
+      "status": "loaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_Math",
+      "status": "unloaded",
+      "weight": "700"
+    },
+    {
+      "family": "KaTeX_Math",
+      "status": "loaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_SansSerif",
+      "status": "unloaded",
+      "weight": "700"
+    },
+    {
+      "family": "KaTeX_SansSerif",
+      "status": "unloaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_SansSerif",
+      "status": "unloaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_Script",
+      "status": "unloaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_Size1",
+      "status": "unloaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_Size2",
+      "status": "unloaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_Size3",
+      "status": "unloaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_Size4",
+      "status": "unloaded",
+      "weight": "400"
+    },
+    {
+      "family": "KaTeX_Typewriter",
+      "status": "unloaded",
+      "weight": "400"
+    }
+  ]
+}

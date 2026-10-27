@@ -54,6 +54,7 @@ from urllib.parse import parse_qs, urlsplit  # noqa: E402
 
 from secure_qa.answering import AnswerService, ModelRuntimeError  # noqa: E402
 from secure_qa.answering import memory as answer_memory  # noqa: E402
+from secure_qa.answering.answer import Notice
 from secure_qa.answering.memory import Conversation  # noqa: E402
 from secure_qa.answering.model_runtime import is_loopback  # noqa: E402
 from secure_qa.library.corpus import pdfs_in  # noqa: E402
@@ -406,16 +407,25 @@ class Handler(BaseHTTPRequestHandler):
         history = self.server.history
         if not conversation_id:
             return self.server.service.answer(question, collection, request_id=request_id, general_knowledge=general)
-        # Load memory before recording the new question so recent_turns excludes it.
-        convo = Conversation(conversation_id=conversation_id, summary=history.get_summary(conversation_id),
-                             recent_turns=history.recent_turns(conversation_id, limit=6))
-        history.append_turn(conversation_id, "user", question)
+        # History is best effort: unavailable storage must not discard an answer.
+        history_failed = False
+        convo = Conversation(conversation_id=conversation_id, summary="", recent_turns=[])
+        try:
+            convo = Conversation(conversation_id=conversation_id, summary=history.get_summary(conversation_id),
+                                 recent_turns=history.recent_turns(conversation_id, limit=6))
+            history.append_turn(conversation_id, "user", question)
+        except Exception:
+            history_failed = True
         answer = self.server.service.answer(question, collection, request_id=request_id,
                                             general_knowledge=general, conversation=convo)
-        answer_dict = answer.to_dict()
-        if history.append_turn(conversation_id, "assistant", "", answer=answer_dict):
-            history.set_summary(conversation_id,
-                                answer_memory.update_summary(self.server.service.runtime, convo.summary, question, answer_dict))
+        try:
+            if not history_failed and history.append_turn(conversation_id, "assistant", "", answer=answer.to_dict()):
+                history.set_summary(conversation_id,
+                                    answer_memory.update_summary(self.server.service.runtime, convo.summary, question, answer.to_dict()))
+        except Exception:
+            history_failed = True
+        if history_failed:
+            answer.warnings.append(Notice("history_save_failed", "This answer is available here, but could not be saved to local history."))
         return answer
 
     def _library(self, request_id: str, operation: str, payload: dict) -> None:

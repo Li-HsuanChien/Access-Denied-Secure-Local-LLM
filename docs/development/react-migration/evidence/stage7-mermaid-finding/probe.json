@@ -1,0 +1,30 @@
+[
+  {
+    "source": "flowchart LR\n A@{ img: \"http://127.0.0.1:4177/renderer-canary-image.svg\", label: \"Canary\", pos: \"t\", w: 60, h: 60 }",
+    "blocked": [
+      "http://127.0.0.1:4177/renderer-canary-image.svg"
+    ],
+    "errors": [],
+    "requests": [
+      "http://127.0.0.1:4177/renderer-canary-image.svg"
+    ],
+    "text": "From your documents\nCanary\n\nS1\n\nGeneral model knowledge\n\nGeneral knowledge is labeled separately from library evidence.\n\nNot checked against your library.\n\nLimits and uncertainty\nOnly this local collection was checked.",
+    "svg": 1
+  },
+  {
+    "source": "flowchart LR\n A@{ shape: image, img: \"http://127.0.0.1:4177/renderer-canary-image2.svg\", label: \"Canary\", pos: \"t\", w: 60, h: 60 }",
+    "blocked": [],
+    "errors": [],
+    "requests": [],
+    "text": "From your documents\nFailed to render diagram: No such shape: image.\nflowchart LR\n A@{ shape: image, img: \"http://127.0.0.1:4177/renderer-canary-image2.svg\", label: \"Canary\", pos: \"t\", w: 60, h: 60 }\n\nS1\n\nGeneral model knowledge\n\nGeneral knowledge is labeled separately from library evidence.\n\nNot checked against your library.\n\nLimits and uncertainty\nOnly this local collection was checked.",
+    "svg": 0
+  },
+  {
+    "source": "flowchart LR\n A[Safe] --> B[Done]",
+    "blocked": [],
+    "errors": [],
+    "requests": [],
+    "text": "From your documents\nSafe\nDone\n\nS1\n\nGeneral model knowledge\n\nGeneral knowledge is labeled separately from library evidence.\n\nNot checked against your library.\n\nLimits and uncertainty\nOnly this local collection was checked.",
+    "svg": 1
+  }
+]

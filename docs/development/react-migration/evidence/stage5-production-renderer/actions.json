@@ -1,0 +1,54 @@
+{
+  "browser": "151.0.7922.34",
+  "browserExecutable": "/Users/evansinocchi/Library/Caches/ms-playwright/chromium-1234/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+  "cases": [
+    {
+      "name": "content-actions",
+      "copiedCode": "print(\"edited\")",
+      "wholeCopyHasEdit": true,
+      "recordsAfterCodeSave": 2,
+      "tableCopy": "| Factor | Value |\n| --- | ---: |\n| Alpha | 12 |\n| Beta | 24 |",
+      "zoom": "transform-origin: 0px 0px 0px; transform: matrix(1.2214, 0, 0, 1.2214, -81.0334, 4.14092);",
+      "reset": "transform-origin: 0px 0px 0px; transform: matrix(1, 0, 0, 1, 0, 0);",
+      "restoredEdit": "print(\"edited\")",
+      "blocked": [],
+      "errors": []
+    },
+    {
+      "name": "html-preview",
+      "sandbox": "",
+      "srcdoc": "<!doctype html><html><head><meta http-equiv=\"Content-Security-Policy\" content=\"default-src 'none'; script-src 'none'; connect-src 'none'; frame-src 'none'; object-src 'none'; base-uri 'none'; form-action 'none'; style-src 'unsafe-inline'; img-src data: blob:\"><meta charset=\"utf-8\"></head><body><div><strong style=\"color: red;\">Inert local HTML preview</strong><img><a>Blocked navigation</a><svg></svg></div></body></html>",
+      "frameText": "Inert local HTML previewBlocked navigation",
+      "url": "http://127.0.0.1:5186/qa",
+      "scriptRan": false,
+      "blocked": [],
+      "errors": [],
+      "requests": []
+    },
+    {
+      "name": "svg-preview",
+      "exported": [
+        "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"60\"><circle cx=\"30\" cy=\"30\" r=\"20\" fill=\"green\"></circle><a><text x=\"50\" y=\"30\">safe</text></a><defs><linearGradient id=\"paint\"><stop offset=\"0\" stop-color=\"green\"></stop></linearGradient></defs><rect x=\"60\" y=\"5\" width=\"20\" height=\"20\" fill=\"url(&quot;#paint&quot;)\"></rect><rect width=\"10\" height=\"10\"></rect></svg>",
+        "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"60\"><circle cx=\"30\" cy=\"30\" r=\"20\" fill=\"green\"></circle><a><text x=\"50\" y=\"30\">safe</text></a><defs><linearGradient id=\"paint\"><stop offset=\"0\" stop-color=\"green\"></stop></linearGradient></defs><rect x=\"60\" y=\"5\" width=\"20\" height=\"20\" fill=\"url(&quot;#paint&quot;)\"></rect><rect width=\"10\" height=\"10\"></rect></svg>"
+      ],
+      "requests": [],
+      "iframeCount": 0,
+      "content": "<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"60\"><circle cx=\"30\" cy=\"30\" r=\"20\" fill=\"green\"></circle><a><text x=\"50\" y=\"30\">safe</text></a><defs><linearGradient id=\"paint\"><stop offset=\"0\" stop-color=\"green\"></stop></linearGradient></defs><rect x=\"60\" y=\"5\" width=\"20\" height=\"20\" fill=\"url(&quot;#paint&quot;)\"></rect><rect width=\"10\" height=\"10\"></rect></svg>",
+      "zoom": "transform-origin: 0px 0px 0px; transform: matrix(1.2214, 0, 0, 1.2214, -56.6791, -68.192);",
+      "reset": "transform-origin: 0px 0px 0px; transform: matrix(1, 0, 0, 1, 0, 0);",
+      "blocked": [],
+      "errors": []
+    },
+    {
+      "name": "unsafe-diagrams",
+      "alerts": [
+        "Failed to render visualization: External visualization resources are disabled",
+        "Failed to render visualization: Unrecognized function: fetch",
+        "Failed to render diagram: Interactive diagram configuration is disabled"
+      ],
+      "blocked": [],
+      "errors": [],
+      "requests": []
+    }
+  ]
+}

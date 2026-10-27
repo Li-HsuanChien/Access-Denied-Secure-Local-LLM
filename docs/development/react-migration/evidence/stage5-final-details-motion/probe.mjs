@@ -1,0 +1,29 @@
+import fs from 'node:fs/promises';
+import assert from 'node:assert/strict';
+import {chromium} from '/Users/evansinocchi/Desktop/Projects/Access-Denied-Secure-Local-LLM/app/document-qa/frontend/node_modules/playwright/index.mjs';
+import {createFixtureState,health,respond} from '/Users/evansinocchi/Desktop/Projects/Access-Denied-Secure-Local-LLM/app/document-qa/frontend/migration-parity/fixtures/responses.mjs';
+const out='/private/tmp/react-stage5b-build7-details-motion';await fs.mkdir(out,{recursive:true});
+const browser=await chromium.launch({headless:true,executablePath:chromium.executablePath(),args:['--disable-background-networking']});
+const results=[];
+async function open(port,{width=1440,height=1000,dark=false,locale='en-US',stored='',query='',sidebar=true,mode='answer',route='/qa'}={}){
+ const origin=`http://127.0.0.1:${port}`,context=await browser.newContext({viewport:{width,height},deviceScaleFactor:1,reducedMotion:'reduce',colorScheme:dark?'dark':'light',locale,timezoneId:'America/New_York',permissions:['clipboard-read','clipboard-write']});
+ await context.addInitScript(({dark,stored,sidebar})=>{if(top!==window)return;localStorage.theme=dark?'dark':'light';localStorage.sidebar=String(sidebar);if(stored)localStorage.locale=stored;Math.random=()=>0.5;const NativeDate=Date,epoch=NativeDate.parse('2026-10-20T12:00:00Z'),start=performance.now();window.Date=class extends NativeDate{constructor(...args){super(...(args.length?args:[epoch+performance.now()-start]));}static now(){return epoch+performance.now()-start;}};let n=0;Object.defineProperty(crypto,'randomUUID',{configurable:true,value:()=>`00000000-0000-4000-8000-${String(++n).padStart(12,'0')}`});},{dark,stored,sidebar});
+ await context.addInitScript(()=>{window.__animationCalls=[];const native=Element.prototype.animate;Element.prototype.animate=function(frames,options){window.__animationCalls.push({cls:this.className,tag:this.tagName,options,frames:Array.isArray(frames)?[frames[0],frames.at(-1)]:frames});return native.call(this,frames,options);};});
+ const page=await context.newPage(),state=createFixtureState(),errors=[],blocked=[],requests=[];state.mode=mode;
+ page.on('pageerror',e=>errors.push(e.message));
+ await page.route('**/*',async r=>{const u=new URL(r.request().url());if(u.origin==='http://127.0.0.1:8765'){if(u.pathname==='/health')return r.fulfill({json:health(mode)});if(u.pathname==='/v1/requests'){const body=r.request().postDataJSON();requests.push(body);const response=await respond(state,body);return r.fulfill({status:response.status,json:response.body});}}if(u.origin===origin)return r.continue();blocked.push(u.href);return r.abort();});
+ await page.goto(origin+route+query,{waitUntil:'networkidle'});await page.locator('#chat-input').waitFor();await page.evaluate(async()=>{await document.fonts.ready;await new Promise(r=>requestAnimationFrame(()=>requestAnimationFrame(r)));});
+ return{page,context,errors,blocked,requests};
+}
+async function shot(page,name){await page.screenshot({path:`${out}/${name}.png`,animations:'disabled'});}
+
+
+try { for(const port of [5173,4177]) {
+ const p=await open(port,{mode:'rich'});await p.page.locator('button').filter({hasText:'Summarize the key points'}).click();await p.page.getByText('Rich response',{exact:true}).waitFor();const button=p.page.getByRole('button',{name:'Expandable detail probe'});await button.scrollIntoViewIfNeeded();
+ const toggle=()=>p.page.evaluate(()=>[...document.querySelectorAll('button')].find(e=>e.textContent.trim()==='Expandable detail probe').click());
+ const snapshot=()=>{const b=[...document.querySelectorAll('button')].find(e=>e.textContent.trim()==='Expandable detail probe'),n=b.parentElement.children[1];if(!n)return null;const a=n.getAnimations().find(a=>Number(a.effect.getTiming().duration)>1&&a.effect.getKeyframes().some(f=>f.height));return {duration:a?.effect.getTiming().duration,frames:a?.effect.getKeyframes(),inert:n.inert,same:n===window.__initialDetailPanel};};
+ const waitMotion=async(min,max)=>p.page.waitForFunction(({min,max})=>{const b=[...document.querySelectorAll('button')].find(e=>e.textContent.trim()==='Expandable detail probe'),n=b?.parentElement.children[1];return n?.getAnimations().some(a=>Number(a.effect.getTiming().duration)>=min&&Number(a.effect.getTiming().duration)<=max);},{min,max});
+ await toggle();await waitMotion(300,300);await p.page.evaluate(()=>{const b=[...document.querySelectorAll('button')].find(e=>e.textContent.trim()==='Expandable detail probe'),n=b.parentElement.children[1];window.__initialDetailPanel=n;const a=n.getAnimations().find(a=>a.effect.getTiming().duration===300);a.pause();a.currentTime=60;});
+ const entrance=await p.page.evaluate(snapshot);await toggle();await waitMotion(201.69,201.70);const interrupted=await p.page.evaluate(snapshot);assert.ok(Math.abs(interrupted.duration-201.696)<.001);assert.equal(interrupted.inert,true);
+ await p.page.evaluate(()=>{const b=[...document.querySelectorAll('button')].find(e=>e.textContent.trim()==='Expandable detail probe'),n=b.parentElement.children[1],a=n.getAnimations().find(a=>Number(a.effect.getTiming().duration)>1&&a.effect.getKeyframes().some(f=>f.height));a.pause();a.currentTime=Number(a.effect.getTiming().duration)/2;});await toggle();await waitMotion(293.69,293.70);const reopened=await p.page.evaluate(snapshot);assert.equal(reopened.same,true);assert.equal(reopened.inert,false);await p.page.waitForTimeout(350);await toggle();await waitMotion(300,300);const settled=await p.page.evaluate(snapshot);assert.equal(settled.inert,true);await p.page.waitForTimeout(350);assert.equal(await p.page.evaluate(snapshot),null);assert.deepEqual(p.errors,[]);assert.deepEqual(p.blocked,[]);results.push({port,entrance,interrupted,reopened,settled,errors:p.errors,blocked:p.blocked});await p.context.close();
+ }}finally{await fs.writeFile(out+'/results.json',JSON.stringify(results,null,2));await browser.close();}

@@ -1,0 +1,11 @@
+{
+  "app/document-qa/frontend/src/lib/features/desktop-shell/react/AppShell.tsx": "7c20973e0ae40756c9618f3039014f9f061cc25f4a3b4fce62b9600e58e9d927",
+  "app/document-qa/frontend/src/lib/features/desktop-shell/react/PinnedModel.tsx": "0399b5df0275b2812d03525295e685e90a035d5cde095599b95047f9bccef888",
+  "app/document-qa/frontend/src/lib/features/desktop-shell/react/nativeMotion.tsx": "8713c91ce03fa1a5372065eb2de1a8d1e35af901db8f9b022837297cb23bc946",
+  "app/document-qa/frontend/src/lib/features/desktop-shell/react/shell.css": "2a45f0ecbdc72b844c63523616fadcfb4cb07463edc131dea55142b7a9dddaa9",
+  "app/document-qa/frontend/src/react/providers/AppProviders.tsx": "9fa8af9f53040c7fd93045bd2d852e2016484e4fb32d07f7e9144377a4921ca8",
+  "app/document-qa/frontend/src/react/routes/navigation.ts": "54063f4332c2e3d98a993e830e37f3b07c3884dffdc11b3ec96f809131eae41d",
+  "app/document-qa/frontend/src/lib/features/answering/react/ModelOption.tsx": "3d836b7e67a17a6ac8020df82cb978b901769a96f15405b2277b4fdacae55425",
+  "app/document-qa/frontend/vitest.config.ts": "734dae743da207619598eee080303426575660ae0e9eb4710c1ccd6bc3c91a7a",
+  "/private/tmp/shell-pinned-paired.mjs": "85630d36c82cf1edae7e1e04687727b874127891347d258a22b8338484fe2bfe"
+}

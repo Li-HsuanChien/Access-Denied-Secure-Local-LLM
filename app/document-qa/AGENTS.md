@@ -1,5 +1,7 @@
-# Open WebUI integration guidance
+# Document-QA integration guidance
 
-Follow the [PRD](../../docs/product/PRD.md) and [SDD](../../docs/architecture/SDD.md) for user-visible behavior, module interfaces, evidence rules, privacy, accessibility, and offline constraints. The approved architecture uses a pinned Open WebUI fork inside the Tauri application: SvelteKit frontend, Python/FastAPI host, and dedicated `secure_qa` workflow modules.
+Follow the [PRD](../../docs/product/PRD.md) and [SDD](../../docs/architecture/SDD.md) for user-visible behavior, module interfaces, evidence rules, privacy, accessibility, and offline constraints. The approved [React parity migration](../../docs/architecture/decisions/0004-react-frontend-parity.md) makes React the canonical frontend while retaining the implemented Python development host and dedicated `secure_qa` workflow modules. The developer host currently uses ThreadingHTTPServer; FastAPI/Tauri production hosting remains a design target/scaffold. The pinned original source is available in Git history for comparison and rollback.
 
 Keep frontend presentation separate from workflow decisions. The frontend renders workflow results and calls typed host interfaces; Python feature modules own validation, publication, retrieval, answer grounding, citations, persistence, and release verification. Keep host routes thin and route product operations through the owning modules. Open WebUI may provide implementation code, but its generic routes or persistence must not bypass workflow invariants.
+
+Follow the [React contracts and file ownership](../../docs/development/react-migration/react-contracts.md). Shared providers own preferences, answer request serialization/history save and publication identity across navigation. Screen unmount does not cancel host work. Preserve full validated answers separately from local message edits; do not invent durable chat or source-page APIs.

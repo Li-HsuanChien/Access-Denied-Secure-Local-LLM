@@ -1,0 +1,12 @@
+[
+  {
+    "port": 5173,
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "port": 4177,
+    "errors": [],
+    "blocked": []
+  }
+]

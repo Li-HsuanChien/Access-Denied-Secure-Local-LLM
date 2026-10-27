@@ -1,0 +1,64 @@
+{
+  "schema_version": "1.0.0",
+  "request_id": "svg-only-answer",
+  "question": "SVG only",
+  "status": "answered",
+  "evidence_mode": "text",
+  "documents": [
+    {
+      "text": "```svg\n<svg xmlns=\"http://www.w3.org/2000/svg\" width=\"100\" height=\"60\"><circle cx=\"30\" cy=\"30\" r=\"20\" fill=\"green\"/></svg>\n```",
+      "citation_ids": [
+        "S1"
+      ]
+    }
+  ],
+  "general_knowledge": "General knowledge is labeled separately from library evidence.",
+  "limitations": [
+    "Only this local collection was checked."
+  ],
+  "citations": [
+    {
+      "citation_id": "S1",
+      "document_id": "doc_000000000000000000000000",
+      "document_title": "QA Reference Guide",
+      "source_filename": "qa-reference-guide.pdf",
+      "page_start": 2,
+      "page_end": 2,
+      "quote": "The local QA library keeps each imported reference on this computer.",
+      "pages": [
+        {
+          "page_number": 2,
+          "page_char_start": 0,
+          "page_char_end": 68,
+          "highlight_rects": [],
+          "coordinates_reliable": false,
+          "page_width": 612,
+          "page_height": 792
+        }
+      ],
+      "chunk_ids": [
+        "chk_000000000000000000000000"
+      ],
+      "char_start": 0,
+      "char_end": 68,
+      "text_checksum_sha256": "0000000000000000000000000000000000000000000000000000000000000000",
+      "evidence_type": "text",
+      "score": 0.91,
+      "rank": 1
+    }
+  ],
+  "evidence": [],
+  "warnings": [],
+  "error": null,
+  "model": null,
+  "collection_version": "fixture",
+  "prompt_version": "fixture/1",
+  "timing": {
+    "retrieval_ms": 0,
+    "generation_ms": 0,
+    "total_ms": 0,
+    "attempts": 1,
+    "prompt_tokens": null,
+    "completion_tokens": null
+  }
+}

@@ -1,7 +1,7 @@
-import type { Answer, AnsweringClient, HealthStatus } from './types';
+import type { Answer, AnsweringClient, Citation, HealthStatus } from './types';
 
 const quote = 'The local QA library keeps each imported reference on this computer.';
-const citation = {
+const citation: Citation = {
 	citation_id: 'S1', document_id: `doc_${'0'.repeat(24)}`, document_title: 'QA Reference Guide', source_filename: 'qa-reference-guide.pdf',
 	page_start: 2, page_end: 2, quote,
 	pages: [{ page_number: 2, page_char_start: 0, page_char_end: quote.length, highlight_rects: [], coordinates_reliable: false, page_width: 612, page_height: 792 }],

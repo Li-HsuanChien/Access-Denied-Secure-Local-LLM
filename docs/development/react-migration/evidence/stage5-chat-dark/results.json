@@ -1,0 +1,63 @@
+[
+  {
+    "port": 5173,
+    "case": "desktop-dark",
+    "model": {
+      "color": "oklch(0.69 0 0)",
+      "compare": "oklch(0.77 0 0)",
+      "focus": "model-search-input"
+    },
+    "escape": "chat-input",
+    "errors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "blocked": []
+  },
+  {
+    "port": 5173,
+    "case": "narrow-dark",
+    "model": {
+      "color": "oklch(0.69 0 0)",
+      "compare": "oklch(0.77 0 0)",
+      "focus": "model-selector-model-button"
+    },
+    "escape": "chat-input",
+    "errors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "blocked": []
+  },
+  {
+    "port": 5176,
+    "case": "desktop-dark",
+    "model": {
+      "color": "oklch(0.69 0 0)",
+      "compare": "oklch(0.77 0 0)",
+      "focus": "model-search-input"
+    },
+    "escape": "chat-input",
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "port": 5176,
+    "case": "narrow-dark",
+    "model": {
+      "color": "oklch(0.69 0 0)",
+      "compare": "oklch(0.77 0 0)",
+      "focus": "model-selector-model-button"
+    },
+    "escape": "chat-input",
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "port": 5176,
+    "case": "same-tick-native-enter-click",
+    "questions": [
+      "first\n  \nthird"
+    ],
+    "errors": [],
+    "blocked": []
+  }
+]

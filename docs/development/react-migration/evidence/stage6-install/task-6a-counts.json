@@ -1,0 +1,49 @@
+{
+  "source_files_before": 894,
+  "source_files_after": 172,
+  "source_svelte_after": 0,
+  "source_ts_after": 49,
+  "source_tsx_after": 43,
+  "locked_packages_after": 587,
+  "direct_runtime_after": 26,
+  "direct_dev_after": 18,
+  "static_files_after": 9,
+  "static_bytes_after": 1091009,
+  "static_remaining": [
+    "README.md",
+    "favicon.png",
+    "BRANDING.md",
+    "robots.txt",
+    "static/README.md",
+    "static/favicon.png",
+    "static/BRANDING.md",
+    "assets/fonts/Inter-Variable.ttf",
+    "assets/fonts/Vazirmatn-Variable.ttf"
+  ],
+  "build_files": 554,
+  "build_bytes": 45208321,
+  "notices": {
+    "LICENSE": "5f1bd74c48bf13ab0f82e177ad9e637313b92533d20ead2593d49347a47fc232",
+    "LICENSE_HISTORY": "b1567cc9763241a41569e01f08272a167dac57273f717b95b31ba7b5ec935e17",
+    "LICENSE_NOTICE": "9de72254becbb9a317410a459447be7e8f042b911a846c58307319c77e50df00"
+  },
+  "preserved_css": {
+    "src/app.css": {
+      "sha256": "67185d804b31aa3280d06320dd4072c52f9d39da7e9899666f2cba53972599fd",
+      "matches_original": true
+    },
+    "src/tailwind.css": {
+      "sha256": "c60d356e41c1d3aafcb7fd3b426bfdd89f48c613fa577a8d85ebcdf6838f2088",
+      "matches_original": true
+    },
+    "src/lib/features/personality/personality.css": {
+      "sha256": "2326f2238d1c622e7b3f6e385a1d541f02c3c2384eacc0c3c92a0c7d03b43b6b",
+      "matches_original": true
+    }
+  },
+  "package_sha256": "6a91301f69a57ad0a9d963bc9b510a0b7e49370f8c4d7de7c02c7ebb85871716",
+  "lock_sha256": "9316d0db5f5af6b7f40f38d87fe7fd6e2903b6a8c5b50f0b3956bcafc773d3e2",
+  "npm_ls_root": "access-denied-document-qa",
+  "npm_ls_problems": [],
+  "forbidden_lock_paths": []
+}

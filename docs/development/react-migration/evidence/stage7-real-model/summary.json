@@ -1,0 +1,120 @@
+{
+  "result": "passed",
+  "model": {
+    "model_id": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+    "name": "Qwen3 4B Instruct 2507",
+    "quant": "Q4_K_M",
+    "api_version": "2026-09-v1",
+    "runtime_version": "0.2.0",
+    "stub": false
+  },
+  "timing": {
+    "retrieval_ms": 7.5,
+    "generation_ms": 25336.6,
+    "total_ms": 25346.2,
+    "attempts": 1,
+    "prompt_tokens": 292,
+    "completion_tokens": 72
+  },
+  "question": "When is the Alder station maintenance window, and who must approve the work?",
+  "source": "The fictional Alder station maintenance window is Tuesday from 09:00 to 11:00. Supervisor Mira must approve maintenance before work begins.",
+  "answer": {
+    "request_id": "70e695b9-70b4-4a49-b321-35b31ad7d10f",
+    "question": "When is the Alder station maintenance window, and who must approve the work?",
+    "status": "answered",
+    "evidence_mode": "text",
+    "documents": [
+      {
+        "text": "The Alder station maintenance window is Tuesday from 09:00 to 11:00.",
+        "citation_ids": [
+          "S1"
+        ]
+      },
+      {
+        "text": "Supervisor Mira must approve maintenance before work begins.",
+        "citation_ids": [
+          "S1"
+        ]
+      }
+    ],
+    "general_knowledge": null,
+    "limitations": [
+      "None. The passages clearly state the maintenance window and the required approval. There is no ambiguity or missing information."
+    ],
+    "citations": [
+      {
+        "citation_id": "S1",
+        "document_id": "doc_dc7c79501c776328f65af9c9",
+        "document_title": "Alder-Station",
+        "source_filename": "alder-station.pdf",
+        "page_start": 1,
+        "page_end": 1,
+        "pages": [
+          {
+            "page_number": 1,
+            "page_char_start": 0,
+            "page_char_end": 139,
+            "highlight_rects": [],
+            "coordinates_reliable": false,
+            "page_width": 1000,
+            "page_height": 792
+          }
+        ],
+        "chunk_ids": [
+          "chk_40e48aed574b1725f6d0865d"
+        ],
+        "char_start": 0,
+        "char_end": 139,
+        "text_checksum_sha256": "f03e5a1f68b156d7c5438f037d6a510e24d2e01b9392abc0a298e032228436e7",
+        "quote": "The fictional Alder station maintenance window is Tuesday from 09:00 to 11:00. Supervisor Mira must approve maintenance before work begins.",
+        "evidence_type": "text",
+        "score": 0.7959,
+        "rank": 1
+      }
+    ],
+    "evidence": [
+      {
+        "citation_id": "S1",
+        "chunk_id": "chk_40e48aed574b1725f6d0865d",
+        "document_id": "doc_dc7c79501c776328f65af9c9",
+        "page_start": 1,
+        "page_end": 1,
+        "score": 0.7959,
+        "rank": 1,
+        "cited": true
+      }
+    ],
+    "warnings": [],
+    "model": {
+      "model_id": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+      "name": "Qwen3 4B Instruct 2507",
+      "quant": "Q4_K_M",
+      "api_version": "2026-09-v1",
+      "runtime_version": "0.2.0",
+      "stub": false
+    },
+    "collection_version": "v0001",
+    "prompt_version": "e3-rag-2026-10-05.1",
+    "timing": {
+      "retrieval_ms": 7.5,
+      "generation_ms": 25336.6,
+      "total_ms": 25346.2,
+      "attempts": 1,
+      "prompt_tokens": 292,
+      "completion_tokens": 72
+    },
+    "error": null,
+    "schema_version": "1.0.0"
+  },
+  "gateway_port": 8087,
+  "host_port": 8767,
+  "services_stopped": true,
+  "network_controls": {
+    "runtime_offline": true,
+    "HF_HUB_OFFLINE": "1",
+    "TRANSFORMERS_OFFLINE": "1",
+    "browser_external_requests": 0,
+    "machine_physically_disconnected": false
+  },
+  "scope": "One generated fictional PDF and one factual question; not a model-quality or reference-hardware benchmark."
+}

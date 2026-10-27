@@ -1,0 +1,86 @@
+import assert from 'node:assert/strict';
+import { browser, hostOrigin, mode, session, send, idle, navigate, committed, deferred, until, finish, textPdf, reports } from './runtime.mjs';
+assert.equal(mode, 'host', 'Set REACT_INTEGRATION_MODE=host and the explicit disposable endpoint.');
+const setup = [];
+async function host(operation, payload = {}) {
+  const request_id = crypto.randomUUID();
+  const response = await fetch(`${hostOrigin}/v1/requests`, { method: 'POST', redirect: 'error', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify({ request_id, operation, payload }) });
+  const body = await response.json(); assert(response.ok, JSON.stringify(body)); assert.equal(body.request_id, request_id); assert.equal(body.operation, operation);
+  setup.push({ operation, request_id }); return body.result;
+}
+try {
+  const readiness = await (await fetch(`${hostOrigin}/health`, { redirect: 'error' })).json();
+  assert(readiness.ready && readiness.answering.stub, 'Only the deterministic disposable host is allowed.');
+  const initialVersion = readiness.library.active_version;
+  await host('history.set_enabled', { enabled: true }); await host('settings.update', { general_knowledge: true }); await host('history.clear');
+  const seed = await host('answering.ask', { question: 'What is the annual occupational dose limit?', general_knowledge: false });
+  assert.equal(seed.status, 'answered'); assert(seed.citations.length > 0);
+  await host('history.save', { conversation_id: 'stage4a-preexisting', title: 'Preexisting seeded answer', answer: seed });
+  const oldAnswer = deferred(), publication = deferred(); let failNextSave = false, holdPublication = true;
+  const s = await session({ name: 'all four workflows through unchanged isolated Python API', routePath: '/history', handle: async (request, forward) => {
+    if (request?.operation === 'history.save' && failNextSave) {
+      failNextSave = false;
+      return { status: 503, body: { request_id: request.request_id, error: { code: 'history_unavailable', message: 'Controlled history storage failure.', hint: 'Try again.' } } };
+    }
+    const result = await forward();
+    if (request?.operation === 'answering.ask' && request.payload.question === 'What is the annual occupational dose limit? old session') await oldAnswer.promise;
+    if (request?.operation === 'library.publish' && holdPublication) await publication.promise;
+    return result;
+  } }), p = s.page;
+  await p.locator('li.row button.open').click(); await p.getByRole('heading', { name: 'Preexisting seeded answer', exact: true }).waitFor();
+  const opened = s.operations('history.open')[0].result.result.conversation;
+  assert.deepEqual(opened.answer, seed, 'Existing answer metadata survives without migration');
+  assert.equal(opened.model_id, seed.model?.model_id ?? null); assert.equal(opened.collection_version, seed.collection_version);
+  await p.locator('details summary').first().click(); assert(await p.locator('details').first().evaluate(node => node.open));
+  assert.equal(await p.locator('.renderer-assistant').count(), 0, 'History retains its plain renderer');
+  await navigate(p, 'Settings');
+  await committed(p.locator('label.setting').filter({ hasText: 'Include general model knowledge by default' }).getByRole('switch'), false);
+  await committed(p.locator('label.setting').filter({ hasText: 'Save new answers to local conversation history' }).getByRole('switch'), false);
+  assert.equal(await p.locator('.service-status').getByRole('switch').isChecked(), false);
+  await navigate(p, 'History'); assert.equal(await p.locator('main').getByRole('switch').isChecked(), false);
+  await navigate(p, 'New Chat'); await send(p, 'What is the annual occupational dose limit?'); await idle(p);
+  assert.equal(s.operations('answering.ask').at(-1).payload.general_knowledge, false);
+  assert.equal(s.operations('history.save').at(-1).result.result.saved, false);
+  assert.equal((await host('history.list')).conversations.length, 1);
+  await committed(p.locator('.service-status').getByRole('switch'), true);
+  await navigate(p, 'Settings'); await committed(p.locator('label.setting').filter({ hasText: 'Save new answers to local conversation history' }).getByRole('switch'), true);
+  await navigate(p, 'New Chat'); await send(p, 'What is the annual occupational dose limit? old session');
+  await until(() => s.operations('answering.ask').length === 2); await send(p, 'discard this old queue');
+  await navigate(p, 'Library'); await p.getByRole('heading', { name: 'Library', exact: true }).waitFor();
+  await navigate(p, 'New Chat'); await send(p, 'What is the annual occupational dose limit? new session');
+  assert.equal(s.operations('answering.ask').length, 2); oldAnswer.resolve(); await idle(p);
+  assert.equal(s.operations('answering.ask').length, 3); assert.equal(s.operations('history.save').length, 3);
+  assert(!(await p.locator('#messages-container').innerText()).includes('old session'));
+  assert(!s.operations('answering.ask').some(request => request.payload.question.includes('discard this')));
+  const asks = s.operations('answering.ask'); assert(asks[2].start >= s.operations('history.save')[1].end);
+  failNextSave = true; await send(p, 'What is the annual occupational dose limit? retained after failed save');
+  await p.getByText(/This answer is available here, but could not be saved/).first().waitFor(); await idle(p);
+  await send(p, 'What is the annual occupational dose limit? after recovery'); await idle(p);
+  assert.equal(s.operations('answering.ask').length, 5); assert.equal(s.operations('history.save').length, 5);
+  await navigate(p, 'Library');
+  await p.locator('#pdfs').setInputFiles([{ name: 'stage4a-local.pdf', mimeType: 'application/pdf', buffer: textPdf() }, { name: 'invalid.pdf', mimeType: 'application/pdf', buffer: Buffer.from('This is not a PDF.') }]);
+  await p.getByRole('button', { name: 'Review selected files', exact: true }).click(); await p.getByRole('heading', { name: 'Review import' }).waitFor();
+  const review = s.operations('library.review').at(-1).result.result;
+  assert.equal(review.accepted.length, 1); assert.equal(review.rejected.length, 1); assert.equal(review.requires_confirmation, true);
+  assert(await p.getByRole('button', { name: 'Publish accepted PDFs' }).isDisabled()); await p.locator('label.check input').check();
+  await p.getByRole('button', { name: 'Publish accepted PDFs' }).click(); await until(() => s.operations('library.publish').length === 1);
+  const publicationId = s.operations('library.publish')[0].request_id;
+  await navigate(p, 'Settings'); await navigate(p, 'Library'); await p.getByRole('heading', { name: 'Publication in progress' }).waitFor();
+  await until(() => s.operations('library.status').length > 0);
+  await p.getByRole('button', { name: 'Cancel publication' }).click(); await p.getByText(/Publication is finishing; cancellation is no longer available/).waitFor();
+  assert.equal(s.operations('library.cancel')[0].payload.target_request_id, publicationId);
+  assert.equal(s.operations('library.cancel')[0].result.result.cancelled, false, 'Completed real publication truthfully refuses cancellation');
+  assert(s.operations('library.status').every(request => request.payload.target_request_id === publicationId));
+  assert.equal(await p.getByRole('heading', { name: 'Publication in progress' }).count(), 1, 'A false cancel acknowledgement does not release ownership');
+  publication.resolve(); holdPublication = false; await p.getByText(/Collection .* is active · 1 PDFs/).waitFor();
+  const published = s.operations('library.publish')[0].result.result; assert.notEqual(published.version_id, initialVersion);
+  await p.getByRole('button', { name: /Roll back/ }).click(); await p.getByText(`Collection ${initialVersion} is active again.`, { exact: true }).waitFor();
+  const versions = await host('library.versions'); assert.equal(versions.active, initialVersion, 'Restore seeded active collection');
+  await navigate(p, 'History'); await p.getByRole('button', { name: 'Delete Preexisting seeded answer', exact: true }).click();
+  await p.getByText('Conversation deleted.', { exact: true }).waitFor();
+  p.once('dialog', dialog => { assert.equal(dialog.message(), 'Delete all saved conversations from this computer?'); return dialog.accept(); });
+  await p.getByRole('button', { name: 'Clear all history' }).click(); await p.getByText('Saved history cleared.', { exact: true }).waitFor();
+  assert.deepEqual((await host('history.list')).conversations, []); await s.close();
+  reports.push({ name: 'disposable host setup and final public API assertions', mode, requests: setup, errors: [], blocked: [] });
+  await finish();
+} finally { await browser.close(); }

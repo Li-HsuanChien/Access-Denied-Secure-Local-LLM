@@ -1,0 +1,1467 @@
+{
+  "baselineCommit": "4dc2a06a4fc57ff393ea43ef4b75014b1458eb9b",
+  "browser": "Chromium 151.0.7922.34",
+  "browserExecutable": "/Users/evansinocchi/Library/Caches/ms-playwright/chromium-1234/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+  "fixedClock": "2026-10-20T12:00:00.000Z epoch plus monotonic test time",
+  "timezone": "America/New_York",
+  "deviceScaleFactor": 1,
+  "reducedMotion": "reduce",
+  "origin": "http://127.0.0.1:4177",
+  "fixtureApi": "schema-valid local workflow responses; no host writes",
+  "repeatProof": "0d32f49b56cbb51f7664bc9764e1b65db5868d0e1baf4bfca6fa6f0381a89a06",
+  "cases": [
+    {
+      "name": "chat-empty-light-1440",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "0d32f49b56cbb51f7664bc9764e1b65db5868d0e1baf4bfca6fa6f0381a89a06",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "sidebar": "collapsed"
+      }
+    },
+    {
+      "name": "chat-empty-light-1440-repeat",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "0d32f49b56cbb51f7664bc9764e1b65db5868d0e1baf4bfca6fa6f0381a89a06",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "sidebar": "collapsed"
+      }
+    },
+    {
+      "name": "chat-typed-multiline-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "0d32f49b56cbb51f7664bc9764e1b65db5868d0e1baf4bfca6fa6f0381a89a06",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "sidebar": "collapsed"
+      }
+    },
+    {
+      "name": "chat-typed-multiline",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "3bfb0eccb6fde014ced3ecaf4aca8216e58e2d8a8782b1ab2f75bfae232953a3",
+      "details": {
+        "route": "/qa",
+        "state": "typed multiline composer"
+      }
+    },
+    {
+      "name": "chat-answer-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "0d32f49b56cbb51f7664bc9764e1b65db5868d0e1baf4bfca6fa6f0381a89a06",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "sidebar": "collapsed"
+      }
+    },
+    {
+      "name": "chat-answer",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "df12641a848d9d38d65faf7cf46458fdb5deca7e62c3870baa9131fb9038c757",
+      "details": {
+        "route": "/qa",
+        "state": "supported answer"
+      }
+    },
+    {
+      "name": "chat-sources-expanded",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "d453d72dde609320cfac41f279a01db8c49872b5e59da55a11efb1390f1c1771",
+      "details": {
+        "route": "/qa",
+        "state": "expanded source"
+      }
+    },
+    {
+      "name": "chat-source-detail-modal",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "f11aec8573b489f1479cb0ca70035ce1a2bd7ab17e76de4058dbb7457e83e4a5",
+      "details": {
+        "route": "/qa",
+        "state": "source detail modal"
+      }
+    },
+    {
+      "name": "chat-empty-light-390",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "89ca7e9a726049741759bc9d000a789d5c40bdf094a833897b1bcae8192c33c2",
+      "details": {
+        "route": "/qa",
+        "width": 390,
+        "height": 844,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "chat-empty-dark-1440",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "6c68fa1676732942fdd4f6073a7f4bad9b09b8944dec7ce6af97df26d3147255",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark",
+        "sidebar": "collapsed"
+      }
+    },
+    {
+      "name": "chat-empty-dark-390",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "8ce85ac308505a0575a3e0da11b0ca0b06bf3def44e0a2c19162dcaa4e398725",
+      "details": {
+        "route": "/qa",
+        "width": 390,
+        "height": 844,
+        "theme": "dark"
+      }
+    },
+    {
+      "name": "chat-insufficient-evidence-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "ba54055e6b5d62965fd3fbd35d89bd7fb9bb4937e81b9094c4275c3f8dfee8be",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "sidebar": "expanded",
+        "apiMode": "insufficient"
+      }
+    },
+    {
+      "name": "chat-insufficient-evidence",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "e8035effcb0b2d74b32eb04f8241efcd30b448825a2258382f8f15f7d0c5ef6b",
+      "details": {
+        "route": "/qa",
+        "state": "There is not enough evidence"
+      }
+    },
+    {
+      "name": "chat-request-failure-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "ba54055e6b5d62965fd3fbd35d89bd7fb9bb4937e81b9094c4275c3f8dfee8be",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "sidebar": "expanded",
+        "apiMode": "failure"
+      }
+    },
+    {
+      "name": "chat-request-failure",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "e28545d52649d08e6d941a7945019f5c1fb5ceaaabfe28b5ca2771b683105b16",
+      "details": {
+        "route": "/qa",
+        "state": "The local QA service is unavailable"
+      }
+    },
+    {
+      "name": "chat-history-save-failure-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "ba54055e6b5d62965fd3fbd35d89bd7fb9bb4937e81b9094c4275c3f8dfee8be",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "sidebar": "expanded",
+        "apiMode": "history-save-failure"
+      }
+    },
+    {
+      "name": "chat-history-save-failure",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "74754d52ec46ef731180faf5d07a3d53a8f588482125bbd42ae1fbf6978bcbb3",
+      "details": {
+        "route": "/qa",
+        "state": "could not be saved to local history"
+      }
+    },
+    {
+      "name": "chat-rich-content-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "0b9ced7afd8961b9015357ad1acd58b4a5ad57988e98e1dd07a6c90b4ad259df",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "sidebar": "expanded",
+        "apiMode": "rich"
+      }
+    },
+    {
+      "name": "chat-rich-content-top",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "aef64616c6524ff55defd328f784d9d4bab9f56249529ea2f4debdc8d62db267",
+      "details": {
+        "route": "/qa",
+        "state": "Rich response",
+        "response": "rich Markdown and renderer formats",
+        "scrollPosition": "top",
+        "viewportOnly": true
+      }
+    },
+    {
+      "name": "chat-rich-content-middle",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "5beac4e91b3fc9a71075db843df51eec2584a860e70fd59309f1c9d08278a8ed",
+      "details": {
+        "route": "/qa",
+        "state": "Rich response",
+        "response": "rich Markdown and renderer formats",
+        "scrollPosition": "middle",
+        "viewportOnly": true
+      }
+    },
+    {
+      "name": "chat-rich-content-bottom",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "18f50b07ed861dcff1e4b95f47d0dc0c1d4b580b8bde6d23ff6b589ebf298687",
+      "details": {
+        "route": "/qa",
+        "state": "Rich response",
+        "response": "rich Markdown and renderer formats",
+        "scrollPosition": "bottom",
+        "viewportOnly": true
+      }
+    },
+    {
+      "name": "chat-long-content-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "0b9ced7afd8961b9015357ad1acd58b4a5ad57988e98e1dd07a6c90b4ad259df",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "sidebar": "expanded",
+        "apiMode": "long"
+      }
+    },
+    {
+      "name": "chat-long-content-top",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "aef64616c6524ff55defd328f784d9d4bab9f56249529ea2f4debdc8d62db267",
+      "details": {
+        "route": "/qa",
+        "state": "Additional section",
+        "response": "long Markdown content",
+        "scrollPosition": "top",
+        "viewportOnly": true
+      }
+    },
+    {
+      "name": "chat-long-content-bottom",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "356c31187c428c07b3681cbb2569ddd741d987aa660b790debb8ca1e6bd1548c",
+      "details": {
+        "route": "/qa",
+        "state": "Additional section",
+        "response": "long Markdown content",
+        "scrollPosition": "bottom",
+        "viewportOnly": true
+      }
+    },
+    {
+      "name": "chat-in-flight-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "063b0d3737cd7e070ccecda0b54fd64c5d9f032ba4633de235044f47de0f4bbb",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "sidebar": "expanded",
+        "apiMode": "answer-delay"
+      }
+    },
+    {
+      "name": "chat-in-flight",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "1d6723bfaf8aae1fcdefc24411289b22aa03ec1b115f2f02be484ed07bc39690",
+      "details": {
+        "route": "/qa",
+        "state": "in-flight answer request"
+      }
+    },
+    {
+      "name": "chat-in-flight-complete",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "444974f32268fd664574b8f271aa21489400efc4cbe938797e74df29ac44b4f9",
+      "details": {
+        "route": "/qa",
+        "state": "From your documents"
+      }
+    },
+    {
+      "name": "chat-suggestion-hover-focus",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "063b0d3737cd7e070ccecda0b54fd64c5d9f032ba4633de235044f47de0f4bbb",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "sidebar": "expanded"
+      }
+    },
+    {
+      "name": "chat-suggestion-hover",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "2087f7838ad28e8c695cfb7ec2191ebbd8e9b49eda4363ecb0890ef7d173cac1",
+      "details": {
+        "route": "/qa",
+        "state": "suggestion hover"
+      }
+    },
+    {
+      "name": "chat-suggestion-focus",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "2d9dec8586d73eede317b189db467a191a6aace7d3eaf52aae1ad49386691862",
+      "details": {
+        "route": "/qa",
+        "state": "suggestion keyboard focus"
+      }
+    },
+    {
+      "name": "chat-sidebar-expanded-light-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "0b9ced7afd8961b9015357ad1acd58b4a5ad57988e98e1dd07a6c90b4ad259df",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "sidebar": "expanded"
+      }
+    },
+    {
+      "name": "chat-sidebar-expanded-light",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "0b9ced7afd8961b9015357ad1acd58b4a5ad57988e98e1dd07a6c90b4ad259df",
+      "details": {
+        "route": "/qa",
+        "state": "expanded sidebar",
+        "theme": "light"
+      }
+    },
+    {
+      "name": "chat-sidebar-expanded-dark-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "5f2216d7cf78d8e56c326ad75edc0add27bd387dcfaf133f7efefbf7d65fd93e",
+      "details": {
+        "route": "/qa",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark",
+        "sidebar": "expanded"
+      }
+    },
+    {
+      "name": "chat-sidebar-expanded-dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "5f2216d7cf78d8e56c326ad75edc0add27bd387dcfaf133f7efefbf7d65fd93e",
+      "details": {
+        "route": "/qa",
+        "state": "expanded sidebar",
+        "theme": "dark"
+      }
+    },
+    {
+      "name": "chat-mobile-sidebar-overlay-initial",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "89ca7e9a726049741759bc9d000a789d5c40bdf094a833897b1bcae8192c33c2",
+      "details": {
+        "route": "/qa",
+        "width": 390,
+        "height": 844,
+        "theme": "light",
+        "sidebar": "collapsed"
+      }
+    },
+    {
+      "name": "chat-mobile-sidebar-overlay",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "2ba6f7e3cd2f344c5f65678960f588a2cfe56fdca2ede29e7b93f9e5b25a193d",
+      "details": {
+        "route": "/qa",
+        "state": "mobile sidebar overlay"
+      }
+    },
+    {
+      "name": "library-initial-narrow",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "2d13b4ecd0c3c849cd5852c372cfe8cfe4d1b0366ea44d9566dda39dd7bcf896",
+      "details": {
+        "route": "/library",
+        "width": 390,
+        "height": 844,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "library-review-unchecked-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "b3285ff48ef9fdfa28b674115c1833a19da2ceda0d177b528c044295637bb168",
+      "details": {
+        "route": "/library",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "library-files-selected",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "876a4a3c42ae54bdcf1db4d329d5807c0d27d2f903dc23e8a947f47d2cfa0eac",
+      "details": {
+        "route": "/library",
+        "state": "selected file list before review"
+      }
+    },
+    {
+      "name": "library-review-unchecked",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "d1435c6194d8f3b7aa87cf12b9bf251d44578e0f09dcf2b1757a1196432a6db1",
+      "details": {
+        "route": "/library",
+        "state": "accepted and rejected files; confirmation unchecked"
+      }
+    },
+    {
+      "name": "library-review-checked",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "811823369dc8bd4b97055c7a40b8218062d7a3b4e727bef2a174ece53c21450b",
+      "details": {
+        "route": "/library",
+        "state": "confirmation checked"
+      }
+    },
+    {
+      "name": "library-review-dark-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "9fc4009dd76d4ecc06603f1840f66becd89a821692210988ebe0edf53a3cf111",
+      "details": {
+        "route": "/library",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark"
+      }
+    },
+    {
+      "name": "library-files-selected-dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "f89dbb179cac6357d1ca8f2f10f55b973c4d5aff6248d17dd1e8288aedb48541",
+      "details": {
+        "route": "/library",
+        "state": "selected file list before review"
+      }
+    },
+    {
+      "name": "library-review-unchecked-dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "78555844f96664349e2925a8c08d1dbb140d547706765a9b33e71b9a4171956d",
+      "details": {
+        "route": "/library",
+        "state": "accepted and rejected files; confirmation unchecked"
+      }
+    },
+    {
+      "name": "library-review-checked-dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "b45ef07b5393a1a6dccf588c37fb284eef144dcf81f79532c24c053e0dcc3aa5",
+      "details": {
+        "route": "/library",
+        "state": "confirmation checked"
+      }
+    },
+    {
+      "name": "library-review-narrow-initial",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "2d13b4ecd0c3c849cd5852c372cfe8cfe4d1b0366ea44d9566dda39dd7bcf896",
+      "details": {
+        "route": "/library",
+        "width": 390,
+        "height": 844,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "library-review-narrow",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "73db3cfcfcb1ef47b37ec9a560d5bfcdfc8e85ae1d559d3b784a85f39c987425",
+      "details": {
+        "route": "/library",
+        "state": "review at narrow viewport"
+      }
+    },
+    {
+      "name": "library-publication-progress-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "b3285ff48ef9fdfa28b674115c1833a19da2ceda0d177b528c044295637bb168",
+      "details": {
+        "route": "/library",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "apiMode": "library-publishing"
+      }
+    },
+    {
+      "name": "library-publication-progress",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "a7fbde668dc34dd31888c10163d32a15137b53763b9ae726f8ef61e8292f6faa",
+      "details": {
+        "route": "/library",
+        "state": "publication progress"
+      }
+    },
+    {
+      "name": "library-publication-result",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "b75e5fafd24d9194db85445f7dea6e081286dee23da3b753a422febc06a9496e",
+      "details": {
+        "route": "/library",
+        "state": "publication result"
+      }
+    },
+    {
+      "name": "library-rollback-result",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "de7607b3f3d2a7bf10ccedebf88f7211cdc37f988cd78412172e1ffc691ee1dd",
+      "details": {
+        "route": "/library",
+        "state": "rollback result"
+      }
+    },
+    {
+      "name": "library-cancelable",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "b3285ff48ef9fdfa28b674115c1833a19da2ceda0d177b528c044295637bb168",
+      "details": {
+        "route": "/library",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "apiMode": "library-cancelable"
+      }
+    },
+    {
+      "name": "library-cancellation-result",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "b31d2f90d2f554dc91616ef466166b60a61a1724fd289b6cf0f5190b1332ce50",
+      "details": {
+        "route": "/library",
+        "state": "cancellation result; active version unchanged"
+      }
+    },
+    {
+      "name": "library-publication-failure-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "9fc4009dd76d4ecc06603f1840f66becd89a821692210988ebe0edf53a3cf111",
+      "details": {
+        "route": "/library",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark",
+        "apiMode": "library-failure"
+      }
+    },
+    {
+      "name": "library-publication-failure",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "777f5d36e0aa5db0ed02ce7294787b023cb07d943bff6fd1d966a488dc4be0c3",
+      "details": {
+        "route": "/library",
+        "state": "publication failure and unchanged active collection"
+      }
+    },
+    {
+      "name": "history-empty",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "7220e1645af14e0c42b94563dc74a4ded66e4c2ce8f60ef13cc92d638c5b6e59",
+      "details": {
+        "route": "/history",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light",
+        "apiMode": "history-empty"
+      }
+    },
+    {
+      "name": "history-request-pending",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "7220e1645af14e0c42b94563dc74a4ded66e4c2ce8f60ef13cc92d638c5b6e59",
+      "details": {
+        "route": "/history",
+        "state": "empty presentation while delayed history requests are pending (no visible loading indicator)",
+        "pendingApiOperations": [
+          "history.enabled",
+          "history.list"
+        ]
+      }
+    },
+    {
+      "name": "history-request-settled",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "7220e1645af14e0c42b94563dc74a4ded66e4c2ce8f60ef13cc92d638c5b6e59",
+      "details": {
+        "route": "/history",
+        "state": "resolved empty history"
+      }
+    },
+    {
+      "name": "history-record-open-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "0c42abbc8f420dfb2c040f6a3712adaccee74a74be5226617360b8e04935923d",
+      "details": {
+        "route": "/history",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "history-record-open",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "402a77dc13251672dacaeeaeea09e863f00f4a2cab1cab4a7fb72f8d642c471a",
+      "details": {
+        "route": "/history",
+        "state": "saved answer opened"
+      }
+    },
+    {
+      "name": "history-source-expanded",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "7703137c0a00e2111ae87538919761158db2c228ea938927f5b44eecd2a3a154",
+      "details": {
+        "route": "/history",
+        "state": "saved answer source detail"
+      }
+    },
+    {
+      "name": "history-record-open-dark-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "46409b957383b26fc08ea9c38d305fb1a3707f04332e7f03bb3d3b3e820c75d2",
+      "details": {
+        "route": "/history",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark"
+      }
+    },
+    {
+      "name": "history-record-open-dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "f2a1b1204e43d59ee95917854b3c340ebefb15b8620a33314b2c5a90a7edda1c",
+      "details": {
+        "route": "/history",
+        "state": "saved answer opened"
+      }
+    },
+    {
+      "name": "history-record-open-narrow-initial",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "a14281bfd9981f2223f70ec7b944daf59ed76b047c9c5ff2b55eb75462c81ef8",
+      "details": {
+        "route": "/history",
+        "width": 390,
+        "height": 844,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "history-record-open-narrow",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "a78cbc38f4b0524a0b44efeb8f9d7a9f922bc90c44689353671bdbfedafc822b",
+      "details": {
+        "route": "/history",
+        "state": "saved answer opened at narrow viewport"
+      }
+    },
+    {
+      "name": "history-delete-clear",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "46409b957383b26fc08ea9c38d305fb1a3707f04332e7f03bb3d3b3e820c75d2",
+      "details": {
+        "route": "/history",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark"
+      }
+    },
+    {
+      "name": "history-delete-outcome",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "0fb159f6db481f48b7417827d79f2d21878a3c691c5f760bed313c2ab9afbedc",
+      "details": {
+        "route": "/history",
+        "state": "record deleted"
+      }
+    },
+    {
+      "name": "history-clear-confirmation",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "0c42abbc8f420dfb2c040f6a3712adaccee74a74be5226617360b8e04935923d",
+      "details": {
+        "route": "/history",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "history-clear-outcome",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "b461d47c69f2588b58cb7ec5b6df8ddfd0891afc6cc78c7b0c00b939a868cc87",
+      "details": {
+        "route": "/history",
+        "state": "clear confirmed and completed"
+      }
+    },
+    {
+      "name": "history-failure-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "9118d0dc7d440720553bd13163f1fee24871d982a79557a1595c63cbabd81591",
+      "details": {
+        "route": "/history",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark",
+        "apiMode": "history-failure"
+      }
+    },
+    {
+      "name": "history-failure",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "9118d0dc7d440720553bd13163f1fee24871d982a79557a1595c63cbabd81591",
+      "details": {
+        "route": "/history",
+        "state": "history load failure"
+      }
+    },
+    {
+      "name": "settings-updated-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "83dbc947c3751dc93a38f600edca3aec416699d5e03514ae8f4df4296fbc0ff0",
+      "details": {
+        "route": "/settings",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "settings-updated",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "2d1bf1b60fb9b8ae4b77c4481312e1f6abdb9e0a8f4877322058dfcbd413e8f4",
+      "details": {
+        "route": "/settings",
+        "state": "updated preferences"
+      }
+    },
+    {
+      "name": "settings-persistence-off",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "9e92aae6d6aedfb395fe264b69da8dc998a0693e686e3ef0fbe6e97a86b03a1e",
+      "details": {
+        "route": "/settings",
+        "state": "persistence disabled"
+      }
+    },
+    {
+      "name": "settings-updated-dark-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "b3ed106b3df54649aad698e9dd0ab6617067e571517a8d3e0fb979f046884b22",
+      "details": {
+        "route": "/settings",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark"
+      }
+    },
+    {
+      "name": "settings-updated-dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "4f85cf511573afc87aa0b722563d6eba3c7b63a1587e8eaba943e279b2614811",
+      "details": {
+        "route": "/settings",
+        "state": "updated preferences"
+      }
+    },
+    {
+      "name": "settings-persistence-off-dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "e12234d86ca568ebe98af6d087bf295f2d22a48a36c6bf169db1b9d53a62453d",
+      "details": {
+        "route": "/settings",
+        "state": "persistence disabled"
+      }
+    },
+    {
+      "name": "settings-degraded-initial",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "62773c3f1ee702ade7f1070ae018a8d1d806e057b689cbf9801857f076043a0d",
+      "details": {
+        "route": "/settings",
+        "width": 390,
+        "height": 844,
+        "theme": "dark",
+        "apiMode": "degraded"
+      }
+    },
+    {
+      "name": "settings-degraded",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "62773c3f1ee702ade7f1070ae018a8d1d806e057b689cbf9801857f076043a0d",
+      "details": {
+        "route": "/settings",
+        "state": "degraded local readiness"
+      }
+    },
+    {
+      "name": "settings-error-initial",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "99c224d64855d04ec07fe1c509d409edc408324bae7eda3b327c880ccb9802a0",
+      "details": {
+        "route": "/settings",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark",
+        "apiMode": "settings-failure"
+      }
+    },
+    {
+      "name": "settings-error",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "99c224d64855d04ec07fe1c509d409edc408324bae7eda3b327c880ccb9802a0",
+      "details": {
+        "route": "/settings",
+        "state": "settings service error"
+      }
+    },
+    {
+      "name": "library-light-1440",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "b3285ff48ef9fdfa28b674115c1833a19da2ceda0d177b528c044295637bb168",
+      "details": {
+        "route": "/library",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "library-dark-1440",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "71180b45bb7690094b1639c7201c2e807295844b4c9297bd507f8af273f84a8e",
+      "details": {
+        "route": "/library",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark"
+      }
+    },
+    {
+      "name": "history-light-1440",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "0c42abbc8f420dfb2c040f6a3712adaccee74a74be5226617360b8e04935923d",
+      "details": {
+        "route": "/history",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "history-persistence-off-light",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "e9c4bcd577f51f01dd91e583da77ddf67cab522cdb12bfcf409dfde1e5976eee",
+      "details": {
+        "route": "/history",
+        "state": "persistence off"
+      }
+    },
+    {
+      "name": "history-dark-1440",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "46409b957383b26fc08ea9c38d305fb1a3707f04332e7f03bb3d3b3e820c75d2",
+      "details": {
+        "route": "/history",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark"
+      }
+    },
+    {
+      "name": "history-persistence-off-dark",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "4009fc8c7cdfb890e38649bc81843fc658d2618a055a9098441c8b9dbe03cb32",
+      "details": {
+        "route": "/history",
+        "state": "persistence off"
+      }
+    },
+    {
+      "name": "history-light-390",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "a14281bfd9981f2223f70ec7b944daf59ed76b047c9c5ff2b55eb75462c81ef8",
+      "details": {
+        "route": "/history",
+        "width": 390,
+        "height": 844,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "settings-light-1440",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "83dbc947c3751dc93a38f600edca3aec416699d5e03514ae8f4df4296fbc0ff0",
+      "details": {
+        "route": "/settings",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "settings-dark-1440",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "b3ed106b3df54649aad698e9dd0ab6617067e571517a8d3e0fb979f046884b22",
+      "details": {
+        "route": "/settings",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark"
+      }
+    },
+    {
+      "name": "settings-light-390",
+      "viewport": {
+        "width": 390,
+        "height": 844,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "20ad091fef25befeffc3d1336cd2139cfbf45dc03901cd94e2ca83816aebb6bf",
+      "details": {
+        "route": "/settings",
+        "width": 390,
+        "height": 844,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "root-light-1440",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "ba54055e6b5d62965fd3fbd35d89bd7fb9bb4937e81b9094c4275c3f8dfee8be",
+      "details": {
+        "route": "/",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "root-dark-1440",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "5f2216d7cf78d8e56c326ad75edc0add27bd387dcfaf133f7efefbf7d65fd93e",
+      "details": {
+        "route": "/",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark"
+      }
+    },
+    {
+      "name": "c-baseline-session-light-1440",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "72e86060a725cb14dfa43096ecad08618771deffa388c1525b6f944b10af3483",
+      "details": {
+        "route": "/c/baseline-session",
+        "width": 1440,
+        "height": 1000,
+        "theme": "light"
+      }
+    },
+    {
+      "name": "c-baseline-session-dark-1440",
+      "viewport": {
+        "width": 1440,
+        "height": 1000,
+        "devicePixelRatio": 1
+      },
+      "screenshotSha256": "5f2216d7cf78d8e56c326ad75edc0add27bd387dcfaf133f7efefbf7d65fd93e",
+      "details": {
+        "route": "/c/baseline-session",
+        "width": 1440,
+        "height": 1000,
+        "theme": "dark"
+      }
+    }
+  ],
+  "blockedRequests": [],
+  "browserErrors": [
+    {
+      "type": "console",
+      "url": "http://127.0.0.1:4177/qa",
+      "location": {
+        "url": "http://127.0.0.1:8765/v1/requests",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "type": "console",
+      "url": "http://127.0.0.1:4177/qa",
+      "location": {
+        "url": "http://127.0.0.1:8765/v1/requests",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "type": "console",
+      "url": "http://127.0.0.1:4177/library",
+      "location": {
+        "url": "http://127.0.0.1:8765/v1/requests",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "message": "Failed to load resource: the server responded with a status of 500 (Internal Server Error)"
+    },
+    {
+      "type": "console",
+      "url": "http://127.0.0.1:4177/history",
+      "location": {
+        "url": "http://127.0.0.1:8765/v1/requests",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "type": "console",
+      "url": "http://127.0.0.1:4177/settings",
+      "location": {
+        "url": "http://127.0.0.1:8765/v1/requests",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    },
+    {
+      "type": "console",
+      "url": "http://127.0.0.1:4177/settings",
+      "location": {
+        "url": "http://127.0.0.1:8765/v1/requests",
+        "line": 0,
+        "column": 0,
+        "lineNumber": 0,
+        "columnNumber": 0
+      },
+      "message": "Failed to load resource: the server responded with a status of 503 (Service Unavailable)"
+    }
+  ]
+}

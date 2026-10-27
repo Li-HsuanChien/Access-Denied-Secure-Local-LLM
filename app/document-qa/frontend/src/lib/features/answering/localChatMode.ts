@@ -1,12 +1,5 @@
-import { writable } from 'svelte/store';
-
-// Product privacy state, independent of Open WebUI's upstream storage bypass.
-export const localTemporaryChat = writable(false);
-
-/** Reconcile privacy on every navigation, including New Chat and back/forward. */
-export function syncLocalChatMode(url: URL) {
-    localTemporaryChat.set(
-        (url.pathname === '/' || url.pathname === '/qa') &&
-        url.searchParams.get('local-temporary') === 'true'
-    );
+/** Product privacy is URL-derived, scoped to a new chat, and never persisted. */
+export function isLocalTemporaryChat(url: URL): boolean {
+ return (url.pathname === '/' || url.pathname === '/qa') &&
+  url.searchParams.get('local-temporary') === 'true';
 }

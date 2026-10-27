@@ -1,0 +1,80 @@
+{
+  "browser": "151.0.7922.34",
+  "executable": "/Users/evansinocchi/Library/Caches/ms-playwright/chromium-1234/chrome-mac-arm64/Google Chrome for Testing.app/Contents/MacOS/Google Chrome for Testing",
+  "origin": "http://127.0.0.1:4177",
+  "cases": [
+    {
+      "name": "F7A1 production parsed metadata rejection and safe queued diagrams",
+      "metadata": [
+        "img: \"http://127.0.0.1:4177/renderer-canary-original.svg\"",
+        "\"img\": \"/renderer-canary-quoted.svg\"",
+        "'img': '../renderer-canary-single.svg'",
+        "\"i\\u006dg\": \"\\u0068ttp://127.0.0.1:4177/renderer-canary-unicode.svg\"",
+        "\"\\x69mg\": \"/renderer-canary-hex.svg\"",
+        "\"\\U00000069mg\": \"file:///renderer-canary-file.svg\"",
+        "img: \"//example.test/renderer-canary-protocol.svg\"",
+        "img: \"#renderer-canary-paint\"",
+        "img: \"data:image/svg+xml;base64,PHN2Zy8+\"",
+        "img: \"blob:http://127.0.0.1:4177/renderer-canary-blob\"",
+        "\n  \"img\": >-\n    http://127.0.0.1:4177/renderer-canary-folded.svg\n  label: Canary\n"
+      ],
+      "alerts": [
+        "Failed to render diagram: External diagram resources are disabled",
+        "Failed to render diagram: External diagram resources are disabled",
+        "Failed to render diagram: External diagram resources are disabled",
+        "Failed to render diagram: External diagram resources are disabled",
+        "Failed to render diagram: External diagram resources are disabled",
+        "Failed to render diagram: External diagram resources are disabled",
+        "Failed to render diagram: External diagram resources are disabled",
+        "Failed to render diagram: External diagram resources are disabled",
+        "Failed to render diagram: External diagram resources are disabled",
+        "Failed to render diagram: External diagram resources are disabled",
+        "Failed to render diagram: External diagram resources are disabled"
+      ],
+      "safe": [
+        "flowchart LR\n A[Safe] --> B[Done]",
+        "flowchart LR\n A@{ shape: rect, label: \"Safe metadata\" } --> B[Complete]",
+        "sequenceDiagram\n Alice->>Bob: Safe message\n Bob-->>Alice: Complete"
+      ],
+      "blocked": [],
+      "errors": [],
+      "canaries": [],
+      "scripts": [
+        "http://127.0.0.1:4177/assets/index-LZVhepO3.js"
+      ]
+    },
+    {
+      "name": "F7A2 nested local saves and repeated root save/copy/branch revisit",
+      "source": "> ```js\n> const quoted = 1;\n> ```\n\n- Item\n\n  ```js\n  const listed = 1;\n  ```\n\n```js\nconst same = 2;\n```\n\n> ```js\n> const quoted = 1;\n> ```\n\n```js\nconst same = 2;\n```\n\n",
+      "before": [
+        "const quoted = 1;",
+        "const listed = 1;",
+        "const same = 2;",
+        "const quoted = 1;",
+        "const same = 2;"
+      ],
+      "afterNestedEditors": [
+        "const localOnly = 0;",
+        "const localOnly = 1;",
+        "const same = 2;",
+        "const localOnly = 3;",
+        "const same = 2;"
+      ],
+      "afterNestedCopy": "### From your documents\n\n> ```js\n> const quoted = 1;\n> ```\n\n- Item\n\n  ```js\n  const listed = 1;\n  ```\n\n```js\nconst same = 2;\n```\n\n> ```js\n> const quoted = 1;\n> ```\n\n```js\nconst same = 2;\n```\n\n [^S1]\n\n### General model knowledge\n\nGeneral knowledge is labeled separately from library evidence.\n\n_Not checked against your library._\n\n### Limits and uncertainty\n\n- Only this local collection was checked.",
+      "copied": "### From your documents\n\n> ```js\n> const quoted = 1;\n> ```\n\n- Item\n\n  ```js\n  const listed = 1;\n  ```\n\n```js\nconst first = 3;\n```\n\n> ```js\n> const quoted = 1;\n> ```\n\n```js\nconst second = 4;\n```\n\n [^S1]\n\n### General model knowledge\n\nGeneral knowledge is labeled separately from library evidence.\n\n_Not checked against your library._\n\n### Limits and uncertainty\n\n- Only this local collection was checked.",
+      "revisitedCopy": "### From your documents\n\n> ```js\n> const quoted = 1;\n> ```\n\n- Item\n\n  ```js\n  const listed = 1;\n  ```\n\n```js\nconst first = 3;\n```\n\n> ```js\n> const quoted = 1;\n> ```\n\n```js\nconst second = 4;\n```\n\n [^S1]\n\n### General model knowledge\n\nGeneral knowledge is labeled separately from library evidence.\n\n_Not checked against your library._\n\n### Limits and uncertainty\n\n- Only this local collection was checked.",
+      "revisitedEditors": [
+        "const quoted = 1;",
+        "const listed = 1;",
+        "const first = 3;",
+        "const quoted = 1;",
+        "const second = 4;"
+      ],
+      "historySaves": 2,
+      "originalSavedText": "> ```js\n> const quoted = 1;\n> ```\n\n- Item\n\n  ```js\n  const listed = 1;\n  ```\n\n```js\nconst same = 2;\n```\n\n> ```js\n> const quoted = 1;\n> ```\n\n```js\nconst same = 2;\n```\n\n",
+      "blocked": [],
+      "errors": []
+    }
+  ],
+  "result": "passed"
+}

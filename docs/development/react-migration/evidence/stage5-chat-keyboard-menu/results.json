@@ -1,0 +1,226 @@
+[
+  {
+    "case": "wire-single",
+    "port": 5173,
+    "before": {
+      "html": "<p>first</p><p>third</p>",
+      "text": "first\n\nthird"
+    },
+    "questions": [
+      "first\nthird"
+    ],
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "case": "wire-blank",
+    "port": 5173,
+    "before": {
+      "html": "<p>first</p><p><br class=\"ProseMirror-trailingBreak\"></p><p>third</p>",
+      "text": "first\n\n\n\n\nthird"
+    },
+    "questions": [
+      "first\n  \nthird"
+    ],
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "case": "wire-leading",
+    "port": 5173,
+    "before": {
+      "html": "<p><br class=\"ProseMirror-trailingBreak\"></p><p>first</p><p>third</p>",
+      "text": "\n\n\nfirst\n\nthird"
+    },
+    "questions": [
+      "  \nfirst\nthird"
+    ],
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "case": "wire-trailing",
+    "port": 5173,
+    "before": {
+      "html": "<p>first</p><p>third</p><p><br class=\"ProseMirror-trailingBreak\"></p><p data-placeholder=\"Ask a question about your library…\" class=\"is-empty\"><br class=\"ProseMirror-trailingBreak\"></p>",
+      "text": "first\n\nthird\n\n\n\n\n\n"
+    },
+    "questions": [
+      "first\nthird"
+    ],
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "case": "wire-consecutive",
+    "port": 5173,
+    "before": {
+      "html": "<p>first</p><p><br class=\"ProseMirror-trailingBreak\"></p><p><br class=\"ProseMirror-trailingBreak\"></p><p>third</p>",
+      "text": "first\n\n\n\n\n\n\n\nthird"
+    },
+    "questions": [
+      "first\n  \n  \nthird"
+    ],
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "case": "wire-single",
+    "port": 5176,
+    "before": {
+      "html": "first<div>third</div>",
+      "text": "first\nthird"
+    },
+    "questions": [
+      "first\nthird"
+    ],
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "case": "wire-blank",
+    "port": 5176,
+    "before": {
+      "html": "first<div><br></div><div>third</div>",
+      "text": "first\n\n\nthird"
+    },
+    "questions": [
+      "first\n  \nthird"
+    ],
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "case": "wire-leading",
+    "port": 5176,
+    "before": {
+      "html": "<div><br></div><div>first</div><div>third</div>",
+      "text": "\n\nfirst\nthird"
+    },
+    "questions": [
+      "  \nfirst\nthird"
+    ],
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "case": "wire-trailing",
+    "port": 5176,
+    "before": {
+      "html": "first<div>third</div><div><br></div><div><br></div>",
+      "text": "first\nthird\n\n\n\n"
+    },
+    "questions": [
+      "first\nthird"
+    ],
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "case": "wire-consecutive",
+    "port": 5176,
+    "before": {
+      "html": "first<div><br></div><div><br></div><div>third</div>",
+      "text": "first\n\n\n\n\nthird"
+    },
+    "questions": [
+      "first\n  \n  \nthird"
+    ],
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "case": "more-options",
+    "port": 5173,
+    "variant": "desktop-light",
+    "initialMenu": "Keep in Sidebar\nCopy Link",
+    "menuRect": {
+      "x": 936.5,
+      "y": 586.125,
+      "width": 210,
+      "height": 60
+    },
+    "copied": "http://127.0.0.1:5173/?model=secure-qa-local",
+    "afterMenu": "Hide from Sidebar\nCopy Link",
+    "pinStorage": {},
+    "unsupported": [
+      {
+        "url": "http://127.0.0.1:5173/api/v1/users/user/settings/update",
+        "body": "{\"ui\":{\"pinnedModels\":[\"secure-qa-local\"]}}"
+      },
+      {
+        "url": "http://127.0.0.1:5173/api/v1/users/user/settings/update",
+        "body": "{\"ui\":{\"pinnedModels\":[]}}"
+      }
+    ],
+    "errors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "blocked": []
+  },
+  {
+    "case": "more-options",
+    "port": 5173,
+    "variant": "narrow-dark",
+    "initialMenu": "Keep in Sidebar\nCopy Link",
+    "menuRect": {
+      "x": 95.5,
+      "y": 524.90625,
+      "width": 210,
+      "height": 60
+    },
+    "copied": "http://127.0.0.1:5173/?model=secure-qa-local",
+    "afterMenu": "Hide from Sidebar\nCopy Link",
+    "pinStorage": {},
+    "unsupported": [
+      {
+        "url": "http://127.0.0.1:5173/api/v1/users/user/settings/update",
+        "body": "{\"ui\":{\"pinnedModels\":[\"secure-qa-local\"]}}"
+      },
+      {
+        "url": "http://127.0.0.1:5173/api/v1/users/user/settings/update",
+        "body": "{\"ui\":{\"pinnedModels\":[]}}"
+      }
+    ],
+    "errors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "blocked": []
+  },
+  {
+    "case": "more-options",
+    "port": 5176,
+    "variant": "desktop-light",
+    "initialMenu": "Keep in Sidebar\nCopy Link",
+    "menuRect": {
+      "x": 936.5,
+      "y": 586.125,
+      "width": 210,
+      "height": 60
+    },
+    "copied": "http://127.0.0.1:5176/?model=secure-qa-local",
+    "afterMenu": "Hide from Sidebar\nCopy Link",
+    "pinStorage": {},
+    "unsupported": [],
+    "errors": [],
+    "blocked": []
+  },
+  {
+    "case": "more-options",
+    "port": 5176,
+    "variant": "narrow-dark",
+    "initialMenu": "Keep in Sidebar\nCopy Link",
+    "menuRect": {
+      "x": 95.5,
+      "y": 524.90625,
+      "width": 210,
+      "height": 60
+    },
+    "copied": "http://127.0.0.1:5176/?model=secure-qa-local",
+    "afterMenu": "Hide from Sidebar\nCopy Link",
+    "pinStorage": {},
+    "unsupported": [],
+    "errors": [],
+    "blocked": []
+  }
+]

@@ -1,0 +1,29 @@
+{
+  "browser": "151.0.7922.34",
+  "infoHidden": "true",
+  "infoChanged": false,
+  "userCopy": "safe action probe",
+  "tableCopy": "| Name | Value |\n| --- | --- |\n| A | 2 |",
+  "csv": {
+    "filename": "table-temporary_undefined-d95f4094-b8f5-476f-a4a8-d42ee52f7629-2.csv",
+    "content": "\ufeff\"Name\",\"Value\"\n\"A\",\"2\""
+  },
+  "diagramCopy": "{\"width\": 140, \"height\": 80, \"data\": {\"values\": [{\"name\": \"A\", \"value\": 3}, {\"name\": \"B\", \"value\": 5}]}, \"mark\": \"bar\", \"encoding\": {\"x\": {\"field\": \"name\", \"type\": \"nominal\"}, \"y\": {\"field\": \"value\", \"type\": \"quantitative\"}}}",
+  "zoomedTransform": "transform-origin: 0px 0px 0px; transform: matrix(1.37713, 0, 0, 1.37713, -161.788, -22.1091);",
+  "resetTransform": "transform-origin: 0px 0px 0px; transform: matrix(1, 0, 0, 1, 0, 0);",
+  "scroll": {
+    "top": 1385,
+    "client": 839,
+    "height": 2225
+  },
+  "askQuestions": [
+    "safe action probe",
+    "safe action probe"
+  ],
+  "blocked": [],
+  "errors": [],
+  "svgDownload": {
+    "filename": "diagram.svg",
+    "containsSvg": true
+  }
+}

@@ -1,0 +1,550 @@
+[
+  {
+    "variant": "desktop-light",
+    "menus": {
+      "chat-actions": {
+        "pixels": 0,
+        "max": 0,
+        "box": [
+          318,
+          69,
+          559,
+          143
+        ],
+        "geometryEqual": true,
+        "focus": {
+          "open": [
+            "menu",
+            "menu"
+          ],
+          "ArrowDown": [
+            "menu",
+            "menu"
+          ],
+          "ArrowUp": [
+            "menu",
+            "menu"
+          ],
+          "Home": [
+            "menu",
+            "menu"
+          ],
+          "End": [
+            "menu",
+            "menu"
+          ],
+          "Escape": [
+            "chat-input",
+            "chat-input"
+          ],
+          "outside": [
+            null,
+            null
+          ]
+        }
+      },
+      "regenerate": {
+        "pixels": 0,
+        "max": 0,
+        "box": [
+          469,
+          494,
+          708,
+          657
+        ],
+        "geometryEqual": true,
+        "focus": {
+          "open": [
+            "menu",
+            "menu"
+          ],
+          "ArrowDown": [
+            "menu",
+            "menu"
+          ],
+          "ArrowUp": [
+            "menu",
+            "menu"
+          ],
+          "Home": [
+            "menu",
+            "menu"
+          ],
+          "End": [
+            "menu",
+            "menu"
+          ],
+          "Escape": [
+            "chat-input",
+            "chat-input"
+          ],
+          "outside": [
+            null,
+            null
+          ]
+        }
+      },
+      "model": {
+        "pixels": 0,
+        "max": 0,
+        "box": [
+          915,
+          851,
+          1276,
+          965
+        ],
+        "geometryEqual": true,
+        "focus": {
+          "open": [
+            "model-search-input",
+            "model-search-input"
+          ],
+          "ArrowDown": [
+            "model-search-input",
+            "model-search-input"
+          ],
+          "ArrowUp": [
+            "model-search-input",
+            "model-search-input"
+          ],
+          "Home": [
+            "model-search-input",
+            "model-search-input"
+          ],
+          "End": [
+            "model-search-input",
+            "model-search-input"
+          ],
+          "Escape": [
+            "chat-input",
+            "chat-input"
+          ],
+          "outside": [
+            null,
+            null
+          ]
+        }
+      }
+    },
+    "originalErrors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON",
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "candidateErrors": [],
+    "blocked": [
+      [],
+      []
+    ]
+  },
+  {
+    "variant": "desktop-dark",
+    "menus": {
+      "chat-actions": {
+        "pixels": 0,
+        "max": 0,
+        "box": [
+          318,
+          69,
+          559,
+          143
+        ],
+        "geometryEqual": true,
+        "focus": {
+          "open": [
+            "menu",
+            "menu"
+          ],
+          "ArrowDown": [
+            "menu",
+            "menu"
+          ],
+          "ArrowUp": [
+            "menu",
+            "menu"
+          ],
+          "Home": [
+            "menu",
+            "menu"
+          ],
+          "End": [
+            "menu",
+            "menu"
+          ],
+          "Escape": [
+            "chat-input",
+            "chat-input"
+          ],
+          "outside": [
+            null,
+            null
+          ]
+        }
+      },
+      "regenerate": {
+        "pixels": 0,
+        "max": 0,
+        "box": [
+          469,
+          494,
+          708,
+          657
+        ],
+        "geometryEqual": true,
+        "focus": {
+          "open": [
+            "menu",
+            "menu"
+          ],
+          "ArrowDown": [
+            "menu",
+            "menu"
+          ],
+          "ArrowUp": [
+            "menu",
+            "menu"
+          ],
+          "Home": [
+            "menu",
+            "menu"
+          ],
+          "End": [
+            "menu",
+            "menu"
+          ],
+          "Escape": [
+            "chat-input",
+            "chat-input"
+          ],
+          "outside": [
+            null,
+            null
+          ]
+        }
+      },
+      "model": {
+        "pixels": 0,
+        "max": 0,
+        "box": [
+          915,
+          851,
+          1276,
+          965
+        ],
+        "geometryEqual": true,
+        "focus": {
+          "open": [
+            "model-search-input",
+            "model-search-input"
+          ],
+          "ArrowDown": [
+            "model-search-input",
+            "model-search-input"
+          ],
+          "ArrowUp": [
+            "model-search-input",
+            "model-search-input"
+          ],
+          "Home": [
+            "model-search-input",
+            "model-search-input"
+          ],
+          "End": [
+            "model-search-input",
+            "model-search-input"
+          ],
+          "Escape": [
+            "chat-input",
+            "chat-input"
+          ],
+          "outside": [
+            null,
+            null
+          ]
+        }
+      }
+    },
+    "originalErrors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON",
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "candidateErrors": [],
+    "blocked": [
+      [],
+      []
+    ]
+  },
+  {
+    "variant": "narrow-light",
+    "menus": {
+      "chat-actions": {
+        "pixels": 1,
+        "max": 1,
+        "box": [
+          76,
+          102,
+          317,
+          176
+        ],
+        "geometryEqual": true,
+        "focus": {
+          "open": [
+            "menu",
+            "menu"
+          ],
+          "ArrowDown": [
+            "menu",
+            "menu"
+          ],
+          "ArrowUp": [
+            "menu",
+            "menu"
+          ],
+          "Home": [
+            "menu",
+            "menu"
+          ],
+          "End": [
+            "menu",
+            "menu"
+          ],
+          "Escape": [
+            "chat-input",
+            "chat-input"
+          ],
+          "outside": [
+            null,
+            null
+          ]
+        }
+      },
+      "regenerate": {
+        "pixels": 9,
+        "max": 11,
+        "box": [
+          54,
+          577,
+          293,
+          740
+        ],
+        "geometryEqual": true,
+        "focus": {
+          "open": [
+            "menu",
+            "menu"
+          ],
+          "ArrowDown": [
+            "menu",
+            "menu"
+          ],
+          "ArrowUp": [
+            "menu",
+            "menu"
+          ],
+          "Home": [
+            "menu",
+            "menu"
+          ],
+          "End": [
+            "menu",
+            "menu"
+          ],
+          "Escape": [
+            "chat-input",
+            "chat-input"
+          ],
+          "outside": [
+            null,
+            null
+          ]
+        }
+      },
+      "model": {
+        "pixels": 1,
+        "max": 1,
+        "box": [
+          0,
+          695,
+          359,
+          809
+        ],
+        "geometryEqual": true,
+        "focus": {
+          "open": [
+            "model-selector-model-button",
+            "model-selector-model-button"
+          ],
+          "ArrowDown": [
+            "model-selector-model-button",
+            "model-selector-model-button"
+          ],
+          "ArrowUp": [
+            "model-selector-model-button",
+            "model-selector-model-button"
+          ],
+          "Home": [
+            "model-selector-model-button",
+            "model-selector-model-button"
+          ],
+          "End": [
+            "model-selector-model-button",
+            "model-selector-model-button"
+          ],
+          "Escape": [
+            "chat-input",
+            "chat-input"
+          ],
+          "outside": [
+            null,
+            null
+          ]
+        }
+      }
+    },
+    "originalErrors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON",
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "candidateErrors": [],
+    "blocked": [
+      [],
+      []
+    ]
+  },
+  {
+    "variant": "narrow-dark",
+    "menus": {
+      "chat-actions": {
+        "pixels": 1,
+        "max": 1,
+        "box": [
+          76,
+          102,
+          317,
+          176
+        ],
+        "geometryEqual": true,
+        "focus": {
+          "open": [
+            "menu",
+            "menu"
+          ],
+          "ArrowDown": [
+            "menu",
+            "menu"
+          ],
+          "ArrowUp": [
+            "menu",
+            "menu"
+          ],
+          "Home": [
+            "menu",
+            "menu"
+          ],
+          "End": [
+            "menu",
+            "menu"
+          ],
+          "Escape": [
+            "chat-input",
+            "chat-input"
+          ],
+          "outside": [
+            null,
+            null
+          ]
+        }
+      },
+      "regenerate": {
+        "pixels": 8,
+        "max": 9,
+        "box": [
+          54,
+          577,
+          293,
+          740
+        ],
+        "geometryEqual": true,
+        "focus": {
+          "open": [
+            "menu",
+            "menu"
+          ],
+          "ArrowDown": [
+            "menu",
+            "menu"
+          ],
+          "ArrowUp": [
+            "menu",
+            "menu"
+          ],
+          "Home": [
+            "menu",
+            "menu"
+          ],
+          "End": [
+            "menu",
+            "menu"
+          ],
+          "Escape": [
+            "chat-input",
+            "chat-input"
+          ],
+          "outside": [
+            null,
+            null
+          ]
+        }
+      },
+      "model": {
+        "pixels": 2,
+        "max": 1,
+        "box": [
+          0,
+          695,
+          359,
+          809
+        ],
+        "geometryEqual": true,
+        "focus": {
+          "open": [
+            "model-selector-model-button",
+            "model-selector-model-button"
+          ],
+          "ArrowDown": [
+            "model-selector-model-button",
+            "model-selector-model-button"
+          ],
+          "ArrowUp": [
+            "model-selector-model-button",
+            "model-selector-model-button"
+          ],
+          "Home": [
+            "model-selector-model-button",
+            "model-selector-model-button"
+          ],
+          "End": [
+            "model-selector-model-button",
+            "model-selector-model-button"
+          ],
+          "Escape": [
+            "chat-input",
+            "chat-input"
+          ],
+          "outside": [
+            null,
+            null
+          ]
+        }
+      }
+    },
+    "originalErrors": [
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON",
+      "Unexpected token '<', \"<!doctype \"... is not valid JSON"
+    ],
+    "candidateErrors": [],
+    "blocked": [
+      [],
+      []
+    ]
+  }
+]

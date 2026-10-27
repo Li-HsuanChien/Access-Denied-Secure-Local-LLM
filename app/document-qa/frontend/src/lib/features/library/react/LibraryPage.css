@@ -1,0 +1,15 @@
+.library-page .picker { position: relative; display: grid; justify-items: center; gap: 2px; border: 1px dashed var(--workspace-line); border-radius: var(--workspace-radius-control); padding: var(--workspace-space-6) var(--workspace-space-4); text-align: center; cursor: pointer; transition: background-color var(--workspace-motion-fast), border-color var(--workspace-motion-fast); }
+.library-page .picker:hover, .library-page .picker:focus-within { border-color: var(--workspace-accent); background: var(--workspace-hover); }
+.library-page .picker.has-files { border-style: solid; }
+.library-page .picker:focus-within { outline: 2px solid var(--workspace-focus); outline-offset: 2px; }
+.library-page .picker input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
+.library-page .picker svg { width: 20px; height: 20px; margin-bottom: 4px; color: var(--workspace-accent); }
+.library-page .picker-title { font-weight: 500; }
+.library-page .picker .hint { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.library-page .rejected { color: var(--workspace-error); }
+
+.library-page .document-switch { display: flex; align-items: center; gap: .5rem; margin-inline: 1rem; white-space: nowrap; }
+.library-page .document-title { display: block; text-align: left; color: var(--workspace-accent); text-decoration: underline; overflow-wrap: anywhere; }
+.library-page .document-title:focus-visible { outline: 2px solid var(--workspace-focus); outline-offset: 2px; }
+.library-preview { padding: 1.5rem; }
+.library-preview .heading, .library-preview .actions { display: flex; justify-content: space-between; gap: .5rem; margin-block: .5rem; }

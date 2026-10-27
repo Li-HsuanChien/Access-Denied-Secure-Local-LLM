@@ -1,6 +1,6 @@
 # Secure QA backend features
 
-This Python package holds the five SDD workflow modules and supporting diagnostics behind their public interfaces. The Open WebUI Python host dispatches versioned loopback HTTP requests to these workflows and does not bind to a non-loopback interface. See the [SDD](../../../../docs/architecture/SDD.md).
+This Python package holds the five SDD workflow modules and supporting diagnostics behind their public interfaces. The Python development host dispatches versioned loopback HTTP requests to these workflows and does not bind to a non-loopback interface. See the [SDD](../../../../docs/architecture/SDD.md).
 
 | Module | State |
 |---|---|

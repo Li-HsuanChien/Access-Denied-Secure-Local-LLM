@@ -10,7 +10,7 @@
   "app": {
     "windows": [{ "label": "main", "title": "Secure Local DocQA — Development preview", "url": "desktop-startup.html", "width": 1200, "height": 800, "minWidth": 800, "minHeight": 600 }],
     "security": {
-      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost http://127.0.0.1:8765; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; frame-src 'none'; object-src 'none'",
+      "csp": "default-src 'self'; connect-src 'self' ipc: http://ipc.localhost http://127.0.0.1:8765; img-src 'self' data: blob:; font-src 'self' data:; media-src 'self' blob:; script-src 'self' 'unsafe-inline' 'unsafe-eval'; style-src 'self' 'unsafe-inline'; worker-src 'self' blob:; frame-src 'self'; object-src 'none'; base-uri 'self'; form-action 'none'",
       "capabilities": []
     }
   },

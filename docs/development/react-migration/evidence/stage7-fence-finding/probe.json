@@ -1,0 +1,36 @@
+[
+  {
+    "index": 1,
+    "edited": "const edited = 11;",
+    "source": "> ```js\n> const quoted = 1;\n> ```\n\n```js\nconst top = 2;\n```\n",
+    "before": [
+      "const quoted = 1;",
+      "const top = 2;"
+    ],
+    "after": [
+      "const quoted = 1;",
+      "const edited = 11;"
+    ],
+    "copied": "### From your documents\n\n> ```js\n> const quoted = 1;\n> ```\n\n```js\nconst top = 2;\n```\n [^S1]\n\n### General model knowledge\n\nGeneral knowledge is labeled separately from library evidence.\n\n_Not checked against your library._\n\n### Limits and uncertainty\n\n- Only this local collection was checked.",
+    "blocked": [],
+    "errors": [],
+    "records": 2
+  },
+  {
+    "index": 0,
+    "edited": "const edited = 10;",
+    "source": "> ```js\n> const quoted = 1;\n> ```\n\n```js\nconst top = 2;\n```\n",
+    "before": [
+      "const quoted = 1;",
+      "const top = 2;"
+    ],
+    "after": [
+      "const edited = 10;",
+      "const edited = 10;"
+    ],
+    "copied": "### From your documents\n\n> ```js\n> const quoted = 1;\n> ```\n\n```js\nconst edited = 10;\n```\n [^S1]\n\n### General model knowledge\n\nGeneral knowledge is labeled separately from library evidence.\n\n_Not checked against your library._\n\n### Limits and uncertainty\n\n- Only this local collection was checked.",
+    "blocked": [],
+    "errors": [],
+    "records": 2
+  }
+]

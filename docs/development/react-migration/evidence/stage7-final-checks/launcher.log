@@ -1,0 +1,85 @@
+
+[1m[1] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+.
+[1m[2] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+    [32mFrontend dependencies installed.[0m
+.
+[1m[3] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+    [32mFrontend dependencies installed.[0m
+
+[1m[4] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+.
+[1m[5] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+    [32mFrontend dependencies installed.[0m
+
+[1m[6] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+    [32mFrontend dependencies installed.[0m
+
+[1m[7] Installing frontend dependencies[0m
+    [32mFrontend dependencies match the manifests and Node.js runtime.[0m
+
+[1m[8] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+    [32mFrontend dependencies installed.[0m
+
+[1m[9] Installing frontend dependencies[0m
+    [32mFrontend dependencies match the manifests and Node.js runtime.[0m
+
+[1m[10] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+    [32mFrontend dependencies installed.[0m
+
+[1m[11] Installing frontend dependencies[0m
+    [32mFrontend dependencies match the manifests and Node.js runtime.[0m
+
+[1m[12] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+    [32mFrontend dependencies installed.[0m
+
+[1m[13] Installing frontend dependencies[0m
+    [32mFrontend dependencies match the manifests and Node.js runtime.[0m
+
+[1m[14] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+    [32mFrontend dependencies installed.[0m
+
+[1m[15] Installing frontend dependencies[0m
+    [32mFrontend dependencies match the manifests and Node.js runtime.[0m
+.
+[1m[16] Installing frontend dependencies[0m
+    [32mFrontend dependencies match the manifests and Node.js runtime.[0m
+.
+[1m[17] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+    [32mFrontend dependencies installed.[0m
+.
+[1m[18] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+    [32mFrontend dependencies installed.[0m
+
+[1m[19] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+    [32mFrontend dependencies installed.[0m
+.
+[1m[20] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+    [32mFrontend dependencies installed.[0m
+
+[1m[21] Installing frontend dependencies[0m
+    [32mFrontend dependencies match the manifests and Node.js runtime.[0m
+.
+[1m[22] Installing frontend dependencies[0m
+    Running `npm ci` to install the pinned React frontend packages (one-time, a few minutes).
+
+[31mx npm ci completed but React, React DOM, or Vite is missing from node_modules.[0m
+...
+----------------------------------------------------------------------
+Ran 11 tests in 0.022s
+
+OK

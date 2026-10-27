@@ -2,24 +2,18 @@
 
 Develop and evaluate a locally deployed AI platform for organizations that cannot use public AI services because of sensitive, proprietary, export-controlled, security-related, privacy-protected, or otherwise restricted information.
 
-The repository contains the product and architecture specifications and a working local build of the document-QA interface: the pinned Open WebUI chat, the Library, History, and Settings views, and the Python host and workflow modules behind them. It also includes a Tauri desktop shell and a Windows development-preview packaging workflow. See the [desktop build instructions](app/release/README.md) to build the real-model portable app and configure push builds. Production signing and offline release qualification remain pending.
+The repository contains the product and architecture specifications and a working local build of the document-QA interface: the React chat preserving the pinned Open WebUI presentation, the Library, History, and Settings views, and the Python host and workflow modules behind them. It also includes a Tauri desktop shell and a Windows development-preview packaging workflow. See the [desktop build instructions](app/release/README.md) to build the real-model portable app and configure push builds. Production signing and offline release qualification remain pending.
 
 ## Run it locally
 
-The easiest way is the one-command launcher. It creates the Python environment, installs the
-backend and frontend dependencies, starts the two loopback services, and opens the browser. It is
-interactive and asks whether to run the **Quick demo** (a deterministic test model and a seeded
-collection - no model weights, no downloads) or **Real local AI** (a real llama.cpp model and
-embeddings, downloading the weights only if you agree). Press Ctrl+C to stop everything.
+The one-command launcher creates the Python environment, installs backend and frontend dependencies, starts the development host and React frontend, and opens the browser. It asks whether to run **Quick demo** (a deterministic test model and seeded collection, with no model weights or downloads) or **Real local AI** (a local llama.cpp model and embeddings; missing weights are downloaded only if you agree). Press Ctrl+C to stop everything.
 
 - **Windows:** double-click `start.cmd`, or run it from a terminal.
 - **macOS / Linux:** `./start.sh` (or `bash start.sh`).
 
-Requirements: Python 3.11+ and Node.js 18-22 on your PATH. The first run installs dependencies and
-takes a few minutes; later runs start quickly. Only setup downloads (pip, npm, and any weights you
-opt into) use the network - the running services stay bound to `127.0.0.1`.
+Requirements: Python 3.11+, Node.js 20–22, and npm 10+ on your PATH. The first run installs dependencies and takes a few minutes. The launcher records a manifest/runtime fingerprint in `node_modules`; it runs `npm ci` again when manifests, Node major version, platform, architecture, or required packages change. If you run `npm ci` manually, the next launcher run may perform one additional install to create its receipt. Setup downloads (pip, npm, and any weights you opt into) use the network; running services stay bound to `127.0.0.1`.
 
-### Manual steps (fallback)
+### Manual steps
 
 From the repository root, install the pinned Python dependencies once and start the host:
 
@@ -29,7 +23,7 @@ python3 -m venv .venv
 .venv/bin/python app/document-qa/backend/dev_host.py
 ```
 
-In a second terminal, start the interface and open `http://127.0.0.1:5173/`:
+In a second terminal, install and run the React frontend:
 
 ```sh
 cd app/document-qa/frontend
@@ -37,18 +31,15 @@ npm ci
 npm run dev:qa
 ```
 
-This uses a deterministic test model and a seeded test collection, so it needs no model weights. The [frontend README](app/document-qa/frontend/README.md) covers what to try, the test commands, and running against the real llama.cpp runtime.
-
-The standalone llama.cpp runtime chat that `start.cmd` used to launch now lives at [`app/document-qa/backend/secure_qa/answering/llama_cpp/start.cmd`](app/document-qa/backend/secure_qa/answering/llama_cpp/start.cmd).
+Open `http://127.0.0.1:5173/`. The deterministic test model and seeded collection need no model weights. The [frontend README](app/document-qa/frontend/README.md) covers workflows and frontend commands. The standalone llama.cpp runtime chat formerly started by `start.cmd` lives at [`app/document-qa/backend/secure_qa/answering/llama_cpp/start.cmd`](app/document-qa/backend/secure_qa/answering/llama_cpp/start.cmd).
 
 ## Documentation
 
 - [Product requirements](docs/product/PRD.md)
 - [System design](docs/architecture/SDD.md)
+- [ADR 0004: React frontend parity](docs/architecture/decisions/0004-react-frontend-parity.md)
 - [Historical codebase design](docs/superpowers/specs/2026-09-22-secure-local-document-qa-codebase-design.md)
-- [ADR 0001: Offline Open WebUI in Tauri](docs/architecture/decisions/0001-open-webui-offline.md)
-- [ADR 0002: Feature-first source layout](docs/architecture/decisions/0002-feature-first-layout.md)
-- [ADR 0003: Research workspace personality](docs/architecture/decisions/0003-research-workspace-personality.md)
+- [Historical ADRs 0001–0003](docs/architecture/decisions/0001-open-webui-offline.md)
 - [Contributing](CONTRIBUTING.md)
 - [Application layout](app/README.md)
 - [Desktop shell](app/desktop/README.md)

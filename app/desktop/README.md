@@ -1,6 +1,6 @@
 # Desktop shell
 
-The Tauri 2 shell embeds the existing Open WebUI static build and supervises the
+The Tauri 2 shell embeds the React static build preserving the Open WebUI presentation and supervises the
 packaged Python host. The supported local test build is a Windows x64 **development
 preview** containing the staged Qwen3-4B Q4_K_M model, llama.cpp and MiniLM
 embeddings. It requires no Python, Node, Vite or model downloads on the test

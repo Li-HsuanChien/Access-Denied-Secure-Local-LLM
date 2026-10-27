@@ -1,0 +1,273 @@
+{
+  "pixel_tolerance": 0,
+  "masks": [],
+  "crop_purpose": "Owned sidebar region, originals and candidates cropped identically; full screenshots retained",
+  "results": [
+    {
+      "variant": "light",
+      "state": "pinned",
+      "crop": [
+        0,
+        0,
+        245,
+        1000
+      ],
+      "status": "identical",
+      "size": [
+        245,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 245000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "variant": "light",
+      "state": "shift",
+      "crop": [
+        0,
+        0,
+        245,
+        1000
+      ],
+      "status": "identical",
+      "size": [
+        245,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 245000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "variant": "light",
+      "state": "collapsed",
+      "crop": [
+        0,
+        0,
+        245,
+        1000
+      ],
+      "status": "identical",
+      "size": [
+        245,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 245000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "variant": "dark",
+      "state": "pinned",
+      "crop": [
+        0,
+        0,
+        245,
+        1000
+      ],
+      "status": "identical",
+      "size": [
+        245,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 245000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "variant": "dark",
+      "state": "shift",
+      "crop": [
+        0,
+        0,
+        245,
+        1000
+      ],
+      "status": "identical",
+      "size": [
+        245,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 245000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "variant": "dark",
+      "state": "collapsed",
+      "crop": [
+        0,
+        0,
+        245,
+        1000
+      ],
+      "status": "identical",
+      "size": [
+        245,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 245000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "variant": "mobile",
+      "state": "pinned",
+      "crop": [
+        0,
+        0,
+        245,
+        844
+      ],
+      "status": "pixels-differ",
+      "size": [
+        245,
+        844
+      ],
+      "changed_pixels": 5,
+      "total_pixels": 206780,
+      "changed_fraction": 2.418028822903569e-05,
+      "bounding_box": [
+        13,
+        13,
+        29,
+        30
+      ],
+      "maximum_channel_difference": 1,
+      "difference_image": "/private/tmp/react-shell-pinned-paired/diff-mobile-pinned.png"
+    },
+    {
+      "variant": "fr",
+      "state": "pinned",
+      "crop": [
+        0,
+        0,
+        245,
+        1000
+      ],
+      "status": "identical",
+      "size": [
+        245,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 245000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "variant": "fr",
+      "state": "shift",
+      "crop": [
+        0,
+        0,
+        245,
+        1000
+      ],
+      "status": "identical",
+      "size": [
+        245,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 245000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "variant": "fr",
+      "state": "collapsed",
+      "crop": [
+        0,
+        0,
+        245,
+        1000
+      ],
+      "status": "identical",
+      "size": [
+        245,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 245000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "variant": "de",
+      "state": "pinned",
+      "crop": [
+        0,
+        0,
+        245,
+        1000
+      ],
+      "status": "identical",
+      "size": [
+        245,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 245000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "variant": "de",
+      "state": "shift",
+      "crop": [
+        0,
+        0,
+        245,
+        1000
+      ],
+      "status": "identical",
+      "size": [
+        245,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 245000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    },
+    {
+      "variant": "de",
+      "state": "collapsed",
+      "crop": [
+        0,
+        0,
+        245,
+        1000
+      ],
+      "status": "identical",
+      "size": [
+        245,
+        1000
+      ],
+      "changed_pixels": 0,
+      "total_pixels": 245000,
+      "changed_fraction": 0.0,
+      "bounding_box": null,
+      "maximum_channel_difference": 0
+    }
+  ]
+}

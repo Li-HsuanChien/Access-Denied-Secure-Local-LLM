@@ -1,24 +1,27 @@
-import type { Answer } from '../answering/types';
-import { formatAnswerForChat, SECURE_QA_MODEL_ID, toOpenWebUICitations } from '../answering/openWebUIChatAdapter';
+import type { ChatSession, ChatMessage } from '../react-contracts';
+import { readAnswer } from '../../../react/providers/history';
+import { formatAnswerForChat } from '../answering/react/chatController';
+import { ClientError } from '../answering/answeringClient';
 
-/** Translate the workflow's ordered thread into the native chat renderer's tree. */
-export function restoreConversation(saved: Record<string, unknown>) {
-	const turns = Array.isArray(saved.messages) ? saved.messages : [];
-	const messages: Record<string, any> = {};
-	let currentId: string | null = null;
-	for (const [index, turn] of turns.entries()) {
-		const id = `saved-${index}`;
-		const answer = turn.answer as Answer | undefined;
-		messages[id] = {
-			id, parentId: currentId, childrenIds: [], role: turn.role,
-			content: answer ? formatAnswerForChat(answer) : String(turn.content ?? ''),
-			...(turn.role === 'assistant' ? {
-				model: SECURE_QA_MODEL_ID, modelName: 'Document Assistant', done: true,
-				citations: answer ? toOpenWebUICitations(answer) : []
-			} : { models: [SECURE_QA_MODEL_ID] })
-		};
-		if (currentId) messages[currentId].childrenIds.push(id);
-		currentId = id;
-	}
-	return { messages, currentId };
+/** Rebuild the React graph; validate every stored answer before rendering. */
+export function restoreConversation(saved: Record<string, unknown>): ChatSession {
+ const invalid = () => new ClientError('invalid_response', 'The local service returned an incompatible response.');
+ if (typeof saved.conversation_id !== 'string' || !Array.isArray(saved.messages)) throw invalid();
+ const messages: Record<string, ChatMessage> = {};
+ let currentId: string | null = null;
+ for (const [index, value] of saved.messages.entries()) {
+  if (!value || typeof value !== 'object') throw invalid();
+  const turn = value as Record<string, unknown>;
+  if (!['user', 'assistant'].includes(String(turn.role)) || typeof turn.content !== 'string') throw invalid();
+  const id = `saved-${index}`;
+  const answer = turn.answer == null ? null : readAnswer(turn.answer);
+  const base = { id, parentId: currentId, childIds: [], createdAt: Date.parse(String(turn.created_at)) || 0, content: answer ? formatAnswerForChat(answer) : turn.content };
+  messages[id] = turn.role === 'user' ? { ...base, role: 'user' } : {
+   ...base, role: 'assistant', status: answer?.status === 'failed' ? 'error' : 'complete',
+   answer, error: answer?.error?.message ?? null, historyWarning: null
+  };
+  if (currentId) messages[currentId] = { ...messages[currentId], childIds: [id] };
+  currentId = id;
+ }
+ return { id: saved.conversation_id, messages, currentId, draft: '', queue: [] };
 }

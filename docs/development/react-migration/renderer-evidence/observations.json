@@ -1,0 +1,41 @@
+{
+  "browser": "151.0.7922.34",
+  "formats": {
+    "charts": 2,
+    "chartTitles": [
+      null,
+      null
+    ],
+    "details": 0,
+    "alert": 0,
+    "previews": [
+      "Preview",
+      "Preview"
+    ],
+    "iframe": 0
+  },
+  "blockedRequests": [],
+  "preview": {
+    "svg": {
+      "iframe": 0,
+      "circles": [
+        "<circle cx=\"15\" cy=\"7\" r=\"2\"></circle>",
+        "<circle cx=\"9\" cy=\"17\" r=\"2\"></circle>",
+        "<circle cx=\"30\" cy=\"30\" r=\"20\" fill=\"green\"></circle>"
+      ]
+    },
+    "html": {
+      "iframes": [
+        {
+          "sandbox": "allow-scripts allow-downloads allow-forms",
+          "hasInertText": true
+        }
+      ]
+    }
+  },
+  "previewErrors": [
+    "Failed to read the 'localStorage' property from 'Window': The document is sandboxed and lacks the 'allow-same-origin' flag.",
+    "Failed to read a named property 'addEventListener' from 'Window': Blocked a frame with origin \"http://127.0.0.1:5173\" from accessing a cross-origin frame."
+  ],
+  "note": "Behavior probes use real clock and UUIDs; screenshots are evidence, not frozen original visual references."
+}

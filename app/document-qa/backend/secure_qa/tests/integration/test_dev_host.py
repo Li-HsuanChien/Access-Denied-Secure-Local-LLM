@@ -9,6 +9,7 @@ import shutil
 import tempfile
 import threading
 import unittest
+from unittest.mock import patch
 from pathlib import Path
 
 from dev_host import DevHost, create_embedder
@@ -199,6 +200,13 @@ class DevHostTest(unittest.TestCase):
         document_id = next(iter(self.sources))
         status, _, _ = self._get(f"/v1/source?document_id={document_id}", headers={"Host": "example.com"})
         self.assertEqual(status, 403)
+
+    def test_history_write_failure_keeps_the_completed_thread_answer(self):
+        with patch.object(self.server.history, "append_turn", side_effect=OSError("disk full")):
+            status, body, _ = self.ask(conversation_id="save-failure")
+        self.assertEqual(status, 200)
+        self.assertEqual(body["result"]["status"], "answered")
+        self.assertIn("history_save_failed", [w["code"] for w in body["result"]["warnings"]])
 
     def test_conversation_id_builds_one_thread_with_memory_across_turns(self):
         room = "mem_room"

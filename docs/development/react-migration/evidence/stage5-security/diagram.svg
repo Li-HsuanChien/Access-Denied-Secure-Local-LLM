@@ -1,0 +1,1 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="240" height="100"><defs><linearGradient id="paint"><stop offset="0" stop-color="green"></stop></linearGradient></defs><rect id="safe" width="50" height="50" fill="url(&quot;#paint&quot;)"></rect><rect id="escape" x="60" width="50" height="50"></rect><rect width="50" height="50"></rect><path d="M0 0L10 10"></path></svg>

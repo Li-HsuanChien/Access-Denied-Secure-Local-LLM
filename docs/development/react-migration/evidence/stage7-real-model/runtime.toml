@@ -1,0 +1,22 @@
+[server]
+host = "127.0.0.1"
+port = 8087
+allow_remote = false
+[backend]
+server_bin = "/opt/homebrew/bin/llama-server"
+backend_port = 0
+models_dir = "/Users/evansinocchi/Desktop/Projects/Access-Denied-Secure-Local-LLM/models"
+model = "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf"
+ctx_size = 4096
+threads = 2
+n_gpu_layers = 0
+mmap = true
+mlock = false
+parallel = 1
+cache_ram_mib = 0
+startup_timeout_s = 180.0
+request_timeout_s = 600.0
+[security]
+offline = true
+[output]
+runs_dir = "/private/tmp/react-migration-real-model-smoke/runs"
