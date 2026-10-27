@@ -57,7 +57,7 @@ class PublicationOutcome:
 class Publisher:
     def __init__(self, versions: CollectionVersions) -> None:
         self.versions = versions
-        self._job = threading.Lock()
+        self._job = threading.RLock()
 
     @property
     def reports_dir(self) -> Path:
@@ -69,7 +69,14 @@ class Publisher:
 
     def publish(self, paths: Sequence[str | Path], *, confirm_rejects: bool = False,
                 smoke_query: str | None = None) -> PublicationOutcome:
-        return self.publish_review(self.review(paths), confirm_rejects=confirm_rejects, smoke_query=smoke_query)
+        # Reserve the job before reviewing files. The nested publish_review call
+        # shares this reservation; another thread must return busy immediately.
+        if not self._job.acquire(blocking=False):
+            return PublicationOutcome(BUSY, message="Another publication is still running. Wait for it to finish.")
+        try:
+            return self.publish_review(self.review(paths), confirm_rejects=confirm_rejects, smoke_query=smoke_query)
+        finally:
+            self._job.release()
 
     def publish_review(self, review: CorpusReview, *, confirm_rejects: bool = False,
                        smoke_query: str | None = None) -> PublicationOutcome:

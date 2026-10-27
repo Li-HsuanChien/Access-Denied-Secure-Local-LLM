@@ -26,7 +26,7 @@ it('opens a fresh local-model chat with the original query and clears it on ordi
 	const navigation = createNavigation(window);
 	navigation.navigate('/', { newChat: true, localModel: true });
 	expect(window.location.pathname + window.location.search).toBe('/?model=secure-qa-local');
-	expect(navigation.getSnapshot()).toEqual({ path: '/', chatEpoch: 1 });
+	expect(navigation.getSnapshot()).toEqual({ path: '/', chatEpoch: 1, temporary: false });
 	navigation.navigate('/', { newChat: true, localModel: true });
 	expect(navigation.getSnapshot().chatEpoch).toBe(2);
 	navigation.navigate('/history');
@@ -41,4 +41,26 @@ it('preserves direct conversation routes and remounts when selecting another thr
  navigation.navigate('/conversation/room-2');
  expect(navigation.getSnapshot().chatEpoch).toBe(1);
  expect(window.location.pathname).toBe('/conversation/room-2');
+});
+
+
+it('reconciles temporary mode on entry, New Chat, saved routes and back/forward', () => {
+ window.history.replaceState(null, '', '/?local-temporary=true');
+ const navigation = createNavigation(window);
+ const unsubscribe = navigation.subscribe(() => undefined);
+ try {
+  expect(navigation.getSnapshot().temporary).toBe(true);
+  navigation.navigate('/', { newChat: true });
+  expect(navigation.getSnapshot().temporary).toBe(false);
+  const epoch = navigation.getSnapshot().chatEpoch;
+  window.history.replaceState(null, '', '/?local-temporary=true');
+  window.dispatchEvent(new PopStateEvent('popstate'));
+  expect(navigation.getSnapshot().temporary).toBe(true);
+  expect(navigation.getSnapshot().chatEpoch).toBe(epoch + 1);
+  for (const path of ['/qa', '/conversation/saved', '/library', '/history', '/settings']) {
+   window.history.replaceState(null, '', path + '?local-temporary=true');
+   window.dispatchEvent(new PopStateEvent('popstate'));
+   expect(navigation.getSnapshot().temporary).toBe(path === '/qa');
+  }
+ } finally { unsubscribe(); }
 });

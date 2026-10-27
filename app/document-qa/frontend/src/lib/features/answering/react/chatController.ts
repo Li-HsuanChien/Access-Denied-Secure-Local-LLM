@@ -17,6 +17,7 @@ interface Dependencies {
   getPending(): Answering["state"]["pending"];
   getGeneralKnowledge(): boolean;
   initialSession?: ChatSession;
+  temporary?: boolean;
 }
 /** Editable graph is mount-local; the answer and history-save lock is app-owned. */
 export function createChatController(deps: Dependencies) {
@@ -78,6 +79,7 @@ export function createChatController(deps: Dependencies) {
       const result = await deps.ask({
         sessionId,
         conversationId: sessionId,
+        ...(deps.temporary ? { temporary: true } : {}),
         question: user.content,
         generalKnowledge: deps.getGeneralKnowledge(),
       });

@@ -125,3 +125,10 @@ Selecting that pinned row uses `navigate('/', { newChat: true, localModel: true 
 ## Production CSS precision
 
 Keep Vite `build.cssMinify: false` and PostCSS `@tailwindcss/postcss` option `optimize: false` in the final configuration. Both the Vite and Tailwind production optimization steps must preserve the source values. The default esbuild CSS minifier changes original decimal shadow alpha (`0.1`) into an eight-digit hex alpha (`26/255`) and lowers direct OKLCH colors to rounded RGB. Paired production captures identified visible pixel differences from these changes. Preserve the source CSS values; JavaScript minification and local asset bundling remain enabled.
+
+
+## Main integration: temporary chat and desktop packaging
+
+`RouteState.temporary` is derived from `local-temporary=true` only on `/` and `/qa`. `NavigationOptions.temporary` starts a fresh view in that mode; New Chat and saved conversation navigation clear it. Back/forward changes to the flag increment `chatEpoch` even on the same path. The mounted Chat controller snapshots mode into `AnswerRequest.temporary`; the app-wide answering coordinator omits the host conversation ID and skips the legacy local history save for those requests. A dispatched answer retains its privacy mode across navigation. Temporary mode has no follow-up memory and displays that limitation. Saved threads continue to use stable conversation IDs and host-owned persistence.
+
+The merged Windows Tauri development-preview packaging runs the canonical React `check`, `test:frontend` and `build` commands. The HTML and native CSP retain local IPC and worker support plus the existing inert preview frame policy. Removed Svelte routes, stores, model APIs and type-check tooling stay outside the active application.

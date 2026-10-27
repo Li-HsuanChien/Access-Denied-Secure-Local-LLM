@@ -52,11 +52,13 @@ function useChatController(initialSession?: ChatSession) {
   const answering = useAnswering(),
     preferences = usePreferences(),
     services = useServices();
+  const { route } = useNavigation();
   const current = useRef({ answering, preferences });
   current.current = { answering, preferences };
   const [controller] = useState(() =>
     createChatController({
       initialSession,
+      temporary: route.temporary,
       createId: services.createId,
       now: services.now,
       ask: (request) => current.current.answering.ask(request),
@@ -86,7 +88,7 @@ export function ChatPage({ initialSession }: { initialSession?: ChatSession }) {
       /^((?!chrome|android).)*safari/i.test(navigator.userAgent),
   );
   const { controller, session, pending } = useChatController(initialSession),
-    { navigate } = useNavigation();
+    { navigate, route } = useNavigation();
   useLayoutEffect(() => {
     document.title = "Access Denied";
     // Original mounted MessageInput's hidden VoiceRecording handles Escape even while inactive.
@@ -144,6 +146,7 @@ export function ChatPage({ initialSession }: { initialSession?: ChatSession }) {
       id="chat-container"
       className="chat-react h-full max-h-full w-full min-w-0 flex flex-col"
     >
+      {route.temporary && <div className="text-center text-xs text-gray-500" role="note" title="Messages are kept only in this view; follow-up memory is unavailable.">Temporary Chat — not saved; follow-up memory unavailable</div>}
       <ChatEntrance>
         <nav
           className={`chat-navbar sticky top-0 z-30 w-full pt-0.5 pb-1 -mb-12 flex flex-col items-center ${empty ? "chat-navbar-empty" : ""}`}
@@ -213,7 +216,7 @@ export function ChatPage({ initialSession }: { initialSession?: ChatSession }) {
           </div>
           {!empty && (
             <div className="w-full text-center text-xs text-gray-500">
-              {"Local conversation"}
+              {route.temporary ? t("Temporary Chat") : "Local conversation"}
             </div>
           )}
         </nav>
@@ -227,12 +230,14 @@ export function ChatPage({ initialSession }: { initialSession?: ChatSession }) {
                 <Tooltip
                   className="w-full flex justify-center mb-0.5"
                   content={t(
-                    "Conversations are saved locally when history is enabled.",
+                    route.temporary
+                      ? "This chat won't appear in history. Messages are kept only in this view; follow-up memory is unavailable."
+                      : "Conversations are saved locally when history is enabled.",
                   )}
                 >
                   <div className="flex items-center gap-1.5 text-gray-500 text-xs my-1 w-fit">
                     <Icon name="eye" className="size-3.5" />
-                    {"Local conversation"}
+                    {route.temporary ? t("Temporary Chat") : "Local conversation"}
                   </div>
                 </Tooltip>
                 <div className="w-full text-3xl text-gray-800 dark:text-gray-100 text-center flex items-center gap-4">

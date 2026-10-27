@@ -101,6 +101,12 @@ export function AppShell({ children }: { children: ReactNode }) {
     {mobile && <button type="button" className="menu-button" aria-label="Open sidebar" onClick={() => setOpen(true)}><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" aria-hidden="true"><path d="M4 7h16M4 12h16M4 17h16" /></svg></button>}
     <span className="status-mark" aria-hidden="true" /><div className="status-text"><strong>{healthError ? 'Workspace needs attention' : 'Local workspace'}</strong><span title={healthMessage}>{healthMessage}</span></div>
     <label className="workspace-switch"><input type="checkbox" role="switch" checked={preferences.generalKnowledge} onChange={async event => { const checked = event.currentTarget.checked; setPreferenceError(''); try { await setGeneralKnowledge(checked); } catch { setPreferenceError('Could not save this preference. Please retry.'); } }} /><span>Include general model knowledge</span></label>
+    <a className="status-action" href={route.temporary ? '/' : '/?local-temporary=true'} onClick={event => {
+     if (event.button !== 0 || event.metaKey || event.ctrlKey || event.shiftKey || event.altKey) return;
+     event.preventDefault();
+     navigate('/', { newChat: true, temporary: !route.temporary });
+     if (mobile) setOpen(false);
+    }}>{route.temporary ? 'Start saved chat' : 'Start temporary chat'}</a>
     <button type="button" className="status-action" onClick={() => void refreshHealth()}>Refresh</button>
    </div>
    {preferenceError && <p className="preference-error" role="alert">{preferenceError}</p>}

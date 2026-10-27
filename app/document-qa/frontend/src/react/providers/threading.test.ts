@@ -37,3 +37,20 @@ it('serializes Library document mutations and clears stale reviews on reselectio
  expect(library.getSnapshot().busy).toBe(false);
  library.dispose();
 });
+
+
+it('temporary requests omit host thread identity and skip local history saving', async () => {
+ const services = createDefaultServices();
+ services.answering.ask = vi.fn(async () => ({ request_id: 'private', warnings: [] } as any));
+ services.history.save = vi.fn();
+ const coordinator = createAnswering(services);
+ const changed = vi.fn();
+ window.addEventListener('secure-qa-history-changed', changed);
+ try {
+  const result = await coordinator.ask({ sessionId: 'view', conversationId: 'must-not-save', question: 'Private', generalKnowledge: true, temporary: true });
+  expect(services.answering.ask).toHaveBeenCalledWith('Private', true);
+  expect(services.history.save).not.toHaveBeenCalled();
+  expect(changed).not.toHaveBeenCalled();
+  expect(result.historyWarning).toBeNull();
+ } finally { window.removeEventListener('secure-qa-history-changed', changed); }
+});

@@ -19,16 +19,17 @@ export function createAnswering(services: AppServices) {
 			}
 			store.update(() => ({ pending: { sessionId: request.sessionId, question: request.question } }));
 			try {
-				const answer = await services.answering.ask(request.question, request.generalKnowledge, ...(request.conversationId ? [request.conversationId] : []));
+				const conversationId = request.temporary ? undefined : request.conversationId;
+				const answer = await services.answering.ask(request.question, request.generalKnowledge, ...(conversationId ? [conversationId] : []));
 				// Snapshot before passing the original payload to persistence or presentation.
 				const immutableAnswer = freeze(structuredClone(answer));
 				let historyWarning: string | null = answer.warnings.find(w => w.code === 'history_save_failed')?.message ?? null;
 				try {
-					if (!request.conversationId) await services.history.save(answer.request_id, request.question, answer as unknown as Record<string, unknown>);
+					if (!request.temporary && !conversationId) await services.history.save(answer.request_id, request.question, answer as unknown as Record<string, unknown>);
 				} catch {
 					historyWarning = 'This answer is available here, but could not be saved to local history.';
 				}
-				if (request.conversationId) window.dispatchEvent(new Event('secure-qa-history-changed'));
+				if (conversationId) window.dispatchEvent(new Event('secure-qa-history-changed'));
 				return { answer: immutableAnswer, historyWarning };
 			} finally {
 				store.update(() => ({ pending: null }));

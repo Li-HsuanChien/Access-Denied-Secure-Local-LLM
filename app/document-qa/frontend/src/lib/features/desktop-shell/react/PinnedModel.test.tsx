@@ -75,7 +75,7 @@ it('selects the sole pinned model as a new Chat with its original fixed query an
  const link=screen.getByRole('link',{name:'logo Document Assistant'});
  expect(link.getAttribute('href')).toBe('/?model=secure-qa-local');
  fireEvent.click(link);
- expect(runtime.navigation.getSnapshot()).toEqual({path:'/',chatEpoch:1});
+ expect(runtime.navigation.getSnapshot()).toEqual({path:'/',chatEpoch:1,temporary:false});
  expect(window.location.pathname+window.location.search).toBe('/?model=secure-qa-local');
  expect(localStorage.sidebar).toBe('false');
  expect(screen.getByText('Hide model')).toBeTruthy();

@@ -45,7 +45,7 @@ it.each([
  expect(screen.getByRole('button', { name: 'Refresh' })).toBeTruthy();
  await screen.findByText('1 document · 2 passages · local model ready');
  fireEvent.click(link);
- expect(runtime.navigation.getSnapshot()).toEqual({ path: '/', chatEpoch: 1 });
+ expect(runtime.navigation.getSnapshot()).toEqual({ path: '/', chatEpoch: 1, temporary: false });
 });
 it.each([
  ['fr-FR', 'Nouvelle conversation', 'Chat history', 'Ouvrir la barre latérale'],

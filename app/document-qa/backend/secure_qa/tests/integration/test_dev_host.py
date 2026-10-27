@@ -141,6 +141,15 @@ class DevHostTest(unittest.TestCase):
         self.assertEqual(status, 204)
         self.assertIn("POST", headers["access-control-allow-methods"])
 
+    def test_packaged_webview_origins_get_cors_without_allowing_lookalikes(self):
+        for origin in ("http://tauri.localhost", "https://tauri.localhost"):
+            with self.subTest(origin=origin):
+                status, _, headers = self.call("GET", "/health", headers={"Origin": origin})
+                self.assertEqual((status, headers.get("access-control-allow-origin")), (200, origin))
+                self.assertEqual(self.call("OPTIONS", "/v1/requests", headers={"Origin": origin})[0], 204)
+        for origin in ("https://tauri.localhost.evil.example", "http://evil.example"):
+            self.assertEqual(self.call("GET", "/health", headers={"Origin": origin})[0], 403)
+
     def test_binds_loopback_only(self):
         self.assertEqual(self.server.server_address[0], "127.0.0.1")
 

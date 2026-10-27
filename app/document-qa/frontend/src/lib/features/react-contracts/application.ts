@@ -1,12 +1,14 @@
 import type { AnsweringClient, ConversationHistoryClient, LibraryClient, SettingsClient } from './wire';
 
 export type AppPath = `/conversation/${string}` | '/' | '/qa' | '/library' | '/history' | '/settings';
-export interface RouteState { readonly path: AppPath; readonly chatEpoch: number }
+export interface RouteState { readonly path: AppPath; readonly chatEpoch: number; readonly temporary: boolean }
 export interface NavigationOptions {
 	replace?: boolean;
 	newChat?: boolean;
 	/** Preserve the existing pinned local-model link on the root chat route. */
 	localModel?: boolean;
+	/** Start a fresh chat without thread memory or history persistence. */
+	temporary?: boolean;
 }
 export interface Navigation {
 	readonly route: RouteState;

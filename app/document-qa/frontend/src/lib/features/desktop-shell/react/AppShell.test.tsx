@@ -30,7 +30,7 @@ it('renders health and refreshes through the shared service', async () => {
 it('navigates and resets chat without activating the printed keyboard shortcut', () => {
  const runtime = mount();
  fireEvent.click(screen.getByRole('link', { name: 'New Chat' }));
- expect(runtime.navigation.getSnapshot()).toEqual({ path: '/', chatEpoch: 1 });
+ expect(runtime.navigation.getSnapshot()).toEqual({ path: '/', chatEpoch: 1, temporary: false });
  fireEvent.keyDown(window, { key: 'o', ctrlKey: true, shiftKey: true });
  expect(runtime.navigation.getSnapshot().chatEpoch).toBe(1);
 });

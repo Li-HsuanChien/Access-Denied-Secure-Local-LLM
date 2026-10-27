@@ -19,3 +19,19 @@ SECURE_QA_TEST_HOST_URL=http://127.0.0.1:8766 npm run test:host
 `REACT_INTEGRATION_ORIGIN` can select another frontend loopback port. `REACT_INTEGRATION_OUTPUT` chooses an output directory. Run under a source write freeze to avoid development HMR replacing the mounted application during a case. These checks establish behavior, not pixel parity or real model qualification.
 
 Fixture cases cover keyboard/IME, actual copy/edit/branch/regenerate/delete/source actions, duplicate dispatch, queue order, late answers/navigation/New Chat, save failure, committed preferences/failures, stale History results and publication identity/cancel/transport loss. The host case covers all four workflows through the unchanged API, including opening an existing full answer, disabled persistence, actual publication/rollback and actual cancellation refusal after completion. Successful cancellation and uncertain transport are deterministic fixture cases; host response delays occur only in the browser test transport.
+
+
+## Main/React temporary chat check
+
+With the production build preview on `127.0.0.1:5177` and a disposable fake host on
+`127.0.0.1:8766` (set `SECURE_QA_DATA_DIR` and `--store` to a temporary directory), run:
+
+```sh
+node migration-parity/integration/temporary-chat.browser.mjs
+```
+
+This check forwards the production API origin only to the disposable host. It verifies
+the temporary-mode notice and tooltip, two private questions with no conversation ID
+or history writes, New Chat and same-path back navigation, and saved follow-ups that
+share a thread and reopen after reload. External requests and browser errors fail
+the check. This mutates only the disposable host's saved history.

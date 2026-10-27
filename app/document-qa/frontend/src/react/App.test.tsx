@@ -130,3 +130,40 @@ describe('React routes inside the application shell', () => {
 		}
 	});
 });
+
+
+describe('temporary chat privacy', () => {
+ it('starts a private React chat, skips persistence for follow-ups, and returns to saved chat', async () => {
+  const runtime = runtimeFor(window);
+  render(<App runtime={runtime} />);
+  fireEvent.click(screen.getByRole('link', { name: 'Start temporary chat' }));
+  expect(window.location.search).toBe('?local-temporary=true');
+  expect(screen.getByText('Temporary Chat')).toBeTruthy();
+  expect(screen.getByText(/not saved; follow-up memory unavailable/)).toBeTruthy();
+  submit('private first'); await screen.findByText('Answer for private first');
+  submit('private next'); await screen.findByText('Answer for private next');
+  expect(runtime.services.answering.ask).toHaveBeenNthCalledWith(1, 'private first', true);
+  expect(runtime.services.answering.ask).toHaveBeenNthCalledWith(2, 'private next', true);
+  expect(runtime.services.history.save).not.toHaveBeenCalled();
+  fireEvent.click(screen.getByRole('link', { name: 'Start saved chat' }));
+  expect(screen.queryByText('Answer for private first')).toBeNull();
+  expect(screen.queryByText(/not saved; follow-up memory unavailable/)).toBeNull();
+  submit('saved'); await screen.findByText('Answer for saved');
+  expect(runtime.services.answering.ask).toHaveBeenLastCalledWith('saved', true, expect.any(String));
+ });
+ it('keeps a dispatched private answer private when New Chat starts before it finishes', async () => {
+  window.history.replaceState(null, '', '/?local-temporary=true');
+  const runtime = runtimeFor(window), first = deferred<Answer>();
+  runtime.services.answering.ask = vi.fn().mockReturnValueOnce(first.promise).mockImplementation(async (question: string) => answerFor(question));
+  render(<App runtime={runtime} />);
+  submit('private pending');
+  fireEvent.click(screen.getByRole('link', { name: 'New Chat' }));
+  submit('saved next');
+  await act(async () => { first.resolve(answerFor('private pending')); });
+  await screen.findByText('Answer for saved next');
+  expect(runtime.services.answering.ask).toHaveBeenNthCalledWith(1, 'private pending', true);
+  expect(runtime.services.answering.ask).toHaveBeenNthCalledWith(2, 'saved next', true, expect.any(String));
+  expect(runtime.services.history.save).not.toHaveBeenCalled();
+  expect(screen.queryByText('Answer for private pending')).toBeNull();
+ });
+});
