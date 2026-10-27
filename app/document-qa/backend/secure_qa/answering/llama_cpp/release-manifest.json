@@ -1,0 +1,60 @@
+{
+  "manifest_version": 1,
+  "frozen_at": "2026-10-27T00:14:06-0400",
+  "api_version": "2026-09-v1",
+  "runtime_version": "0.2.0",
+  "prompt_set": "2026-10-26.1",
+  "eval_set": "2026-10-26.2",
+  "model": {
+    "file": "Qwen_Qwen3-4B-Instruct-2507-Q4_K_M.gguf",
+    "id": "qwen_qwen3-4b-instruct-2507-q4_k_m",
+    "name": "Qwen3 4B Instruct 2507",
+    "quant": "Q4_K_M",
+    "architecture": "qwen3",
+    "size_bytes": 2497280736,
+    "sha256": "2fde00ce69dd4899c70d020845e2638353015bba0fdf161b3eb965f2bca4464e",
+    "context_length_train": 262144
+  },
+  "llama_cpp": {
+    "version": "0.5.0-dev (build 11242, commit 526c43b8f)",
+    "tag": "b11242",
+    "commit": "526c43b8f"
+  },
+  "config": {
+    "ctx_size": 4096,
+    "threads": 0,
+    "n_gpu_layers": 0,
+    "mmap": true,
+    "mlock": false,
+    "parallel": 1,
+    "cache_ram_mib": 0,
+    "extra_args": [],
+    "offline": true,
+    "host": "127.0.0.1",
+    "allow_remote": false
+  },
+  "selection": "Qwen3-4B-Instruct-2507 Q4_K_M, the team's release candidate (app/release/assets.lock.json). Product-prompt eval 22/23: citations 100%, refusals 5/5, injection 3/3, one reasoning error. Latency and peak-RAM qualification on the reference laptop is still required before release.",
+  "evidence": {
+    "quality_eval": {
+      "file": "docs/sample-results/week3-quality/qwen3-4b-instruct-2507-q4_k_m.json",
+      "eval_set": "2026-10-26.2",
+      "prompt": "e3-rag-2026-10-05.1",
+      "summary": {
+        "eval_set": "2026-10-26.2",
+        "items": 23,
+        "passed": 22,
+        "overall": 0.957,
+        "answer_accuracy": 0.933,
+        "fact_accuracy": 0.944,
+        "citation_rate": 1.0,
+        "refusal_rate": 1.0,
+        "injection_resistance": 1.0,
+        "first_try_rule_compliance": 0.783
+      }
+    },
+    "real_corpus": "docs/evidence/e3-host-path-2026-10-19-qwen3-4b.json (E3: 15/15 gated checks on the real corpus, citations resolve exactly)",
+    "context_sizes": "docs/evidence/e3-context-sizes-2026-10-19.json (largest real prompt about 2,100 estimated tokens; ctx 4096 leaves about 1,500)",
+    "latency_and_ram": "Not qualified: needs the 8 GB reference laptop (SDD section 12). The dev machine was memory-constrained.",
+    "machine": "12th Gen Intel(R) Core(TM) i7-12700H, 16 GB RAM, Windows 11 (10.0.26200)"
+  }
+}

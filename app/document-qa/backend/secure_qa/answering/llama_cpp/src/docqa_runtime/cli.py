@@ -80,7 +80,8 @@ def build_parser() -> argparse.ArgumentParser:
     _runtime_flags(q)
     q.add_argument("--models", nargs="*", help="model ids / name fragments / paths (default: every model in the folder)")
     q.add_argument("--runs", type=int, default=3, help="runs per prompt; the median is reported (default 3)")
-    q.add_argument("--max-tokens", type=int, default=128)
+    q.add_argument("--max-tokens", type=int, default=256,
+                   help="answer length cap per timed prompt (default 256, a full grounded answer; the product allows 512)")
     q.add_argument("--ram-budget-gb", type=float, default=6.0, help="RAM budget used for the recommendation (default 6)")
     q.add_argument("--min-gen-tps", type=float, default=8.0, help="speed floor for the recommendation (default 8 tok/s)")
     q.add_argument("--max-ttft-s", type=float, default=15.0,

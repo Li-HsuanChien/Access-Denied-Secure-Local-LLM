@@ -30,7 +30,17 @@ FROZEN_KEYS = ("ctx_size", "threads", "n_gpu_layers", "mmap", "mlock", "parallel
 
 
 def manifest_path(cfg: Config) -> Path:
-    return Path(cfg.base_dir or ".") / MANIFEST_NAME
+    """Where the manifest is (or would be written): next to runtime.toml, else next to the models folder.
+
+    The desktop app copies runtime.toml into the user-data folder at start-up (desktop_entry.py) but passes
+    --models-dir pointing into the installed payload, so a manifest shipped beside the payload's models folder is
+    still found.
+    """
+    beside_config = Path(cfg.base_dir or ".") / MANIFEST_NAME
+    beside_models = cfg.models_path.parent / MANIFEST_NAME
+    if not beside_config.is_file() and beside_models.is_file():
+        return beside_models
+    return beside_config
 
 
 def sha256_file(path: Path, chunk: int = 8 * 1024 * 1024) -> str:

@@ -164,11 +164,21 @@
         },
         "failed": {
           "type": "integer"
+        },
+        "in_flight": {
+          "type": "integer",
+          "description": "chat requests being answered now (0 or 1 with one slot; more wait in line)"
+        },
+        "cancelled": {
+          "type": "integer",
+          "description": "requests cancelled since start (by POST /v1/requests/{id}/cancel, caller disconnect or shutdown)"
         }
       },
       "required": [
         "total",
-        "failed"
+        "failed",
+        "in_flight",
+        "cancelled"
       ],
       "additionalProperties": false
     },

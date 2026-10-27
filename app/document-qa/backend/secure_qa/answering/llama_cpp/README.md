@@ -23,6 +23,12 @@ DocQA runtime ready in 3.84 s
 | **W2** `/health`, `/v1/models`, `/v1/chat/completions` | [`docs/api.md`](docs/api.md) (contract for E3/E4) |
 | **W2** Actionable errors | every failure has `code` + `hint` + exit code (see api.md) |
 | **W2** Quantization matrix (RAM / startup / tokens-per-second) | `docqa-runtime bench` → `runs/bench-*/report.md` |
+| **W3** Model selection on speed, RAM *and* answer quality, with the product's own prompt | `docqa-runtime bench --quality`, [`docs/week3-model-evaluation.md`](docs/week3-model-evaluation.md) |
+| **W3** Frozen model + config, checked anywhere | `release-manifest.json`, `docqa-runtime freeze` / `verify` |
+| **W3** Stable endpoint contract | [`docs/api.md`](docs/api.md) (v1, additive only) + JSON Schemas in [`contract/`](contract/) |
+| **W4** Restarts, clear config errors, configuration guide | [`docs/configuration.md`](docs/configuration.md), `tests/test_runtime.py`, `tests/test_release.py` |
+| **W5** Runtime settings for real RAG context sizes | [`docs/configuration.md`](docs/configuration.md) (context size), largest-prompt timings in `bench` |
+| **W6** Request ids, cancellation, busy state, graceful shutdown | [`docs/api.md`](docs/api.md#request-ids-and-cancellation-added-2026-10-26-week-6), `tests/test_cancellation.py` |
 | Friday demo | [`docs/week2-demo-runbook.md`](docs/week2-demo-runbook.md), `scripts/windows/demo.ps1` |
 | Design and security choices | [`docs/decisions.md`](docs/decisions.md) |
 
@@ -72,7 +78,10 @@ docqa-runtime bench                        # Week 2 matrix: every .gguf in model
 | `models` | List GGUF files with quant, size and architecture. `*` marks the default pick |
 | `chat "…"` | Ask the running runtime (streams the answer, prints tok/s). No question = interactive conversation |
 | `baseline` | Week 1: fixed prompt, startup, RAM after load, peak RAM, tok/s, network probes, socket audit |
-| `bench` | Week 2: for each model: startup, peak RAM, generation tok/s, RAG-prompt read speed and time-to-first-token (median of `--runs`), comparison vs the highest-precision quant, and a recommendation for `--ram-budget-gb` |
+| `bench` | For each model: startup, peak RAM, generation tok/s, time-to-first-token and total time on a typical and on the largest real RAG prompt (median of `--runs`), comparison vs the highest-precision quant, and a recommendation. `--quality` adds the answer-quality eval and selects on it (Week 3) |
+| `eval` | Answer-quality eval (23 questions, the product prompt) against a running runtime |
+| `freeze` | Write `release-manifest.json`: model SHA-256, llama.cpp build, frozen settings, benchmark evidence |
+| `verify` | Check this machine against `release-manifest.json` (`--quick` skips hashing the model) |
 | `stub-models` | Create placeholder models for the stub backend |
 
 Common flags: `--model <id|file|path>`, `--models-dir`, `--server-bin <path|stub>`, `--port`, `--ctx-size`,
@@ -85,27 +94,31 @@ src/docqa_runtime/
   cli.py          commands            launcher.py  up / Runtime (gateway + backend lifecycle)
   gateway.py      public API          backend.py   llama-server process, diagnosis of failures
   discovery.py    find binary/models  gguf.py      GGUF header reader (quant, arch, ctx)
-  bench.py        baseline + matrix   prompts.py   fixed benchmark prompts (versioned)
+  bench.py        baseline + matrix   prompts.py   benchmark prompts (a copy of the product prompt)
+  evals.py        answer-quality eval release.py   release manifest: freeze / verify
   offline.py      loopback/network    metrics.py   peak RAM, system info
   stub_server.py  simulated llama-server             client.py    stdlib API client
 scripts/windows/  fetch_runtime, fetch_models, build_exe, block-network, demo (PowerShell)
 scripts/dev/      make_tiny_gguf.py (random-weight model for testing the real engine)
 packaging/        PyInstaller spec, start-runtime.cmd, README-RUN.txt
-docs/             api, week1 models, week2 runbook, decisions, sample-results/
-tests/            56 tests
+contract/         JSON Schemas for every request and response (API v1)
+docs/             api, configuration, week1 models, week2 runbook, week3 model evaluation, decisions, sample-results/
+tests/            103 tests
 ```
 
 ## Tests
 
 ```bash
-pip install -e ".[dev]" && pytest          # about 1 minute, uses the stub
+pip install -e ".[dev]" && pytest          # about 3 minutes, uses the stub
 # against a real llama-server + a folder of GGUFs:
 DOCQA_TEST_LLAMA_SERVER=/path/llama-server DOCQA_TEST_MODELS_DIR=/path/models pytest -k real
 ```
 
 ## Status
 
-Built and tested on Linux against the stub **and** a real `llama-server` compiled from llama.cpp source (with a
-tiny random-weight model). **Not yet run on Windows or with real model weights.** The first run on the reference
-laptop is the next step; see "Known limitations" in `docs/decisions.md`. The numbers in `docs/sample-results/` show
-the report format only.
+Tested on Windows 11 (103 tests) and run with real weights: the frozen model, Qwen3-4B-Instruct-2507 Q4_K_M on
+llama.cpp b11242 (`release-manifest.json`), scored 22/23 on the quality eval with the product prompt
+([`docs/week3-model-evaluation.md`](docs/week3-model-evaluation.md)). **Not yet run on the 8 GB reference
+laptop**, so there are no decision-grade latency or peak-RAM figures yet; see
+[`docs/reports/E1-weeks-3-6-report.md`](../../../../../../docs/reports/E1-weeks-3-6-report.md) for what to run
+there. The other numbers in `docs/sample-results/` are stub and tiny-model data that show the report format.

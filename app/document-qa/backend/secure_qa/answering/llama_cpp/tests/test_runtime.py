@@ -187,7 +187,8 @@ def test_health_reports_loading_then_ok(make_cfg, monkeypatch):
             seen.add((st, h["status"]))
             if h["status"] == "loading":
                 st2, _, b = raw(rt.cfg.port, "POST", "/v1/chat/completions", {"messages": msg()})
-                assert st2 == 503 and b["error"]["code"] == "model_loading"
+                # The model may finish loading between the two requests on a busy machine; then 200 is correct.
+                assert (st2 == 503 and b["error"]["code"] == "model_loading") or st2 == 200, (st2, b)
         except OSError:
             pass
         time.sleep(0.05)
@@ -214,6 +215,28 @@ def test_crash_is_detected_and_reported(make_cfg, monkeypatch):
         assert e.value.status == 503
     finally:
         rt.stop()
+
+
+def test_repeated_restarts_on_the_same_port(make_cfg):
+    """Week 4: start/stop/restart without manual repair - same port, fresh backend each time, nothing left behind."""
+    import psutil
+
+    cfg = make_cfg()
+    pids = []
+    for _ in range(3):
+        rt = Runtime(cfg, quiet=True)
+        rt.start()
+        try:
+            assert get_json(rt.base_url(), "/health")[1]["status"] == "ok"
+            assert chat(rt.base_url(), msg(), max_tokens=3, stream=False)["text"]
+            pids.append(rt.backend.pid)
+        finally:
+            rt.stop()
+        deadline = time.time() + 5
+        while psutil.pid_exists(pids[-1]) and time.time() < deadline:
+            time.sleep(0.05)
+        assert not psutil.pid_exists(pids[-1]) or psutil.Process(pids[-1]).status() == psutil.STATUS_ZOMBIE
+    assert len(set(pids)) == 3
 
 
 def test_port_in_use(make_cfg, runtime):

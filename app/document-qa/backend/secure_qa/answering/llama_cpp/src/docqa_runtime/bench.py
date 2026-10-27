@@ -20,7 +20,7 @@ from .gguf import FILE_TYPE_IDS
 from .launcher import Runtime
 from .metrics import PeakSampler, current_rss, fmt_bytes, system_info
 from .offline import free_loopback_port, outbound_network, socket_audit
-from .prompts import PROMPT_SET_VERSION, baseline_messages, rag_messages
+from .prompts import PROMPT_SET_VERSION, baseline_messages, rag_max_messages, rag_messages
 
 SIM_BANNER = ("> **SIMULATED RESULTS - stub backend.** These numbers come from the stub llama-server, not a real model. "
               "They prove the pipeline works end to end; re-run on the reference laptop with real GGUF files for real numbers.")
@@ -50,11 +50,14 @@ class Thresholds:
     def check(self, r: dict) -> dict:
         """Per-threshold pass/fail for one benchmark result. Quality checks only apply when quality was measured."""
         s = r["summary"]
+        ttft = s.get("rag_max_ttft_s") or s["rag_ttft_s"]
+        total = s.get("rag_max_total_s") or s["rag_total_s"]
         checks = {
             "peak_ram": (r["peak_rss_bytes"], self.ram_budget_gb * 1024**3, r["peak_rss_bytes"] <= self.ram_budget_gb * 1024**3),
             "gen_tps": (s["short_gen_tps"], self.min_gen_tps, (s["short_gen_tps"] or 0) >= self.min_gen_tps),
-            "rag_ttft_s": (s["rag_ttft_s"], self.max_ttft_s, (s["rag_ttft_s"] or 1e9) <= self.max_ttft_s),
-            "rag_total_s": (s["rag_total_s"], self.max_total_s, (s["rag_total_s"] or 1e9) <= self.max_total_s),
+            # Latency is judged on the largest real prompt E3 measured (rag_max) when it was run, else the typical one.
+            "rag_ttft_s": (ttft, self.max_ttft_s, (ttft or 1e9) <= self.max_ttft_s),
+            "rag_total_s": (total, self.max_total_s, (total or 1e9) <= self.max_total_s),
         }
         q = (r.get("quality") or {}).get("summary")
         if q and not r.get("stub"):
@@ -115,9 +118,9 @@ def measure_model(cfg: Config, model: ModelEntry, *, runs: int, max_tokens: int,
         url = rt.base_url()
         if warmup:
             chat(url, baseline_messages(), max_tokens=8, extra=NO_CACHE)
-        per_run = {"short": [], "rag": []}
+        per_run = {"short": [], "rag": [], "rag_max": []}
         for i in range(runs):
-            for name, msgs in (("short", baseline_messages()), ("rag", rag_messages())):
+            for name, msgs in (("short", baseline_messages()), ("rag", rag_messages()), ("rag_max", rag_max_messages())):
                 r = chat(url, msgs, max_tokens=max_tokens, extra=NO_CACHE)
                 per_run[name].append({
                     "run": i + 1, "ttft_s": round(r["ttft_s"], 3) if r["ttft_s"] is not None else None,
@@ -127,7 +130,7 @@ def measure_model(cfg: Config, model: ModelEntry, *, runs: int, max_tokens: int,
                     "text_preview": r["text"][:160],
                 })
             log(f"    run {i + 1}/{runs}: short {per_run['short'][-1]['gen_tps']} tok/s, "
-                f"rag TTFT {per_run['rag'][-1]['ttft_s']} s")
+                f"rag TTFT {per_run['rag'][-1]['ttft_s']} s, largest prompt {per_run['rag_max'][-1]['total_s']} s total")
         if quality:
             result["quality"] = run_eval(url, chat, log=log)
             q = result["quality"]["summary"]
@@ -145,6 +148,9 @@ def measure_model(cfg: Config, model: ModelEntry, *, runs: int, max_tokens: int,
                 "rag_ttft_s": _median(r["ttft_s"] for r in per_run["rag"]),
                 "rag_gen_tps": _median(r["gen_tps"] for r in per_run["rag"]),
                 "rag_total_s": _median(r["total_s"] for r in per_run["rag"]),
+                "rag_max_prompt_tokens": _median(r["prompt_tokens"] for r in per_run["rag_max"]),
+                "rag_max_ttft_s": _median(r["ttft_s"] for r in per_run["rag_max"]),
+                "rag_max_total_s": _median(r["total_s"] for r in per_run["rag_max"]),
             },
         })
     except RuntimeFailure as e:
@@ -345,7 +351,7 @@ def analyse(results: list[dict], t: Thresholds) -> dict:
 
 CSV_FIELDS = ["model_id", "family", "quant", "file_size_mib", "startup_s", "rss_after_load_mib", "peak_rss_mib",
               "short_gen_tps", "short_total_s", "rag_prompt_tokens", "rag_prompt_tps", "rag_ttft_s", "rag_gen_tps",
-              "rag_total_s", "quality_overall", "answer_accuracy", "citation_rate", "refusal_rate",
+              "rag_total_s", "rag_max_prompt_tokens", "rag_max_ttft_s", "rag_max_total_s", "quality_overall", "answer_accuracy", "citation_rate", "refusal_rate",
               "injection_resistance", "meets_all_thresholds", "stub", "ok", "error"]
 
 
@@ -383,17 +389,19 @@ def matrix_markdown(doc: dict) -> str:
         f"threads {st['threads']}, GPU layers {st['n_gpu_layers']}, temperature 0",
         f"- **Network during run:** {'reachable' if doc['network']['outbound_reachable'] else 'isolated'}",
         "", "## Results", "",
-        "| Model | Quant | File | Startup | Peak RAM | Gen tok/s (short) | RAG prompt tok/s | RAG time-to-first-token | RAG total |",
-        "|---|---|---:|---:|---:|---:|---:|---:|---:|",
+        "| Model | Quant | File | Startup | Peak RAM | Gen tok/s (short) | RAG prompt tok/s | RAG time-to-first-token | RAG total "
+        "| Largest RAG prompt: first token / total |",
+        "|---|---|---:|---:|---:|---:|---:|---:|---:|---:|",
     ]
     for r in doc["results"]:
         if not r["ok"]:
-            lines.append(f"| {r['family']} | {r['quant']} | {r['model'].get('display_size') or fmt_bytes(r['model']['size_bytes'])} | FAILED: {r['error']['code']} | | | | | |")
+            lines.append(f"| {r['family']} | {r['quant']} | {r['model'].get('display_size') or fmt_bytes(r['model']['size_bytes'])} | FAILED: {r['error']['code']} | | | | | | |")
             continue
         x = r["summary"]
         lines.append(
             f"| {r['family']} | {r['quant']} | {r['model'].get('display_size') or fmt_bytes(r['model']['size_bytes'])} | {r['startup_s']:.2f} s | "
-            f"{fmt_bytes(r['peak_rss_bytes'])} | {x['short_gen_tps']} | {x['rag_prompt_tps']} | {x['rag_ttft_s']} s | {x['rag_total_s']} s |"
+            f"{fmt_bytes(r['peak_rss_bytes'])} | {x['short_gen_tps']} | {x['rag_prompt_tps']} | {x['rag_ttft_s']} s | {x['rag_total_s']} s | "
+            + (f"{x['rag_max_ttft_s']} s / {x['rag_max_total_s']} s ({x['rag_max_prompt_tokens']} tokens) |" if x.get("rag_max_total_s") else "n/a |")
         )
     a = doc["analysis"]
     pct = lambda v: "n/a" if v is None else f"{v:.0%}"  # noqa: E731
@@ -451,8 +459,10 @@ def matrix_markdown(doc: dict) -> str:
               "- **Peak RAM**: OS peak working set of llama-server (Windows `PeakWorkingSetSize`, Linux `VmHWM`). "
               "With mmap enabled, model pages count once they are touched.",
               "- **Gen tok/s**: tokens generated per second as reported by llama.cpp `timings.predicted_per_second`.",
-              "- **RAG prompt tok/s / time-to-first-token**: how fast the model reads ~1.3k tokens of retrieved passages - "
-              "on CPU this is usually the wait the user notices most in document Q&A.", "",
+              "- **RAG prompt tok/s / time-to-first-token**: how fast the model reads a typical product prompt (6 passages, "
+              "about 1.5k tokens) - on CPU this is usually the wait the user notices most in document Q&A.",
+              "- **Largest RAG prompt**: the biggest prompt E3 measured on the real corpus (about 2.1k tokens). The latency "
+              "thresholds are judged on this one.", "",
               "Raw per-run data: `results.json`; spreadsheet-friendly: `results.csv`.", ""]
     if a["failed"]:
         lines += ["## Failures", ""] + [f"- `{x['id']}`: [{x['error']['code']}] {x['error']['message']} - {x['error'].get('hint', '')}" for x in a["failed"]] + [""]

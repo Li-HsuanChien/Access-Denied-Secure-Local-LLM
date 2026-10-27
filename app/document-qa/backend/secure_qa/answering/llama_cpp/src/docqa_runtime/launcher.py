@@ -134,6 +134,12 @@ class Runtime:
         }
 
     def stop(self) -> None:
+        if self.state:
+            # Tell callers mid-answer that the runtime is stopping (409 request_cancelled) instead of dropping them.
+            if self.state.cancel_all("runtime_stopping"):
+                deadline = time.time() + 2.0
+                while self.state.inflight and time.time() < deadline:
+                    time.sleep(0.02)
         if self.backend:
             self.backend.stop()
         if self.state and self.state.status != "error":
