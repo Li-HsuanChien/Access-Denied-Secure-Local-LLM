@@ -1,0 +1,3988 @@
+{
+  "document_id": "doc_72f2433a1e2f2e6340f14040",
+  "chunker": {
+    "target_chars": 1200,
+    "overlap_chars": 200,
+    "min_chunk_chars": 100,
+    "sorted_reading_order": true,
+    "strip_running_headers": true,
+    "respect_sentence_boundaries": true,
+    "chunker_version": "refchunk-3.0.0",
+    "config_id": "cfg_821e9f258539"
+  },
+  "chunk_count": 18,
+  "chunks": [
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_c3cbf93684c33201e4e07d6d",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 0,
+      "text": "Nuclear\nPower\n for\nElectrical\nGeneration\nThe purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a\nnuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant\nhas many similarities to other electrical generating facilities.  It should also be obvious that nuclear\npower plants have some significant differences from other plants.\n\nStationary Coil\nDrive Shaft\nRotor\nElectrical\nOutput\nFlange\nGenerator Housing\nELECTRICAL GENERATOR\nOf the several known methods to produce electricity, by far the most practical for large scale production\nand distribution involves the use of an “electrical generator.”  In an electrical generator, a magnet (rotor)\nrevolves inside a coil of wire (stator), creating a flow of electrons inside the wire.  This flow of electrons\nis called electricity.  Some mechanical device (wind turbine, water turbine, steam turbine, diesel engine,\netc.) must be available to provide the motive force for the rotor.\n\n",
+      "text_checksum_sha256": "c4b66f2b0e6f6a3064c06118fb739f7128b18d2cda928f743d233be37fd7f6a8",
+      "char_start": 0,
+      "char_end": 1024,
+      "page_start": 1,
+      "page_end": 2,
+      "page_spans": [
+        {
+          "page_number": 1,
+          "char_start": 0,
+          "char_end": 424,
+          "page_char_start": 0,
+          "page_char_end": 424,
+          "highlight_rects": [
+            [
+              220.08,
+              135.0,
+              410.02,
+              201.42
+            ],
+            [
+              238.38,
+              204.0,
+              391.66,
+              270.42
+            ],
+            [
+              272.52,
+              273.0,
+              357.48,
+              339.42
+            ],
+            [
+              200.04,
+              342.0,
+              430.07,
+              408.42
+            ],
+            [
+              181.74,
+              411.0,
+              448.37,
+              477.42
+            ],
+            [
+              72.0,
+              562.97,
+              557.97,
+              576.25
+            ],
+            [
+              72.0,
+              577.13,
+              558.0,
+              590.41
+            ],
+            [
+              72.0,
+              591.29,
+              558.0,
+              604.57
+            ],
+            [
+              72.0,
+              605.45,
+              386.48,
+              618.73
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 2,
+          "char_start": 424,
+          "char_end": 1024,
+          "page_char_start": 0,
+          "page_char_end": 600,
+          "highlight_rects": [
+            [
+              379.62,
+              69.34,
+              438.49,
+              80.1
+            ],
+            [
+              134.94,
+              119.5,
+              179.82,
+              130.26
+            ],
+            [
+              403.2,
+              121.0,
+              425.34,
+              131.76
+            ],
+            [
+              420.42,
+              183.88,
+              457.51,
+              194.64
+            ],
+            [
+              425.52,
+              195.04,
+              452.4,
+              205.8
+            ],
+            [
+              152.88,
+              211.96,
+              179.22,
+              222.72
+            ],
+            [
+              365.58,
+              248.92,
+              439.74,
+              259.68
+            ],
+            [
+              234.06,
+              301.95,
+              440.07,
+              320.55
+            ],
+            [
+              54.0,
+              644.57,
+              540.07,
+              657.85
+            ],
+            [
+              54.0,
+              658.73,
+              539.99,
+              672.01
+            ],
+            [
+              54.0,
+              672.89,
+              540.0,
+              686.17
+            ],
+            [
+              54.0,
+              687.05,
+              540.07,
+              700.33
+            ],
+            [
+              54.0,
+              701.21,
+              360.02,
+              714.49
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 256,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_7a9f6f58f24a7f7149b2a656",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 1,
+      "text": "This flow of electrons\nis called electricity.  Some mechanical device (wind turbine, water turbine, steam turbine, diesel engine,\netc.) must be available to provide the motive force for the rotor.\n\nWhen a turbine is attached to the electrical generator, the kinetic energy (i.e., motion) of the wind, falling\nwater, or steam pushes against the fan-type blades of the turbine, causing the turbine, and therefore, the\nattached rotor of the electrical generator, to spin and produce electricity.\n\nHYDROELECTRIC PLANT\nELECTRICAL\nGENERATOR\nW ATER\nINLET\nVALVE\nDAM\nW ATER\nOUTLET\nW ATER\nTURBINE\nIn a hydroelectric power plant, water, flowing from a higher level to a lower level, travels through the\nmetal blades of a water turbine, causing the rotor of the electrical generator to spin and produce\nelectricity.\n\nThrottle\nA\nValve\nC\nB\nElectric\nGenerator\nMain\nTurbine\nMain\nCondenser\nD\nFuel\nSupply\nFeedwater\nPump\nE\nF\nBoiler\nFOSSIL FUEL STEAM PLANT\nIn a fossil-fueled power plant, heat, from the burning of coal, oil, or natural gas, converts (boils) water\ninto steam (A), which is piped to the turbine (B).  ",
+      "text_checksum_sha256": "2436b9eef2aaa78591fa182855c9f50a63100d5f5260e8c133661c2d9ea09b05",
+      "char_start": 826,
+      "char_end": 1923,
+      "page_start": 2,
+      "page_end": 5,
+      "page_spans": [
+        {
+          "page_number": 2,
+          "char_start": 826,
+          "char_end": 1024,
+          "page_char_start": 402,
+          "page_char_end": 600,
+          "highlight_rects": [
+            [
+              54.0,
+              672.89,
+              540.0,
+              686.17
+            ],
+            [
+              54.0,
+              687.05,
+              540.07,
+              700.33
+            ],
+            [
+              54.0,
+              701.21,
+              360.02,
+              714.49
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 3,
+          "char_start": 1024,
+          "char_end": 1320,
+          "page_char_start": 0,
+          "page_char_end": 296,
+          "highlight_rects": [
+            [
+              72.0,
+              672.89,
+              558.0,
+              686.17
+            ],
+            [
+              72.0,
+              687.05,
+              558.0,
+              700.33
+            ],
+            [
+              72.0,
+              701.21,
+              419.35,
+              714.49
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 4,
+          "char_start": 1320,
+          "char_end": 1631,
+          "page_char_start": 0,
+          "page_char_end": 311,
+          "highlight_rects": [
+            [
+              137.1,
+              68.59,
+              419.86,
+              91.91
+            ],
+            [
+              370.02,
+              172.25,
+              430.3,
+              181.88
+            ],
+            [
+              370.02,
+              182.27,
+              430.18,
+              191.9
+            ],
+            [
+              123.48,
+              222.23,
+              158.45,
+              231.86
+            ],
+            [
+              127.08,
+              232.25,
+              154.96,
+              241.88
+            ],
+            [
+              124.38,
+              242.27,
+              157.59,
+              251.9
+            ],
+            [
+              212.16,
+              306.34,
+              252.34,
+              323.81
+            ],
+            [
+              467.64,
+              324.83,
+              502.61,
+              334.46
+            ],
+            [
+              466.08,
+              334.85,
+              504.16,
+              344.48
+            ],
+            [
+              366.96,
+              376.61,
+              401.99,
+              386.24
+            ],
+            [
+              363.18,
+              386.63,
+              405.81,
+              396.26
+            ],
+            [
+              54.0,
+              545.45,
+              540.04,
+              558.73
+            ],
+            [
+              54.0,
+              559.61,
+              540.11,
+              572.89
+            ],
+            [
+              54.0,
+              573.77,
+              105.2,
+              587.05
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 5,
+          "char_start": 1631,
+          "char_end": 1923,
+          "page_char_start": 0,
+          "page_char_end": 292,
+          "highlight_rects": [
+            [
+              269.52,
+              98.41,
+              312.47,
+              113.15
+            ],
+            [
+              275.04,
+              113.41,
+              306.94,
+              128.15
+            ],
+            [
+              113.1,
+              116.31,
+              120.46,
+              127.6
+            ],
+            [
+              521.34,
+              138.81,
+              528.14,
+              150.1
+            ],
+            [
+              296.16,
+              152.01,
+              302.96,
+              163.3
+            ],
+            [
+              504.78,
+              166.99,
+              546.35,
+              181.73
+            ],
+            [
+              293.94,
+              170.83,
+              322.23,
+              185.57
+            ],
+            [
+              498.96,
+              181.99,
+              552.2,
+              196.73
+            ],
+            [
+              287.1,
+              185.83,
+              329.32,
+              200.57
+            ],
+            [
+              363.72,
+              237.13,
+              392.01,
+              251.87
+            ],
+            [
+              349.32,
+              252.13,
+              406.16,
+              266.87
+            ],
+            [
+              417.96,
+              296.97,
+              425.32,
+              308.26
+            ],
+            [
+              80.1,
+              331.89,
+              95.83,
+              341.25
+            ],
+            [
+              75.6,
+              341.61,
+              100.59,
+              350.97
+            ],
+            [
+              311.22,
+              362.02,
+              362.9,
+              375.17
+            ],
+            [
+              286.62,
+              370.47,
+              292.85,
+              381.76
+            ],
+            [
+              322.38,
+              375.52,
+              351.66,
+              388.67
+            ],
+            [
+              140.52,
+              385.47,
+              146.19,
+              396.76
+            ],
+            [
+              162.96,
+              387.04,
+              193.92,
+              400.19
+            ],
+            [
+              207.12,
+              408.24,
+              487.09,
+              430.82
+            ],
+            [
+              72.0,
+              545.45,
+              558.02,
+              558.73
+            ],
+            [
+              72.0,
+              559.61,
+              558.01,
+              572.89
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 274,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_037b707b0a52ff51759f59f4",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 2,
+      "text": "Throttle\nA\nValve\nC\nB\nElectric\nGenerator\nMain\nTurbine\nMain\nCondenser\nD\nFuel\nSupply\nFeedwater\nPump\nE\nF\nBoiler\nFOSSIL FUEL STEAM PLANT\nIn a fossil-fueled power plant, heat, from the burning of coal, oil, or natural gas, converts (boils) water\ninto steam (A), which is piped to the turbine (B).  In the turbine, the steam passes through the blades,\nwhich spins the electrical generator (C), resulting in a flow of electricity.  After leaving the turbine, the\nsteam is converted (condensed) back into water in the condenser (D).  The water is then pumped (E)\nback to the boiler (F) to be reheated and converted back into steam.\n\nThrottle\nValve\nMain\nTurbine\nElectric\nGenerator\nNuclear\nSteam\nMain\nCondenser\nSupply\nSystem\nFeedwater\nPump\nNuclear Fuel Steam Plant\nIn a nuclear power plant, many of the components are similar to those in a fossil-fueled plant, except that\nthe steam boiler is replaced by a Nuclear Steam Supply System (NSSS).  The NSSS consists of a nuclear\nreactor and all of the components necessary to produce high pressure steam, which will be used to turn\nthe turbine for the electrical generator.\n\n",
+      "text_checksum_sha256": "e41e72087f3f7c1bbc2e65e7beeb869a76a31e36ebbac7cf635c582db6be8455",
+      "char_start": 1631,
+      "char_end": 2741,
+      "page_start": 5,
+      "page_end": 6,
+      "page_spans": [
+        {
+          "page_number": 5,
+          "char_start": 1631,
+          "char_end": 2255,
+          "page_char_start": 0,
+          "page_char_end": 624,
+          "highlight_rects": [
+            [
+              269.52,
+              98.41,
+              312.47,
+              113.15
+            ],
+            [
+              275.04,
+              113.41,
+              306.94,
+              128.15
+            ],
+            [
+              113.1,
+              116.31,
+              120.46,
+              127.6
+            ],
+            [
+              521.34,
+              138.81,
+              528.14,
+              150.1
+            ],
+            [
+              296.16,
+              152.01,
+              302.96,
+              163.3
+            ],
+            [
+              504.78,
+              166.99,
+              546.35,
+              181.73
+            ],
+            [
+              293.94,
+              170.83,
+              322.23,
+              185.57
+            ],
+            [
+              498.96,
+              181.99,
+              552.2,
+              196.73
+            ],
+            [
+              287.1,
+              185.83,
+              329.32,
+              200.57
+            ],
+            [
+              363.72,
+              237.13,
+              392.01,
+              251.87
+            ],
+            [
+              349.32,
+              252.13,
+              406.16,
+              266.87
+            ],
+            [
+              417.96,
+              296.97,
+              425.32,
+              308.26
+            ],
+            [
+              80.1,
+              331.89,
+              95.83,
+              341.25
+            ],
+            [
+              75.6,
+              341.61,
+              100.59,
+              350.97
+            ],
+            [
+              311.22,
+              362.02,
+              362.9,
+              375.17
+            ],
+            [
+              286.62,
+              370.47,
+              292.85,
+              381.76
+            ],
+            [
+              322.38,
+              375.52,
+              351.66,
+              388.67
+            ],
+            [
+              140.52,
+              385.47,
+              146.19,
+              396.76
+            ],
+            [
+              162.96,
+              387.04,
+              193.92,
+              400.19
+            ],
+            [
+              207.12,
+              408.24,
+              487.09,
+              430.82
+            ],
+            [
+              72.0,
+              545.45,
+              558.02,
+              558.73
+            ],
+            [
+              72.0,
+              559.61,
+              558.01,
+              572.89
+            ],
+            [
+              72.0,
+              573.77,
+              557.99,
+              587.05
+            ],
+            [
+              72.0,
+              587.93,
+              558.03,
+              601.21
+            ],
+            [
+              72.0,
+              602.09,
+              396.08,
+              615.37
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 6,
+          "char_start": 2255,
+          "char_end": 2741,
+          "page_char_start": 0,
+          "page_char_end": 486,
+          "highlight_rects": [
+            [
+              223.8,
+              97.69,
+              266.4,
+              112.5
+            ],
+            [
+              229.26,
+              112.75,
+              260.93,
+              127.56
+            ],
+            [
+              469.98,
+              165.01,
+              511.32,
+              179.82
+            ],
+            [
+              248.04,
+              170.41,
+              276.15,
+              185.22
+            ],
+            [
+              464.22,
+              180.07,
+              517.12,
+              194.88
+            ],
+            [
+              114.3,
+              184.87,
+              162.92,
+              202.14
+            ],
+            [
+              241.26,
+              185.47,
+              283.19,
+              200.28
+            ],
+            [
+              119.46,
+              219.97,
+              158.09,
+              237.24
+            ],
+            [
+              317.34,
+              237.07,
+              345.45,
+              251.88
+            ],
+            [
+              303.06,
+              252.13,
+              359.44,
+              266.94
+            ],
+            [
+              117.0,
+              255.19,
+              160.74,
+              272.46
+            ],
+            [
+              115.98,
+              290.29,
+              161.45,
+              307.56
+            ],
+            [
+              264.18,
+              360.61,
+              319.06,
+              375.42
+            ],
+            [
+              276.3,
+              375.67,
+              307.05,
+              390.48
+            ],
+            [
+              174.0,
+              418.59,
+              420.02,
+              445.16
+            ],
+            [
+              54.0,
+              545.09,
+              540.01,
+              558.37
+            ],
+            [
+              54.0,
+              559.25,
+              539.98,
+              572.53
+            ],
+            [
+              54.0,
+              573.41,
+              540.06,
+              586.69
+            ],
+            [
+              54.0,
+              587.57,
+              239.11,
+              600.85
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 277,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_c0e1d5d630b4a72987f0dc26",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 3,
+      "text": "The NSSS consists of a nuclear\nreactor and all of the components necessary to produce high pressure steam, which will be used to turn\nthe turbine for the electrical generator.\n\nFission\nLike a fossil-fueled plant, a nuclear power plant boils water to produce electricity.  Unlike a fossil-fueled\nplant, the nuclear plant’s energy does not come from the combustion of fuel, but from the fissioning\n(splitting) of fuel atoms.\n\nENRICHMENT\n(% U-235)\nUranium Ore (0.7%)\n   Fuel Pellet (3.5%)\nThe most common fuel for the electrical producing reactor plants in the United States is uranium.  The\nuranium starts out as ore, and contains a very low percentage (or low enrichment) of the desired atoms\n(U-235).  The U-235 is a more desirable atom for fuel, because it is easier to cause the U-235 atoms to\nfission (split) than the much more abundant U-238 atoms.  Therefore, the fuel fabrication process\nincludes steps to increase the number of U-235 atoms in relation to the number of U-238 atoms\n(enrichment process).\n\n",
+      "text_checksum_sha256": "474b148e8760f8a89366a3e9f5e4e33b853e2146afeaafaa04e1c3aa52bc3663",
+      "char_start": 2564,
+      "char_end": 3575,
+      "page_start": 6,
+      "page_end": 8,
+      "page_spans": [
+        {
+          "page_number": 6,
+          "char_start": 2564,
+          "char_end": 2741,
+          "page_char_start": 309,
+          "page_char_end": 486,
+          "highlight_rects": [
+            [
+              54.0,
+              559.25,
+              539.98,
+              572.53
+            ],
+            [
+              54.0,
+              573.41,
+              540.06,
+              586.69
+            ],
+            [
+              54.0,
+              587.57,
+              239.11,
+              600.85
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 7,
+          "char_start": 2741,
+          "char_end": 2988,
+          "page_char_start": 0,
+          "page_char_end": 247,
+          "highlight_rects": [
+            [
+              420.12,
+              216.0,
+              528.08,
+              256.05
+            ],
+            [
+              72.0,
+              545.45,
+              558.02,
+              558.73
+            ],
+            [
+              72.0,
+              559.61,
+              558.01,
+              572.89
+            ],
+            [
+              72.0,
+              573.77,
+              188.71,
+              587.05
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 8,
+          "char_start": 2988,
+          "char_end": 3575,
+          "page_char_start": 0,
+          "page_char_end": 587,
+          "highlight_rects": [
+            [
+              218.34,
+              64.59,
+              375.68,
+              91.16
+            ],
+            [
+              245.4,
+              92.55,
+              348.66,
+              119.12
+            ],
+            [
+              90.0,
+              360.82,
+              239.4,
+              380.74
+            ],
+            [
+              341.95,
+              360.82,
+              486.88,
+              380.74
+            ],
+            [
+              54.0,
+              551.69,
+              540.01,
+              564.97
+            ],
+            [
+              54.0,
+              565.85,
+              540.0,
+              579.13
+            ],
+            [
+              54.0,
+              580.01,
+              540.07,
+              593.29
+            ],
+            [
+              54.0,
+              594.17,
+              540.04,
+              607.45
+            ],
+            [
+              54.0,
+              608.33,
+              540.05,
+              621.61
+            ],
+            [
+              54.0,
+              622.49,
+              158.09,
+              635.77
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 252,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_23963ad2f53efbdd4e276114",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 4,
+      "text": "Therefore, the fuel fabrication process\nincludes steps to increase the number of U-235 atoms in relation to the number of U-238 atoms\n(enrichment process).\n\nCHEMICAL CONVERSION TO UF6\nENRICHMENT\nPELLETIZING\nTubing & End Plugs\nROD LOADING\nSpacers & Tie Plates\nBUNDLE ASSEMBLY\nBUNDLE FINAL INSPECTION\nPACKAGING & SHIPPING\nSITE INSPECTION & CHANNELING\nOnce the fuel has been enriched, it is fabricated into ceramic pellets.  The pellets are stacked into 12-foot\nlong, slender metal tubes, generally made of a zirconium alloy.  The tube is called the “fuel cladding.”\nWhen a tube is filled with the uranium pellets, it is pressurized with helium gas, and plugs are installed\nand welded to seal the tube.  The filled rod is called a “fuel rod.”  The fuel rods are bundled together into\n“fuel assemblies” or “fuel elements.”  The completed assemblies are now ready to be shipped to the plant\nfor installation into the reactor vessel.\n\nREACTOR FUEL ASSEMBLIES\nBoth boiling water reactor and pressurized water reactor fuel assemblies consist of the same major\ncomponents.  These major components are the fuel rods, the spacer grids, and the upper and lower end\nfittings.  ",
+      "text_checksum_sha256": "cfe2949a6d8822b95daa76f6882754fc2b31ecc50261f47697f4f5944b912e23",
+      "char_start": 3418,
+      "char_end": 4582,
+      "page_start": 8,
+      "page_end": 10,
+      "page_spans": [
+        {
+          "page_number": 8,
+          "char_start": 3418,
+          "char_end": 3575,
+          "page_char_start": 430,
+          "page_char_end": 587,
+          "highlight_rects": [
+            [
+              54.0,
+              594.17,
+              540.04,
+              607.45
+            ],
+            [
+              54.0,
+              608.33,
+              540.05,
+              621.61
+            ],
+            [
+              54.0,
+              622.49,
+              158.09,
+              635.77
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 9,
+          "char_start": 3575,
+          "char_end": 4347,
+          "page_char_start": 0,
+          "page_char_end": 772,
+          "highlight_rects": [
+            [
+              308.1,
+              75.13,
+              462.24,
+              86.15
+            ],
+            [
+              352.56,
+              135.07,
+              417.5,
+              146.09
+            ],
+            [
+              354.3,
+              195.19,
+              416.46,
+              206.21
+            ],
+            [
+              163.98,
+              255.25,
+              246.09,
+              266.27
+            ],
+            [
+              350.88,
+              255.25,
+              419.38,
+              266.27
+            ],
+            [
+              163.2,
+              315.19,
+              246.41,
+              326.21
+            ],
+            [
+              337.56,
+              315.19,
+              433.3,
+              326.21
+            ],
+            [
+              319.32,
+              375.25,
+              451.22,
+              386.27
+            ],
+            [
+              327.12,
+              435.31,
+              442.78,
+              446.33
+            ],
+            [
+              305.88,
+              495.25,
+              464.69,
+              506.27
+            ],
+            [
+              72.0,
+              545.45,
+              558.0,
+              558.73
+            ],
+            [
+              72.0,
+              559.61,
+              558.03,
+              572.89
+            ],
+            [
+              72.0,
+              573.77,
+              558.01,
+              587.05
+            ],
+            [
+              72.0,
+              587.93,
+              558.09,
+              601.21
+            ],
+            [
+              72.0,
+              602.09,
+              557.98,
+              615.37
+            ],
+            [
+              72.0,
+              616.25,
+              253.77,
+              629.53
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 10,
+          "char_start": 4347,
+          "char_end": 4582,
+          "page_char_start": 0,
+          "page_char_end": 235,
+          "highlight_rects": [
+            [
+              122.28,
+              79.12,
+              471.77,
+              105.68
+            ],
+            [
+              54.0,
+              134.57,
+              540.01,
+              147.85
+            ],
+            [
+              54.0,
+              148.73,
+              540.05,
+              162.01
+            ],
+            [
+              54.0,
+              162.89,
+              540.02,
+              176.17
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 291,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_1a15542a59e00d99db1615fd",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 5,
+      "text": "These major components are the fuel rods, the spacer grids, and the upper and lower end\nfittings.  The fuel assembly drawing on page 1-11 shows these major components (pressurized water\nreactor fuel assembly).\nThe fuel rods contain the ceramic fuel pellets.  The fuel rods are approximately 12 feet long and contain\na space at the top for the collection of any gases that are produced by the fission process.  These rods are\narranged in a square matrix ranging from 17 x 17 for pressurized water reactors to 8 x 8 for boiling water\nreactors.\nThe spacer grids separate the individual rods with pieces of sprung metal.  This provides the rigidity of\nthe assemblies and allows the coolant to flow freely up through the assemblies and around the fuel rods.\nSome spacer grids may have flow mixing vanes that are used to promote mixing of the coolant as it\nflows around and though the fuel assembly.\nThe upper and lower end fittings serve as the upper and lower structural elements of the assemblies.  The\nlower fitting (or bottom nozzle) will direct the coolant flow to the assembly through several small holes\nmachined into the fitting.  ",
+      "text_checksum_sha256": "f0007ec58d615c8005f165fc1525e9d0d72f1aec13a7afd857dd1ce50596d90a",
+      "char_start": 4483,
+      "char_end": 5617,
+      "page_start": 10,
+      "page_end": 10,
+      "page_spans": [
+        {
+          "page_number": 10,
+          "char_start": 4483,
+          "char_end": 5617,
+          "page_char_start": 136,
+          "page_char_end": 1270,
+          "highlight_rects": [
+            [
+              54.0,
+              148.73,
+              540.05,
+              162.01
+            ],
+            [
+              54.0,
+              162.89,
+              540.02,
+              176.17
+            ],
+            [
+              54.0,
+              177.05,
+              163.75,
+              190.33
+            ],
+            [
+              54.0,
+              205.37,
+              540.03,
+              218.65
+            ],
+            [
+              54.0,
+              219.53,
+              540.01,
+              232.81
+            ],
+            [
+              54.0,
+              233.69,
+              539.99,
+              246.97
+            ],
+            [
+              54.0,
+              247.85,
+              95.1,
+              261.13
+            ],
+            [
+              54.0,
+              276.17,
+              540.07,
+              289.45
+            ],
+            [
+              54.0,
+              290.33,
+              540.01,
+              303.61
+            ],
+            [
+              54.0,
+              304.49,
+              540.06,
+              317.77
+            ],
+            [
+              54.0,
+              318.65,
+              263.7,
+              331.93
+            ],
+            [
+              54.0,
+              346.97,
+              540.03,
+              360.25
+            ],
+            [
+              54.0,
+              361.13,
+              540.14,
+              374.41
+            ],
+            [
+              54.0,
+              375.29,
+              540.03,
+              388.57
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 283,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_ff55dd19d73b96d377e2c6b3",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 6,
+      "text": "The\nlower fitting (or bottom nozzle) will direct the coolant flow to the assembly through several small holes\nmachined into the fitting.  There are also holes drilled in the upper fitting to allow the coolant flow to\nexit the fuel assembly.  The upper end fitting will also have a connecting point for the refueling\nequipment to attach for the moving of the fuel with a crane.\nFor pressurized water reactor fuel, there will also be guide tubes in which the control rods travel.  The\nguide tubes will be welded to the spacer grids and attached to the upper and lower end fittings.  The\nguide tubes provide a channel for the movement of the control rods and provide for support of the rods.\nThe upper end of the control rod will be attached to a drive shaft, which will be used to position the rod\nduring operations.\nA brief description and a picture of boiling water reactor fuel can be found in Chapter3 (pages 3-3 and\n3-7).\n\n",
+      "text_checksum_sha256": "a05e89b6e7a046bea461bcca602e8ff1e379963e0621d3f113c3114855d9dbc6",
+      "char_start": 5479,
+      "char_end": 6405,
+      "page_start": 10,
+      "page_end": 10,
+      "page_spans": [
+        {
+          "page_number": 10,
+          "char_start": 5479,
+          "char_end": 6405,
+          "page_char_start": 1132,
+          "page_char_end": 2058,
+          "highlight_rects": [
+            [
+              54.0,
+              346.97,
+              540.03,
+              360.25
+            ],
+            [
+              54.0,
+              361.13,
+              540.14,
+              374.41
+            ],
+            [
+              54.0,
+              375.29,
+              540.03,
+              388.57
+            ],
+            [
+              54.0,
+              389.45,
+              540.13,
+              402.73
+            ],
+            [
+              54.0,
+              403.61,
+              340.15,
+              416.89
+            ],
+            [
+              54.0,
+              431.93,
+              540.0,
+              445.21
+            ],
+            [
+              54.0,
+              446.09,
+              540.01,
+              459.37
+            ],
+            [
+              54.0,
+              460.25,
+              540.07,
+              473.53
+            ],
+            [
+              54.0,
+              474.41,
+              540.06,
+              487.69
+            ],
+            [
+              54.0,
+              488.57,
+              141.48,
+              501.85
+            ],
+            [
+              54.0,
+              516.89,
+              540.04,
+              530.17
+            ],
+            [
+              54.0,
+              531.05,
+              77.04,
+              544.33
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 231,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_0125f014b19c9974503ce241",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 7,
+      "text": "A brief description and a picture of boiling water reactor fuel can be found in Chapter3 (pages 3-3 and\n3-7).\n\nHOLD DOWN SPRING\nROD CLUSTER CONTROL\nTOP NOZZLE\nFUEL ROD\nCONTROL ROD\nTHIMBLE TUBE\nGRID\nMIXING VANES\nBULGE JOINTS\nDASHPOT REGION\nGRID SPRING\nDIMPLE\nBOTTOM NOZZLE\nTHIMBLE SCREW\n\nAt the nuclear power plant, the fuel assemblies are inserted vertically into the reactor vessel (a large steel\ntank filled with water with a removable top).  The fuel is placed in a precise grid pattern known as the\n“reactor core.”\n\nContainment/Drywell\nReactor\nVessel\nSteam\nTurbine Building\nLine\nThrottle\nElectrical\nGenerator\nValve\nSteam Dryer\n&\nMoisture\nSeparator\nTurbine\nReactor Core\nCondenser\nJet Pump\nTo/From\nRiver\nRecirculation\nPump\nPump\nContainment Suppression Chamber\nThere are two basic types of reactor plants being used in the United States to produce electricity, the\nboiling water reactor (BWR) and the pressurized water reactor (PWR).  The boiling water reactor\noperates in essentially the same way as a fossil-fueled generating plant.  Inside the reactor vessel, a\nsteam/water mixture is produced when very pure water (reactor coolant) moves upward through the core\nabsorbing heat.  ",
+      "text_checksum_sha256": "9c4a8f7d7b0542530130b1ef9b619076180de46601e6ef37861bea012ee8da5e",
+      "char_start": 6294,
+      "char_end": 7478,
+      "page_start": 10,
+      "page_end": 13,
+      "page_spans": [
+        {
+          "page_number": 10,
+          "char_start": 6294,
+          "char_end": 6405,
+          "page_char_start": 1947,
+          "page_char_end": 2058,
+          "highlight_rects": [
+            [
+              54.0,
+              516.89,
+              540.04,
+              530.17
+            ],
+            [
+              54.0,
+              531.05,
+              77.04,
+              544.33
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 11,
+          "char_start": 6405,
+          "char_end": 6581,
+          "page_char_start": 0,
+          "page_char_end": 176,
+          "highlight_rects": [
+            [
+              431.58,
+              183.01,
+              540.49,
+              194.1
+            ],
+            [
+              92.82,
+              228.01,
+              222.48,
+              239.1
+            ],
+            [
+              118.2,
+              252.61,
+              183.76,
+              263.7
+            ],
+            [
+              443.82,
+              313.09,
+              496.65,
+              324.18
+            ],
+            [
+              112.8,
+              321.19,
+              190.29,
+              332.28
+            ],
+            [
+              443.82,
+              356.53,
+              523.57,
+              367.62
+            ],
+            [
+              145.44,
+              385.27,
+              171.57,
+              396.36
+            ],
+            [
+              440.52,
+              463.33,
+              520.3,
+              474.42
+            ],
+            [
+              116.1,
+              473.35,
+              191.75,
+              484.44
+            ],
+            [
+              435.96,
+              526.87,
+              530.73,
+              537.96
+            ],
+            [
+              123.18,
+              580.69,
+              191.31,
+              591.78
+            ],
+            [
+              434.88,
+              587.35,
+              475.08,
+              598.44
+            ],
+            [
+              396.0,
+              666.91,
+              484.54,
+              678.0
+            ],
+            [
+              136.5,
+              673.33,
+              227.88,
+              684.42
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 12,
+          "char_start": 6581,
+          "char_end": 6814,
+          "page_char_start": 0,
+          "page_char_end": 233,
+          "highlight_rects": [
+            [
+              54.0,
+              545.45,
+              540.03,
+              558.73
+            ],
+            [
+              54.0,
+              559.61,
+              540.04,
+              572.89
+            ],
+            [
+              54.0,
+              573.77,
+              124.78,
+              587.05
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 13,
+          "char_start": 6814,
+          "char_end": 7478,
+          "page_char_start": 0,
+          "page_char_end": 664,
+          "highlight_rects": [
+            [
+              131.58,
+              77.7,
+              184.29,
+              84.48
+            ],
+            [
+              202.86,
+              80.63,
+              227.83,
+              89.66
+            ],
+            [
+              204.6,
+              88.91,
+              226.13,
+              97.94
+            ],
+            [
+              229.14,
+              98.75,
+              249.35,
+              107.78
+            ],
+            [
+              231.9,
+              107.09,
+              246.63,
+              116.12
+            ],
+            [
+              322.44,
+              107.34,
+              364.14,
+              114.12
+            ],
+            [
+              463.08,
+              117.29,
+              493.93,
+              126.32
+            ],
+            [
+              374.82,
+              125.45,
+              400.83,
+              134.48
+            ],
+            [
+              462.42,
+              125.57,
+              494.48,
+              134.6
+            ],
+            [
+              378.18,
+              133.73,
+              397.47,
+              142.76
+            ],
+            [
+              77.94,
+              142.46,
+              111.7,
+              149.97
+            ],
+            [
+              92.28,
+              149.24,
+              97.55,
+              156.75
+            ],
+            [
+              82.74,
+              156.02,
+              106.87,
+              163.53
+            ],
+            [
+              82.14,
+              162.8,
+              107.8,
+              170.31
+            ],
+            [
+              347.1,
+              161.45,
+              372.74,
+              170.48
+            ],
+            [
+              218.1,
+              204.89,
+              260.7,
+              213.92
+            ],
+            [
+              353.52,
+              204.89,
+              387.98,
+              213.92
+            ],
+            [
+              219.72,
+              225.35,
+              249.6,
+              234.38
+            ],
+            [
+              523.38,
+              254.21,
+              552.11,
+              263.24
+            ],
+            [
+              528.78,
+              262.49,
+              546.74,
+              271.52
+            ],
+            [
+              228.54,
+              276.29,
+              271.86,
+              285.32
+            ],
+            [
+              240.72,
+              284.63,
+              259.5,
+              293.66
+            ],
+            [
+              373.56,
+              297.53,
+              392.34,
+              306.56
+            ],
+            [
+              129.84,
+              309.14,
+              225.23,
+              316.65
+            ],
+            [
+              72.0,
+              474.65,
+              558.03,
+              487.93
+            ],
+            [
+              72.0,
+              488.81,
+              558.08,
+              502.09
+            ],
+            [
+              72.0,
+              502.97,
+              558.04,
+              516.25
+            ],
+            [
+              72.0,
+              517.13,
+              558.05,
+              530.41
+            ],
+            [
+              72.0,
+              531.29,
+              558.07,
+              544.57
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 296,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_a3bc6236ed14c69a3fcf4949",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 8,
+      "text": "Inside the reactor vessel, a\nsteam/water mixture is produced when very pure water (reactor coolant) moves upward through the core\nabsorbing heat.  The major difference in the operation of a boiling water reactor as compared to other\nnuclear systems is the steam void formation in the core.  The steam/water mixture leaves the top of the\ncore and enters two stages of moisture separation, where water droplets are removed before the steam\nis allowed to enter the steam line.  The steam line, in turn, directs the steam to the main turbine, causing\nit to turn the turbine and the attached electrical generator.  The unused steam is exhausted to the\ncondenser where it is condensed into water.  The resulting water (condensate) is pumped out of the\ncondenser with a series of pumps and back to the reactor vessel.  The recirculation pumps and the jet\npumps allow the operator to vary coolant flow through the core and to change reactor power.\nBoiling water reactors are manufactured in the United States by the General Electric Company, San Jose,\nCalifornia.  Boiling water reactors comprise about one-third of the power reactors in the United States.\n\n",
+      "text_checksum_sha256": "601b0cdfcedc9fbaada0c923b314c41c0a704e17796c6c6cf479426764fa432a",
+      "char_start": 7331,
+      "char_end": 8481,
+      "page_start": 13,
+      "page_end": 13,
+      "page_spans": [
+        {
+          "page_number": 13,
+          "char_start": 7331,
+          "char_end": 8481,
+          "page_char_start": 517,
+          "page_char_end": 1667,
+          "highlight_rects": [
+            [
+              72.0,
+              502.97,
+              558.04,
+              516.25
+            ],
+            [
+              72.0,
+              517.13,
+              558.05,
+              530.41
+            ],
+            [
+              72.0,
+              531.29,
+              558.07,
+              544.57
+            ],
+            [
+              72.0,
+              545.45,
+              558.06,
+              558.73
+            ],
+            [
+              72.0,
+              559.61,
+              558.14,
+              572.89
+            ],
+            [
+              72.0,
+              573.77,
+              558.06,
+              587.05
+            ],
+            [
+              72.0,
+              587.93,
+              558.06,
+              601.21
+            ],
+            [
+              72.0,
+              602.09,
+              558.02,
+              615.37
+            ],
+            [
+              72.0,
+              616.25,
+              558.16,
+              629.53
+            ],
+            [
+              72.0,
+              630.41,
+              518.42,
+              643.69
+            ],
+            [
+              72.0,
+              658.73,
+              558.04,
+              672.01
+            ],
+            [
+              72.0,
+              672.89,
+              558.05,
+              686.17
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 287,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_d5ecb5e6710e1208d1558e49",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 9,
+      "text": "Boiling water reactors comprise about one-third of the power reactors in the United States.\n\nContainment\nThrottle\nValve\nS/G\nP\nZ\nR\nElectric\nGenerator\nMain\nTurbine\nMain\nCondenser\nCore\nRCP\nReactor Coolant\nFeedwater\nSystem\nPump\nThe pressurized water reactor (PWR) differs from the boiling water reactor in that steam is produced in\nthe steam generator rather than in the reactor vessel.  The pressurizer keeps the water that is flowing\nthrough the reactor vessel under very high pressure (more than 2,200 pounds per square inch) to prevent\nit from boiling, even at operating temperatures of more than 600EF.  Pressurized water reactors make\nup about two-thirds of the power reactors in the United States.\nPressurized water reactors were manufactured in the United States by Westinghouse Electric Corporation\n(Pittsburgh, Pennsylvania), Babcock and Wilcox Company (Lynchburg, Virginia), and the Combustion\nEngineering Company (Windsor, Connecticut).\n\n",
+      "text_checksum_sha256": "3d7ef551496577c3930f2e8fb06e99a1ebe78b4cee43716884e7204003493913",
+      "char_start": 8388,
+      "char_end": 9334,
+      "page_start": 13,
+      "page_end": 14,
+      "page_spans": [
+        {
+          "page_number": 13,
+          "char_start": 8388,
+          "char_end": 8481,
+          "page_char_start": 1574,
+          "page_char_end": 1667,
+          "highlight_rects": [
+            [
+              72.0,
+              672.89,
+              558.05,
+              686.17
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 14,
+          "char_start": 8481,
+          "char_end": 9334,
+          "page_char_start": 0,
+          "page_char_end": 853,
+          "highlight_rects": [
+            [
+              174.24,
+              92.78,
+              229.4,
+              104.54
+            ],
+            [
+              339.66,
+              181.88,
+              374.14,
+              193.64
+            ],
+            [
+              344.1,
+              194.84,
+              369.58,
+              206.6
+            ],
+            [
+              217.14,
+              204.74,
+              233.87,
+              216.5
+            ],
+            [
+              167.64,
+              212.96,
+              173.54,
+              224.72
+            ],
+            [
+              167.52,
+              225.86,
+              174.01,
+              237.62
+            ],
+            [
+              360.84,
+              227.9,
+              383.31,
+              239.66
+            ],
+            [
+              495.54,
+              228.62,
+              528.58,
+              240.38
+            ],
+            [
+              167.1,
+              238.7,
+              174.18,
+              250.46
+            ],
+            [
+              355.26,
+              240.8,
+              389.02,
+              252.56
+            ],
+            [
+              490.8,
+              241.52,
+              533.28,
+              253.28
+            ],
+            [
+              404.76,
+              278.86,
+              424.11,
+              289.02
+            ],
+            [
+              394.92,
+              289.96,
+              434.04,
+              300.12
+            ],
+            [
+              115.56,
+              318.7,
+              133.38,
+              328.86
+            ],
+            [
+              172.68,
+              345.76,
+              190.08,
+              355.92
+            ],
+            [
+              83.52,
+              363.44,
+              152.96,
+              375.2
+            ],
+            [
+              364.26,
+              363.74,
+              408.46,
+              375.5
+            ],
+            [
+              102.66,
+              376.4,
+              133.96,
+              388.16
+            ],
+            [
+              374.04,
+              376.7,
+              398.91,
+              388.46
+            ],
+            [
+              54.0,
+              545.45,
+              540.05,
+              558.73
+            ],
+            [
+              54.0,
+              559.61,
+              540.1,
+              572.89
+            ],
+            [
+              54.0,
+              573.77,
+              540.04,
+              587.05
+            ],
+            [
+              54.0,
+              587.6,
+              539.98,
+              601.61
+            ],
+            [
+              54.0,
+              602.09,
+              353.39,
+              615.37
+            ],
+            [
+              54.0,
+              630.41,
+              540.07,
+              643.69
+            ],
+            [
+              54.0,
+              644.57,
+              540.05,
+              657.85
+            ],
+            [
+              54.0,
+              658.73,
+              281.69,
+              672.01
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 236,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_89777332e16ea81dfd2ac9b8",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 10,
+      "text": "Pressurized water reactors were manufactured in the United States by Westinghouse Electric Corporation\n(Pittsburgh, Pennsylvania), Babcock and Wilcox Company (Lynchburg, Virginia), and the Combustion\nEngineering Company (Windsor, Connecticut).\n\nThrottle\nValve\nSteam\nGenerator\nElectric\nGenerator\nMain\nTurbine\nCore\nMain\nCondenser\nHelium\nCirculator\nFeedwater Pump\nHigh Temperature Gas-Cooled Reactor (HTGR)\nAnother type of reactor uses helium gas instead of water as its media for removing heat from the core.\nThe only high temperature gas-cooled reactor (HTGR) in the United States was the Fort St. Vrain plant\nin Colorado.  The plant was manufactured by General Atomic Company of La Jolla, California.  High\ntemperature gas-cooled reactors are widely used in other countries.\n\nOther\n(biomass fuels, wood, wind,\nPetroleum\nphotovoltaic, and solar)\n(2%)\n(<1%)\nGas\n(10%)\nNuclear\n(22%)\nCoal\n(55%)\nHydroelectric\n(10%)\nElectrical Production by Type\nCommercial nuclear power plants generate approximately 22% of the electricity produced in the United\nStates.  The total generation is approximately 3,800 thousand gigawatt-hours.\n",
+      "text_checksum_sha256": "447209ce2dc786b1a03d023791332b30e4c9c80e55bec97d1dc55e443b080dde",
+      "char_start": 9089,
+      "char_end": 10209,
+      "page_start": 14,
+      "page_end": 16,
+      "page_spans": [
+        {
+          "page_number": 14,
+          "char_start": 9089,
+          "char_end": 9334,
+          "page_char_start": 608,
+          "page_char_end": 853,
+          "highlight_rects": [
+            [
+              54.0,
+              630.41,
+              540.07,
+              643.69
+            ],
+            [
+              54.0,
+              644.57,
+              540.05,
+              657.85
+            ],
+            [
+              54.0,
+              658.73,
+              281.69,
+              672.01
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 15,
+          "char_start": 9334,
+          "char_end": 9865,
+          "page_char_start": 0,
+          "page_char_end": 531,
+          "highlight_rects": [
+            [
+              308.16,
+              94.84,
+              342.93,
+              107.46
+            ],
+            [
+              312.72,
+              107.44,
+              338.54,
+              120.06
+            ],
+            [
+              243.06,
+              121.72,
+              274.86,
+              136.13
+            ],
+            [
+              233.64,
+              136.72,
+              283.82,
+              151.13
+            ],
+            [
+              333.18,
+              156.82,
+              355.86,
+              169.44
+            ],
+            [
+              505.38,
+              154.96,
+              538.83,
+              167.58
+            ],
+            [
+              327.48,
+              169.42,
+              361.77,
+              182.04
+            ],
+            [
+              500.7,
+              167.62,
+              543.44,
+              180.24
+            ],
+            [
+              130.98,
+              174.85,
+              165.28,
+              193.85
+            ],
+            [
+              387.42,
+              213.58,
+              410.04,
+              226.2
+            ],
+            [
+              375.84,
+              226.24,
+              421.88,
+              238.86
+            ],
+            [
+              135.66,
+              259.45,
+              184.24,
+              278.45
+            ],
+            [
+              127.08,
+              278.65,
+              192.46,
+              297.65
+            ],
+            [
+              327.66,
+              371.26,
+              400.14,
+              383.88
+            ],
+            [
+              82.32,
+              475.23,
+              547.71,
+              501.8
+            ],
+            [
+              72.0,
+              545.09,
+              558.03,
+              558.37
+            ],
+            [
+              72.0,
+              559.25,
+              557.98,
+              572.53
+            ],
+            [
+              72.0,
+              573.41,
+              558.01,
+              586.69
+            ],
+            [
+              72.0,
+              587.57,
+              394.15,
+              600.85
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 16,
+          "char_start": 9865,
+          "char_end": 10209,
+          "page_char_start": 0,
+          "page_char_end": 344,
+          "highlight_rects": [
+            [
+              383.1,
+              65.88,
+              410.77,
+              79.23
+            ],
+            [
+              328.26,
+              79.62,
+              465.51,
+              92.97
+            ],
+            [
+              154.38,
+              83.94,
+              204.51,
+              97.29
+            ],
+            [
+              339.3,
+              93.36,
+              454.55,
+              106.71
+            ],
+            [
+              167.28,
+              97.68,
+              191.46,
+              111.03
+            ],
+            [
+              381.36,
+              106.86,
+              412.44,
+              120.21
+            ],
+            [
+              223.68,
+              178.49,
+              243.97,
+              191.84
+            ],
+            [
+              217.56,
+              192.23,
+              249.96,
+              205.58
+            ],
+            [
+              165.96,
+              268.9,
+              227.5,
+              288.9
+            ],
+            [
+              172.44,
+              289.6,
+              221.29,
+              309.6
+            ],
+            [
+              354.72,
+              288.46,
+              391.21,
+              308.45
+            ],
+            [
+              348.6,
+              309.1,
+              397.45,
+              329.1
+            ],
+            [
+              178.32,
+              374.45,
+              249.98,
+              387.8
+            ],
+            [
+              197.76,
+              388.19,
+              230.16,
+              401.54
+            ],
+            [
+              142.56,
+              482.13,
+              433.42,
+              508.76
+            ],
+            [
+              54.0,
+              559.61,
+              540.04,
+              572.89
+            ],
+            [
+              54.0,
+              573.77,
+              426.51,
+              587.05
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 280,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_101a0ea2b44a31e0b052a843",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 11,
+      "text": "The total generation is approximately 3,800 thousand gigawatt-hours.\nFor comparison purposes, nuclear generation accounts for the following of the total electrical production\nin some other countries:   75% in France, 46% in Sweden, 43% in Ukraine, 39% in south Korea, 30%\nin Germany, and 30% in Japan.\nThe electricity produced in the United States from nuclear power is equivalent to 31% of the world’s\ntotal nuclear generated electrical power.  This compares with 16% for France, 13% for Japan, 7% for\nGermany, 5% for Russia, and 4% for South Korea and United Kingdom.\n\nRegion I\nRegion II\n1\n3\n4\n2\n9\n20\n7\n13\nRegion III\nRegion IV\n1\n1\n1\n11\n8\n8\n11\n4\nWestinghouse\nGeneral Electric\nCombustion Engineering\nBabcock & Wilcox\nThere are currently 104 licensed commercial nuclear power plants in the United States.  Of the 104\nplants, 48 were built by Westinghouse, 35 by General Electric, 14 by Combustion Engineering, and 7\nby Babcock & Wilcox.\nThe illustration above shows the breakdown of the plants, by vendor, assigned to the four NRC Regions.\n\n",
+      "text_checksum_sha256": "4f71b11cee7bc9c9b8fb1e6d9bf9b52360591ea6ba06ab051582718391791fe4",
+      "char_start": 10140,
+      "char_end": 11180,
+      "page_start": 16,
+      "page_end": 17,
+      "page_spans": [
+        {
+          "page_number": 16,
+          "char_start": 10140,
+          "char_end": 10711,
+          "page_char_start": 275,
+          "page_char_end": 846,
+          "highlight_rects": [
+            [
+              54.0,
+              573.77,
+              426.51,
+              587.05
+            ],
+            [
+              54.0,
+              602.09,
+              540.13,
+              615.37
+            ],
+            [
+              54.0,
+              616.25,
+              539.97,
+              629.53
+            ],
+            [
+              54.0,
+              630.41,
+              205.01,
+              643.69
+            ],
+            [
+              54.0,
+              658.73,
+              540.19,
+              672.01
+            ],
+            [
+              54.0,
+              672.89,
+              540.23,
+              686.17
+            ],
+            [
+              54.0,
+              687.05,
+              402.67,
+              700.33
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 17,
+          "char_start": 10711,
+          "char_end": 11180,
+          "page_char_start": 0,
+          "page_char_end": 469,
+          "highlight_rects": [
+            [
+              201.78,
+              69.8,
+              235.31,
+              80.36
+            ],
+            [
+              399.41,
+              69.8,
+              435.97,
+              80.36
+            ],
+            [
+              208.62,
+              96.62,
+              213.39,
+              107.18
+            ],
+            [
+              179.34,
+              113.36,
+              184.11,
+              123.92
+            ],
+            [
+              394.38,
+              113.36,
+              399.15,
+              123.92
+            ],
+            [
+              358.8,
+              127.52,
+              363.57,
+              138.08
+            ],
+            [
+              258.42,
+              145.4,
+              263.19,
+              155.96
+            ],
+            [
+              363.6,
+              175.4,
+              368.37,
+              185.96
+            ],
+            [
+              452.46,
+              174.74,
+              462.15,
+              185.3
+            ],
+            [
+              191.28,
+              201.5,
+              200.85,
+              212.06
+            ],
+            [
+              202.14,
+              293.0,
+              241.61,
+              303.56
+            ],
+            [
+              398.88,
+              292.22,
+              439.13,
+              302.78
+            ],
+            [
+              404.46,
+              317.6,
+              409.23,
+              328.16
+            ],
+            [
+              187.74,
+              322.52,
+              192.51,
+              333.08
+            ],
+            [
+              205.92,
+              321.74,
+              210.69,
+              332.3
+            ],
+            [
+              457.02,
+              370.4,
+              461.79,
+              380.96
+            ],
+            [
+              251.46,
+              381.2,
+              261.15,
+              391.76
+            ],
+            [
+              369.84,
+              382.1,
+              374.61,
+              392.66
+            ],
+            [
+              176.1,
+              403.82,
+              185.67,
+              414.38
+            ],
+            [
+              423.42,
+              440.0,
+              428.19,
+              450.56
+            ],
+            [
+              280.86,
+              492.86,
+              335.56,
+              503.42
+            ],
+            [
+              280.86,
+              514.76,
+              343.73,
+              525.32
+            ],
+            [
+              280.86,
+              536.6,
+              377.87,
+              547.16
+            ],
+            [
+              280.86,
+              558.62,
+              355.29,
+              569.18
+            ],
+            [
+              72.0,
+              630.41,
+              558.15,
+              643.69
+            ],
+            [
+              72.0,
+              644.57,
+              558.0,
+              657.85
+            ],
+            [
+              72.0,
+              658.73,
+              182.65,
+              672.01
+            ],
+            [
+              72.0,
+              687.05,
+              558.0,
+              700.33
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 260,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_23ce12860c94f831af0203bb",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 12,
+      "text": "The illustration above shows the breakdown of the plants, by vendor, assigned to the four NRC Regions.\n\nSTEAM\nELECTRIC\nGENERATOR\nMAIN\nTURBINE\nMAIN\nCONDENSER\nCONDENSATE\nPUMP\nCIRCULATING\nWATER PUMP\nTo operate properly, all steam plants, whether nuclear or fossil-fueled, need a circulating water system\nto remove excess heat from the steam system in order to condense the steam, and transfer that heat to\nthe environment.  The circulating water system pumps water from the environment (river, lake, ocean)\nthrough thousands of metal tubes in the plant’s condenser.  Steam exiting the plant’s turbine is very\nrapidly cooled and condensed into water when it comes in contact with the much cooler tubes.  Since\nthe tubes provide a barrier between the steam and the environment, there is no physical contact between\nthe plant’s steam and the cooling water.  Because a condenser operates at a vacuum, any tube leakage\nin this system will produce an “inflow” of water into the condenser rather than an “outflow” of water\nto the environment.\n\n",
+      "text_checksum_sha256": "17a23f618758ae465db0a04f81827c0540d1b1c30425f6c863b3b1be7de3b1ed",
+      "char_start": 11076,
+      "char_end": 12110,
+      "page_start": 17,
+      "page_end": 18,
+      "page_spans": [
+        {
+          "page_number": 17,
+          "char_start": 11076,
+          "char_end": 11180,
+          "page_char_start": 365,
+          "page_char_end": 469,
+          "highlight_rects": [
+            [
+              72.0,
+              687.05,
+              558.0,
+              700.33
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 18,
+          "char_start": 11180,
+          "char_end": 12110,
+          "page_char_start": 0,
+          "page_char_end": 930,
+          "highlight_rects": [
+            [
+              138.66,
+              67.63,
+              178.11,
+              80.51
+            ],
+            [
+              98.7,
+              165.85,
+              129.42,
+              178.73
+            ],
+            [
+              323.64,
+              164.92,
+              378.65,
+              178.07
+            ],
+            [
+              89.1,
+              179.29,
+              139.23,
+              192.17
+            ],
+            [
+              316.02,
+              178.35,
+              386.27,
+              191.51
+            ],
+            [
+              169.92,
+              246.73,
+              200.58,
+              259.61
+            ],
+            [
+              150.48,
+              260.11,
+              220.22,
+              272.99
+            ],
+            [
+              104.16,
+              388.24,
+              181.68,
+              401.39
+            ],
+            [
+              127.08,
+              401.62,
+              158.55,
+              414.77
+            ],
+            [
+              402.3,
+              426.04,
+              480.12,
+              439.19
+            ],
+            [
+              403.38,
+              439.42,
+              479.13,
+              452.57
+            ],
+            [
+              54.0,
+              531.29,
+              540.16,
+              544.57
+            ],
+            [
+              54.0,
+              545.45,
+              540.07,
+              558.73
+            ],
+            [
+              54.0,
+              559.61,
+              540.04,
+              572.89
+            ],
+            [
+              54.0,
+              573.77,
+              540.07,
+              587.05
+            ],
+            [
+              54.0,
+              587.93,
+              540.11,
+              601.21
+            ],
+            [
+              54.0,
+              602.09,
+              540.04,
+              615.37
+            ],
+            [
+              54.0,
+              616.25,
+              540.04,
+              629.53
+            ],
+            [
+              54.0,
+              630.41,
+              540.16,
+              643.69
+            ],
+            [
+              54.0,
+              644.57,
+              147.73,
+              657.85
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 258,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_9153009ebe51db0e0ade0a9f",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 13,
+      "text": "Because a condenser operates at a vacuum, any tube leakage\nin this system will produce an “inflow” of water into the condenser rather than an “outflow” of water\nto the environment.\n\nELECTRIC\nGENERATOR\nMAIN\nTURBINE\nDISCHARGE\nMAIN\nCONDENSER\nLarge Body\nof Water\n(ocean, lake, etc.)\nINTAKE\nCIRCULATING\nWATER PUMP\nPower plants located on the ocean (or other large bodies of water) will often discharge their circulating\nwater directly back to the ocean under strict environmental protection regulations.  Water is taken from\nthe ocean, pumped through the thousands of small tubes in the condenser to remove the excess heat, and\nis then discharged back into the ocean.  The expected temperature increase from circulating water inlet\nto outlet is about 5 to 10 degrees Fahrenheit.\n\nELECTRIC\nGENERATOR\nMAIN\nTURBINE\nFANS\nMAIN\nCONDENSER\nFORCED DRAFT\nCOOLING TOWER\nCIRCULATING\nWATER PUMP\nMost nuclear power plants not located on the ocean need cooling towers to remove the excess heat from\nthe circulating water system.  One type of cooling tower is the forced draft cooling tower.  ",
+      "text_checksum_sha256": "54d9a918f35a1e666d9edd085639c12dcbccbdbb8167cb515d73f8114dbbe08c",
+      "char_start": 11928,
+      "char_end": 13000,
+      "page_start": 18,
+      "page_end": 20,
+      "page_spans": [
+        {
+          "page_number": 18,
+          "char_start": 11928,
+          "char_end": 12110,
+          "page_char_start": 748,
+          "page_char_end": 930,
+          "highlight_rects": [
+            [
+              54.0,
+              616.25,
+              540.04,
+              629.53
+            ],
+            [
+              54.0,
+              630.41,
+              540.16,
+              643.69
+            ],
+            [
+              54.0,
+              644.57,
+              147.73,
+              657.85
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 19,
+          "char_start": 12110,
+          "char_end": 12703,
+          "page_char_start": 0,
+          "page_char_end": 593,
+          "highlight_rects": [
+            [
+              100.08,
+              120.57,
+              118.32,
+              128.21
+            ],
+            [
+              233.7,
+              119.99,
+              266.39,
+              127.76
+            ],
+            [
+              94.38,
+              128.49,
+              124.16,
+              136.13
+            ],
+            [
+              229.2,
+              127.96,
+              270.88,
+              135.74
+            ],
+            [
+              142.38,
+              168.51,
+              160.62,
+              176.15
+            ],
+            [
+              490.44,
+              171.97,
+              537.75,
+              181.2
+            ],
+            [
+              130.86,
+              176.43,
+              172.3,
+              184.07
+            ],
+            [
+              484.32,
+              205.57,
+              523.45,
+              214.8
+            ],
+            [
+              489.12,
+              215.11,
+              518.43,
+              224.34
+            ],
+            [
+              474.48,
+              224.59,
+              533.1,
+              233.82
+            ],
+            [
+              448.56,
+              255.61,
+              479.25,
+              264.84
+            ],
+            [
+              280.44,
+              274.73,
+              326.63,
+              282.5
+            ],
+            [
+              281.04,
+              282.65,
+              326.06,
+              290.42
+            ],
+            [
+              72.0,
+              545.45,
+              558.07,
+              558.73
+            ],
+            [
+              72.0,
+              559.61,
+              558.16,
+              572.89
+            ],
+            [
+              72.0,
+              573.77,
+              558.11,
+              587.05
+            ],
+            [
+              72.0,
+              587.93,
+              558.02,
+              601.21
+            ],
+            [
+              72.0,
+              602.09,
+              286.0,
+              615.37
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 20,
+          "char_start": 12703,
+          "char_end": 13000,
+          "page_char_start": 0,
+          "page_char_end": 297,
+          "highlight_rects": [
+            [
+              87.18,
+              83.23,
+              110.22,
+              93.06
+            ],
+            [
+              255.18,
+              82.4,
+              296.27,
+              92.36
+            ],
+            [
+              79.98,
+              93.43,
+              117.51,
+              103.26
+            ],
+            [
+              249.48,
+              92.66,
+              301.91,
+              102.62
+            ],
+            [
+              458.7,
+              115.05,
+              485.37,
+              126.94
+            ],
+            [
+              140.34,
+              144.85,
+              163.38,
+              154.68
+            ],
+            [
+              125.82,
+              155.05,
+              178.06,
+              164.88
+            ],
+            [
+              435.54,
+              235.59,
+              513.36,
+              247.48
+            ],
+            [
+              431.28,
+              247.83,
+              517.71,
+              259.72
+            ],
+            [
+              313.86,
+              281.3,
+              372.03,
+              291.26
+            ],
+            [
+              314.7,
+              291.5,
+              371.28,
+              301.46
+            ],
+            [
+              54.0,
+              545.45,
+              540.14,
+              558.73
+            ],
+            [
+              54.0,
+              559.61,
+              540.06,
+              572.89
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 268,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_1fdb13b16571b773e10ff6f5",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 14,
+      "text": "One type of cooling tower is the forced draft cooling tower.  The\ncirculating water is pumped into the tower, after passing through the condenser, and allowed to splash\ndownward through the tower, transferring some of its heat to the air.  Several large electrical fans,\nlocated at the top of the cooling tower, provide forced air circulation for more efficient cooling.\n\nELECTRIC\nGENERATOR\nMAIN\nTURBINE\nCOOLING\nTOWER\nMAIN\nCONDENSER\nCIRCULATING\nWATER PUMP\nThe taller hourglass shaped, natural convection cooling towers do not require fans to transfer the excess\nheat from the circulating water system into the air.  Rather, the natural tendency of hot air to rise\nremoves the excess heat as the circulating water splashes down inside the cooling tower.  These towers\nare typically several hundred feet tall.\n\nCold Dry Air\n35\n30\n25\nWarm\nGrams of\nWater per\n20\nWet\nAir\n15\nCubic\nMeter\nof Air\n10\n5\n30\n50\n70\n90\nEF\nThe “steam” vented from the top of a cooling tower is really lukewarm water vapor.  IT IS NOT\nRADIOACTIVE.  ",
+      "text_checksum_sha256": "e8ac2c5ac1cc6300ffe9202669403dc7f62419182293595723026be242df3964",
+      "char_start": 12938,
+      "char_end": 13954,
+      "page_start": 20,
+      "page_end": 22,
+      "page_spans": [
+        {
+          "page_number": 20,
+          "char_start": 12938,
+          "char_end": 13310,
+          "page_char_start": 235,
+          "page_char_end": 607,
+          "highlight_rects": [
+            [
+              54.0,
+              559.61,
+              540.06,
+              572.89
+            ],
+            [
+              54.0,
+              573.77,
+              539.99,
+              587.05
+            ],
+            [
+              54.0,
+              587.93,
+              540.09,
+              601.21
+            ],
+            [
+              54.0,
+              602.09,
+              512.87,
+              615.37
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 21,
+          "char_start": 13310,
+          "char_end": 13747,
+          "page_char_start": 0,
+          "page_char_end": 437,
+          "highlight_rects": [
+            [
+              106.38,
+              93.46,
+              128.94,
+              103.02
+            ],
+            [
+              271.08,
+              92.58,
+              311.43,
+              102.34
+            ],
+            [
+              99.36,
+              103.42,
+              136.14,
+              112.98
+            ],
+            [
+              265.5,
+              102.6,
+              317.01,
+              112.36
+            ],
+            [
+              480.12,
+              132.72,
+              525.87,
+              144.28
+            ],
+            [
+              484.74,
+              144.66,
+              521.29,
+              156.22
+            ],
+            [
+              158.52,
+              153.64,
+              181.08,
+              163.2
+            ],
+            [
+              144.3,
+              163.6,
+              195.42,
+              173.16
+            ],
+            [
+              328.68,
+              286.8,
+              385.82,
+              296.56
+            ],
+            [
+              329.46,
+              296.76,
+              385.01,
+              306.52
+            ],
+            [
+              72.0,
+              545.45,
+              557.99,
+              558.73
+            ],
+            [
+              72.0,
+              559.61,
+              558.0,
+              572.89
+            ],
+            [
+              72.0,
+              573.77,
+              558.01,
+              587.05
+            ],
+            [
+              72.0,
+              587.93,
+              253.73,
+              601.21
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 22,
+          "char_start": 13747,
+          "char_end": 13954,
+          "page_char_start": 0,
+          "page_char_end": 207,
+          "highlight_rects": [
+            [
+              445.8,
+              66.86,
+              499.15,
+              78.08
+            ],
+            [
+              115.8,
+              129.62,
+              125.85,
+              140.85
+            ],
+            [
+              115.8,
+              155.66,
+              125.85,
+              166.88
+            ],
+            [
+              115.8,
+              181.94,
+              125.85,
+              193.16
+            ],
+            [
+              459.3,
+              185.24,
+              484.59,
+              196.46
+            ],
+            [
+              59.46,
+              188.12,
+              97.34,
+              199.34
+            ],
+            [
+              58.38,
+              199.76,
+              98.24,
+              210.98
+            ],
+            [
+              115.8,
+              208.22,
+              125.85,
+              219.44
+            ],
+            [
+              463.5,
+              208.52,
+              480.24,
+              219.74
+            ],
+            [
+              66.36,
+              211.4,
+              90.42,
+              222.62
+            ],
+            [
+              66.36,
+              223.16,
+              90.26,
+              234.38
+            ],
+            [
+              465.12,
+              231.92,
+              478.52,
+              243.14
+            ],
+            [
+              66.24,
+              234.8,
+              90.44,
+              246.02
+            ],
+            [
+              115.8,
+              234.56,
+              125.85,
+              245.78
+            ],
+            [
+              115.8,
+              260.84,
+              125.85,
+              272.06
+            ],
+            [
+              121.5,
+              287.12,
+              126.57,
+              298.34
+            ],
+            [
+              151.5,
+              322.22,
+              161.55,
+              333.44
+            ],
+            [
+              203.4,
+              322.22,
+              213.45,
+              333.44
+            ],
+            [
+              255.24,
+              322.22,
+              265.29,
+              333.44
+            ],
+            [
+              306.72,
+              322.22,
+              316.77,
+              333.44
+            ],
+            [
+              228.48,
+              343.25,
+              239.16,
+              355.09
+            ],
+            [
+              54.0,
+              531.29,
+              540.03,
+              544.57
+            ],
+            [
+              54.0,
+              545.45,
+              540.06,
+              558.73
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 254,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_ce10b6ea9bf968a5548c3a8f",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 15,
+      "text": "IT IS NOT\nRADIOACTIVE.  As the warm, wet air from inside the cooling tower contacts the cooler, dryer air\nabove the cooling tower, the water vapor which cannot be held by the cooler air forms a visible cloud.\nThis is because the colder the air is, the lower its ability to hold water.  The released cloud of vapor will\nonly be visible until it is dispersed and absorbed by the air.  The graph above shows air’s ability to hold\nwater as air temperature increases.\n",
+      "text_checksum_sha256": "1403b430c62b1066556842dfaffbf3acb4d905bbb6eeacd5b955f2c0976ac624",
+      "char_start": 13930,
+      "char_end": 14393,
+      "page_start": 22,
+      "page_end": 22,
+      "page_spans": [
+        {
+          "page_number": 22,
+          "char_start": 13930,
+          "char_end": 14393,
+          "page_char_start": 183,
+          "page_char_end": 646,
+          "highlight_rects": [
+            [
+              54.0,
+              531.29,
+              540.03,
+              544.57
+            ],
+            [
+              54.0,
+              545.45,
+              540.06,
+              558.73
+            ],
+            [
+              54.0,
+              559.61,
+              540.04,
+              572.89
+            ],
+            [
+              54.0,
+              573.77,
+              540.03,
+              587.05
+            ],
+            [
+              54.0,
+              587.93,
+              540.05,
+              601.21
+            ],
+            [
+              54.0,
+              602.09,
+              219.94,
+              615.37
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 115,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_aa0d553d21660f199bb2da71",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 16,
+      "text": "The released cloud of vapor will\nonly be visible until it is dispersed and absorbed by the air.  The graph above shows air’s ability to hold\nwater as air temperature increases.\n100% RELATIVE HUMIDITY\n\nPRESSURIZED WATER REACTOR PLANT LAYOUT\nCONTAINMENT BUILDING\nREACTOR\nCOOLANT SYSTEM\nMSR\nS/G\nELECTRIC\nGENERATOR\nHP\nLP\nP\nZ\nR\nCOOLING TOWER\nMAIN\nTURBINE\nMAIN\nCONDENSER\nCO R E\nRHR\nHX\nRCP\nFW\nHTR\nRHR\nPUMP\nCONDENSATE\nPUMP\nPUMP\nMAIN FEED\nCIRC. WATER\nPUMP\nCONTAINMENT\nSUMP\nTURBINE BUILDING\nAUXILIARY BUILDING\nThe major structures at a pressurized water reactor plant are:\n•\nThe containment building, which houses the reactor and its high pressure steam\ngenerating equipment;\n•\nThe turbine building, which houses the steam turbines, condensers, and the electrical\ngenerator; and\n•\nThe auxiliary building, which houses normal and emergency support systems (such as\nthe residual heat removal (RHR) system, fuel handling and storage equipment,\nlaboratories, maintenance areas, and the control room).\nDepending upon the plant location and environmental regulations, there may or may not be a cooling\ntower to remove the excess heat from the facility.\n\n",
+      "text_checksum_sha256": "615e0e01324d1bd26c7a60df1e1e50ed030e1b6e6b6d4c922518c50a67d870ed",
+      "char_start": 14216,
+      "char_end": 15354,
+      "page_start": 22,
+      "page_end": 23,
+      "page_spans": [
+        {
+          "page_number": 22,
+          "char_start": 14216,
+          "char_end": 14417,
+          "page_char_start": 469,
+          "page_char_end": 670,
+          "highlight_rects": [
+            [
+              175.39,
+              147.05,
+              278.1,
+              242.19
+            ],
+            [
+              54.0,
+              573.77,
+              540.03,
+              587.05
+            ],
+            [
+              54.0,
+              587.93,
+              540.05,
+              601.21
+            ],
+            [
+              54.0,
+              602.09,
+              219.94,
+              615.37
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 23,
+          "char_start": 14417,
+          "char_end": 15354,
+          "page_char_start": 0,
+          "page_char_end": 937,
+          "highlight_rects": [
+            [
+              218.1,
+              68.03,
+              440.66,
+              78.92
+            ],
+            [
+              182.58,
+              101.26,
+              261.55,
+              108.36
+            ],
+            [
+              185.16,
+              149.74,
+              215.3,
+              156.84
+            ],
+            [
+              171.42,
+              157.12,
+              228.9,
+              164.22
+            ],
+            [
+              389.76,
+              183.96,
+              399.94,
+              189.4
+            ],
+            [
+              247.62,
+              190.74,
+              255.25,
+              196.18
+            ],
+            [
+              418.56,
+              190.44,
+              441.58,
+              195.88
+            ],
+            [
+              221.58,
+              197.64,
+              224.32,
+              203.08
+            ],
+            [
+              415.38,
+              195.96,
+              444.52,
+              201.4
+            ],
+            [
+              221.58,
+              202.38,
+              224.59,
+              207.82
+            ],
+            [
+              370.98,
+              201.96,
+              377.19,
+              207.4
+            ],
+            [
+              394.74,
+              202.08,
+              400.36,
+              207.52
+            ],
+            [
+              221.4,
+              207.0,
+              224.68,
+              212.44
+            ],
+            [
+              351.36,
+              209.46,
+              364.09,
+              214.9
+            ],
+            [
+              499.68,
+              209.16,
+              539.56,
+              214.6
+            ],
+            [
+              347.34,
+              214.98,
+              367.99,
+              220.42
+            ],
+            [
+              397.62,
+              238.02,
+              410.35,
+              243.46
+            ],
+            [
+              389.64,
+              243.54,
+              418.66,
+              248.98
+            ],
+            [
+              129.42,
+              259.02,
+              139.3,
+              264.46
+            ],
+            [
+              185.46,
+              258.98,
+              198.0,
+              263.43
+            ],
+            [
+              130.92,
+              264.72,
+              137.95,
+              270.16
+            ],
+            [
+              357.12,
+              271.32,
+              364.46,
+              276.76
+            ],
+            [
+              102.6,
+              275.16,
+              112.48,
+              280.6
+            ],
+            [
+              216.3,
+              273.78,
+              225.34,
+              279.22
+            ],
+            [
+              355.92,
+              276.84,
+              365.5,
+              282.28
+            ],
+            [
+              100.98,
+              280.86,
+              114.09,
+              286.3
+            ],
+            [
+              307.08,
+              282.06,
+              333.18,
+              287.5
+            ],
+            [
+              397.14,
+              282.24,
+              429.24,
+              287.68
+            ],
+            [
+              313.44,
+              287.58,
+              326.55,
+              293.02
+            ],
+            [
+              406.62,
+              287.76,
+              419.79,
+              293.2
+            ],
+            [
+              473.52,
+              287.88,
+              504.34,
+              293.32
+            ],
+            [
+              482.22,
+              293.58,
+              495.33,
+              299.02
+            ],
+            [
+              220.38,
+              308.46,
+              255.6,
+              313.9
+            ],
+            [
+              78.24,
+              313.84,
+              145.63,
+              320.94
+            ],
+            [
+              231.54,
+              314.16,
+              244.65,
+              319.6
+            ],
+            [
+              336.9,
+              313.66,
+              396.67,
+              320.76
+            ],
+            [
+              72.0,
+              545.45,
+              363.48,
+              558.73
+            ],
+            [
+              108.0,
+              573.77,
+              112.2,
+              587.05
+            ],
+            [
+              144.0,
+              573.77,
+              558.15,
+              587.05
+            ],
+            [
+              144.0,
+              587.93,
+              251.75,
+              601.21
+            ],
+            [
+              108.0,
+              602.09,
+              112.2,
+              615.37
+            ],
+            [
+              144.0,
+              602.09,
+              557.99,
+              615.37
+            ],
+            [
+              144.0,
+              616.25,
+              213.12,
+              629.53
+            ],
+            [
+              108.0,
+              630.41,
+              112.2,
+              643.69
+            ],
+            [
+              144.0,
+              630.41,
+              558.01,
+              643.69
+            ],
+            [
+              144.0,
+              644.57,
+              558.11,
+              657.85
+            ],
+            [
+              144.0,
+              658.73,
+              408.7,
+              672.01
+            ],
+            [
+              72.0,
+              687.05,
+              558.0,
+              700.33
+            ],
+            [
+              72.0,
+              701.21,
+              309.75,
+              714.49
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 284,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    },
+    {
+      "schema_version": "1.0.0",
+      "chunk_id": "chk_5548c933566212602d43340f",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "ordinal": 17,
+      "text": "Depending upon the plant location and environmental regulations, there may or may not be a cooling\ntower to remove the excess heat from the facility.\n\nContainment/Drywell\nReactor\nVessel\nSteam\nTurbine Building\nLine\nThrottle\nElectrical\nGenerator\nValve\nSteam Dryer\n&\nMoisture\nSeparator\nTurbine\nReactor Core\nCondenser\nJet Pump\nTo/From\nRiver\nRecirculation\nPump\nPump\nContainment Suppression Chamber\nThe major structures at a boiling water reactor plant are:\n•\nThe primary containment, which includes the suppression chamber, and houses the\nreactor and recirculation pumps;\n•\nThe reactor building (secondary containment), which surrounds the primary containment\nand serves many of the same functions as a pressurized water reactor’s auxiliary building;\nand\n•\nThe turbine building.\nDepending upon the plant location, there may or may not be a cooling tower to remove excess heat from\nthe facility.\n\n",
+      "text_checksum_sha256": "6e7fd2803f2804b2de12e36810e6b1d8f06c53296971e827c2947b13e59aca9c",
+      "char_start": 15203,
+      "char_end": 16094,
+      "page_start": 23,
+      "page_end": 24,
+      "page_spans": [
+        {
+          "page_number": 23,
+          "char_start": 15203,
+          "char_end": 15354,
+          "page_char_start": 786,
+          "page_char_end": 937,
+          "highlight_rects": [
+            [
+              72.0,
+              687.05,
+              558.0,
+              700.33
+            ],
+            [
+              72.0,
+              701.21,
+              309.75,
+              714.49
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        },
+        {
+          "page_number": 24,
+          "char_start": 15354,
+          "char_end": 16094,
+          "page_char_start": 0,
+          "page_char_end": 740,
+          "highlight_rects": [
+            [
+              110.4,
+              69.67,
+              163.6,
+              76.51
+            ],
+            [
+              182.34,
+              72.78,
+              207.6,
+              81.95
+            ],
+            [
+              184.08,
+              81.12,
+              205.82,
+              90.29
+            ],
+            [
+              208.86,
+              91.08,
+              229.26,
+              100.25
+            ],
+            [
+              211.68,
+              99.48,
+              226.52,
+              108.65
+            ],
+            [
+              303.06,
+              99.61,
+              345.16,
+              106.45
+            ],
+            [
+              445.02,
+              109.74,
+              476.19,
+              118.91
+            ],
+            [
+              355.92,
+              118.02,
+              382.22,
+              127.19
+            ],
+            [
+              444.42,
+              118.14,
+              476.82,
+              127.31
+            ],
+            [
+              359.4,
+              126.42,
+              378.8,
+              135.59
+            ],
+            [
+              56.22,
+              135.21,
+              90.3,
+              142.78
+            ],
+            [
+              70.74,
+              142.05,
+              76.06,
+              149.62
+            ],
+            [
+              61.08,
+              148.89,
+              85.42,
+              156.46
+            ],
+            [
+              60.42,
+              155.67,
+              86.33,
+              163.24
+            ],
+            [
+              327.96,
+              154.38,
+              353.9,
+              163.55
+            ],
+            [
+              197.7,
+              198.24,
+              240.8,
+              207.41
+            ],
+            [
+              334.44,
+              198.24,
+              369.24,
+              207.41
+            ],
+            [
+              199.38,
+              218.82,
+              229.56,
+              227.99
+            ],
+            [
+              505.92,
+              247.98,
+              534.98,
+              257.15
+            ],
+            [
+              511.38,
+              256.38,
+              529.5,
+              265.55
+            ],
+            [
+              208.26,
+              270.3,
+              252.07,
+              279.47
+            ],
+            [
+              220.56,
+              278.7,
+              239.58,
+              287.87
+            ],
+            [
+              354.66,
+              291.72,
+              373.68,
+              300.89
+            ],
+            [
+              108.6,
+              303.45,
+              204.97,
+              311.02
+            ],
+            [
+              54.0,
+              545.45,
+              324.79,
+              558.73
+            ],
+            [
+              90.0,
+              573.77,
+              94.2,
+              587.05
+            ],
+            [
+              126.0,
+              573.77,
+              540.01,
+              587.05
+            ],
+            [
+              126.0,
+              587.93,
+              281.83,
+              601.21
+            ],
+            [
+              90.0,
+              602.09,
+              94.2,
+              615.37
+            ],
+            [
+              126.0,
+              602.09,
+              539.91,
+              615.37
+            ],
+            [
+              126.0,
+              616.25,
+              540.05,
+              629.53
+            ],
+            [
+              126.0,
+              630.41,
+              143.34,
+              643.69
+            ],
+            [
+              90.0,
+              644.57,
+              94.2,
+              657.85
+            ],
+            [
+              126.0,
+              644.57,
+              227.82,
+              657.85
+            ],
+            [
+              54.0,
+              672.89,
+              540.07,
+              686.17
+            ],
+            [
+              54.0,
+              687.05,
+              108.79,
+              700.33
+            ]
+          ],
+          "coordinates_reliable": true,
+          "page_width": 612.0,
+          "page_height": 792.0
+        }
+      ],
+      "token_estimate": 222,
+      "chunker_config_id": "cfg_821e9f258539",
+      "chunker_version": "refchunk-3.0.0"
+    }
+  ]
+}

@@ -1,0 +1,64 @@
+# Operating-system files
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# Python dependencies, generated package metadata, and caches
+__pycache__/
+*.py[cod]
+*.egg-info/
+.venv*/
+venv/
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+.coverage
+.coverage.*
+htmlcov/
+
+# JavaScript dependencies and generated frontend output
+node_modules/
+.svelte-kit/
+.vite/
+coverage/
+
+# Build output (keep build scripts, manifests, and dependency lockfiles)
+build/
+dist/
+/app/desktop/src-tauri/target/
+/app/desktop/src-tauri/gen/
+# Downloaded/copied payload assembled by release tooling
+/app/desktop/src-tauri/resources/
+/app/release/reports/
+
+# Local configuration and signing credentials (safe examples are versioned)
+.env
+.env.*
+!.env.example
+!.env.*.example
+*.key
+*.pem
+*.p12
+*.pfx
+*.p8
+*.jks
+*.keystore
+
+# Model weights and local download/benchmark caches
+/models/
+/app/document-qa/backend/secure_qa/answering/llama_cpp/models/
+*.gguf
+*.safetensors
+.bench_data/
+.cache/
+
+# Runtime databases and logs; reviewed PDF fixtures and sample reports stay tracked
+*.db
+*.db-wal
+*.db-shm
+*.db-journal
+*.sqlite
+*.sqlite-*
+*.sqlite3
+*.sqlite3-*
+*.log

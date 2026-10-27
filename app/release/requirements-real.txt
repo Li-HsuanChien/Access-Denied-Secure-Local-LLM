@@ -1,0 +1,4 @@
+# Freeze the real embedding stack versions used for local desktop acceptance.
+torch==2.14.1
+transformers==5.19.0
+jsonschema==4.26.0

@@ -1,3 +1,13 @@
 # Packaged offline acceptance tests
 
-Scaffold only. Reserved for network-disabled first-launch and full-flow tests on Windows x86-64, macOS Apple silicon, and Ubuntu Linux x86-64. These tests will verify sidecar startup, import, answering, citations, history, release checks, and the absence of non-loopback listeners or outbound attempts. See the [release gates](../../../docs/superpowers/specs/2026-09-22-secure-local-document-qa-codebase-design.md#8-verification-and-release-gates).
+`smoke.py` exercises the frozen demo host from a temporary working directory:
+grounded answering, PDF upload/ingestion, publication, and persistence across
+restarts. `--desktop <exe>` additionally renders the native chat, checks webview
+HTTP calls, verifies service cleanup and rejects occupied service ports.
+`--installer <setup.exe>` installs into a temporary directory, runs that native
+test against the installed executable, and uninstalls it afterwards.
+
+See the [release commands](../README.md). These are development smoke checks.
+Network-disabled VM acceptance, DNS/outbound capture, real-model performance and
+macOS/Linux qualification remain required for a production release under the
+[SDD](../../../docs/architecture/SDD.md).

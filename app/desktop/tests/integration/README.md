@@ -1,3 +1,3 @@
 # Desktop integration tests
 
-Scaffold only. Reserved for Tauri-to-loopback-host lifecycle and webview readiness checks. Full installed-bundle acceptance lives under `app/release/acceptance/`.
+Scaffold only. Reserved for Tauri-to-sidecar lifecycle and message-contract checks, including readiness and shutdown. Full installed-bundle acceptance lives under `app/release/acceptance/`. See the [SDD](../../../../docs/architecture/SDD.md).

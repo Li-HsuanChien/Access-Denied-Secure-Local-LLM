@@ -1,0 +1,46 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://securelocaldocqa.local/schemas/document/1.0.0",
+  "title": "Document",
+  "description": "One imported PDF. Fields follow SDD 5.1 'Document'.",
+  "type": "object",
+  "required": [
+    "schema_version", "document_id", "checksum_sha256", "source_filename",
+    "display_title", "page_count", "byte_size", "extractor", "import_warnings"
+  ],
+  "additionalProperties": false,
+  "properties": {
+    "schema_version": { "const": "1.0.0" },
+    "document_id": {
+      "type": "string",
+      "pattern": "^doc_[0-9a-f]{24}$",
+      "description": "sha256 of the file bytes. Content-addressed, so the same PDF imported twice under different names is one document."
+    },
+    "checksum_sha256": { "type": "string", "pattern": "^[0-9a-f]{64}$" },
+    "source_filename": { "type": "string", "minLength": 1 },
+    "display_title": {
+      "type": "string",
+      "description": "PDF metadata title where present, otherwise the filename stem. Shown in citations, so it is display text and never an identifier."
+    },
+    "page_count": { "type": "integer", "minimum": 1 },
+    "byte_size": { "type": "integer", "minimum": 1 },
+    "pdf_version": { "type": ["string", "null"] },
+    "extractor": {
+      "type": "string",
+      "description": "Library and version that produced the text, e.g. pymupdf/1.28.2. Recorded because a different extractor yields different offsets, which would invalidate stored citations."
+    },
+    "import_warnings": {
+      "type": "array",
+      "description": "Non-fatal findings carried forward into the import report. Empty for a clean accept.",
+      "items": {
+        "type": "object",
+        "required": ["code", "message"],
+        "properties": {
+          "code": { "type": "string" },
+          "message": { "type": "string" },
+          "pages": { "type": "array", "items": { "type": "integer", "minimum": 1 } }
+        }
+      }
+    }
+  }
+}
