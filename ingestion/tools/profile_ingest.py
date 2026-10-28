@@ -18,6 +18,10 @@ For each target it records:
   output    pages, chunks, the manifest and chunk-set SHA-256s, and every reject
             with its reason and failed check. Two profiles with the same output
             block produced the same run, byte for byte.
+  disk      the sealed run's size by kind of file, the peak under the import root
+            during an import and during a rerun, and what the root holds after an
+            import that follows a killed one. Measured in a separate process,
+            because the sampler thread would disturb the timings.
 
 Targets: the NRC chapter (normal), the arXiv paper (two-column layout), the DOE
 handbook in its original typesetting (large), the 1,200-page synthetic file
@@ -130,6 +134,50 @@ with tempfile.TemporaryDirectory(prefix='e2-profile-') as root:
     }))
 '''
 
+DISK_CHILD = r'''
+import json, os, shutil, sys, tempfile, threading
+from pathlib import Path
+code, paths = sys.argv[1], sys.argv[2:]
+sys.path.insert(0, code)
+from src import pipeline as P
+
+def size(path):
+    total = 0
+    for folder, _, files in os.walk(path):
+        for name in files:
+            try:
+                total += os.lstat(os.path.join(folder, name)).st_size
+            except OSError:                    # removed while it was being walked
+                pass
+    return total
+
+def imported(root):
+    """Import, returning the run and the largest size seen under the root meanwhile."""
+    peak, done = [0], threading.Event()
+    def sample():
+        while not done.wait(0.02):
+            peak[0] = max(peak[0], size(root))
+    thread = threading.Thread(target=sample, daemon=True)
+    thread.start()
+    run = P.ingest(paths, root, acknowledge_rejections=True)
+    done.set()
+    thread.join()
+    return run, max(peak[0], size(root))
+
+with tempfile.TemporaryDirectory(prefix='e2-profile-disk-') as root:
+    run, peak = imported(root)
+    files = {'sources': size(run.path / 'sources'), 'chunks': size(run.path / 'chunks'),
+             'extraction': size(run.path / 'extraction')}
+    files['other'] = size(run.path) - sum(files.values())
+    after = size(root)
+    again, rerun_peak = imported(root)
+    assert again.reused and again.run_id == run.run_id
+    shutil.copytree(run.path, Path(root) / 'runs' / '.partial-20260101T000000Z-1-killed')
+    imported(root)
+    print(json.dumps({'run': files, 'import_peak': peak, 'root_after_import': after,
+                      'rerun_peak': rerun_peak, 'root_after_killed_import': size(root)}))
+'''
+
 
 def _paths(name: str) -> list[str]:
     files = TARGETS[name]
@@ -145,6 +193,23 @@ def _child(code: Path, paths: list[str], traced: bool) -> dict:
     if done.returncode != 0:
         raise SystemExit(f'profiling run failed:\n{done.stderr[-2000:]}')
     return json.loads(done.stdout.strip().splitlines()[-1])
+
+
+def _disk(code: Path, paths: list[str], repeat: int) -> dict:
+    """Sizes do not vary between runs. The peaks are sampled, so keep the highest."""
+    runs = []
+    for _ in range(repeat):
+        done = subprocess.run([sys.executable, '-c', DISK_CHILD, str(code), *paths],
+                              capture_output=True, text=True, cwd=tempfile.gettempdir())
+        if done.returncode != 0:
+            raise SystemExit(f'disk measurement failed:\n{done.stderr[-2000:]}')
+        runs.append(json.loads(done.stdout.strip().splitlines()[-1]))
+    mb = lambda b: round(b / 2**20, 2)
+    return {'run_mb': {k: mb(v) for k, v in runs[0]['run'].items()},
+            'import_peak_mb': mb(max(r['import_peak'] for r in runs)),
+            'root_after_import_mb': mb(runs[0]['root_after_import']),
+            'rerun_peak_mb': mb(max(r['rerun_peak'] for r in runs)),
+            'root_after_killed_import_mb': mb(runs[0]['root_after_killed_import'])}
 
 
 def _revision(code: Path) -> str:
@@ -190,6 +255,7 @@ def profile(code: Path, repeat: int, names: list[str]) -> dict:
             'leftovers': first['leftovers'],
             'output_identical_across_runs': len(outputs) == 1,
             'output': first['output'],
+            'disk': _disk(code, paths, repeat),
         }
         t = out['targets'][name]
         print(f'{name:<10} {t["seconds"]["prepare"] + t["seconds"]["commit"]:6.2f}s import '
@@ -279,6 +345,22 @@ def compare(before: dict, after: dict) -> tuple[str, bool]:
               'checksum and the chunk-set digest. The same run ID before and after means '
               'the same chunk IDs, text, offsets, pages and highlight rectangles, and the '
               'same reject verdicts.']
+    measured = [n for n, a in after['targets'].items()
+                if 'disk' in a and 'disk' in before['targets'].get(n, {})]
+    if measured:
+        lines += ['', '### Disk', '',
+                  '| Target | Sealed run | of which sources | Import peak before | after '
+                  '| Rerun peak before | after | Root after a killed import, before | after |',
+                  '|---|---|---|---|---|---|---|---|---|']
+        for name in measured:
+            b, a = before['targets'][name]['disk'], after['targets'][name]['disk']
+            lines.append(f'| {name} | {sum(a["run_mb"].values()):.2f} MB | {a["run_mb"]["sources"]:.2f} MB '
+                         f'| {b["import_peak_mb"]:.2f} MB | {a["import_peak_mb"]:.2f} MB '
+                         f'| {b["rerun_peak_mb"]:.2f} MB | {a["rerun_peak_mb"]:.2f} MB '
+                         f'| {b["root_after_killed_import_mb"]:.2f} MB | {a["root_after_killed_import_mb"]:.2f} MB |')
+        lines += ['', 'Peaks are sampled about every 20 ms, so they can slightly undercount. '
+                  '"Root after a killed import" plants a copy of the run as a leftover attempt, '
+                  'then imports again, and measures what remains under the import root.']
     return '\n'.join(lines) + '\n', same_all
 
 
