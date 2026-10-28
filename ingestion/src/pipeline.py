@@ -71,6 +71,7 @@ RUN_NAME = re.compile(r'run_[0-9a-f]{16}$')
 OS_METADATA = frozenset({'.DS_Store', 'Thumbs.db', 'desktop.ini'})
 COPY_BLOCK = 1 << 20
 TEXT_BLOCK = 1 << 18                        # characters encoded at a time when hashing a text stream
+CHUNK_BATCH = 256                           # chunks encoded and written at a time
 DISK_RESERVE_BYTES = 64 * 1024 * 1024       # never fill the volume to the last block
 
 log = logging.getLogger('e2.ingest')
@@ -159,13 +160,26 @@ def _text_sha256(text: str) -> str:
     return digest.hexdigest()
 
 
-def _write(path: Path, data: bytes | list[bytes], durable: bool = True) -> None:
-    """Write a file whole, or from a list of its pieces without joining them first."""
+def _write(path: Path, data: bytes, durable: bool = True) -> None:
     with open(path, 'wb') as handle:         # binary: no newline translation on Windows
-        if isinstance(data, list):
-            handle.writelines(data)
-        else:
-            handle.write(data)
+        handle.write(data)
+        if durable:
+            handle.flush()
+            os.fsync(handle.fileno())
+
+
+def _write_chunks(path: Path, chunks: list[Chunk], need_space: Callable[[int], None],
+                  durable: bool = True) -> None:
+    """
+    Write a chunk file a batch at a time, so the encoded lines of a long document
+    are never all in memory together. need_space(bytes) raises if a batch will
+    not fit; it is asked before each one is written.
+    """
+    with open(path, 'wb') as handle:         # binary: no newline translation on Windows
+        for at in range(0, len(chunks), CHUNK_BATCH):
+            lines = [_line(k.to_dict()) for k in chunks[at:at + CHUNK_BATCH]]
+            need_space(sum(map(len, lines)))
+            handle.writelines(lines)
         if durable:
             handle.flush()
             os.fsync(handle.fileno())
@@ -669,8 +683,6 @@ def prepare(paths: Iterable[str | Path], root: str | Path, *,
             else:
                 text, pages, made = processed.text, processed.pages, processed.chunks
                 document = result.document
-                # Lines, not one joined blob: joining would hold every line twice.
-                lines = [_line(k.to_dict()) for k in made]
                 table = {
                     'schema_version': MANIFEST_SCHEMA_VERSION,
                     'document_id': document['document_id'],
@@ -683,11 +695,14 @@ def prepare(paths: Iterable[str | Path], root: str | Path, *,
                 }
                 table_blob = json.dumps(table, sort_keys=True, separators=(',', ':'),
                                         ensure_ascii=True).encode('ascii') + b'\n'
-                need = sum(map(len, lines)) + len(table_blob) + DISK_RESERVE_BYTES
-                free = disk_free(root)
-                if free < need:
-                    raise InsufficientDiskSpace(need, free)
-                _write(partial / 'chunks' / f'{document["document_id"]}.jsonl', lines, durable)
+
+                def need_space(size: int) -> None:
+                    need, free = size + len(table_blob) + DISK_RESERVE_BYTES, disk_free(root)
+                    if free < need:
+                        raise InsufficientDiskSpace(need, free)
+
+                _write_chunks(partial / 'chunks' / f'{document["document_id"]}.jsonl', made,
+                              need_space, durable)
                 _write(partial / 'extraction' / f'{document["document_id"]}.json', table_blob, durable)
                 c.document_id = document['document_id']
                 c.page_count, c.chunk_count = document['page_count'], len(made)
@@ -701,7 +716,7 @@ def prepare(paths: Iterable[str | Path], root: str | Path, *,
                     'chunk_count': len(made),
                 }
                 state['warnings'] += len(result.warnings)
-                del text, pages, made, lines, processed     # one document in memory at a time
+                del text, pages, made, processed            # one document in memory at a time
 
             c.seconds = round(time.perf_counter() - t_file, 4)
             state['files'] += 1

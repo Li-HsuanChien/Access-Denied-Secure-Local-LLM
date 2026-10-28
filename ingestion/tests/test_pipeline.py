@@ -926,6 +926,29 @@ def test_recover_deletes_only_what_it_knows_is_throwaway():
             'an interrupted attempt is deleted, and the intact run is untouched')
 
 
+def test_chunk_files_do_not_depend_on_the_batch_size():
+    """Bounded batches change how much is in memory while writing, and nothing about what is written."""
+    size = P.CHUNK_BATCH
+    ids, calls = {}, {}
+    try:
+        for batch in (1, 5, 10_000):
+            P.CHUNK_BATCH = batch
+            root = fresh(f'batch-{batch}')
+            calls[batch] = []
+            def free(path, seen=calls[batch]):
+                seen.append(1)
+                return 10**12
+            run = P.ingest([NORMAL], root, disk_free=free, durable=False)
+            ids[batch] = run.run_id
+            count = run.manifest['totals']['chunks']
+    finally:
+        P.CHUNK_BATCH = size
+    assert len(set(ids.values())) == 1, ids
+    # One check before anything is copied, then one per batch: the disk is asked as the file grows.
+    assert [len(calls[b]) for b in (1, 5, 10_000)] == [1 + count, 1 + (count + 4) // 5, 2], calls
+    return f'batches of 1, 5 and 10,000 give run {ids[1]} from {count} chunks, with a disk check per batch'
+
+
 def test_verify_judges_the_run_and_not_its_surroundings():
     """Three ways an intact run used to fail to load, and one way a broken one crashed instead of failing."""
     run = small()
