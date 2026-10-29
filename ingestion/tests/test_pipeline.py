@@ -926,6 +926,49 @@ def test_recover_deletes_only_what_it_knows_is_throwaway():
             'an interrupted attempt is deleted, and the intact run is untouched')
 
 
+def test_an_import_removes_what_a_killed_one_left():
+    """A crash leftover is not kept until someone calls recover(), and only leftovers are removed."""
+    root = fresh('sweep')
+    run = P.ingest([ADVERSARIAL], root, durable=False)
+    outside = fresh('sweep-outside')
+    outside.mkdir()
+    (outside / 'keep.txt').write_text('not under runs/')
+    runs = root / 'runs'
+    (runs / '.partial-link').symlink_to(outside, target_is_directory=True)
+    (runs / 'my-notes').mkdir()
+    (runs / 'my-notes' / 'keep.txt').write_text('not made by the pipeline')
+    dead = runs / '.partial-20260101T000000Z-1-abcdef'
+    (dead / 'sources').mkdir(parents=True)
+    (dead / 'sources' / 'half.pdf').write_bytes(b'%PDF-1.4 half a copy')
+
+    seen = []
+    def free(path):                                    # asked by the disk check
+        seen.append(dead.exists())
+        return 10**12
+    second = P.ingest([NORMAL], root, disk_free=free, durable=False)
+    assert seen[0] is False, 'the leftover was counted against the disk check'
+    assert not dead.exists()
+    assert (outside / 'keep.txt').exists() and (runs / '.partial-link').is_symlink()
+    assert (runs / 'my-notes' / 'keep.txt').exists()
+    assert set(P.list_runs(root)) == {run.run_id, second.run_id}
+    swept = [e for e in _journal(root) if e['event'] == 'leftover_removed']
+    assert [(e['name'], e['bytes']) for e in swept] == [(dead.name, 20)], swept
+
+    # One that cannot be removed is reported, and does not stop the import.
+    if os.geteuid() != 0:
+        stuck = runs / '.partial-20260101T000000Z-2-abcdef'
+        (stuck / 'sources').mkdir(parents=True)
+        (stuck / 'sources' / 'half.pdf').write_bytes(b'%PDF-1.4')
+        os.chmod(stuck / 'sources', 0o500)
+        try:
+            P.discard(P.prepare([ADVERSARIAL], root, durable=False))
+            kept = [e for e in _journal(root) if e['event'] == 'leftover_kept']
+            assert [e['name'] for e in kept] == [stuck.name], kept
+        finally:
+            os.chmod(stuck / 'sources', 0o700)
+    return 'swept before the disk check and journalled; a symlink, a foreign folder and a sealed run stayed'
+
+
 def test_chunk_files_do_not_depend_on_the_batch_size():
     """Bounded batches change how much is in memory while writing, and nothing about what is written."""
     size = P.CHUNK_BATCH

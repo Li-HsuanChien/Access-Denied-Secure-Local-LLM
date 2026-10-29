@@ -18,7 +18,8 @@ run_id is derived from the manifest's own hash. A directory that is still named
 not a run. load_run() refuses it. recover() deletes interrupted attempts, moves
 a run_* directory that no longer verifies into quarantine/ (it may be a good
 run that was damaged later, so it is never deleted), and leaves alone anything
-it did not create.
+it did not create. prepare() removes interrupted attempts too, once it holds
+the job lock: with the lock held, no attempt under runs/ can still be alive.
 
 What never reaches a sealed run
 -------------------------------
@@ -488,6 +489,9 @@ def prepare(paths: Iterable[str | Path], root: str | Path, *,
     passed to commit() or discard(); use it as a context manager to make sure
     one of the two happens. On any exception - cancellation, a full disk, a
     bug - the attempt directory is removed before the exception leaves.
+
+    What a killed process left under runs/ is removed first, so its bytes are
+    not counted against this import's disk check.
     """
     policy, config = policy or IngestionPolicy(), config or ChunkerConfig()
     # Built before the lock is taken: a bad argument must not leave the root locked.
@@ -532,6 +536,7 @@ def prepare(paths: Iterable[str | Path], root: str | Path, *,
 
     try:
         _silence_mupdf()
+        _sweep_interrupted(runs, journal)
         partial.mkdir()
         for sub in ('incoming', 'sources', 'chunks', 'extraction'):
             (partial / sub).mkdir()
@@ -1248,6 +1253,25 @@ def _set_aside(root: Path, path: Path) -> Path:
 
 def _tree_bytes(path: Path) -> int:
     return sum(p.stat().st_size for p in path.rglob('*') if p.is_file())
+
+
+def _sweep_interrupted(runs: Path, journal: _Journal) -> None:
+    """
+    Remove the attempts a dead process left under runs/. The caller holds the job
+    lock, so none of them is still being written. A leftover that cannot be
+    removed is journalled and left for recover(): it does not stop this import.
+    """
+    for entry in sorted(runs.iterdir()):
+        if not entry.name.startswith(PARTIAL_PREFIX) or entry.is_symlink() or not entry.is_dir():
+            continue
+        try:
+            size = _tree_bytes(entry)
+            shutil.rmtree(entry)
+        except OSError as exc:
+            journal('leftover_kept', reason='interrupted_attempt', name=entry.name,
+                    error=type(exc).__name__)
+        else:
+            journal('leftover_removed', reason='interrupted_attempt', name=entry.name, bytes=size)
 
 
 def recover(root: str | Path, *, quarantine: bool = False) -> list[dict]:
