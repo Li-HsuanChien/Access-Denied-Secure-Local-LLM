@@ -1100,6 +1100,14 @@ def test_chunk_files_do_not_depend_on_the_batch_size():
     return f'batches of 1, 5 and 10,000 give run {ids[1]} from {count} chunks, with a disk check per batch'
 
 
+def test_the_candidate_build_handles_the_week_7_inputs():
+    """Normal, duplicate, large and invalid PDFs, end to end, through the tool the demo runs."""
+    done = subprocess.run([sys.executable, str(ROOT / 'tools' / 'candidate_run.py'), '--check'],
+                          capture_output=True, text=True)
+    assert done.returncode == 0, done.stdout[-1500:] + done.stderr[-1500:]
+    return done.stdout.strip().splitlines()[-1]
+
+
 def test_verify_judges_the_run_and_not_its_surroundings():
     """Three ways an intact run used to fail to load, and one way a broken one crashed instead of failing."""
     run = small()
