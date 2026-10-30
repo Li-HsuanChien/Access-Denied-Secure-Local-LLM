@@ -8,6 +8,7 @@ E2 ingestion pipeline: candidate PDFs in, one sealed run directory out.
     verify(run_dir)       ->  Verification
     load_run(run_dir)     ->  Run        the only way a consumer reads a run
     recover(root)                        remove what an interrupted attempt left
+    prune(root, keep)                    delete sealed runs nothing needs any more
 
 What "sealed" means
 -------------------
@@ -1274,6 +1275,16 @@ def _sweep_interrupted(runs: Path, journal: _Journal) -> None:
             journal('leftover_removed', reason='interrupted_attempt', name=entry.name, bytes=size)
 
 
+def _seal_intact(run_dir: Path) -> bool:
+    """The manifest hashes to itself and to the directory's name. Reads no other file."""
+    try:
+        manifest = json.loads((run_dir / 'manifest.json').read_bytes())
+        return (_seal({k: v for k, v in manifest.items() if k != 'seal'}) == manifest.get('seal')
+                and manifest['seal']['run_id'] == run_dir.name)
+    except (ValueError, KeyError, TypeError, AttributeError, OSError):
+        return False
+
+
 def recover(root: str | Path, *, quarantine: bool = False) -> list[dict]:
     """
     Call at startup (SDD 9, unexpected shutdown). Returns what it found under
@@ -1307,15 +1318,9 @@ def recover(root: str | Path, *, quarantine: bool = False) -> list[dict]:
                 why, action = 'not_a_run', 'ignored'
             elif not (entry / 'manifest.json').is_file():
                 why, action = 'no_manifest', 'quarantined'
+            elif _seal_intact(entry):
+                continue
             else:
-                try:
-                    manifest = json.loads((entry / 'manifest.json').read_bytes())
-                    good = _seal({k: v for k, v in manifest.items() if k != 'seal'}) == manifest.get('seal') \
-                        and manifest['seal']['run_id'] == entry.name
-                except (ValueError, KeyError, TypeError, AttributeError, OSError):
-                    good = False
-                if good:
-                    continue
                 why, action = 'manifest_seal_mismatch', 'quarantined'
             size = _tree_bytes(entry)
             if action == 'quarantined':
@@ -1350,17 +1355,55 @@ def list_runs(root: str | Path) -> list[str]:
     if not runs.is_dir():
         return []
     return sorted(p.name for p in runs.iterdir()
-                  if p.is_dir() and p.name.startswith(RUN_PREFIX) and (p / 'manifest.json').is_file())
+                  if RUN_NAME.match(p.name) and not p.is_symlink() and p.is_dir()
+                  and (p / 'manifest.json').is_file())
 
 
 def prune(root: str | Path, keep: Iterable[str]) -> list[str]:
-    """Delete sealed runs not named in keep. E3 calls this with the runs behind its active and previous versions."""
-    keep, removed = set(keep), []
-    for name in list_runs(root):
-        if name not in keep:
-            shutil.rmtree(Path(root) / 'runs' / name)
+    """
+    Delete sealed runs not named in keep, and return their names. Meant to be
+    called with the runs behind the active and previous versions.
+
+    A run holds the only staged copy of its PDFs, so this refuses rather than
+    guesses. It raises Busy while an import is open, ValueError if keep is empty
+    or names a run that is not here (a mistyped name would otherwise cost every
+    other run), and IntegrityError if a run in keep fails its seal. In all three
+    cases nothing is deleted.
+
+    Only run folders holding a manifest are touched: quarantine/, other folders
+    and symbolic links stay where they are. A run is first renamed to an attempt
+    name, so a crash part-way through a delete leaves something the next import
+    sweeps away, not something that still looks like a run.
+    """
+    root, keep = Path(root), set(keep)
+    if not keep:
+        raise ValueError('prune() needs at least one run to keep.')
+    if not (root / 'runs').is_dir():
+        raise ValueError('This root has no runs.')
+    lock = _JobLock(root)
+    lock.acquire()
+    try:
+        present = list_runs(root)
+        unknown = keep - set(present)
+        if unknown:
+            raise ValueError(f'These runs are not in this root: {sorted(unknown)}')
+        runs = root / 'runs'
+        for name in sorted(keep):
+            if not _seal_intact(runs / name):
+                raise IntegrityError(f'Run {name} fails its seal, so nothing was pruned.')
+        journal, removed = _Journal(root, 'prune'), []
+        for name in present:
+            if name in keep:
+                continue
+            size = _tree_bytes(runs / name)
+            doomed = runs / f'{PARTIAL_PREFIX}pruned-{name}'
+            os.replace(runs / name, doomed)
+            shutil.rmtree(doomed)
             removed.append(name)
-    return removed
+            journal('run_pruned', run_id=name, bytes=size)
+        return removed
+    finally:
+        lock.release()
 
 
 # ---------------------------------------------------------------------------

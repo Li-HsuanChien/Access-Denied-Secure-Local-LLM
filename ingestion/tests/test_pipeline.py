@@ -969,6 +969,67 @@ def test_an_import_removes_what_a_killed_one_left():
     return 'swept before the disk check and journalled; a symlink, a foreign folder and a sealed run stayed'
 
 
+def test_prune_refuses_rather_than_guesses():
+    """prune() deletes the only staged copy of a run's PDFs, so a doubtful call deletes nothing."""
+    root = fresh('prune')
+    keep = P.ingest([ADVERSARIAL], root, durable=False)
+    other = P.ingest([NORMAL], root, durable=False)
+    third = P.ingest([ADVERSARIAL, NORMAL], root, durable=False)
+    runs = root / 'runs'
+    (runs / 'my-notes').mkdir()
+    (root / P.QUARANTINE_DIR).mkdir()
+    (root / P.QUARANTINE_DIR / 'set-aside').mkdir()
+    elsewhere = fresh('prune-elsewhere')
+    shutil.copytree(third.path, elsewhere)
+    link = runs / 'run_00000000000000aa'
+    link.symlink_to(elsewhere, target_is_directory=True)
+
+    def listing():                                     # an open review adds its own attempt folder
+        return sorted(p.name for p in runs.iterdir() if not p.name.startswith(P.PARTIAL_PREFIX))
+    everything = listing()
+
+    def refused(error, names):
+        try:
+            P.prune(root, names)
+        except error:
+            assert listing() == everything, f'{names} deleted something'
+            return
+        raise AssertionError(f'prune({names}) was accepted')
+
+    refused(ValueError, [])
+    refused(ValueError, [keep.run_id, 'run_0000000000000000'])
+    refused(ValueError, [link.name])                   # a link to a run is not a run in this root
+    manifest = keep.path / 'manifest.json'
+    good = manifest.read_bytes()
+    manifest.write_bytes(good.replace(b'"schema_version"', b'"schema_versions"', 1))
+    refused(P.IntegrityError, [keep.run_id])
+    manifest.write_bytes(good)
+    review = P.prepare([ADVERSARIAL], root, durable=False)
+    refused(P.Busy, [keep.run_id])
+    P.discard(review)
+    try:
+        P.prune(fresh('prune-nothing-here'), [keep.run_id])
+        raise AssertionError('pruned a root that does not exist')
+    except ValueError:
+        pass
+
+    removed = P.prune(root, [keep.run_id])
+    assert removed == sorted([other.run_id, third.run_id]), removed
+    assert P.list_runs(root) == [keep.run_id] and P.verify(keep.path).ok
+    assert (runs / 'my-notes').is_dir() and (root / P.QUARANTINE_DIR / 'set-aside').is_dir()
+    assert link.is_symlink() and (elsewhere / 'manifest.json').is_file(), 'followed a link'
+    assert not list(runs.glob('.partial-*')), 'left a renamed run behind'
+    pruned = {e['run_id']: e['bytes'] for e in _journal(root) if e['event'] == 'run_pruned'}
+    assert set(pruned) == set(removed) and all(pruned.values()), pruned
+
+    # A crash between the rename and the delete leaves an attempt, and the next import sweeps it.
+    half = runs / f'{P.PARTIAL_PREFIX}pruned-{other.run_id}'
+    half.mkdir()
+    P.discard(P.prepare([ADVERSARIAL], root, durable=False))
+    assert not half.exists()
+    return 'empty, unknown, linked, damaged and busy calls all refused with nothing deleted; a good call removed 2 runs'
+
+
 def test_chunk_files_do_not_depend_on_the_batch_size():
     """Bounded batches change how much is in memory while writing, and nothing about what is written."""
     size = P.CHUNK_BATCH
