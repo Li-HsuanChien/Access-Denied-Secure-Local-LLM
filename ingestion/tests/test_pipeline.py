@@ -15,6 +15,7 @@ Run:  python3 tests/test_pipeline.py            (all)
 from __future__ import annotations
 
 import ast
+import hashlib
 import importlib.util
 import io
 import json
@@ -37,7 +38,7 @@ from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
 from src import pipeline as P
-from src.ingest import chunks, extract, validate
+from src.ingest import chunks, extract, process, validate
 from src.schema import ChunkerConfig, Document
 from src.validation import IngestionPolicy, RejectReason
 
@@ -1028,6 +1029,52 @@ def test_prune_refuses_rather_than_guesses():
     P.discard(P.prepare([ADVERSARIAL], root, durable=False))
     assert not half.exists()
     return 'empty, unknown, linked, damaged and busy calls all refused with nothing deleted; a good call removed 2 runs'
+
+
+def test_sources_are_never_modified():
+    """Read-only copies of every kind of file, through every entry point and every ending."""
+    work = fresh('read-only-sources')
+    work.mkdir()
+    for path in sorted(FIX.rglob('*.pdf')):
+        if path != OVERSIZED:                          # takes as long as all the others together
+            shutil.copy2(path, work / path.name)
+    malformed = [work / p.name for p in (TRUNCATED, NOT_PDF, LOCKED)]
+
+    def snapshot():
+        return {p.name: (hashlib.sha256(p.read_bytes()).hexdigest(), p.stat().st_size,
+                         p.stat().st_mtime_ns, p.stat().st_mode) for p in work.iterdir()}
+
+    paths = sorted(work.iterdir())
+    for p in paths:
+        os.chmod(p, 0o444)
+    os.chmod(work, 0o555)
+    try:
+        before = snapshot()
+        for path in malformed + [work / NORMAL.name]:
+            validate(path)
+            process(path)
+        chunks(work / NORMAL.name)
+        extract(work / NORMAL.name)[2].close()
+        P.discard(P.prepare(paths, fresh('ro-declined'), durable=False))
+        try:
+            P.prepare(paths, fresh('ro-cancelled'), cancel=lambda: True)
+        except P.Cancelled:
+            pass
+        run = P.ingest(paths, fresh('ro-sealed'), acknowledge_rejections=True, durable=False)
+        assert P.verify(run.path, deep=True).ok
+        P.trace(run, run.manifest['documents'][0]['document_id'], 0)
+        again = P.ingest(paths, run.path.parent.parent, acknowledge_rejections=True, durable=False)
+        assert again.reused
+        P.recover(run.path.parent.parent)
+        after = snapshot()
+    finally:
+        os.chmod(work, 0o755)
+    assert after == before, sorted(k for k in before if after.get(k) != before[k])
+    assert set(after) == {p.name for p in paths}, 'something was written next to a source'
+    rejected = len(run.manifest['rejected'])
+    assert rejected >= 7, rejected
+    return (f'{len(paths)} read-only files, {rejected} of them rejected: same bytes, size, mtime and mode, '
+            'and nothing new beside them, after validate, process, chunks, a decline, a cancel, a seal and a rerun')
 
 
 def test_chunk_files_do_not_depend_on_the_batch_size():
