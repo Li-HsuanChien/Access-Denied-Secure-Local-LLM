@@ -1,0 +1,166 @@
+{
+  "run_id": "run_b3ed0f274f4475cf",
+  "pipeline_version": "e2-pipeline-1.0.0",
+  "totals": {
+    "accepted": 4,
+    "rejected": 8,
+    "duplicates": 1,
+    "pages": 1390,
+    "chunks": 3639
+  },
+  "files": [
+    {
+      "file": "normal_nrc_reactor_concepts_ch01.pdf",
+      "kind": "normal",
+      "label": "accept",
+      "disposition": "accepted",
+      "reject_reason": null
+    },
+    {
+      "file": "large_doe_nuclear_physics_v1_original.pdf",
+      "kind": "large",
+      "label": "accept",
+      "disposition": "accepted",
+      "reject_reason": null
+    },
+    {
+      "file": "oversized_1200_pages.pdf",
+      "kind": "large",
+      "label": "accept",
+      "disposition": "accepted",
+      "reject_reason": null
+    },
+    {
+      "file": "corrupt_truncated_50pct.pdf",
+      "kind": "invalid",
+      "label": "reject",
+      "disposition": "rejected",
+      "reject_reason": "corrupt"
+    },
+    {
+      "file": "corrupt_header_only.pdf",
+      "kind": "invalid",
+      "label": "reject",
+      "disposition": "rejected",
+      "reject_reason": "corrupt"
+    },
+    {
+      "file": "corrupt_empty.pdf",
+      "kind": "invalid",
+      "label": "reject",
+      "disposition": "rejected",
+      "reject_reason": "corrupt"
+    },
+    {
+      "file": "corrupt_bad_xref.pdf",
+      "kind": "invalid",
+      "label": "decision_required",
+      "disposition": "accepted_with_warnings",
+      "reject_reason": null
+    },
+    {
+      "file": "protected_user_password.pdf",
+      "kind": "invalid",
+      "label": "reject",
+      "disposition": "rejected",
+      "reject_reason": "password_protected"
+    },
+    {
+      "file": "protected_owner_password_no_extract.pdf",
+      "kind": "invalid",
+      "label": "decision_required",
+      "disposition": "rejected",
+      "reject_reason": "password_protected"
+    },
+    {
+      "file": "scanned_no_text_layer.pdf",
+      "kind": "invalid",
+      "label": "reject",
+      "disposition": "rejected",
+      "reject_reason": "scanned_only"
+    },
+    {
+      "file": "nonpdf_zip_container_renamed.pdf",
+      "kind": "invalid",
+      "label": "reject",
+      "disposition": "rejected",
+      "reject_reason": "non_pdf"
+    },
+    {
+      "file": "nonpdf_plaintext_renamed.pdf",
+      "kind": "invalid",
+      "label": "reject",
+      "disposition": "rejected",
+      "reject_reason": "non_pdf"
+    },
+    {
+      "file": "same_bytes_under_another_name.pdf",
+      "kind": "duplicate",
+      "label": "duplicate of the normal file",
+      "disposition": "duplicate",
+      "reject_reason": null
+    }
+  ],
+  "checks": [
+    {
+      "check": "confirmed",
+      "ok": true,
+      "detail": "8 rejected files stopped the seal until confirmed"
+    },
+    {
+      "check": "outcomes",
+      "ok": true,
+      "detail": "13 files as labelled"
+    },
+    {
+      "check": "duplicate",
+      "ok": true,
+      "detail": "one document for two names; alias ['same_bytes_under_another_name.pdf']"
+    },
+    {
+      "check": "sealed",
+      "ok": true,
+      "detail": "deep verify 19/19, run run_b3ed0f274f4475cf"
+    },
+    {
+      "check": "provenance",
+      "ok": true,
+      "detail": "12 chunks traced to their page and offsets"
+    },
+    {
+      "check": "rerun",
+      "ok": true,
+      "detail": "reused run_b3ed0f274f4475cf"
+    },
+    {
+      "check": "leftover",
+      "ok": true,
+      "detail": "a killed import's folder was removed by the next import"
+    },
+    {
+      "check": "sources",
+      "ok": true,
+      "detail": "13 read-only files unchanged in bytes, size, modified time and mode"
+    },
+    {
+      "check": "root",
+      "ok": true,
+      "detail": "only the run, the lock and the journal"
+    }
+  ],
+  "measured": {
+    "import_seconds": 13.55,
+    "rerun_seconds": 15.96,
+    "peak_rss_mb": 142.1,
+    "input_mb": 17.3,
+    "run_mb": 16.7,
+    "import_disk_peak_mb": 16.7,
+    "rerun_disk_peak_mb": 33.5,
+    "root_after_mb": 16.7
+  },
+  "host": {
+    "platform": "macOS-26.6.2",
+    "machine": "arm64",
+    "python": "3.14.4"
+  }
+}
