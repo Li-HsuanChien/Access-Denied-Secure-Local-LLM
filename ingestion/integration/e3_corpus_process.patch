@@ -1,0 +1,45 @@
+diff --git a/app/document-qa/backend/secure_qa/library/corpus.py b/app/document-qa/backend/secure_qa/library/corpus.py
+index fa1bf0a..1ac884c 100644
+--- a/app/document-qa/backend/secure_qa/library/corpus.py
++++ b/app/document-qa/backend/secure_qa/library/corpus.py
+@@ -1,7 +1,8 @@
+ """Corpus ingestion for the Library: PDFs in, a review and publishable chunks out (SDD §6.1, §6.2).
+ 
+-This is the consumer side of E2's ingestion seam. It calls E2's `validate()` and
+-`chunks()` (`ingestion/src/ingest.py`), turns the results into this module's own
++This is the consumer side of E2's ingestion seam. It calls E2's `process()`
++(`ingestion/src/ingest.py`), which validates and chunks a file from one reading
++of it, turns the results into this module's own
+ records, and never lets a rejected file through silently: every file lands in
+ the review as accepted, accepted with warnings, or rejected with a reason.
+ 
+@@ -151,7 +152,10 @@ def ingest_corpus(paths: Iterable[str | Path], *, keep_text: bool = False) -> Co
+     validator = extractor = ""
+ 
+     for path in sorted((Path(p) for p in paths), key=lambda p: (p.name, str(p))):
+-        result = ingest.validate(path)
++        # One extraction gives the validation result, the chunks and the text stream.
++        # validate(), chunks() and extract() would each read and parse the whole PDF again.
++        processed = ingest.process(path, None, config, source_filename=path.name)
++        result = processed.result
+         validator, extractor = result.validator_version, result.extractor
+         review = FileReview(
+             filename=path.name,
+@@ -168,15 +172,13 @@ def ingest_corpus(paths: Iterable[str | Path], *, keep_text: bool = False) -> Co
+         document = result.document
+         review.document_id = document["document_id"]
+         review.pages = document["page_count"]
+-        file_chunks = [Chunk.from_dict(c.to_dict()) for c in ingest.chunks(path, config, document["document_id"])]
++        file_chunks = [Chunk.from_dict(c.to_dict()) for c in processed.chunks or []]
+         review.chunks = len(file_chunks)
+         documents.append(document)
+         source_paths[document["document_id"]] = path
+         chunks += file_chunks
+         if keep_text:
+-            text, pages, pdf = ingest.extract(path, sort=config.sorted_reading_order, strip_boilerplate=config.strip_running_headers)
+-            pdf.close()
+-            sources[document["document_id"]] = SourceText(text, [(p.char_start, p.char_end) for p in pages])
++            sources[document["document_id"]] = SourceText(processed.text, [(p.char_start, p.char_end) for p in processed.pages])
+ 
+     return CorpusReview(
+         files=files,

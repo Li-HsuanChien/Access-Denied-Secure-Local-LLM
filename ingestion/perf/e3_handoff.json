@@ -1,0 +1,90 @@
+{
+  "real corpus (4 PDFs), keep_text=False": {
+    "identical_output": true,
+    "chunks": 282,
+    "seconds": {
+      "before": 2.26,
+      "after": 1.09
+    },
+    "peak_rss_mb": {
+      "before": 83.0,
+      "after": 85.2
+    },
+    "work": {
+      "before": {
+        "documents_opened": 8,
+        "text_pages_built": 270
+      },
+      "after": {
+        "documents_opened": 4,
+        "text_pages_built": 135
+      }
+    }
+  },
+  "real corpus (4 PDFs), keep_text=True": {
+    "identical_output": true,
+    "chunks": 282,
+    "seconds": {
+      "before": 3.073,
+      "after": 1.077
+    },
+    "peak_rss_mb": {
+      "before": 86.3,
+      "after": 84.3
+    },
+    "work": {
+      "before": {
+        "documents_opened": 12,
+        "text_pages_built": 405
+      },
+      "after": {
+        "documents_opened": 4,
+        "text_pages_built": 135
+      }
+    }
+  },
+  "all 16 fixtures, keep_text=False": {
+    "identical_output": true,
+    "chunks": 3915,
+    "seconds": {
+      "before": 26.58,
+      "after": 16.357
+    },
+    "peak_rss_mb": {
+      "before": 169.1,
+      "after": 174.6
+    },
+    "work": {
+      "before": {
+        "documents_opened": 21,
+        "text_pages_built": 3167
+      },
+      "after": {
+        "documents_opened": 13,
+        "text_pages_built": 1630
+      }
+    }
+  },
+  "all 16 fixtures, keep_text=True": {
+    "identical_output": true,
+    "chunks": 3915,
+    "seconds": {
+      "before": 39.258,
+      "after": 13.651
+    },
+    "peak_rss_mb": {
+      "before": 184.0,
+      "after": 178.6
+    },
+    "work": {
+      "before": {
+        "documents_opened": 29,
+        "text_pages_built": 4704
+      },
+      "after": {
+        "documents_opened": 13,
+        "text_pages_built": 1630
+      }
+    }
+  }
+}
