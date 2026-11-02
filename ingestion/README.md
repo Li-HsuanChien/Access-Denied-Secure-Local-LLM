@@ -14,7 +14,8 @@ and rectangles come out, in a sealed directory the document store can publish.
 | Sample corpus and its ingest command | `corpus/corpus.json`, `tools/ingest_corpus.py`, output in `corpus/out/` |
 | Sample-document demo | `demo.py` (live), `WALKTHROUGH.md` (written), `walkthrough/chunk_viewer.html` (visual) |
 | Tests | `tests/test_contracts.py` (34), `tests/test_chunking.py` (11), `tests/test_pipeline.py` (38), `tests/test_corpus.py` (9) |
-| Profiling: time, memory, parser work, output | `tools/profile_ingest.py`, results in `perf/` |
+| Profiling: time, memory, disk, parser work, output | `tools/profile_ingest.py`, results in `perf/` |
+| For E3 and E4: integration notes, dependency list | `integration/README.md`, `DEPENDENCIES.md` |
 
 Three ways to walk through one document, for three audiences:
 
@@ -203,10 +204,18 @@ the sealed directory holds nothing it cannot attribute to an accepted document.
 **Nothing half-written is ever a run.** An attempt lives in `runs/.partial-*`
 until it is sealed. `load_run()` refuses anything that is not sealed or that
 fails verification. A full disk, a cancellation or an error removes the
-attempt. `recover()`, for startup after a crash, deletes interrupted attempts
-and nothing else: a `run_*` directory that no longer verifies is moved to
-`quarantine/` with its PDFs, because it may be a good run that was damaged
-later, and a folder the pipeline did not create is left alone.
+attempt. A killed process can't do that, so the next `prepare()` removes
+`.partial-*` folders once it holds the lock, before it checks for disk space, and
+records each one in the journal. `recover()`, for startup after a crash, deletes
+interrupted attempts and nothing else: a `run_*` directory that no longer verifies
+is moved to `quarantine/` with its PDFs, because it may be a good run that was
+damaged later, and a folder the pipeline did not create is left alone.
+
+**`prune()` refuses rather than guesses.** A run holds the only staged copy of its
+PDFs. `prune(root, keep)` raises `Busy` during an open import, `ValueError` for an
+empty or unknown `keep`, and `IntegrityError` if a kept run fails its seal, and
+deletes nothing in those cases. It only removes `run_*` folders in this root that
+hold a manifest, never `quarantine/`, other folders or symbolic links.
 
 **A failure that is not the file's fault is not a verdict on the file.** An
 exception from the caller's progress or cancel callback, or a failure to write
@@ -281,24 +290,29 @@ python3 tools/profile_ingest.py --label baseline --code <ingestion/ folder of th
 python3 tools/profile_ingest.py --compare perf/baseline.json perf/patched.json
 ```
 
+The profile also records disk use: the run's size, the peak during an import and a
+rerun, and what remains after an import that follows a killed one.
+
 The current figures, on an M-series Mac (macOS 26, Python 3.14, PyMuPDF
 1.28.2), medians of 3 runs. Import is prepare and commit; the deep verify
 re-extracts every accepted PDF and is timed separately.
 
 | Target | Pages | Chunks | Import | Deep verify | Peak RSS | Python heap peak |
 |---|---|---|---|---|---|---|
-| NRC chapter | 24 | 18 | 0.10 s | 0.09 s | 65 MB | 3.4 MB |
-| arXiv two-column paper | 13 | 50 | 0.18 s | 0.16 s | 74 MB | 4.6 MB |
-| DOE handbook, original | 142 | 194 | 0.83 s | 0.80 s | 80 MB | 9.3 MB |
-| Synthetic, 1,200 pages | 1,200 | 3,409 | 7.49 s | 7.43 s | 154 MB | 56.0 MB |
-| Sample corpus, 10 files | 179 | 262 | 1.12 s | 1.05 s | 85 MB | 9.3 MB |
+| NRC chapter | 24 | 18 | 0.16 s | 0.13 s | 67 MB | 4.7 MB |
+| arXiv two-column paper | 13 | 50 | 0.29 s | 0.23 s | 77 MB | 4.9 MB |
+| DOE handbook, original | 142 | 194 | 1.21 s | 1.18 s | 81 MB | 8.9 MB |
+| Synthetic, 1,200 pages | 1,200 | 3,409 | 12.40 s | 13.16 s | 142 MB | 51.7 MB |
+| Sample corpus, 10 files | 179 | 262 | 1.83 s | 1.82 s | 87 MB | 8.9 MB |
 
-The interpreter and PyMuPDF take 59 to 64 MB of RSS before the first file is
-read. Most of the remaining time is MuPDF building each page's text dictionary,
-about 6 of the 7.5 seconds on 1,200 pages. `perf/REPORT.md` compares these
-figures with the code as it stood before the week 6 changes. The import is
-17 to 20% faster on real documents, the heap peak is 19 to 22% lower on the
-larger ones, and the output is identical.
+The interpreter and PyMuPDF take 60 to 66 MB of RSS before the first file is read.
+Most of the remaining time is MuPDF building each page's text dictionary. Compare times
+only within one report, because they moved between sessions on the same laptop: the week 6
+code took 12.60 s on 1,200 pages in this session and 7.49 s when `perf/REPORT.md` was
+written. That report covers week 6. `perf/REPORT-week7.md` covers week 7, including what
+an unchanged rerun still costs: it parses everything again and briefly needs twice the
+run's disk. `perf/CANDIDATE.md` records normal, duplicate, large and invalid PDFs going
+through this build together, from `tools/candidate_run.py`.
 
 ## Known limitations
 
@@ -361,13 +375,14 @@ src/
 tests/
   test_contracts.py    34 tests: schemas, IDs, provenance, validation outcomes, damaged files
   test_chunking.py     11 tests: where chunks begin and end
-  test_pipeline.py     38 tests: the import flow against its acceptance criteria
+  test_pipeline.py     43 tests: the import flow against its acceptance criteria
   test_corpus.py        9 tests: the corpus ingest, its rejects and its rerun consistency
 corpus/
   corpus.json      the sample corpus: documents and intake checks, with checksums
   out/             generated by tools/ingest_corpus.py: manifest, summary, SUMMARY.md
   runs/            the sealed run, rebuilt by the command (not committed)
-perf/          profiles from tools/profile_ingest.py: baseline.json, patched.json, REPORT.md
+perf/          profiles and reports: REPORT.md (week 6), REPORT-week7.md, CANDIDATE.md
+integration/   for E3 and E4: integration notes, the E3 patch and its benchmark
 fixtures/
   normal/       baseline happy path
   large/        the DOE handbook twice: a 96-page text reflow and the 142-page original
@@ -390,15 +405,17 @@ tools/
   build_walkthrough.py       regenerates WALKTHROUGH.md from live output
   ingest_corpus.py           ingests corpus/corpus.json and writes corpus/out/
   profile_ingest.py          times and measures an import per target; compares two profiles
+  candidate_run.py           runs normal, duplicate, large and invalid PDFs end to end
 manifest.json                the labeled corpus: 16 fixtures, expected outcomes, checksums
 probe_results.json           raw measurement output
 ```
 
 ```bash
-pip install -r requirements.txt      # PyMuPDF is pinned: chunk IDs depend on the extractor
+pip install -r requirements-dev.txt  # PyMuPDF is pinned: chunk IDs depend on the extractor
+                                     # to run without the tests: requirements.txt (DEPENDENCIES.md)
 python3 tests/test_contracts.py      # 34/34, about a minute (it reads the 1,200-page fixture)
 python3 tests/test_chunking.py       # 11/11
-python3 tests/test_pipeline.py       # 38/38; two of them need E3_LIBRARY=<E3 checkout>/secure_qa/library
+python3 tests/test_pipeline.py       # 43/43; two of them need E3_LIBRARY=<E3 checkout>/secure_qa/library
                                      # and are reported as SKIPPED without it
 python3 tests/test_corpus.py         # 9/9
 python3 tools/build_walkthrough.py   # regenerates the demo
