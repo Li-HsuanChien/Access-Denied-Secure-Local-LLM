@@ -95,7 +95,10 @@ def prepare_assets(cache: Path, *, offline=False) -> Path:
     config = RUNTIME / 'runtime.toml'
     if tomllib.loads(config.read_text(encoding='utf-8'))['backend']['model'] != lock['answering']['name']:
         raise ValueError('runtime.toml and assets.lock.json select different answering models')
+    from build import MANIFEST, check_runtime_release
+    check_runtime_release(RUNTIME, lock)
     shutil.copy2(config, assets / 'runtime.toml')
+    shutil.copy2(RUNTIME / MANIFEST, assets / MANIFEST)
     model = lock['answering']
     fetch_file(model['url'], assets / 'models' / model['name'], model['sha256'], offline=offline,
                local=RUNTIME / 'models' / model['name'])

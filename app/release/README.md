@@ -79,8 +79,17 @@ machine. Matching locally staged GGUF weights can seed the cache. A mismatch fai
 instead of substituting a test model. Model upgrades require reviewing the lock
 and `runtime.toml` together.
 
+The runtime's frozen release (`answering/llama_cpp/release-manifest.json`, written by
+`docqa-runtime freeze`) is staged beside `runtime.toml` in `payload/runtime/`. The build
+refuses to package if the manifest, `runtime.toml` and the lock disagree on the model file,
+its SHA-256, the llama.cpp version or a frozen setting. A release test checks the committed
+files on every PR. The packaged runtime reports the frozen release in `/health.release`;
+acceptance checks it and runs `docqa-service runtime verify --quick` inside the package. The
+upgrade steps are in [the runtime install guide](../document-qa/backend/secure_qa/answering/llama_cpp/docs/install.md#upgrading-the-model-or-llamacpp).
+
 Each package contains `provenance.json` with source revision, dirty-tree state,
-version, profile and executable/payload/asset-lock hashes. It also retains the
+version, profile and executable/payload/asset-lock hashes, plus `runtime_release`: the
+manifest hash, frozen model and SHA-256, llama.cpp build and runtime API version. It also retains the
 payload checksum manifest, asset lock and Open WebUI notices.
 
 These are development packages. Provenance/checksums are not signatures or a

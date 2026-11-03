@@ -68,6 +68,15 @@ def assemble(binary: Path, payload: Path, destination: Path) -> Path:
     lock = destination / 'payload/runtime/assets.lock.json'
     if lock.is_file():
         report['asset_lock_sha256'] = digest(lock)
+    manifest = destination / 'payload/runtime/release-manifest.json'
+    if manifest.is_file():
+        frozen = json.loads(manifest.read_text(encoding='utf-8'))
+        report['runtime_release'] = {
+            'manifest_sha256': digest(manifest), 'frozen_at': frozen.get('frozen_at'),
+            'api_version': frozen.get('api_version'), 'runtime_version': frozen.get('runtime_version'),
+            'model': frozen['model']['file'], 'model_sha256': frozen['model']['sha256'],
+            'llama_cpp': frozen['llama_cpp'].get('tag'),
+        }
     (destination / 'provenance.json').write_text(json.dumps(report, indent=2), encoding='utf-8')
     return destination
 

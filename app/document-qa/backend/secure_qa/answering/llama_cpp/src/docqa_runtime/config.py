@@ -157,6 +157,12 @@ def validate(cfg: Config) -> None:
         raise ConfigError("config_ctx", f"ctx_size = {cfg.ctx_size} is too small", "Use at least 2048 for document Q&A.")
     if cfg.threads < 0:
         raise ConfigError("config_threads", "threads cannot be negative", "Use 0 for automatic.")
+    if "__DOCQA_USER_DATA__" in cfg.runs_dir:
+        # The desktop payload ships runtime.toml as a template; desktop_entry.py fills this in at start-up.
+        raise ConfigError("config_unresolved_template", f"runs_dir is still the template value {cfg.runs_dir!r}",
+                          "This is the packaged template. Start the runtime through the desktop app (docqa-service "
+                          "runtime ...) with SECURE_QA_DATA_DIR set, or copy runtime.toml and set [output] runs_dir "
+                          "to a writable folder.")
     if cfg.parallel < 1:
         raise ConfigError("config_parallel", f"parallel = {cfg.parallel} must be at least 1",
                           "Use 1: the product answers one question at a time.")

@@ -37,7 +37,50 @@ def validate_assets(assets: Path) -> dict:
     binary = 'llama-server.exe' if sys.platform == 'win32' else 'llama-server'
     if not (assets / 'bin' / binary).is_file():
         raise ValueError(f'Stage bin/{binary} and its native dependencies')
+    lock = assets / 'assets.lock.json'
+    check_runtime_release(assets, json.loads(lock.read_text(encoding='utf-8')) if lock.is_file() else None)
     return config
+
+
+MANIFEST = 'release-manifest.json'
+
+
+def check_runtime_release(runtime: Path, lock: dict | None, *, hash_model: bool = False) -> dict:
+    """The runtime's frozen release (E1's release-manifest.json) must describe exactly what this build ships.
+
+    It must name the model file runtime.toml configures and, when the asset lock is present, the lock's model
+    SHA-256 and llama.cpp version; its frozen settings must match runtime.toml. Upgrading the model, llama.cpp or a
+    frozen setting therefore needs runtime.toml, assets.lock.json and `docqa-runtime freeze` in the same change.
+    """
+    path = runtime / MANIFEST
+    if not path.is_file():
+        raise ValueError(f'Stage {MANIFEST} (the runtime\'s frozen release, written by `docqa-runtime freeze`) '
+                         'beside runtime.toml')
+    manifest = json.loads(path.read_text(encoding='utf-8'))
+    config = tomllib.loads((runtime / 'runtime.toml').read_text(encoding='utf-8'))
+    settings = {**config.get('server', {}), **config.get('backend', {}), **config.get('security', {})}
+    model = manifest['model']
+    problems = []
+    if settings.get('model') != model['file']:
+        problems.append(f"runtime.toml model is {settings.get('model')!r}, the manifest froze {model['file']!r}")
+    if lock is not None:
+        if lock['answering']['name'] != model['file'] or lock['answering']['sha256'] != model['sha256']:
+            problems.append('assets.lock.json answering model/SHA-256 differ from the manifest')
+        if lock['runtime']['version'] != manifest['llama_cpp'].get('tag'):
+            problems.append(f"assets.lock.json ships llama.cpp {lock['runtime']['version']}, "
+                            f"the manifest froze {manifest['llama_cpp'].get('tag')}")
+    drift = sorted(k for k, v in manifest.get('config', {}).items() if k in settings and settings[k] != v)
+    if drift:
+        problems.append('runtime.toml differs from the frozen settings: ' + ', '.join(drift))
+    if hash_model and not problems:
+        staged = runtime / 'models' / model['file']
+        with staged.open('rb') as source:
+            if hashlib.file_digest(source, 'sha256').hexdigest() != model['sha256']:
+                problems.append(f"{staged.name} does not match the manifest SHA-256")
+    if problems:
+        raise ValueError('Runtime release manifest does not match this build: ' + '; '.join(problems) +
+                         '. Re-run `docqa-runtime freeze` and update assets.lock.json in the same change.')
+    return manifest
 
 
 def main() -> None:

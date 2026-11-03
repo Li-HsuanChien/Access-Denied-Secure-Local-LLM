@@ -28,9 +28,12 @@ def main():
     for path in required:
         if not path.is_file():
             raise SystemExit(f'Required local asset is missing: {path}')
+    from build import MANIFEST, check_runtime_release
+    check_runtime_release(RUNTIME, None, hash_model=True)   # no lock here, so check the staged weights themselves
     ASSETS.mkdir(parents=True, exist_ok=True)
     (ASSETS / 'models').mkdir(exist_ok=True)
     shutil.copy2(RUNTIME / 'runtime.toml', ASSETS / 'runtime.toml')
+    shutil.copy2(RUNTIME / MANIFEST, ASSETS / MANIFEST)
     shutil.copy2(RUNTIME / 'models' / model, ASSETS / 'models' / model)
     shutil.copytree(RUNTIME / 'bin', ASSETS / 'bin', dirs_exist_ok=True)
     shutil.copytree(ROOT / 'models/all-MiniLM-L6-v2', ASSETS / 'embedding', dirs_exist_ok=True)

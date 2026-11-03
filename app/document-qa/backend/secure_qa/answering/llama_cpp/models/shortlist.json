@@ -1,11 +1,16 @@
 {
   "_note": "Week 1 candidate shortlist for the reference laptop (Windows, 8-16 GB RAM, CPU only). Sizes are approximate unless size_bytes is given. Files with a sha256 are pinned to the checksum Hugging Face publishes (Qwen3-4B Q4_K_M/Q8_0 checked 2026-09-28, the week3 set 2026-10-05); fetch_models.ps1 refuses a download that does not match. Verify links and licences of the others before first download.",
   "llama_cpp": {
-    "_note": "Pinned llama.cpp build used for the Week 1/2 runs. fetch_runtime.ps1 downloads this tag by default; pass -Tag latest to try a newer build.",
+    "_note": "Pinned llama.cpp build for every target. fetch_runtime.ps1 downloads the Windows build by default (pass -Tag latest to try a newer one); docs/install.md has the macOS and Linux steps. sha256 values are GitHub's published release digests, checked 2026-11-03. app/release/assets.lock.json must name the same tag.",
     "tag": "b11242",
     "commit": "526c43b8f",
     "windows_asset": "llama-b11242-bin-win-cpu-x64.zip",
-    "release_url": "https://github.com/ggml-org/llama.cpp/releases/tag/b11242"
+    "release_url": "https://github.com/ggml-org/llama.cpp/releases/tag/b11242",
+    "assets": {
+      "windows-x86_64": {"file": "llama-b11242-bin-win-cpu-x64.zip", "sha256": "851fb7a4070a14789e9b4f617d0f1a58369e295b6466e518441d5067327a5320"},
+      "macos-arm64":    {"file": "llama-b11242-bin-macos-arm64.tar.gz", "sha256": "76142db728d264a56da04592d69e4f3bdf798049183ca7c9b0511fbb561458e8"},
+      "linux-x86_64":   {"file": "llama-b11242-bin-ubuntu-x64.tar.gz", "sha256": "30d1cd591a875b4f4a96ac1f6b7b35e5de25fdb8527047290e48e067890b2d18"}
+    }
   },
   "candidates": [
     {

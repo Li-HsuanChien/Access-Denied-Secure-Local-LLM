@@ -1,0 +1,23 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docqa.local/contract/2026-09-v1/ready-error.schema.json",
+  "title": "docqa-runtime up --ready-file when the runtime could not start (added 2026-11-03)",
+  "type": "object",
+  "required": ["status", "exit_code", "error"],
+  "properties": {
+    "status": {"const": "error"},
+    "exit_code": {"type": "integer", "minimum": 1, "description": "the process exit code; docs/api.md lists them"},
+    "error": {
+      "type": "object",
+      "required": ["code", "message", "hint"],
+      "properties": {
+        "code": {"type": "string"},
+        "message": {"type": "string"},
+        "hint": {"type": "string"},
+        "details": {"type": "object"}
+      },
+      "additionalProperties": false
+    }
+  },
+  "additionalProperties": false
+}

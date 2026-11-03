@@ -77,13 +77,24 @@ def main():
     with tempfile.TemporaryDirectory(prefix='docqa-real-') as tmp:
         data = Path(tmp)
         gateway, host = free_port(), free_port()
-        runtime_args = ['runtime', 'up', '--config', str(runtime / 'runtime.toml'),
-            '--server-bin', str(runtime / 'bin/llama-server.exe'), '--models-dir', str(runtime / 'models'),
-            '--host', '127.0.0.1', '--port', str(gateway)]
+        paths = ['--config', str(runtime / 'runtime.toml'),
+            '--server-bin', str(runtime / 'bin/llama-server.exe'), '--models-dir', str(runtime / 'models')]
+        frozen = json.loads((runtime / 'release-manifest.json').read_text(encoding='utf-8'))
+        (data / 'runtime').mkdir(parents=True, exist_ok=True)
+        verify = subprocess.run([str(exe), 'runtime', 'verify', '--quick', *paths], cwd=data / 'runtime',
+            env={**os.environ, 'SECURE_QA_DATA_DIR': str(data / 'runtime')}, capture_output=True, text=True, timeout=120)
+        assert verify.returncode == 0 and 'Matches the frozen release.' in verify.stdout, verify.stdout + verify.stderr
+        print(f'PASS packaged runtime matches its frozen release: {frozen["model"]["file"]} on llama.cpp '
+              f'{frozen["llama_cpp"]["tag"]}', flush=True)
+        runtime_args = ['runtime', 'up', *paths, '--host', '127.0.0.1', '--port', str(gateway)]
         with service(exe, runtime_args, data / 'runtime', lambda: request(gateway, origin=None)['ready']):
             health = request(gateway, origin=None)
             assert health['engine']['stub'] is False, health
             assert 'qwen' in health['model']['name'].lower(), health
+            assert health['api_version'] == frozen['api_version'], health
+            release = health['release']
+            assert release['manifest'] and release['matches_manifest'], health
+            assert release['model_sha256'] == frozen['model']['sha256'], health
             result = completion(gateway)
             assert result['choices'][0]['message']['content'].strip(), result
             print(f'PASS packaged real llama.cpp generation: {health["model"]["name"]}', flush=True)

@@ -288,3 +288,16 @@ def test_cli_error_exit_codes(tmp_path):
     assert r.returncode == 6 and "remote_bind_refused" in r.stderr
     r = run("chat", "hi", "--url", f"http://127.0.0.1:{free_port()}")
     assert r.returncode == 3 and "runtime_not_running" in r.stderr
+
+
+def test_ready_file_reports_startup_failures(tmp_path):
+    """A supervising app (the desktop shell) reads why the runtime didn't start, with the hint to show."""
+    ready = tmp_path / "ready.json"
+    r = subprocess.run([sys.executable, "-m", "docqa_runtime", "up", "--server-bin", "stub", "--models-dir",
+                        str(tmp_path / "none"), "--ready-file", str(ready)],
+                       capture_output=True, text=True, cwd=tmp_path, timeout=60)
+    info = json.loads(ready.read_text())
+    assert r.returncode == 2 and info["status"] == "error" and info["exit_code"] == 2
+    assert info["error"]["code"] == "no_models" and info["error"]["hint"]
+    from .test_contract import check
+    check("ready-error", info)

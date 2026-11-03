@@ -67,6 +67,9 @@ def test_config_file_and_overrides(tmp_path, monkeypatch):
     ("[server]\nport = \"8080\"\n", "config_type"),
     ("[server]\nport = 70000\n", "config_port"),
     ("[server\n", "config_invalid"),
+    ("[backend]\nparallel = 0\n", "config_parallel"),
+    ("[backend]\ncache_ram_mib = -5\n", "config_cache_ram"),
+    ("[output]\nruns_dir = \"__DOCQA_USER_DATA__\"\n", "config_unresolved_template"),
 ])
 def test_config_errors_are_actionable(tmp_path, monkeypatch, toml, code):
     monkeypatch.chdir(tmp_path)

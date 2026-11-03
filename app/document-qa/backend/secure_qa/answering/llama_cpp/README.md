@@ -29,6 +29,7 @@ DocQA runtime ready in 3.84 s
 | **W4** Restarts, clear config errors, configuration guide | [`docs/configuration.md`](docs/configuration.md), `tests/test_runtime.py`, `tests/test_release.py` |
 | **W5** Runtime settings for real RAG context sizes | [`docs/configuration.md`](docs/configuration.md) (context size), largest-prompt timings in `bench` |
 | **W6** Request ids, cancellation, busy state, graceful shutdown | [`docs/api.md`](docs/api.md#request-ids-and-cancellation-added-2026-10-26-week-6), `tests/test_cancellation.py` |
+| **W7** Release-candidate runtime package, install/startup instructions, recorded checksums and versions | Packaged by `app/release/` with `release-manifest.json` cross-checked against `assets.lock.json`; [`docs/install.md`](docs/install.md); llama.cpp pins for Windows, macOS and Linux in `models/shortlist.json` |
 | Friday demo | [`docs/week2-demo-runbook.md`](docs/week2-demo-runbook.md), `scripts/windows/demo.ps1` |
 | Design and security choices | [`docs/decisions.md`](docs/decisions.md) |
 
@@ -50,24 +51,18 @@ docqa-runtime chat "Hello, are you running locally?"
 curl http://127.0.0.1:8080/health
 ```
 
-## Real setup (Windows reference laptop)
+## Real setup
 
-On a machine with internet:
-
-```powershell
-scripts\windows\fetch_runtime.ps1              # official llama.cpp Windows CPU build (pinned b11242) -> bin\
-scripts\windows\fetch_models.ps1 -Set week2    # Qwen3-4B-Instruct-2507 at Q4_K_M and Q8_0 -> models\ (SHA-256 checked)
-scripts\windows\build_exe.ps1 -IncludeBin -IncludeModels -Zip   # -> dist\DocQA-Runtime.zip
-```
-
-Copy `DocQA-Runtime\` to the laptop (no Python needed there), disconnect the network, then:
+In the product, the runtime ships inside the desktop app (`app/release/package.ps1`); nothing else is installed.
+To run it on its own (Windows, macOS Apple silicon or Linux x64), follow [`docs/install.md`](docs/install.md). It
+covers the pinned downloads, their checksums, `docqa-runtime verify` against the frozen release, starting and
+stopping, upgrades, and every startup error. On the reference laptop, with networking disabled:
 
 ```powershell
-docqa-runtime doctor                       # checks binary, model, RAM, port, network
+docqa-runtime verify                       # exactly the frozen model, llama.cpp build and settings
+docqa-runtime doctor                       # binary, model, RAM, port, network
 docqa-runtime baseline --require-offline   # Week 1 record
-docqa-runtime up                           # or double-click start-runtime.cmd
-docqa-runtime bench                        # Week 2 matrix: every .gguf in models\
-```
+docqa-runtime bench --quality              # speed, RAM and quality per model in models```
 
 ## Commands
 

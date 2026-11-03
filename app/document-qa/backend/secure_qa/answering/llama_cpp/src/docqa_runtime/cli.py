@@ -134,6 +134,9 @@ def main(argv: list[str] | None = None) -> int:
         return dispatch(args)
     except RuntimeFailure as e:
         print(e.render(), file=sys.stderr, flush=True)
+        from .launcher import write_failure
+
+        write_failure(getattr(args, "ready_file", None), e)     # e.g. a config error before startup began
         return e.exit_code
     except KeyboardInterrupt:
         return 130

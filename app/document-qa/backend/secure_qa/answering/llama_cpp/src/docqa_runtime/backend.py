@@ -181,9 +181,11 @@ class BackendProcess:
                 **kwargs,
             )
         except OSError as e:
-            raise BackendError("backend_not_runnable", f"Could not start {self.server_cmd[0]}: {e}",
-                               "Check that the file is the Windows x64 llama-server.exe and not blocked by antivirus "
-                               "(right-click > Properties > Unblock).")
+            hint = ("Check that the file is the Windows x64 llama-server.exe and not blocked by antivirus "
+                    "(right-click > Properties > Unblock)." if IS_WINDOWS else
+                    "Check that it is the llama-server build for this platform and is executable (chmod +x). On "
+                    "macOS, a downloaded build may also need: xattr -d com.apple.quarantine <file>")
+            raise BackendError("backend_not_runnable", f"Could not start {self.server_cmd[0]}: {e}", hint)
         self.started_at = time.perf_counter()
         _LIVE.add(self)
         if IS_WINDOWS:

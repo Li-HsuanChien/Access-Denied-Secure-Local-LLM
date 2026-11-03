@@ -150,6 +150,17 @@ class Runtime:
             self.httpd = None
 
 
+def write_failure(ready_file: str | None, e: RuntimeFailure) -> None:
+    """Record why the runtime didn't start, so a supervising app (the desktop shell) can show the code and hint."""
+    if not ready_file:
+        return
+    try:
+        Path(ready_file).write_text(json.dumps({"status": "error", "exit_code": e.exit_code, "error": e.to_dict()},
+                                               indent=2), encoding="utf-8")
+    except OSError:
+        pass
+
+
 def run_up(cfg: Config, *, json_output: bool = False, ready_file: str | None = None, after_ready=None) -> int:
     """Start the runtime and block until Ctrl+C or a backend crash.
 
@@ -176,6 +187,7 @@ def run_up(cfg: Config, *, json_output: bool = False, ready_file: str | None = N
             say(json.dumps({"status": "error", "error": e.to_dict()}))
         else:
             print(e.render(), file=sys.stderr, flush=True)
+        write_failure(ready_file, e)
         return e.exit_code
     except KeyboardInterrupt:
         rt.stop()
