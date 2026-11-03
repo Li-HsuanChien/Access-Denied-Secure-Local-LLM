@@ -4,36 +4,37 @@ E2 turns candidate PDFs into validated, chunked, traceable text for the document
 store. This page describes how that work is tested and gives the numbers from
 one full run of the test suite.
 
-Measured on 27 October 2026 on branch `E2-Chunking` (commit `1c18893` plus the
-week 6 changes), with Python 3.14.4 and PyMuPDF 1.28.2 on macOS. Code coverage
-was last measured on 20 October, before the week 6 changes.
+Measured on 3 November 2026 on branch `E2-Chunking` (commit `905a75b` plus the
+week 7 changes), with Python 3.14.4 and PyMuPDF 1.28.2 on macOS. Code coverage
+was last measured on 20 October, before the week 6 and week 7 changes.
 
 ## Summary
 
 | Metric | Result |
 |---|---|
-| Automated tests | 92 |
-| Passed | 90 |
+| Automated tests | 97 |
+| Passed | 97, with `E3_LIBRARY` set to a checkout of the E3 document store |
 | Failed | 0 |
-| Skipped | 2 (they need a checkout of the E3 document store) |
+| Skipped | 0 (2 are skipped when `E3_LIBRARY` is not set) |
 | Statement coverage | 87.0% (1,885 of 2,166 statements), as of 20 October |
 | Branch coverage | 84.8% (619 of 730 branches), as of 20 October |
 | Fixture PDFs exercised | 16, in 9 categories |
 | Sample corpus | 3 documents, 179 pages, 262 chunks; 7 bad files rejected, each with its reason |
 | Chunks checked end to end | 3,915, each traced back to its page and offsets |
 | Rerun consistency | A fresh corpus ingest reproduces the committed manifest and summary byte for byte |
-| Corpus import | 1.12 s and a 9.3 MB Python heap peak, down from 1.37 s and 12.0 MB, with identical output |
-| Test code | 2,665 lines, against 4,085 lines of source |
-| Time for the whole suite | about 2 minutes on a laptop |
+| Corpus import | 1.83 s and an 8.9 MB Python heap peak, against 1.78 s and 9.3 MB before week 7, with identical output |
+| Candidate build | 13 normal, duplicate, large and invalid files; 9 of 9 checks passed |
+| Test code | 2,847 lines, against 3,834 lines of source |
+| Time for the whole suite | about 5 minutes on a laptop |
 
 ## The four test suites
 
 | Suite | Tests | What it covers | Time |
 |---|---|---|---|
-| `tests/test_contracts.py` | 34 | Schemas, stable IDs, provenance, validation verdicts, damaged files | 62 s |
-| `tests/test_chunking.py` | 11 | Where chunks begin and end | 3 s |
-| `tests/test_pipeline.py` | 38 (36 run, 2 skipped) | The import flow from files to a sealed, verified run | 29 s |
-| `tests/test_corpus.py` | 9 | The corpus ingest: rejects, counts, checksums, rerun consistency | 16 s |
+| `tests/test_contracts.py` | 34 | Schemas, stable IDs, provenance, validation verdicts, damaged files | 108 s |
+| `tests/test_chunking.py` | 11 | Where chunks begin and end | 6 s |
+| `tests/test_pipeline.py` | 43 | The import flow from files to a sealed, verified run | 142 s |
+| `tests/test_corpus.py` | 9 | The corpus ingest: rejects, counts, checksums, rerun consistency | 25 s |
 
 Each suite is a plain Python script with no test framework. Every test prints
 one line of evidence when it passes, so the output is a record of what was
@@ -155,10 +156,34 @@ each in a fresh process, medians of 3 runs: the three corpus documents, the
 | Stale corpus runs are removed | An ingest after an earlier run leaves `run_1474c5fc384c4b66` as the only run under `corpus/runs/` |
 | Each page is read once | 24 text pages for 24 pages, 148 for 142 (6 without text) and 30 for 24 (6 scanned); the scanned pages still report their images |
 
+### Week 7: optimization and integration
+
+The same five targets were measured against commit `905a75b`, and normal, duplicate,
+large and invalid PDFs went through the candidate build. Details are in
+`perf/REPORT-week7.md` and `perf/CANDIDATE.md`.
+
+| Criterion | Evidence from the run |
+|---|---|
+| Time changes are measured | E2's import is unchanged within noise (1,200 pages: 12.60 s → 12.40 s). The E3 hand-off patch, not yet applied, takes the real corpus from 3.07 s to 1.08 s |
+| RAM changes are measured | Python heap peak on 1,200 pages: 56.0 MB → 51.7 MB. Peak RSS: 149.5 MB → 142.1 MB, a change close to the noise between processes |
+| Disk changes are measured | Import peak unchanged (10.24 MB on 1,200 pages). Root after a killed import: 20.49 MB → 10.25 MB. Rerun peak unchanged at 20.49 MB, twice the run |
+| Repeat extraction is avoided | With the patch, E3 opens 4 documents instead of 12 and builds 135 text pages instead of 405. An unchanged rerun inside E2 still parses everything: see the report |
+| Temporary artifacts are cleaned safely | A leftover is removed before the disk check and journalled; a symbolic link, a foreign folder and a sealed run stay. `prune()` refuses empty, unknown, linked, damaged and busy calls with nothing deleted |
+| Source files are preserved | 15 read-only files, 8 of them rejected, keep their bytes, size, modified time and mode through validate, process, chunks, a decline, a cancel, a seal and a rerun, with nothing new beside them |
+| Chunk provenance passes regression | All 5 targets give the same run ID as before week 7. Every chunk across the corpus traces to its page and offsets, and batches of 1, 5 and 10,000 write the same run |
+| Rerun behavior passes regression | The candidate set reuses `run_b3ed0f274f4475cf` on a rerun, and `--check` reproduces `run_1474c5fc384c4b66` byte for byte |
+| Malformed and protected inputs stay non-destructive | 8 of the 13 candidate files are rejected with their reasons, and the seal waits for confirmation. The damaged-but-readable `corrupt_bad_xref.pdf` is accepted with warnings, pending the open policy decision |
+| Integration defects are addressed | 3 fixed in `ingestion/`. 2 in `app/` are prepared and tested but not applied: `integration/README.md`. Merging with `origin/main` at `79042fb` now reports no conflicts |
+| Dependency list for E4 | PyMuPDF alone runs and freezes on macOS, with the same run ID: `DEPENDENCIES.md`. The Windows build is untested |
+
+The plan lists E5's regression suite as an input, but none exists on `main` at `79042fb`.
+E2's suites and E3's suite stood in for it. On the scratch merge, E3 ran 122 tests:
+115 passed and 7 skipped. Six of the skips need the embedding model and one needs E1's runtime.
+
 ## Code coverage
 
 Measured with coverage.py 7.16.2 over all four suites on 20 October, at the
-end of week 5. It has not been measured since the week 6 changes.
+end of week 5. It has not been measured since the week 6 and week 7 changes.
 
 | Module | Role | Statements | Statement coverage | Branch coverage |
 |---|---|---|---|---|
@@ -177,7 +202,7 @@ command-line code, 92.5% of the module's statements are covered.
 
 ## How to reproduce
 
-From the `ingestion/` folder, with the packages in `requirements.txt` installed:
+From the `ingestion/` folder, with the packages in `requirements-dev.txt` installed:
 
 ```
 python3 tests/test_contracts.py
@@ -185,6 +210,7 @@ python3 tests/test_chunking.py
 python3 tests/test_pipeline.py
 python3 tests/test_corpus.py
 python3 tools/ingest_corpus.py --check
+python3 tools/candidate_run.py --check
 ```
 
 Each script exits with a non-zero status if any test fails. The lines beginning
@@ -199,7 +225,9 @@ deliberately corrupt fixtures.
   scale yet.
 - **Integration with the document store.** Two tests check that a sealed run
   meets E3's publication rules. They are skipped unless `E3_LIBRARY` points at
-  an E3 checkout, and they were skipped in this run.
+  an E3 checkout. They ran here against a scratch merge, which isn't on `main`,
+  and without E3's embedding model.
+- **An E5 regression suite.** None exists yet, so this work has not been run against one.
 - **Retrieval quality.** Nothing here measures whether chunks are retrieved well.
   That is E3's golden set, which has to be re-run whenever the chunker changes.
 - **Scanned documents.** PDFs with no text layer are detected and rejected; there
@@ -207,8 +235,9 @@ deliberately corrupt fixtures.
 - **Three open policy decisions.** Three fixtures have no fixed expected outcome
   until the team decides how to treat them. The tests show that each decision
   can be switched by configuration, not which setting is right.
-- **Other platforms.** The run above is on macOS only, and E2 has no
-  continuous integration yet, so the suites run when someone runs them.
+- **Other platforms.** The run above is on macOS only, including the frozen-build
+  check, while E4's release builds on Windows. E2 has no continuous integration
+  yet, so the suites run when someone runs them.
 - **Speed and memory at scale.** `tools/profile_ingest.py` measures one machine
   and files up to 1,200 pages, not a batch at the 2,000 to 5,000 pages the PRD
   expects. The test suites do not time anything, so a slowdown fails no test;
