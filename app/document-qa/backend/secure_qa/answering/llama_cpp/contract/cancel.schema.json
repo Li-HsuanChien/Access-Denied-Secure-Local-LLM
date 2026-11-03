@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "$id": "https://docqa.local/contract/2026-09-v1/cancel.schema.json",
+  "title": "POST /v1/requests/{id}/cancel (200; 404 request_not_found uses the error envelope)",
+  "type": "object",
+  "properties": {
+    "id": {
+      "type": "string"
+    },
+    "cancelled": {
+      "const": true
+    }
+  },
+  "required": [
+    "id",
+    "cancelled"
+  ],
+  "additionalProperties": false
+}

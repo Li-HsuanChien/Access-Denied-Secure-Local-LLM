@@ -17,8 +17,12 @@ from __future__ import annotations
 
 import http.client
 import json
+import re
+import select
+import socket
 import threading
 import time
+import uuid
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 from typing import TYPE_CHECKING
 from urllib.parse import urlsplit
@@ -34,7 +38,8 @@ if TYPE_CHECKING:
 MAX_BODY = 16 * 1024 * 1024            # 16 MiB: plenty for retrieved chunks, blocks accidental huge uploads
 VALID_ROLES = {"system", "user", "assistant", "tool", "developer"}
 MODEL_ALIASES = {"", "default", "local", "docqa"}
-ENDPOINTS = ["GET /health", "GET /v1/models", "GET /v1/models/{id}", "POST /v1/chat/completions"]
+ENDPOINTS = ["GET /health", "GET /v1/models", "GET /v1/models/{id}", "POST /v1/chat/completions",
+             "POST /v1/requests/{id}/cancel"]
 
 
 class RuntimeState:
@@ -52,8 +57,37 @@ class RuntimeState:
         self.lock = threading.Lock()
         self.requests_total = 0
         self.requests_failed = 0
+        self.requests_cancelled = 0
+        self.inflight: dict[str, _InFlight] = {}
         from .release import release_info
         self.release = release_info(cfg, model)
+
+    # ------------------------------------------------- in-flight requests --
+    def begin(self, rid: str) -> "_InFlight | None":
+        """Register a chat request; None if that id is already in flight."""
+        with self.lock:
+            if rid in self.inflight:
+                return None
+            entry = self.inflight[rid] = _InFlight(rid)
+            return entry
+
+    def end(self, rid: str) -> None:
+        with self.lock:
+            self.inflight.pop(rid, None)
+
+    def cancel(self, rid: str, reason: str) -> bool:
+        with self.lock:
+            entry = self.inflight.get(rid)
+        if entry is None or not entry.cancel(reason):
+            return False
+        with self.lock:
+            self.requests_cancelled += 1
+        return True
+
+    def cancel_all(self, reason: str) -> int:
+        with self.lock:
+            ids = list(self.inflight)
+        return sum(self.cancel(rid, reason) for rid in ids)
 
     def set(self, status: str, error: dict | None = None) -> None:
         with self.lock:
@@ -85,14 +119,58 @@ class RuntimeState:
                 "release": dict(self.release),
                 "uptime_s": round(time.time() - self.started_wall, 1),
                 "startup_s": round(self.startup_s, 3) if self.startup_s is not None else None,
-                "requests": {"total": self.requests_total, "failed": self.requests_failed},
+                "requests": {"total": self.requests_total, "failed": self.requests_failed,
+                             "in_flight": len(self.inflight), "cancelled": self.requests_cancelled},
                 "error": self.error,
             }
 
 
+class _InFlight:
+    """One chat request being answered. Cancelling it closes the connection to llama-server, which stops generating
+    as soon as it notices (llama.cpp checks between tokens) and frees the single slot for the next question."""
+
+    _REASONS = {
+        "cancelled": ("The request was cancelled", "Ask again when you're ready."),
+        "client_disconnected": ("The client disconnected before the answer finished", ""),
+        "runtime_stopping": ("The runtime is shutting down", "Restart the runtime, then ask again."),
+    }
+
+    def __init__(self, rid: str):
+        self.rid = rid
+        self.reason: str | None = None
+        self.conn: http.client.HTTPConnection | None = None
+        self._lock = threading.Lock()
+
+    def attach(self, conn: http.client.HTTPConnection) -> bool:
+        """Remember the backend connection; False if the request was cancelled before it started."""
+        with self._lock:
+            self.conn = conn
+            return self.reason is None
+
+    def cancel(self, reason: str) -> bool:
+        with self._lock:
+            if self.reason is not None:
+                return False
+            self.reason = reason
+            conn = self.conn
+        if conn is not None and conn.sock is not None:
+            try:
+                conn.sock.shutdown(socket.SHUT_RDWR)
+            except OSError:
+                pass
+        return True
+
+    def error(self) -> tuple[str, str]:
+        return self._REASONS.get(self.reason or "cancelled", self._REASONS["cancelled"])
+
+
+REQUEST_ID = re.compile(r"^[A-Za-z0-9._:-]{1,128}$")
+
+
 def error_body(status: int, code: str, message: str, hint: str = "", etype: str | None = None) -> dict:
     etype = etype or {400: "invalid_request_error", 404: "not_found_error", 405: "invalid_request_error",
-                      413: "invalid_request_error", 403: "permission_error", 503: "unavailable_error"}.get(status, "server_error")
+                      413: "invalid_request_error", 403: "permission_error", 409: "conflict_error",
+                      503: "unavailable_error"}.get(status, "server_error")
     return {"error": {"message": message, "type": etype, "code": code, "hint": hint, "status": status}}
 
 
@@ -180,8 +258,9 @@ class Handler(BaseHTTPRequestHandler):
         if origin and self._origin_allowed(origin):
             self.send_header("Access-Control-Allow-Origin", origin)
             self.send_header("Vary", "Origin")
-            self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization")
+            self.send_header("Access-Control-Allow-Headers", "Content-Type, Authorization, X-Request-ID")
             self.send_header("Access-Control-Allow-Methods", "GET, POST, OPTIONS")
+            self.send_header("Access-Control-Expose-Headers", "X-Request-ID, X-DocQA-API-Version")
 
     def _send_json(self, status: int, obj, extra_headers: dict | None = None) -> None:
         body = json.dumps(obj, ensure_ascii=False).encode("utf-8")
@@ -190,6 +269,8 @@ class Handler(BaseHTTPRequestHandler):
         self.send_header("Content-Length", str(len(body)))
         self.send_header("X-DocQA-API-Version", API_VERSION)
         self.send_header("Cache-Control", "no-store")
+        if getattr(self, "rid", None):
+            self.send_header("X-Request-ID", self.rid)
         self._cors_headers()
         for k, v in (extra_headers or {}).items():
             self.send_header(k, v)
@@ -198,7 +279,7 @@ class Handler(BaseHTTPRequestHandler):
             self.wfile.write(body)
 
     def _error(self, status: int, code: str, message: str, hint: str = "", headers: dict | None = None, etype=None) -> int:
-        if status >= 400 and self.command == "POST":
+        if status >= 400 and self.command == "POST" and code not in ("request_cancelled", "request_not_found"):
             with self.state.lock:
                 self.state.requests_failed += 1
         self._send_json(status, error_body(status, code, message, hint, etype), headers)
@@ -230,6 +311,7 @@ class Handler(BaseHTTPRequestHandler):
 
     # ------------------------------------------------------------ routes --
     def do_OPTIONS(self):
+        self.rid = None
         t0 = time.perf_counter()
         if self._guard():
             return
@@ -243,11 +325,13 @@ class Handler(BaseHTTPRequestHandler):
         self.do_GET()
 
     def do_GET(self):
+        self.rid = None                 # a keep-alive connection reuses this handler; never echo an old request id
         t0 = time.perf_counter()
         status = self._guard() or self._route_get()
         self._log(status, t0)
 
     def do_POST(self):
+        self.rid = None
         t0 = time.perf_counter()
         status = self._guard() or self._route_post()
         self._log(status, t0)
@@ -278,8 +362,8 @@ class Handler(BaseHTTPRequestHandler):
             self._send_json(200, {"name": "docqa-runtime", "version": __version__, "api_version": API_VERSION,
                                   "endpoints": ENDPOINTS})
             return 200
-        if path == "/v1/chat/completions":
-            return self._error(405, "method_not_allowed", "Use POST for /v1/chat/completions", "")
+        if path == "/v1/chat/completions" or path.startswith("/v1/requests/"):
+            return self._error(405, "method_not_allowed", f"Use POST for {path}", "")
         return self._error(404, "not_found", f"No endpoint {path}", "Available: " + ", ".join(ENDPOINTS))
 
     def _model_obj(self) -> dict:
@@ -297,11 +381,19 @@ class Handler(BaseHTTPRequestHandler):
         path = urlsplit(self.path).path.rstrip("/")
         if path in ("/health", "/v1/models"):
             return self._error(405, "method_not_allowed", f"Use GET for {path}", "")
+        m = re.fullmatch(r"/v1/requests/([^/]+)/cancel", path)
+        if m:
+            return self._cancel(m.group(1))
         if path != "/v1/chat/completions":
             return self._error(404, "not_found", f"No endpoint {path}", "Available: " + ", ".join(ENDPOINTS))
         st = self.state
         with st.lock:
             st.requests_total += 1
+        rid = (self.headers.get("X-Request-ID") or "").strip()
+        if rid and not REQUEST_ID.match(rid):
+            return self._error(400, "invalid_request", "X-Request-ID must be 1-128 letters, digits, '.', '_', ':' or '-'",
+                               "Omit the header to have one generated, or send a simple id such as a UUID.")
+        self.rid = rid or uuid.uuid4().hex
 
         # ---- read + validate body
         try:
@@ -342,50 +434,120 @@ class Handler(BaseHTTPRequestHandler):
 
     def _forward(self, req: dict) -> int:
         st = self.state
-        body = json.dumps(req).encode("utf-8")
+        entry = st.begin(self.rid)
+        if entry is None:
+            return self._error(409, "request_id_in_use", f"Request '{self.rid}' is already being answered",
+                               "Send a new X-Request-ID for each request.")
+        done = threading.Event()
+        conn = None
         try:
-            conn = http.client.HTTPConnection("127.0.0.1", st.backend.port, timeout=st.cfg.request_timeout_s)
-            conn.request("POST", "/v1/chat/completions", body=body,
-                         headers={"Content-Type": "application/json", "Content-Length": str(len(body)),
-                                  **st.backend.auth_headers()})
-            resp = conn.getresponse()
-        except TimeoutError:
-            return self._error(504, "backend_timeout", f"The model did not answer within {st.cfg.request_timeout_s:.0f} s",
-                               "Lower max_tokens, send less context, or raise request_timeout_s in runtime.toml.")
-        except OSError as e:
-            return self._error(503, "backend_unavailable", f"Could not reach llama-server: {e}",
-                               "The model process may have crashed - check GET /health and the runtime console.")
-        try:
-            if resp.status != 200:
-                raw = resp.read()
-                return self._backend_error(resp.status, raw)
-            if req.get("stream"):
-                return self._pipe_stream(resp)
+            body = json.dumps(req).encode("utf-8")
             try:
-                raw = json.dumps(shape_completion(json.loads(resp.read()), st.model.id), ensure_ascii=False).encode("utf-8")
-            except (json.JSONDecodeError, UnicodeDecodeError, AttributeError) as e:
-                return self._error(502, "backend_bad_response", f"llama-server returned an unreadable answer: {e}",
-                                   "Check the runtime log; this usually means a llama.cpp build mismatch (run `docqa-runtime verify`).")
-            self.send_response(200)
-            self.send_header("Content-Type", "application/json; charset=utf-8")
-            self.send_header("Content-Length", str(len(raw)))
-            self.send_header("X-DocQA-API-Version", API_VERSION)
-            self.send_header("Cache-Control", "no-store")
-            self._cors_headers()
-            self.end_headers()
-            self.wfile.write(raw)
-            return 200
-        except (OSError, http.client.HTTPException) as e:
-            # client went away mid-stream, or backend died mid-answer
-            if not self.wfile.closed:
+                conn = http.client.HTTPConnection("127.0.0.1", st.backend.port, timeout=st.cfg.request_timeout_s)
+                conn.connect()
+                if not entry.attach(conn):
+                    return self._cancelled(entry)
+                threading.Thread(target=self._watch_client, args=(entry, done), daemon=True).start()
+                conn.request("POST", "/v1/chat/completions", body=body,
+                             headers={"Content-Type": "application/json", "Content-Length": str(len(body)),
+                                      **st.backend.auth_headers()})
+                if not self._await_backend(conn, entry):
+                    return self._cancelled(entry)
+                resp = conn.getresponse()
+            except TimeoutError:
+                return self._error(504, "backend_timeout", f"The model did not answer within {st.cfg.request_timeout_s:.0f} s",
+                                   "Lower max_tokens, send less context, or raise request_timeout_s in runtime.toml.")
+            except (OSError, http.client.HTTPException) as e:
+                if entry.reason:
+                    return self._cancelled(entry)
+                return self._error(503, "backend_unavailable", f"Could not reach llama-server: {e}",
+                                   "The model process may have crashed - check GET /health and the runtime console.")
+            try:
+                if resp.status != 200:
+                    return self._backend_error(resp.status, resp.read())
+                if req.get("stream"):
+                    return self._pipe_stream(resp, entry)
+                data = resp.read()
+                if entry.reason:
+                    return self._cancelled(entry)
                 try:
-                    return self._error(502, "backend_disconnected", f"The model stopped mid-answer: {e}",
-                                       "Check GET /health; the runtime console shows why.")
-                except OSError:
-                    pass
-            return 499
+                    raw = json.dumps(shape_completion(json.loads(data), st.model.id), ensure_ascii=False).encode("utf-8")
+                except (json.JSONDecodeError, UnicodeDecodeError, AttributeError) as e:
+                    return self._error(502, "backend_bad_response", f"llama-server returned an unreadable answer: {e}",
+                                       "Check the runtime log; this usually means a llama.cpp build mismatch (run `docqa-runtime verify`).")
+                self.send_response(200)
+                self.send_header("Content-Type", "application/json; charset=utf-8")
+                self.send_header("Content-Length", str(len(raw)))
+                self.send_header("X-DocQA-API-Version", API_VERSION)
+                self.send_header("X-Request-ID", self.rid)
+                self.send_header("Cache-Control", "no-store")
+                self._cors_headers()
+                self.end_headers()
+                self.wfile.write(raw)
+                return 200
+            except (OSError, http.client.HTTPException) as e:
+                if entry.reason:
+                    return self._cancelled(entry)
+                # client went away, or the backend died mid-answer
+                if not self.wfile.closed:
+                    try:
+                        return self._error(502, "backend_disconnected", f"The model stopped mid-answer: {e}",
+                                           "Check GET /health; the runtime console shows why.")
+                    except OSError:
+                        pass
+                return 499
         finally:
-            conn.close()
+            done.set()
+            st.end(entry.rid)
+            if conn is not None:
+                conn.close()            # if llama-server is still generating, this stops it
+
+    def _await_backend(self, conn: http.client.HTTPConnection, entry: "_InFlight") -> bool:
+        """Wait for llama-server to start answering, checking for cancellation every 0.25 s; False if cancelled.
+
+        For a non-streaming request llama-server sends nothing until the whole answer is written, and on Windows a
+        read blocked in another thread is not woken by shutting the socket down, so poll instead of blocking.
+        """
+        deadline = time.monotonic() + self.state.cfg.request_timeout_s
+        while not entry.reason:
+            try:
+                readable, _, _ = select.select([conn.sock], [], [], 0.25)
+            except (OSError, ValueError):
+                return not entry.reason
+            if readable:
+                return not entry.reason
+            if time.monotonic() > deadline:
+                raise TimeoutError
+        return False
+
+    def _watch_client(self, entry: "_InFlight", done: threading.Event) -> None:
+        """Cancel the request if the caller hangs up, so an abandoned answer doesn't keep the only slot busy."""
+        sock = self.connection
+        while not done.wait(0.25):
+            try:
+                readable, _, _ = select.select([sock], [], [], 0)
+                if readable and sock.recv(1, socket.MSG_PEEK) == b"":
+                    self.state.cancel(entry.rid, "client_disconnected")
+                    return
+            except (OSError, ValueError):
+                self.state.cancel(entry.rid, "client_disconnected")
+                return
+
+    def _cancelled(self, entry: "_InFlight") -> int:
+        message, hint = entry.error()
+        try:
+            return self._error(409, "request_cancelled", message, hint)
+        except OSError:
+            return 499                  # the caller is gone (client_disconnected)
+
+    def _cancel(self, rid: str) -> int:
+        if not REQUEST_ID.match(rid):
+            return self._error(400, "invalid_request", f"'{rid}' is not a valid request id", "Use the X-Request-ID you sent.")
+        if self.state.cancel(rid, "cancelled"):
+            self._send_json(200, {"id": rid, "cancelled": True})
+            return 200
+        return self._error(404, "request_not_found", f"No request '{rid}' is being answered",
+                           "It may already have finished; there is nothing to cancel.")
 
     def _backend_error(self, status: int, raw: bytes) -> int:
         try:
@@ -397,35 +559,53 @@ class Handler(BaseHTTPRequestHandler):
         code, hint = _BACKEND_HINTS.get(btype, ("backend_error", "See the runtime console / log for details."))
         return self._error(status if 400 <= status < 600 else 502, code, msg, hint, etype=btype or None)
 
-    def _pipe_stream(self, resp) -> int:
+    def _pipe_stream(self, resp, entry: "_InFlight") -> int:
         self.send_response(200)
         self.send_header("Content-Type", "text/event-stream; charset=utf-8")
         self.send_header("Cache-Control", "no-cache")
         self.send_header("Transfer-Encoding", "chunked")
         self.send_header("X-DocQA-API-Version", API_VERSION)
+        self.send_header("X-Request-ID", self.rid)
         self._cors_headers()
         self.end_headers()
         model_id = self.state.model.id
-        while True:
-            line = resp.readline()        # SSE is line-oriented; forward each event as it arrives
-            if not line:
-                break
-            stripped = line.strip()
-            if stripped.startswith(b"data:") and stripped[5:].strip() != b"[DONE]":
-                try:
-                    obj = json.loads(stripped[5:])
-                    if "error" in obj:        # llama-server reports mid-stream failures as an error event
-                        body = error_body(502, "backend_error", str((obj["error"] or {}).get("message", obj["error"])),
-                                          "See the runtime console / log for details.")
-                    else:
-                        body = shape_chunk(obj, model_id)
-                    line = b"data: " + json.dumps(body, ensure_ascii=False).encode("utf-8") + b"\n"
-                except (json.JSONDecodeError, UnicodeDecodeError, AttributeError, TypeError):
-                    pass                      # forward unparseable lines untouched rather than dropping text
+
+        def send(line: bytes) -> None:
             self.wfile.write(f"{len(line):X}\r\n".encode() + line + b"\r\n")
             self.wfile.flush()
-        self.wfile.write(b"0\r\n\r\n")
-        self.wfile.flush()
+
+        try:
+            while True:
+                try:
+                    line = resp.readline()    # SSE is line-oriented; forward each event as it arrives
+                except (OSError, http.client.HTTPException):
+                    line = b""
+                if not line:
+                    break
+                stripped = line.strip()
+                if stripped.startswith(b"data:") and stripped[5:].strip() != b"[DONE]":
+                    try:
+                        obj = json.loads(stripped[5:])
+                        if "error" in obj:    # llama-server reports mid-stream failures as an error event
+                            body = error_body(502, "backend_error", str((obj["error"] or {}).get("message", obj["error"])),
+                                              "See the runtime console / log for details.")
+                        else:
+                            body = shape_chunk(obj, model_id)
+                        line = b"data: " + json.dumps(body, ensure_ascii=False).encode("utf-8") + b"\n"
+                    except (json.JSONDecodeError, UnicodeDecodeError, AttributeError, TypeError):
+                        pass                  # forward unparseable lines untouched rather than dropping text
+                send(line)
+            if entry.reason:                  # cancelled mid-answer: end the stream with one error event, then [DONE]
+                message, hint = entry.error()
+                send(b"data: " + json.dumps(error_body(409, "request_cancelled", message, hint)).encode("utf-8") + b"\n")
+                send(b"\n")
+                send(b"data: [DONE]\n")
+                send(b"\n")
+            self.wfile.write(b"0\r\n\r\n")
+            self.wfile.flush()
+        except OSError:                       # the caller hung up mid-stream
+            self.state.cancel(entry.rid, "client_disconnected")
+            return 499
         return 200
 
 

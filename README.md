@@ -47,4 +47,4 @@ Open `http://127.0.0.1:5173/`. The deterministic test model and seeded collectio
 - [Release area](app/release/README.md)
 - [Backend workflow modules and tests](app/document-qa/backend/secure_qa/README.md)
 - [E2 ingestion schemas and fixture corpus](ingestion/README.md) (not yet wired into the app)
-- [E1 LLM runtime report](docs/reports/E1-runtime-report.md) (runtime adapter: [llama_cpp](app/document-qa/backend/secure_qa/answering/llama_cpp/README.md))
+- E1 LLM runtime reports: [Weeks 1–2](docs/reports/E1-runtime-report.md), [Weeks 3–6](docs/reports/E1-weeks-3-6-report.md) (runtime adapter: [llama_cpp](app/document-qa/backend/secure_qa/answering/llama_cpp/README.md))

@@ -38,7 +38,10 @@
             "backend_error",
             "model_loading",
             "backend_unavailable",
-            "backend_timeout"
+            "backend_timeout",
+            "request_cancelled",
+            "request_not_found",
+            "request_id_in_use"
           ]
         }
       },

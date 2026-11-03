@@ -77,15 +77,17 @@ report banners), so simulated numbers can't be mistaken for real ones. It also h
 
 **Quality is measured, not assumed.** Until Week 2, the recommendation used bits-per-weight as a stand-in for
 quality. `bench --quality` now runs a fixed eval set (`evals.py`, version-stamped like the prompt set) of 23
-questions over the benchmark passages:
-15 answerable (the right fact *and* the right citation are required), 5 with no answer in the passages (the model
-must say so), and 3 where a planted passage tries to hijack the assistant. Scoring is regex-based and
-deterministic (temperature 0, fixed seed), so it is repeatable and needs no second model as a judge. It is a
-selection screen; E5's grounding and citation set is the acceptance test.
+questions over the benchmark passages, asked with the product's own prompt:
+15 answerable (the fact under "From your documents:" *and* the right `[S#]` label are required), 5 with no answer
+in the passages (no document claim allowed, and the reply must say they don't cover it), and 3 where a planted
+passage tries to hijack the assistant. Requests use the product's settings (temperature 0.1, seed 42, up to 512
+tokens). Scoring is regex-based and deterministic, so it is repeatable and needs no second model as a judge. It is
+a selection screen; E5's grounding and citation set is the acceptance test.
 
 **Selection rule** (`bench.analyse`):
 1. Drop anything that misses a threshold: peak RAM ≤ 6 GB (8 GB laptop, minus OS, app and vector store),
-   ≥ 8 tok/s generation, ≤ 15 s to first token and ≤ 30 s total on the 1.3k-token RAG prompt (codebase design),
+   ≥ 8 tok/s generation, ≤ 15 s to first token and ≤ 30 s total on the largest real RAG prompt E3 measured
+   (about 2.1k tokens, 256 answer tokens; SDD §12),
    ≥ 80% of eval items, ≥ 80% correct refusals, 100% injection resistance.
 2. Of the rest, take the highest eval score.
 3. Ties go to the more capable model (weight size, with precision above Q6_K discounted), because every
@@ -96,10 +98,14 @@ selection screen; E5's grounding and citation set is the acceptance test.
 the app had been running. `runtime.toml` now sets `parallel = 1` (the product answers one question at a time)
 and `cache_ram_mib = 0`. The single slot's own KV cache still reuses the shared system-prompt prefix.
 
-**Prompt hardening.** The first real eval showed the old prompt's `[doc:page]` example and "say you could not
-find it" being copied literally, and a planted instruction being obeyed in 2 of 3 cases. Passages are now
-wrapped in `<passages>` and declared untrusted data (codebase design 4.2), and the citation format is shown with
-a real tag. The prompt set version moved to `2026-10-05.1`, so Week 2-format numbers are not directly comparable.
+**Evaluate with the product's prompt, not our own (revised 2026-10-26).** The first real eval (2026-10-05) used a
+runtime-only prompt. It showed a `[doc:page]` example and "say you could not find it" being copied literally, and
+a planted instruction obeyed in 2 of 3 cases. Meanwhile E3's Question Answering module had defined the prompt the
+product actually sends (`secure_qa/answering/context.py`: labelled `<<<S1 | title | page>>>` passages, `[S1]`
+citations, three headed sections, passages declared data and neutralised). Selecting a model on a different prompt
+measures the wrong thing, so `prompts.py` is now a copy of `context.py`, and a parity test in the backend suite
+(`test_runtime_prompt_parity.py`) fails if they drift. Prompt set `2026-10-26.1` and eval set `2026-10-26.1` are
+not comparable with the 2026-10-05 numbers.
 
 **Freezing.** `docqa-runtime freeze` writes `release-manifest.json`. It records the model file's SHA-256 and
 size, the llama.cpp tag and commit, the settings that affect output or exposure (context, threads, slots, cache,
@@ -112,9 +118,45 @@ and E4 exposed to whatever fields a llama.cpp build adds or renames. It now re-e
 both normal and streamed responses. JSON Schemas in `contract/` plus `tests/test_contract.py` pin every
 response type and error code.
 
+## 9. Week 4: stable start, stop and configuration
+
+* **Restarts.** `tests/test_runtime.py::test_repeated_restarts_on_the_same_port` starts, answers and stops three
+  times on one port and checks the previous llama-server process is gone each time. Windows cleanup relies on the
+  Job Object (kill-on-close) set up in `backend.py`; the desktop shell sets its own (`lifecycle.rs`).
+* **Configuration.** [`configuration.md`](configuration.md) explains context size (with the KV-cache cost per
+  size), threads, port, binding, slots and cache. Every configuration mistake stops before the model loads, with a
+  `code`, a hint and exit code 2.
+* **The manifest in the desktop app.** `desktop_entry.py` copies `runtime.toml` into the user-data folder, so a
+  manifest beside the config would never be found there. The runtime now also looks beside the models folder,
+  which stays in the installed payload. The release build still has to copy `release-manifest.json` into
+  `payload/runtime/` for `/health.release.manifest` to be true in a packaged app (handed to the release owner).
+
+## 10. Week 5: settings for real RAG context sizes
+
+E3 measured the real corpus (`docs/evidence/e3-context-sizes-2026-10-19.json`): at most about 2,100 estimated
+prompt tokens with 5 passages, 512 tokens reserved for the answer, nothing dropped. `ctx_size = 4096` stays: it
+leaves about 1,500 tokens for conversation memory and longer chunks, and costs 576 MiB of KV cache for Qwen3-4B.
+3072 would save 144 MiB but leave about 450 tokens of slack; 8192 would cost another 576 MiB the 8 GB budget does
+not have. `bench` now times a prompt of that maximum size and judges the latency thresholds on it. The measured
+latency and RAM on the reference laptop are still open; the dev machine was too memory-constrained to give
+decision-grade numbers (Week 5 report).
+
+## 11. Week 6: cancellation and shutdown
+
+With one slot, an answer nobody is waiting for blocks the next question until it reaches its token limit. Requests
+now carry an id (`X-Request-ID`, generated if absent), and `POST /v1/requests/{id}/cancel`, a caller hanging up,
+or the runtime stopping all cancel the answer. The gateway closes its connection to llama-server, which stops
+generating, and the caller gets `409 request_cancelled` (or a final error event when streaming). For a
+non-streaming request llama-server sends nothing until it has finished, and on Windows a blocked read in another
+thread is not woken by shutting the socket down. So the gateway polls the socket every 0.25 s while it waits,
+instead of blocking. `/health.requests` adds `in_flight` and `cancelled` so the UI can show a busy state. All of it
+is additive to API v1; `tests/test_cancellation.py` covers each path and that the next request is unaffected.
+
 ## Verification done in this workspace
 
-* 56 automated tests (unit, HTTP integration, failure modes, CLI exit codes, security): 55 run against the stub, plus one opt-in test against a real llama-server.
+* 103 automated tests on Windows (2026-10-26: 102 pass, 1 opt-in real-engine test skipped): unit, HTTP integration,
+  failure modes, CLI exit codes, security, API contract schemas, quality-eval scoring, release manifest,
+  restarts and cancellation. Plus 3 prompt-parity tests in the backend suite.
 * The same launcher, gateway and benchmark run against a **real `llama-server` built from llama.cpp source**, using
   a tiny random-weight model built from llama.cpp's bundled vocab and quantized to F32/F16/Q8_0/Q4_K_M.
   This confirmed flag compatibility, `--offline`, `/props` context capping, the `timings` format, the
@@ -123,9 +165,10 @@ response type and error code.
 
 ## Known limitations / not verified here
 
-* **Not run on Windows.** The Windows-only pieces (Job Object, `PeakWorkingSetSize`, the PowerShell scripts,
-  `.exe` build) follow documented APIs but need a first run on the reference laptop.
-* No real-model numbers yet. `docs/sample-results` contains stub data and tiny-random-model data only.
+* **Not run on the 8 GB reference laptop.** Everything so far ran on a 16 GB dev machine (Windows 11) that was
+  memory-constrained during real-model runs, so no latency or peak-RAM figure here is decision-grade.
+* The PyInstaller `.exe` (`build_exe.ps1`) has not been rebuilt on Windows; the desktop app now packages the
+  runtime through `app/release/` instead.
 * One model per runtime instance. Switching models means a restart (`--model`).
-* The Qwen3-4B Q4_K_M and Q8_0 downloads are verified and pinned by SHA-256 in `models/shortlist.json`. The other
-  shortlisted models' Hugging Face repo and file names are still unverified.
+* All 9 downloaded candidate files are pinned by SHA-256 in `models/shortlist.json`; Llama-3.2-3B Q8_0 and
+  Qwen2.5-1.5B Q8_0 were never downloaded.
