@@ -1,6 +1,7 @@
 # ADR 0004: React frontend with observed interface parity
 
 - **Status:** Accepted, 2026-10-20; React migration accepted on 2026-10-21. See the [acceptance record](../../development/react-migration/acceptance.md) for checks, evidence, and qualification limits.
+- **Partially superseded (2026-11-10):** the visual presentation-parity clause (preserving the observed Open WebUI interface; "a redesigned UI" in the rulings below) is superseded by [ADR 0010](0010-reading-room-visual-redesign.md). The framework, runtime, safety and renderer rulings remain in effect. The text below is unchanged history.
 - **Supersedes:** ADR 0001's SvelteKit/frontend choice and frontend-specific implementation statements in ADRs 0002/0003. Their workflow separation, offline requirements, feature layout, visual tokens and provenance remain applicable. Historical ADRs remain unchanged.
 - **Scope:** Replace the active Svelte frontend with React/TypeScript/Vite while preserving the observed interface and actions. No new PRD product scope, Python host API, wire schema, storage, model workflow or desktop platform design.
 

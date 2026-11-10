@@ -1,40 +1,124 @@
+/* App frame: sidebar, top bar, main column, side document panel. Ported from prototypes/ui-revamp/src/styles/shell.css. */
 
-	.react-desktop-shell { display: flex; width: 100%; height: 100dvh; overflow: hidden; background: var(--workspace-paper); color: var(--workspace-ink); }
-	/* The expanded sidebar is fixed-position, so the workspace reserves its width instead of sitting underneath it. */
-	.react-desktop-shell .workspace { display: flex; min-width: 0; flex: 1; flex-direction: column; transition: margin-inline-start 250ms cubic-bezier(0.22, 1, 0.36, 1); }
-	.react-desktop-shell.sidebar-open .workspace { margin-inline-start: var(--sidebar-width); }
-	.react-desktop-shell .service-status { z-index: 20; display: flex; flex: none; align-items: center; gap: var(--workspace-space-3); min-height: 48px; border-bottom: 1px solid var(--workspace-line); padding: 6px var(--workspace-space-4); font-size: 12px; line-height: 1.35; }
-	.react-desktop-shell .status-text { display: grid; flex: 1; min-width: 0; }
-	.react-desktop-shell .status-text strong { font-weight: 600; }
-	.react-desktop-shell .status-text span { overflow: hidden; color: var(--workspace-ink-muted); text-overflow: ellipsis; white-space: nowrap; }
-	.react-desktop-shell .status-mark { flex: none; width: 8px; height: 8px; border-radius: 50%; background: var(--workspace-evidence); box-shadow: 0 0 0 3px color-mix(in srgb, var(--workspace-evidence) 18%, transparent); }
-	.react-desktop-shell .degraded .status-mark { background: var(--workspace-warning); box-shadow: 0 0 0 3px color-mix(in srgb, var(--workspace-warning) 18%, transparent); }
-	.react-desktop-shell .status-action, .react-desktop-shell .menu-button { flex: none; border-radius: var(--workspace-radius-control); color: var(--workspace-accent); cursor: pointer; transition: background-color var(--workspace-motion-fast); }
-	.react-desktop-shell .status-action { padding: 6px 10px; font-weight: 500; }
-	.react-desktop-shell .menu-button { display: grid; width: 32px; height: 32px; place-items: center; color: var(--workspace-ink); }
-	.react-desktop-shell .menu-button svg { width: 18px; height: 18px; }
-	.react-desktop-shell .status-action:hover, .react-desktop-shell .menu-button:hover { background: var(--workspace-hover); }
-	.react-desktop-shell .preference-error { margin: 0; border-bottom: 1px solid var(--workspace-error-line); background: var(--workspace-error-surface); padding: 8px var(--workspace-space-4); color: var(--workspace-error); font-size: 13px; }
-	.react-desktop-shell #main-content { position: relative; min-height: 0; flex: 1; overflow: auto; }
-	/* The pinned chat sizes itself to the viewport and subtracts the sidebar; inside the workspace both are already accounted for. */
-	.react-desktop-shell #main-content #chat-container { height: 100%; max-height: 100%; max-width: 100%; }
-	/* The status bar owns the mobile sidebar toggle, and the attachment menu only offers workflows this build does not support. */
-	.react-desktop-shell #main-content #sidebar-toggle-button, .react-desktop-shell #main-content #input-menu-button { display: none; }
-	@media (max-width: 700px) {
-		.react-desktop-shell .service-status { flex-wrap: wrap; row-gap: 4px; }
-		.react-desktop-shell .status-text { flex-basis: 40%; }
-	}
+.shell {
+	display: grid; grid-template-columns: var(--sidebar-w) minmax(0, 1fr); grid-template-rows: minmax(0, 1fr);
+	width: 100%; height: 100dvh; overflow: hidden; background: var(--paper); color: var(--ink);
+	font-family: var(--font-ui); font-size: var(--text-md); line-height: 1.5;
+	transition: grid-template-columns var(--base) var(--ease);
+}
+.shell[data-sidebar='closed']:not([data-compact]) { grid-template-columns: 0 minmax(0, 1fr); }
+.shell[data-viewer='side'] { grid-template-columns: var(--sidebar-w) minmax(380px, 1fr) minmax(460px, 1.05fr); }
+.shell[data-viewer='side'][data-sidebar='closed'] { grid-template-columns: 0 minmax(380px, 1fr) minmax(460px, 1.15fr); }
+.shell[data-compact] { grid-template-columns: minmax(0, 1fr); }
 
-.react-desktop-shell .shell-expanded { transition: width 250ms cubic-bezier(0.22, 1, 0.36, 1); }
-.react-desktop-shell .shell-backdrop { position: fixed; inset: 0; z-index: 40; background: black; }
-@media(max-width:767px){.react-desktop-shell #sidebar{will-change:transform;touch-action:pan-y;}}
+/* ------------------------------------------------------------------ sidebar */
+.shell-sidebar {
+	display: flex; flex-direction: column; min-width: 0; height: 100%; background: var(--paper-side);
+	border-right: 1px solid var(--line); overflow: hidden; font-size: var(--text-md);
+}
+.shell[data-sidebar='closed'] .shell-sidebar { border-right: 0; }
+.shell[data-compact] .shell-sidebar {
+	position: fixed; inset: 0 auto 0 0; width: min(300px, 86vw); z-index: 50; box-shadow: var(--shadow-lg);
+	transform: translateX(-102%); transition: transform var(--base) var(--ease);
+}
+.shell[data-compact] .shell-sidebar[data-open='true'] { transform: none; }
+.shell-drawer-scrim { position: fixed; inset: 0; z-index: 45; background: var(--scrim); animation: ui-fade var(--base); }
 
-.saved-chats { padding: 12px 8px; font-size: 13px; }
-.saved-chats .heading, .saved-chats li { display: flex; align-items: center; gap: 8px; }
-.saved-chats .heading { justify-content: space-between; margin-bottom: 8px; }
-.saved-chats h2 { font-weight: 600; }
-.saved-chats p, .saved-chats .heading button { color: var(--workspace-ink-muted); font-size: 12px; }
-.saved-chats li a { flex: 1; min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; padding: 8px; border-radius: 8px; }
-.saved-chats li a:hover, .saved-chats a[aria-current='page'] { background: var(--workspace-hover); }
-.saved-chats li button { padding: 6px 8px; border-radius: 6px; }
-.saved-chats button:focus-visible, .saved-chats a:focus-visible { outline: 2px solid var(--workspace-accent); }
+.shell-sidebar-head { display: flex; align-items: center; justify-content: space-between; padding: 10px 8px 6px 12px; min-width: var(--sidebar-w); }
+.shell[data-compact] .shell-sidebar-head { min-width: 0; }
+.shell-brand { display: flex; align-items: center; gap: 10px; padding: 4px; border-radius: 10px; color: var(--ink); }
+.shell-brand:hover { background: var(--hover); }
+.shell-brand-name { font-family: var(--font-serif); font-size: var(--text-lg); font-weight: 600; letter-spacing: -0.01em; }
+
+.shell-sidebar-actions { padding: 4px 8px 8px; display: grid; gap: 1px; min-width: var(--sidebar-w); }
+.shell[data-compact] .shell-sidebar-actions { min-width: 0; }
+.shell-nav-item {
+	display: flex; align-items: center; gap: 10px; width: 100%; height: 36px; padding: 0 10px; border-radius: 9px;
+	color: var(--ink-2); font-weight: 520; text-align: left; white-space: nowrap; text-decoration: none;
+}
+.shell-nav-item:hover { background: var(--hover); color: var(--ink); }
+.shell-nav-item[aria-current='page'] { background: var(--active); color: var(--ink); }
+.shell-nav-item-strong { color: var(--ink); font-weight: 600; }
+.shell-nav-item > span:first-of-type { flex: 1; overflow: hidden; text-overflow: ellipsis; }
+.shell-nav-kbd, .shell-nav-meta { color: var(--ink-3); font-size: var(--text-xs); display: inline-flex; gap: 5px; align-items: center; font-family: var(--font-ui); }
+.shell-nav-kbd { opacity: 0; transition: opacity var(--fast); }
+.shell-nav-item:hover .shell-nav-kbd, .shell-nav-item:focus-visible .shell-nav-kbd { opacity: 1; }
+
+.shell-sidebar-scroll { flex: 1; overflow-y: auto; padding: 4px 8px 12px; scrollbar-width: thin; scrollbar-color: var(--line-strong) transparent; min-width: var(--sidebar-w); }
+.shell[data-compact] .shell-sidebar-scroll { min-width: 0; }
+.shell-sidebar-empty { color: var(--ink-3); font-size: var(--text-sm); padding: 12px 10px; margin: 0; }
+.shell-nav-group { margin-top: 14px; }
+.shell-nav-group ul { margin: 0; padding: 0; list-style: none; }
+.shell-nav-group-title { margin: 0; font-size: var(--text-xs); font-weight: 600; color: var(--ink-3); padding: 0 10px 4px; letter-spacing: 0.01em; }
+.shell-thread-row { position: relative; display: flex; align-items: center; border-radius: 9px; }
+.shell-thread-row:hover, .shell-thread-row[data-menu] { background: var(--hover); }
+.shell-thread-row[data-active] { background: var(--active); }
+.shell-thread-link {
+	flex: 1; min-width: 0; height: 34px; line-height: 34px; padding: 0 10px; text-align: left; white-space: nowrap; overflow: hidden;
+	text-overflow: ellipsis; color: var(--ink-2); font-size: var(--text-md); border-radius: 9px; text-decoration: none;
+	mask-image: linear-gradient(to right, #000 calc(100% - 28px), transparent);
+}
+.shell-thread-row[data-active] .shell-thread-link { color: var(--ink); font-weight: 550; }
+.shell-thread-row:hover .shell-thread-link, .shell-thread-row:focus-within .shell-thread-link { mask-image: linear-gradient(to right, #000 calc(100% - 44px), transparent); }
+.shell-thread-more {
+	position: absolute; right: 4px; display: grid; place-items: center; width: 28px; height: 28px; border-radius: 7px;
+	color: var(--ink-2); opacity: 0; background: none; border: 0; cursor: pointer;
+}
+.shell-thread-row:hover .shell-thread-more, .shell-thread-more:focus-visible, .shell-thread-row[data-menu] .shell-thread-more, .shell-thread-row[data-active] .shell-thread-more { opacity: 1; }
+.shell-thread-more:hover { background: var(--active); color: var(--ink); }
+.shell-thread-more:disabled { opacity: 0.3; cursor: not-allowed; }
+@media (hover: none) { .shell-thread-more { opacity: 1; } }
+
+.shell-sidebar-foot { padding: 8px; border-top: 1px solid var(--line); min-width: var(--sidebar-w); }
+.shell[data-compact] .shell-sidebar-foot { min-width: 0; }
+.shell-local-note { display: flex; align-items: center; gap: 6px; margin: 0; padding: 6px 10px 2px; font-size: var(--text-xs); color: var(--ink-3); white-space: nowrap; }
+/* Open WebUI attribution (license requirement): keep visible and legible. */
+.shell-credit { display: flex; align-items: center; gap: 6px; margin: 0; padding: 2px 10px 4px; font-size: var(--text-xs); color: var(--ink-3); white-space: nowrap; }
+.shell-credit-logo { width: 14px; height: 14px; border-radius: 50%; flex-shrink: 0; }
+
+/* ------------------------------------------------------------------ main + top bar */
+.shell-main-column { display: flex; flex-direction: column; min-width: 0; height: 100%; overflow: hidden; }
+.shell-topbar {
+	display: flex; align-items: center; justify-content: space-between; gap: 12px; height: var(--topbar-h);
+	padding: 0 12px; flex-shrink: 0;
+}
+.shell-topbar-start, .shell-topbar-end { display: flex; align-items: center; gap: 4px; min-width: 0; }
+.shell-topbar-start { flex: 1; }
+.shell-topbar-end { gap: 6px; flex-shrink: 0; }
+.shell-topbar-title { margin: 0; font-size: var(--text-md); font-weight: 550; color: var(--ink-2); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; padding: 0 8px; }
+.shell-temp-badge { display: inline-flex; align-items: center; gap: 6px; padding: 3px 10px; border-radius: 999px; font-size: var(--text-xs); font-weight: 600; color: var(--ink-2); border: 1px dashed var(--line-strong); white-space: nowrap; }
+
+.shell-status-pill {
+	display: inline-flex; align-items: center; gap: 8px; height: 30px; padding: 0 12px; border-radius: 999px;
+	font-size: var(--text-sm); font-weight: 550; color: var(--ink-2); background: none; border: 0; cursor: pointer;
+}
+.shell-status-pill:hover { background: var(--hover); color: var(--ink); }
+.shell-status-dot { width: 8px; height: 8px; border-radius: 50%; background: var(--accent); box-shadow: 0 0 0 3px var(--accent-soft); }
+.shell-status-pill[data-state='checking'] .shell-status-dot,
+.shell-status-pill[data-state='needs-documents'] .shell-status-dot { background: var(--saffron); box-shadow: 0 0 0 3px var(--warn-soft); }
+.shell-status-pill[data-state='checking'] .shell-status-dot { animation: ui-pulse 1.2s infinite; }
+.shell-status-pill[data-state='unavailable'] { color: var(--danger); }
+.shell-status-pill[data-state='unavailable'] .shell-status-dot { background: var(--danger); box-shadow: 0 0 0 3px var(--danger-soft); }
+.shell-status-popover { width: min(340px, calc(100vw - 16px)); }
+.shell-status-popover .ui-status-list { margin: 10px 0 0; }
+.shell-status-setting { display: flex; align-items: center; justify-content: space-between; gap: 12px; margin-top: 14px; padding-top: 12px; border-top: 1px solid var(--line); font-size: var(--text-sm); font-weight: 550; }
+.shell-status-hint { margin: 2px 0 0; color: var(--ink-3); font-size: var(--text-xs); }
+
+.shell-main { position: relative; flex: 1; min-height: 0; overflow: auto; outline: none; }
+/* The pinned chat sizes itself to the viewport; inside the shell the column already accounts for it. */
+.shell-main #chat-container { height: 100%; max-height: 100%; max-width: 100%; }
+/* The attachment menu only offers workflows this build does not support; the shell owns the sidebar toggle. */
+.shell-main #sidebar-toggle-button, .shell-main #input-menu-button { display: none; }
+
+/* ------------------------------------------------------------------ side document panel */
+.shell-viewer { min-width: 0; height: 100%; border-left: 1px solid var(--line); background: var(--paper-sunken); animation: shell-slide-in var(--base) var(--ease); }
+@keyframes shell-slide-in { from { opacity: 0; transform: translateX(16px); } }
+
+@media (max-width: 860px) {
+	.shell-topbar { padding: 0 8px; }
+}
+@media (max-width: 480px) {
+	.shell-temp-badge { display: none; }
+	.shell-status-pill { padding: 0 8px; }
+	.shell-status-pill > span:last-child { position: absolute !important; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); }
+}

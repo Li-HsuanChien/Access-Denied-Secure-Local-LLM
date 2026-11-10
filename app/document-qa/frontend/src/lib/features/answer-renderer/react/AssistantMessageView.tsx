@@ -1,15 +1,41 @@
 import { NativeDropdown } from "../../desktop-shell/react/NativeDropdown";
 import { useI18n } from "@/react/i18n";
-// Assistant chrome translated from pinned Open WebUI ResponseMessage; see frontend LICENSE.
-import { useEffect, useRef, useState } from "react";
+import { useEffect, useId, useRef, useState, type ReactElement } from "react";
 import type { AssistantMessageViewProps } from "../../react-contracts/rendering";
+import {
+  answerBasis,
+  answerNotices,
+  type AnswerBasis,
+} from "../../answering/react/chatController";
+import { answerBasisLabel, workspaceVoice } from "../../personality/presentation";
+import {
+  Button,
+  ConfirmDialog,
+  IconAlert,
+  IconBook,
+  IconButton,
+  IconCheck,
+  IconChevronLeft,
+  IconChevronRight,
+  IconCompose,
+  IconCopy,
+  IconInfo,
+  IconRefresh,
+  IconSparkle,
+  IconTrash,
+  PendingDots,
+  Popover,
+} from "@/lib/features/design-system/react";
 import { ChatAnswer } from "./ChatAnswer";
 import { Icon } from "./Icon";
-import { Modal } from "./Modal";
-import { useTooltips } from "./useTooltips";
 import "./renderer.css";
-const action =
-  "p-1.5 hover:bg-black/5 dark:hover:bg-white/5 rounded-lg dark:hover:text-white hover:text-black transition";
+
+const basisIcon: Record<AnswerBasis, ReactElement> = {
+  documents: <IconBook size={16} />,
+  general: <IconSparkle size={16} />,
+  none: <IconInfo size={16} />,
+};
+
 export function AssistantMessageView({
   message,
   branch,
@@ -23,7 +49,6 @@ export function AssistantMessageView({
   canDelete,
 }: AssistantMessageViewProps) {
   const { t } = useI18n();
-  const tooltipRoot = useTooltips<HTMLDivElement>("bottom");
   const [editing, setEditing] = useState(false),
     [edited, setEdited] = useState(message.content),
     [menu, setMenu] = useState(false),
@@ -31,9 +56,13 @@ export function AssistantMessageView({
     [confirm, setConfirm] = useState(false),
     [branchEdit, setBranchEdit] = useState(false),
     [branchValue, setBranchValue] = useState(String(branch.index)),
-    [copied, setCopied] = useState(false);
+    [copied, setCopied] = useState(false),
+    [detailsOpen, setDetailsOpen] = useState(false),
+    [detailsAnchor, setDetailsAnchor] = useState<HTMLButtonElement | null>(null);
   const textarea = useRef<HTMLTextAreaElement>(null),
-    menuTrigger = useRef<HTMLButtonElement>(null);
+    menuTrigger = useRef<HTMLButtonElement>(null),
+    deleteTrigger = useRef<HTMLButtonElement>(null);
+  const detailsTitle = useId();
   useEffect(() => {
     setEditing(false);
     setEdited(message.content);
@@ -63,41 +92,71 @@ export function AssistantMessageView({
       onSelectBranch(number);
     setBranchEdit(false);
   };
-  const timestamp = new Date(message.createdAt);
+  const answer = message.answer;
+  const basis =
+    answer && message.status === "complete" && answer.status !== "failed"
+      ? answerBasis(answer)
+      : null;
+  const notices = message.status === "complete" ? answerNotices(answer) : [];
+
+  if (message.status === "pending")
+    return (
+      <div
+        className={`qa-msg qa-msg-assistant renderer-assistant message-${message.id}`}
+        id={`message-${message.id}`}
+      >
+        <div className="qa-pending" role="status">
+          <PendingDots />
+          <span className="qa-pending-text">{workspaceVoice.answerPending}</span>
+        </div>
+      </div>
+    );
+
   return (
-    <div
-      ref={tooltipRoot}
-      className={`renderer-assistant flex w-full message-${message.id}`}
+    <article
+      className={`qa-msg qa-msg-assistant renderer-assistant message-${message.id}`}
       id={`message-${message.id}`}
+      data-basis={basis ?? undefined}
+      aria-label={basis ? answerBasisLabel(basis) : "Answer"}
       style={{ scrollMarginTop: "3rem" }}
     >
-      <div className="shrink-0 mr-2 hidden @lg:flex mt-0.5">
-        <img
-          aria-hidden="true"
-          src="/static/favicon.png"
-          className="size-7 assistant-message-profile-image object-cover rounded-2xl"
-          alt="profile"
-          draggable="false"
-        />
-      </div>
-      <div className="flex-auto w-0 pl-1 relative">
-        <div className="self-center text-[0.9375rem] font-normal line-clamp-1 flex gap-1 items-center">
-          <span
-            id="response-message-model-name"
-            className="line-clamp-1 text-black dark:text-white"
-            title="Document Assistant"
-          >
-            Document Assistant
-          </span>
+      {basis && (
+        <p className="qa-basis">
+          {basisIcon[basis]}
+          <span>{answerBasisLabel(basis)}</span>
+        </p>
+      )}
+      {message.status === "error" ? (
+        <div role="alert" className="ui-callout ui-callout-error qa-failure">
+          <IconAlert size={18} />
+          <div>
+            <p>
+              <strong>No answer this time.</strong>{" "}
+              {message.error ?? workspaceVoice.answerFailed}
+              {answer?.error?.hint ? ` ${answer.error.hint}` : ""} Your question
+              is still above.
+            </p>
+            {canRegenerate && (
+              <Button
+                size="sm"
+                variant="secondary"
+                icon={<IconRefresh size={15} />}
+                onClick={() => onRegenerate()}
+              >
+                Try again
+              </Button>
+            )}
+          </div>
         </div>
-        <div className="chat-assistant w-full min-w-full">
+      ) : (
+        <>
           {editing && (
-            <div className="w-full bg-gray-50 dark:bg-gray-800 rounded-3xl px-3 py-3 my-2">
+            <div className="qa-edit">
               <textarea
                 ref={textarea}
                 id={`message-edit-${message.id}`}
                 aria-label="Edit message"
-                className="bg-transparent outline-hidden focus-visible:outline-none! w-full resize-none text-[0.9375rem]"
+                className="qa-edit-input"
                 value={edited}
                 onChange={(event) => {
                   setEdited(event.target.value);
@@ -106,108 +165,90 @@ export function AssistantMessageView({
                 }}
                 onKeyDown={(event) => {
                   if (event.key === "Escape") setEditing(false);
-                  if (
-                    (event.ctrlKey || event.metaKey) &&
-                    event.key === "Enter"
-                  ) {
+                  if ((event.ctrlKey || event.metaKey) && event.key === "Enter") {
                     event.preventDefault();
                     save(false);
                   }
                 }}
               />
-              <div className="mt-2 flex justify-between text-sm font-normal">
-                <button
-                  type="button"
-                  id="save-new-message-button"
-                  className="px-2.5 py-1 bg-gray-50 hover:bg-gray-100 dark:bg-gray-800 dark:hover:bg-gray-700 border border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-200 transition rounded-3xl"
-                  onClick={() => save(true)}
-                >
+              <p className="qa-edit-note">
+                Edits change only this view. Sources stay tied to the original answer.
+              </p>
+              <div className="qa-edit-actions">
+                <Button size="sm" variant="ghost" id="save-new-message-button" onClick={() => save(true)}>
                   {t("Save As Copy")}
-                </button>
-                <div className="flex space-x-1.5">
-                  <button
-                    type="button"
-                    id="close-edit-message-button"
-                    className="px-2.5 py-1 bg-white dark:bg-gray-900 hover:bg-gray-100 text-gray-800 dark:text-gray-100 transition rounded-3xl"
-                    onClick={() => setEditing(false)}
-                  >
-                    {t("Cancel")}
-                  </button>
-                  <button
-                    type="button"
-                    id="confirm-edit-message-button"
-                    className="px-2.5 py-1 bg-gray-900 dark:bg-white hover:bg-gray-850 text-gray-100 dark:text-gray-800 transition rounded-3xl"
-                    onClick={() => save(false)}
-                  >
-                    {t("Save")}
-                  </button>
-                </div>
+                </Button>
+                <span className="qa-edit-spacer" />
+                <Button size="sm" variant="ghost" id="close-edit-message-button" onClick={() => setEditing(false)}>
+                  {t("Cancel")}
+                </Button>
+                <Button size="sm" variant="primary" id="confirm-edit-message-button" onClick={() => save(false)}>
+                  {t("Save")}
+                </Button>
               </div>
             </div>
           )}
           <div
-            className={`w-full flex flex-col relative ${editing ? "hidden" : ""}`}
+            className={`qa-answer-body ${editing ? "hidden" : ""}`}
             id="response-content-container"
           >
-            {message.answer && message.status !== "pending" && message.answer.status !== "failed" && (
-              <div className="answer-basis">
-                {message.answer.documents.length ? t("Based on your documents") : message.answer.general_knowledge ? t("General knowledge · no supporting documents") : t("No supporting documents")}
-              </div>
-            )}
             {message.content && (
               <ChatAnswer
                 key={message.id}
                 messageId={message.id}
                 content={message.content}
-                citations={message.answer?.citations ?? []}
-                collectionVersion={message.answer?.collection_version}
+                citations={answer?.citations ?? []}
+                collectionVersion={answer?.collection_version}
                 onNavigate={onNavigate}
                 onSaveContent={(content) => onSaveEdit(content, false)}
               />
             )}
-            {message.status === "pending" && (
-              <div
-                className="text-[0.9375rem] leading-relaxed"
-                aria-label="Answer in progress"
-              >
-                <span className="inline-block w-[0.125rem] h-3.5 bg-gray-400 dark:bg-gray-500 ml-0.5 animate-pulse align-text-bottom" />
-              </div>
-            )}
-            {message.status === "error" && (
-              <div
-                role="alert"
-                className="my-1.5 flex w-full items-start gap-2 rounded-2xl bg-black/[0.03] px-3 py-2 text-gray-500 dark:bg-white/[0.04] dark:text-gray-400"
-              >
-                <Icon
-                  name="info"
-                  className="mt-0.5 size-4 shrink-0 text-gray-400 dark:text-gray-500"
-                  strokeWidth={1.8}
-                />
-                <div className="min-w-0 break-words text-[0.8125rem] leading-5">
-                  {message.error ?? message.content}
-                </div>
-              </div>
-            )}
           </div>
-        </div>
-        {!editing && message.status !== "pending" && (
-          <div className="renderer-assistant-actions flex items-center justify-start whitespace-nowrap buttons text-gray-600 dark:text-gray-500 mt-0.5 [&>*]:shrink-0">
-            {branch.count > 1 && (
-              <div className="flex self-center min-w-fit" dir="ltr">
-                <button
-                  type="button"
-                  aria-label={t("Previous message")}
-                  className="self-center p-1 hover:bg-black/5 dark:hover:bg-white/5 dark:hover:text-white hover:text-black rounded-md transition"
-                  onClick={() => onSelectBranch(Math.max(1, branch.index - 1))}
-                >
-                  <Icon
-                    name="previous"
-                    className="size-3.5"
-                    strokeWidth={2.5}
-                  />
+          {notices.length > 0 && (
+            <div className="ui-callout ui-callout-warn qa-notice">
+              <IconAlert size={16} />
+              {notices.length === 1 ? (
+                <span>{notices[0]}</span>
+              ) : (
+                <ul>
+                  {notices.map((n) => (
+                    <li key={n}>
+                      <span>{n}</span>
+                    </li>
+                  ))}
+                </ul>
+              )}
+            </div>
+          )}
+          {message.historyWarning && (
+            <p className="ui-callout ui-callout-warn qa-notice" role="status">
+              <IconAlert size={16} />
+              <span>
+                {message.historyWarning} It stays here until you leave this chat.
+              </span>
+              {canRegenerate && (
+                <button type="button" className="ui-link-btn" onClick={() => onRegenerate()}>
+                  Ask again
                 </button>
+              )}
+            </p>
+          )}
+        </>
+      )}
+      {!editing && (
+        <div className="qa-msg-foot renderer-assistant-actions">
+          <div className="qa-msg-actions">
+            {branch.count > 1 && (
+              <div className="qa-branch" dir="ltr">
+                <IconButton
+                  size="sm"
+                  tooltip={false}
+                  label={t("Previous message")}
+                  icon={<IconChevronLeft size={15} />}
+                  onClick={() => onSelectBranch(Math.max(1, branch.index - 1))}
+                />
                 {branchEdit ? (
-                  <div className="text-sm flex justify-center font-normal self-center dark:text-gray-100 min-w-fit">
+                  <span className="qa-branch-count">
                     <input
                       aria-label="Message branch"
                       type="number"
@@ -225,68 +266,66 @@ export function AssistantMessageView({
                         }
                         if (event.key === "Escape") setBranchEdit(false);
                       }}
-                      className="renderer-branch-input bg-transparent font-normal self-center dark:text-gray-100 min-w-fit outline-hidden"
+                      className="renderer-branch-input"
                     />
                     /{branch.count}
-                  </div>
+                  </span>
                 ) : (
-                  <div
-                    className="text-sm tracking-widest font-normal self-center dark:text-gray-100 min-w-fit"
+                  <span
+                    className="qa-branch-count"
                     onDoubleClick={() => {
                       setBranchValue(String(branch.index));
                       setBranchEdit(true);
                     }}
                   >
                     {branch.index}/{branch.count}
-                  </div>
+                  </span>
                 )}
-                <button
-                  type="button"
-                  aria-label={t("Next message")}
-                  className="self-center p-1 hover:bg-black/5 dark:hover:bg-white/5 dark:hover:text-white hover:text-black rounded-md transition"
-                  onClick={() =>
-                    onSelectBranch(Math.min(branch.count, branch.index + 1))
-                  }
-                >
-                  <Icon name="next" className="size-3.5" strokeWidth={2.5} />
-                </button>
+                <IconButton
+                  size="sm"
+                  tooltip={false}
+                  label={t("Next message")}
+                  icon={<IconChevronRight size={15} />}
+                  onClick={() => onSelectBranch(Math.min(branch.count, branch.index + 1))}
+                />
               </div>
             )}
-            <button
-              type="button"
-              aria-label={t("Edit")}
-              title={t("Edit")}
-              className={action}
-              onClick={() => {
-                setEdited(message.content);
-                setEditing(true);
-              }}
-            >
-              <Icon name="edit" />
-            </button>
-            <button
-              type="button"
-              aria-label={t("Copy")}
-              title={copied ? t("Copied") : t("Copy")}
-              className={`${action} copy-response-button`}
-              onClick={() => {
-                void onCopy().then(() => {
-                  setCopied(true);
-                  setTimeout(() => setCopied(false), 1000);
-                });
-              }}
-            >
-              <Icon name={copied ? "check" : "copy"} />
-            </button>
+            {message.status !== "error" && (
+              <IconButton
+                size="sm"
+                side="top"
+                className="copy-response-button"
+                label={copied ? t("Copied") : t("Copy")}
+                icon={copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
+                onClick={() => {
+                  void onCopy().then(() => {
+                    setCopied(true);
+                    setTimeout(() => setCopied(false), 1600);
+                  });
+                }}
+              />
+            )}
+            {message.status !== "error" && (
+              <IconButton
+                size="sm"
+                side="top"
+                label={t("Edit")}
+                icon={<IconCompose size={16} />}
+                onClick={() => {
+                  setEdited(message.content);
+                  setEditing(true);
+                }}
+              />
+            )}
             {canRegenerate && (
-              <div className="relative">
-                <button
-                  type="button"
+              <span className="qa-regenerate">
+                <IconButton
                   ref={menuTrigger}
-                  aria-label={t("Regenerate")}
-                  title={t("Regenerate")}
+                  size="sm"
+                  side="top"
+                  label={t("Regenerate")}
                   aria-expanded={menu}
-                  className={action}
+                  icon={<IconRefresh size={16} />}
                   onClick={() => setMenu(!menu)}
                   onKeyDown={(event) => {
                     if (event.key === "Enter" || event.key === " ") {
@@ -294,9 +333,7 @@ export function AssistantMessageView({
                       setMenu(!menu);
                     }
                   }}
-                >
-                  <Icon name="reset" />
-                </button>
+                />
                 <NativeDropdown
                   open={menu}
                   onOpenChange={setMenu}
@@ -304,138 +341,152 @@ export function AssistantMessageView({
                   sideOffset={-2}
                   className="renderer-regenerate-menu"
                 >
-                  <div>
-                    <div className="app-dropdown-menu rounded-xl! p-0.5! border border-gray-100 dark:border-gray-800 z-50 bg-white dark:bg-gray-850 dark:text-white shadow-lg max-w-[12.5rem] transition [&>button]:flex [&>button]:w-full [&>button]:h-[1.6875rem] [&>button]:items-center [&>button]:gap-2 [&>button]:rounded-xl! [&>button]:px-2! [&>button]:text-[0.8125rem] [&>button:hover]:bg-gray-50/60 dark:[&>button:hover]:bg-gray-800/60 [&>a]:flex [&>a]:w-full [&>a]:h-[1.6875rem] [&>a]:items-center [&>a]:gap-2 [&>a]:rounded-xl! [&>a]:px-2! [&>a]:text-[0.8125rem] [&>a:hover]:bg-gray-50/60 dark:[&>a:hover]:bg-gray-800/60 [&>button_svg]:size-3.5 [&>a_svg]:size-3.5 [&>hr]:my-0.5 [&>hr]:mx-1">
-                      <div className="py-1 px-2 flex dark:text-gray-100">
-                        <input
-                          type="text"
-                          id="floating-message-input"
-                          className="bg-transparent outline-hidden w-full flex-1 text-[0.8125rem]"
-                          placeholder={t("Suggest a change")}
-                          value={suggestion}
-                          autoComplete="off"
-                          onChange={(event) =>
-                            setSuggestion(event.target.value)
-                          }
-                          onKeyDown={(event) => {
-                            if (event.key === "Enter") regenerate(suggestion);
-                          }}
-                        />
-                        <div className="ml-2 self-center flex items-center">
-                          <button
-                            type="button"
-                            aria-label={t("Submit suggestion")}
-                            className={`${suggestion ? "bg-black text-white hover:bg-gray-900 dark:bg-white dark:text-black dark:hover:bg-gray-100" : "text-white bg-gray-200 dark:text-gray-900 dark:bg-gray-700 disabled"} transition rounded-full p-1 self-center`}
-                            onClick={() => regenerate(suggestion)}
-                          >
-                            <svg
-                              xmlns="http://www.w3.org/2000/svg"
-                              viewBox="0 0 16 16"
-                              fill="currentColor"
-                              className="size-3.5"
-                            >
-                              <path
-                                fillRule="evenodd"
-                                d="M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z"
-                                clipRule="evenodd"
-                              />
-                            </svg>
-                          </button>
-                        </div>
-                      </div>
-                      <hr className="border-gray-50/30 dark:border-gray-800/30 my-0.5 mx-1" />
-                      {(
-                        [
-                          ["Try Again", "reset"],
-                          ["Add Details", "detailsMore"],
-                          ["More Concise", "detailsLess"],
-                        ] as const
-                      ).map(([label, icon]) => (
-                        <button
-                          key={label}
-                          type="button"
-                          className="select-none flex h-[1.6875rem] w-full items-center gap-2 rounded-xl px-2 text-[0.8125rem] cursor-pointer hover:bg-gray-50/40 dark:hover:bg-gray-800/40"
-                          onClick={() =>
-                            regenerate(
-                              label === "Try Again" ? undefined : t(label),
-                            )
-                          }
-                        >
-                          <Icon
-                            name={icon}
-                            className="size-3.5"
-                            strokeWidth={2}
+                  <div className="qa-regen-menu">
+                    <div className="qa-regen-suggest">
+                      <input
+                        type="text"
+                        id="floating-message-input"
+                        placeholder={t("Suggest a change")}
+                        value={suggestion}
+                        autoComplete="off"
+                        onChange={(event) => setSuggestion(event.target.value)}
+                        onKeyDown={(event) => {
+                          if (event.key === "Enter") regenerate(suggestion);
+                        }}
+                      />
+                      <button
+                        type="button"
+                        aria-label={t("Submit suggestion")}
+                        className="qa-regen-submit"
+                        data-ready={suggestion ? "" : undefined}
+                        onClick={() => regenerate(suggestion)}
+                      >
+                        <svg viewBox="0 0 16 16" fill="currentColor" width="14" height="14" aria-hidden="true">
+                          <path
+                            fillRule="evenodd"
+                            d="M8 14a.75.75 0 0 1-.75-.75V4.56L4.03 7.78a.75.75 0 0 1-1.06-1.06l4.5-4.5a.75.75 0 0 1 1.06 0l4.5 4.5a.75.75 0 0 1-1.06 1.06L8.75 4.56v8.69A.75.75 0 0 1 8 14Z"
+                            clipRule="evenodd"
                           />
-                          <div className="flex items-center">{t(label)}</div>
-                        </button>
-                      ))}
+                        </svg>
+                      </button>
                     </div>
+                    <hr />
+                    {(
+                      [
+                        ["Try Again", "reset"],
+                        ["Add Details", "detailsMore"],
+                        ["More Concise", "detailsLess"],
+                      ] as const
+                    ).map(([label, icon]) => (
+                      <button
+                        key={label}
+                        type="button"
+                        className="qa-regen-item"
+                        onClick={() => regenerate(label === "Try Again" ? undefined : t(label))}
+                      >
+                        <Icon name={icon} className="size-3.5" strokeWidth={2} />
+                        <span>{t(label)}</span>
+                      </button>
+                    ))}
                   </div>
                 </NativeDropdown>
-              </div>
+              </span>
+            )}
+            {answer && (
+              <IconButton
+                ref={setDetailsAnchor}
+                size="sm"
+                side="top"
+                label="Answer details"
+                aria-haspopup="dialog"
+                aria-expanded={detailsOpen}
+                icon={<IconInfo size={16} />}
+                onClick={() => setDetailsOpen((o) => !o)}
+              />
             )}
             {canDelete && (
-              <button
-                type="button"
-                aria-label={t("Delete")}
-                title={t("Delete")}
+              <IconButton
+                ref={deleteTrigger}
+                size="sm"
+                side="top"
                 id="delete-response-button"
-                className={action}
+                label={t("Delete")}
+                icon={<IconTrash size={16} />}
                 onClick={() => setConfirm(true)}
-              >
-                <Icon name="delete" />
-              </button>
+              />
             )}
-            <time
-              dateTime={timestamp.toISOString()}
-              title={timestamp.toLocaleString()}
-              className="hover-reveal ml-1 shrink-0 whitespace-nowrap text-[0.6875rem] tabular-nums text-gray-400 dark:text-gray-600 select-none"
-            >
-              {timestamp.toLocaleString(undefined, {
-                month: "short",
-                day: "numeric",
-                hour: "numeric",
-                minute: "2-digit",
-              })}
-            </time>
           </div>
-        )}
-      </div>
-      {confirm && (
-        <Modal
-          label={t("Delete message?")}
-          onClose={() => setConfirm(false)}
-          confirm
-        >
-          <div className="px-5 py-5 flex flex-col">
-            <div className="text-base font-medium dark:text-gray-200 mb-2.5">
-              {t("Delete message?")}
-            </div>
-            <div className="text-sm text-gray-500 flex-1">
-              {t("This action cannot be undone. Do you wish to continue?")}
-            </div>
-            <div className="mt-5 flex justify-between gap-1.5">
-              <button
-                type="button"
-                className="text-sm bg-gray-100 hover:bg-gray-100/70 text-gray-800 dark:bg-gray-850 dark:text-white font-normal w-full py-1.5 rounded-full transition"
-                onClick={() => setConfirm(false)}
-              >
-                {t("Cancel")}
-              </button>
-              <button
-                type="button"
-                className="text-sm bg-gray-900 text-gray-100 dark:bg-gray-100 dark:text-gray-800 font-normal w-full py-1.5 rounded-full transition"
-                onClick={() => {
-                  setConfirm(false);
-                  onDelete();
-                }}
-              >
-                {t("Confirm")}
-              </button>
-            </div>
-          </div>
-        </Modal>
+        </div>
       )}
-    </div>
+      {answer && (
+        <Popover
+          anchor={detailsAnchor}
+          open={detailsOpen}
+          onClose={() => setDetailsOpen(false)}
+          labelledBy={detailsTitle}
+          side="top"
+          align="start"
+          className="qa-details-popover"
+        >
+          <h2 id={detailsTitle} className="ui-popover-title">
+            Answer details
+          </h2>
+          <dl className="ui-status-list">
+            <div>
+              <dt>Model</dt>
+              <dd>
+                {answer.model
+                  ? `${answer.model.name}${answer.model.quant ? ` · ${answer.model.quant}` : ""}`
+                  : "Not reported"}
+              </dd>
+            </div>
+            <div>
+              <dt>Time</dt>
+              <dd>{(answer.timing.total_ms / 1000).toFixed(1)} seconds</dd>
+            </div>
+            <div>
+              <dt>Passages used</dt>
+              <dd>{answer.evidence.length || "None"}</dd>
+            </div>
+            <div>
+              <dt>Library version</dt>
+              <dd>{answer.collection_version ?? "None"}</dd>
+            </div>
+            <div>
+              <dt>Answered</dt>
+              <dd>
+                <time dateTime={new Date(message.createdAt).toISOString()}>
+                  {new Date(message.createdAt).toLocaleString(undefined, {
+                    month: "short",
+                    day: "numeric",
+                    hour: "numeric",
+                    minute: "2-digit",
+                  })}
+                </time>
+              </dd>
+            </div>
+            {message.historyWarning && (
+              <div>
+                <dt>Saved</dt>
+                <dd>Not saved to history</dd>
+              </div>
+            )}
+          </dl>
+        </Popover>
+      )}
+      <ConfirmDialog
+        open={confirm}
+        title={t("Delete message?")}
+        description={t("This action cannot be undone. Do you wish to continue?")}
+        confirmLabel={t("Delete")}
+        cancelLabel={t("Cancel")}
+        returnFocus={deleteTrigger.current}
+        onCancel={() => setConfirm(false)}
+        onConfirm={() => {
+          setConfirm(false);
+          onDelete();
+        }}
+      />
+    </article>
   );
 }

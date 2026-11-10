@@ -2,6 +2,7 @@ import type { ChatSession, ChatMessage } from '../react-contracts';
 import { readAnswer } from '../../../react/providers/history';
 import { formatAnswerForChat } from '../answering/react/chatController';
 import { ClientError } from '../answering/answeringClient';
+import { parseTimestamp } from '../design-system/react/primitives';
 
 /** Rebuild the React graph; validate every stored answer before rendering. */
 export function restoreConversation(saved: Record<string, unknown>): ChatSession {
@@ -15,7 +16,7 @@ export function restoreConversation(saved: Record<string, unknown>): ChatSession
   if (!['user', 'assistant'].includes(String(turn.role)) || typeof turn.content !== 'string') throw invalid();
   const id = `saved-${index}`;
   const answer = turn.answer == null ? null : readAnswer(turn.answer);
-  const base = { id, parentId: currentId, childIds: [], createdAt: Date.parse(String(turn.created_at)) || 0, content: answer ? formatAnswerForChat(answer) : turn.content };
+  const base = { id, parentId: currentId, childIds: [], createdAt: parseTimestamp(String(turn.created_at)), content: answer ? formatAnswerForChat(answer) : turn.content };
   messages[id] = turn.role === 'user' ? { ...base, role: 'user' } : {
    ...base, role: 'assistant', status: answer?.status === 'failed' ? 'error' : 'complete',
    answer, error: answer?.error?.message ?? null, historyWarning: null

@@ -247,7 +247,7 @@ export function Diagram({
   }, [source, language]);
   return (
     <div
-      className="relative flex flex-col rounded-2xl border border-gray-100/30 dark:border-gray-850/30 my-0.5 overflow-clip"
+      className="renderer-diagram-frame relative flex flex-col rounded-2xl border my-0.5 overflow-clip"
       dir="ltr"
     >
       {svg ? (

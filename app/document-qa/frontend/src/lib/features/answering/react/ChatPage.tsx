@@ -6,9 +6,9 @@ import {
   useState,
   useSyncExternalStore,
 } from "react";
-import Fuse from "fuse.js";
 import {
   useAnswering,
+  useHealth,
   useNavigation,
   usePreferences,
   useServices,
@@ -19,21 +19,30 @@ import type {
   UserMessage as UserMessageType,
 } from "../../react-contracts";
 import { AssistantMessageView } from "../../answer-renderer/react/AssistantMessageView";
-import { ChatAnswer } from "../../answer-renderer/react/ChatAnswer";
+import { workspaceVoice } from "../../personality/presentation";
+import {
+  Button,
+  IconButton,
+  IconCheck,
+  IconChevronDown,
+  IconChevronLeft,
+  IconChevronRight,
+  IconCompose,
+  IconCopy,
+  IconTemporary,
+  IconUpload,
+} from "@/lib/features/design-system/react";
 import {
   createChatController,
-  conversationText,
+  messageCopyText,
   messageSiblings,
   visibleMessages,
 } from "./chatController";
 import { Composer } from "./Composer";
-import { ChatEntrance } from "./chatMotion";
-import { NativeDropdown } from "@/lib/features/desktop-shell/react/NativeDropdown";
-import { Icon } from "./icons";
-import { Tooltip } from "./Tooltip";
 import { copyToClipboard } from "./clipboard";
 import "./chat.css";
 
+/** Starters fill the composer; the person finishes the question before sending it. */
 const suggestions = [
   {
     title: ["Summarize the key points", "of a document in my library"],
@@ -80,6 +89,82 @@ function useChatController(initialSession?: ChatSession) {
   }, [controller, answering.state.pending]);
   return { controller, session, pending: !!answering.state.pending };
 }
+
+function EmptyChat({
+  temporary,
+  composer,
+  disabled,
+  onSuggest,
+}: {
+  temporary: boolean;
+  composer: React.ReactNode;
+  disabled: boolean;
+  onSuggest: (text: string) => void;
+}) {
+  const { health, readiness } = useHealth();
+  const preferences = usePreferences();
+  const { navigate } = useNavigation();
+  const count = health?.library.document_count ?? null;
+  const noDocs = readiness === "needs-documents" || count === 0;
+  return (
+    <div className="qa-empty">
+      <div className="qa-hello">
+        {temporary ? (
+          <>
+            <span className="qa-hello-icon" aria-hidden="true">
+              <IconTemporary size={22} />
+            </span>
+            <h1 className="qa-hello-title">Temporary Chat</h1>
+            <p className="qa-hello-sub">
+              This chat is not saved; follow-up memory unavailable.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="qa-hello-title">{workspaceVoice.homeTitle}</h1>
+            <p className="qa-hello-sub">
+              {noDocs
+                ? preferences.state.generalKnowledge
+                  ? "No documents are in your library yet, so I can only answer from general knowledge."
+                  : "No documents are in your library yet. Add PDFs to get answers you can check page by page."
+                : count
+                  ? `I’ll answer from your ${count} ${count === 1 ? "document" : "documents"} and show you the page behind every claim.`
+                  : "I’ll answer from your documents and show you the page behind every claim."}
+            </p>
+          </>
+        )}
+        {composer}
+        {noDocs && !temporary && (
+          <Button
+            variant="secondary"
+            icon={<IconUpload size={16} />}
+            onClick={() => navigate("/library")}
+          >
+            Add PDFs to your library
+          </Button>
+        )}
+        <ul className="qa-suggestions" aria-label="Suggested questions">
+          {suggestions.map((s) => (
+            <li key={s.content}>
+              <button
+                type="button"
+                className="qa-suggestion chat-suggestion"
+                disabled={disabled}
+                onClick={() => onSuggest(s.content)}
+              >
+                <span className="qa-suggestion-label">{s.title[0]}</span>
+                <span className="qa-suggestion-q">{s.title[1]}</span>
+              </button>
+            </li>
+          ))}
+        </ul>
+        {/* LICENSE covers this Open WebUI identifier. https://docs.openwebui.com/license */}
+        <p className="qa-version">Access Denied ‧ v0.11.4</p>
+      </div>
+    </div>
+  );
+}
+
 export function ChatPage({ initialSession }: { initialSession?: ChatSession }) {
   const { t } = useI18n();
   const [isWebKit] = useState(
@@ -89,27 +174,36 @@ export function ChatPage({ initialSession }: { initialSession?: ChatSession }) {
   );
   const { controller, session, pending } = useChatController(initialSession),
     { navigate, route } = useNavigation();
+  const { readiness } = useHealth();
   useLayoutEffect(() => {
     document.title = "Access Denied";
-    // Original mounted MessageInput's hidden VoiceRecording handles Escape even while inactive.
-    // Register with Chat before later-opened dropdowns, so their restore check sees composer focus.
-    const escape = (event: KeyboardEvent) => {
-      if (event.key === "Escape")
-        document.getElementById("chat-input")?.focus();
-    };
-    window.addEventListener("keydown", escape);
-    return () => window.removeEventListener("keydown", escape);
   }, []);
-  const [orderedSuggestions] = useState(() =>
-    [...suggestions].sort(() => Math.random() - 0.5),
-  );
-  const [menu, setMenu] = useState(false),
-    [atBottom, setAtBottom] = useState(true);
+  const [atBottom, setAtBottom] = useState(true);
+  const [announce, setAnnounce] = useState("");
   const scroll = useRef<HTMLDivElement>(null),
-    autoScroll = useRef(true),
-    menuRef = useRef<HTMLButtonElement>(null);
+    autoScroll = useRef(true);
   const messages = visibleMessages(session),
     empty = messages.length === 0;
+  const last = messages.at(-1);
+  const lastState = last?.role === "assistant" ? last.status : null;
+  const awaiting = useRef(new Set<string>());
+  useEffect(() => {
+    // Announce the single pending status and then completion once per answer asked in this view
+    // (not for restored threads). The persistent region is used because a role="status" element that
+    // mounts with its text already present is not reliably announced.
+    if (!last || last.role !== "assistant") return;
+    if (lastState === "pending") {
+      if (!awaiting.current.has(last.id)) setAnnounce(workspaceVoice.answerPending);
+      awaiting.current.add(last.id);
+      return;
+    }
+    if (!awaiting.current.delete(last.id)) return;
+    setAnnounce(
+      lastState === "error"
+        ? "The answer could not be completed."
+        : workspaceVoice.answerReady,
+    );
+  }, [last?.id, lastState]);
   const copy = async (text: string) => {
     await copyToClipboard(text);
   };
@@ -117,7 +211,7 @@ export function ChatPage({ initialSession }: { initialSession?: ChatSession }) {
     const element = scroll.current;
     if (!autoScroll.current || !element) return;
     element.scrollTop = element.scrollHeight;
-    // As in Messages.svelte, account for content-visibility's next-frame layout.
+    // Account for content-visibility's next-frame layout.
     const frame = requestAnimationFrame(() => {
       if (autoScroll.current) element.scrollTop = element.scrollHeight;
     });
@@ -127,350 +221,144 @@ export function ChatPage({ initialSession }: { initialSession?: ChatSession }) {
     autoScroll.current = true;
     controller.selectBranch(parentId, childId);
   };
-  const matches =
-    session.draft.length > 500
-      ? []
-      : session.draft.trim()
-        ? new Fuse(orderedSuggestions, {
-            keys: ["content", "title"],
-            threshold: 0.5,
-          })
-            .search(session.draft.trim())
-            .map((x) => x.item)
-        : orderedSuggestions;
   const composer = (
-    <Composer session={session} controller={controller} pending={pending} />
+    <Composer
+      session={session}
+      controller={controller}
+      pending={pending}
+      temporary={route.temporary}
+    />
   );
+  const liveRegion = (
+    <p className="ui-sr-only" aria-live="polite">
+      {announce}
+    </p>
+  );
+  if (empty)
+    return (
+      <div
+        id="chat-container"
+        className="chat-react qa-chat qa-chat-empty"
+        data-temporary={route.temporary || undefined}
+      >
+        <EmptyChat
+          temporary={route.temporary}
+          composer={composer}
+          disabled={readiness === "unavailable"}
+          onSuggest={(text) => {
+            controller.setDraft(text);
+            const input = document.getElementById("chat-input");
+            if (input) {
+              input.focus();
+              // Caret to the end so the person can finish the question.
+              const range = document.createRange();
+              range.selectNodeContents(input);
+              range.collapse(false);
+              const sel = window.getSelection();
+              sel?.removeAllRanges();
+              sel?.addRange(range);
+            }
+          }}
+        />
+        {liveRegion}
+      </div>
+    );
   return (
     <div
       id="chat-container"
-      className="chat-react h-full max-h-full w-full min-w-0 flex flex-col"
+      className="chat-react qa-chat"
+      data-temporary={route.temporary || undefined}
     >
-      {route.temporary && <div className="text-center text-xs text-gray-500" role="note" title="Messages are kept only in this view; follow-up memory is unavailable.">Temporary Chat — not saved; follow-up memory unavailable</div>}
-      <ChatEntrance>
-        <nav
-          className={`chat-navbar sticky top-0 z-30 w-full pt-0.5 pb-1 -mb-12 flex flex-col items-center ${empty ? "chat-navbar-empty" : ""}`}
-        >
-          <div className="flex items-center w-full pl-1.5 pr-1">
-            <div
-              id="navbar-bg-gradient-to-b"
-              className={`${empty ? "invisible" : "visible"} bg-linear-to-b via-40% to-97% from-white/90 via-white/50 to-transparent dark:from-gray-900/90 dark:via-gray-900/50 dark:to-transparent pointer-events-none absolute inset-0 -bottom-10 z-[-1]`}
-            />
-            <div
-              aria-hidden="true"
-              className="chat-native-sidebar-slot mr-1 flex-none self-center"
-            />
-            <div className="chat-nav-title flex-1 overflow-hidden max-w-full mt-0.5 py-0.5 pl-1">
+      <div
+        id="messages-container"
+        ref={scroll}
+        className="qa-thread-scroll"
+        onScroll={() => {
+          const el = scroll.current!;
+          autoScroll.current =
+            el.scrollHeight - el.scrollTop <= el.clientHeight + 5;
+          setAtBottom(autoScroll.current);
+        }}
+      >
+        <section className="qa-thread" aria-labelledby="chat-conversation">
+          <h2 id="chat-conversation" className="ui-sr-only">
+            {t("Chat Conversation")}
+          </h2>
+          {messages.map((message) => {
+            const siblings = messageSiblings(session, message);
+            return (
               <div
-                className={`flex min-w-0 items-center gap-2 ${empty ? "invisible" : ""}`}
+                key={message.id}
+                className={`qa-turn message-listitem ${isWebKit ? "" : "message-virtualized"}`}
               >
-                <div className="truncate py-1 text-[0.9375rem] text-gray-700 dark:text-gray-300">
-                  {t("New Chat")}
-                </div>
-                {!empty && (
-                  <div className="relative">
-                    <button
-                      ref={menuRef}
-                      id="chat-context-menu-button"
-                      aria-label={t("Chat actions")}
-                      className="flex size-6 shrink-0 cursor-pointer items-center justify-center rounded-lg text-gray-500 transition hover:bg-gray-50/40 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800/40 dark:hover:text-gray-200"
-                      onClick={(event) => {
-                        event.preventDefault();
-                        setMenu((v) => !v);
-                      }}
-                    >
-                      <Icon
-                        name="dots"
-                        className="size-4.5"
-                        strokeWidth="1.5"
-                      />
-                    </button>
-                    <NativeDropdown
-                      open={menu}
-                      onOpenChange={setMenu}
-                      triggerRef={menuRef}
-                      sideOffset={8}
-                    >
-                      <div className="chat-actions-menu">
-                        <button
-                          id="chat-copy-button"
-                          type="button"
-                          onClick={() => {
-                            void copy(conversationText(session));
-                            setMenu(false);
-                          }}
-                        >
-                          <Icon
-                            name="copy"
-                            className="size-3.5"
-                            strokeWidth="1.5"
-                          />
-                          <div className="flex items-center">{t("Copy")}</div>
-                        </button>
-                      </div>
-                    </NativeDropdown>
-                  </div>
+                {message.role === "user" ? (
+                  <UserMessageView
+                    message={message}
+                    session={session}
+                    controller={controller}
+                    pending={pending}
+                    onCopy={() => copy(message.content)}
+                    onSelectBranch={(id) => select(message.parentId, id)}
+                  />
+                ) : (
+                  <AssistantMessageView
+                    message={message}
+                    branch={{
+                      index: siblings.indexOf(message.id) + 1,
+                      count: siblings.length,
+                    }}
+                    onNavigate={(path) => navigate(path)}
+                    onCopy={() => copy(messageCopyText(message))}
+                    onSelectBranch={(index) => {
+                      const id =
+                        siblings[
+                          Math.max(0, Math.min(index - 1, siblings.length - 1))
+                        ];
+                      if (id) select(message.parentId, id);
+                    }}
+                    onSaveEdit={(text, asCopy) =>
+                      controller.saveAssistantEdit(message.id, text, asCopy)
+                    }
+                    onRegenerate={(suggestion) => {
+                      autoScroll.current = true;
+                      controller.regenerate(message.id, suggestion);
+                    }}
+                    onDelete={() => controller.deleteAssistant(message.id)}
+                    canRegenerate={!pending && readiness !== "unavailable"}
+                    canDelete={!pending && siblings.length > 1}
+                  />
                 )}
               </div>
-            </div>
+            );
+          })}
+        </section>
+      </div>
+      <div className="qa-chat-bottom chat-bottom-composer">
+        {!atBottom && (
+          <div className="qa-scroll-bottom">
+            <IconButton
+              label={t("Scroll to bottom")}
+              tooltip={false}
+              icon={<IconChevronDown size={18} />}
+              onClick={() => {
+                autoScroll.current = true;
+                scroll.current?.scrollTo({
+                  top: scroll.current.scrollHeight,
+                  behavior: window.matchMedia?.("(prefers-reduced-motion: reduce)")?.matches
+                    ? "auto"
+                    : "smooth",
+                });
+              }}
+            />
           </div>
-          {!empty && (
-            <div className="w-full text-center text-xs text-gray-500">
-              {route.temporary ? t("Temporary Chat") : "Local conversation"}
-            </div>
-          )}
-        </nav>
-        <div
-          id="chat-pane"
-          className="flex flex-col flex-auto z-10 w-full @container overflow-auto min-h-0"
-        >
-          {empty ? (
-            <div className="flex items-center h-full">
-              <div className="m-auto w-full max-w-[58rem] px-1 @2xl:px-20 translate-y-6 py-24 text-center">
-                <Tooltip
-                  className="w-full flex justify-center mb-0.5"
-                  content={t(
-                    route.temporary
-                      ? "This chat won't appear in history. Messages are kept only in this view; follow-up memory is unavailable."
-                      : "Conversations are saved locally when history is enabled.",
-                  )}
-                >
-                  <div className="flex items-center gap-1.5 text-gray-500 text-xs my-1 w-fit">
-                    <Icon name="eye" className="size-3.5" />
-                    {route.temporary ? t("Temporary Chat") : "Local conversation"}
-                  </div>
-                </Tooltip>
-                <div className="w-full text-3xl text-gray-800 dark:text-gray-100 text-center flex items-center gap-4">
-                  <div className="w-full flex flex-col justify-center items-center">
-                    <div className="flex flex-row justify-center gap-2.5 @sm:gap-3 w-fit px-5 max-w-xl">
-                      <div className="flex shrink-0 justify-center">
-                        <div className="flex -space-x-4 mb-0.5">
-                          <button
-                            aria-hidden="true"
-                            aria-label={t(
-                              "Get information on {{name}} in the UI",
-                              { name: "Document Assistant" },
-                            )}
-                          >
-                            <img
-                              src="/favicon.png"
-                              className="size-9 @sm:size-10 rounded-2xl"
-                              alt=""
-                              aria-hidden="true"
-                              draggable="false"
-                            />
-                          </button>
-                        </div>
-                      </div>
-                      <div className="text-2xl line-clamp-1 flex items-center">
-                        <span className="line-clamp-1">Document Assistant</span>
-                      </div>
-                    </div>
-                    <div className="flex mt-1 mb-2">
-                      <div />
-                    </div>
-                    <div className="text-base font-normal @md:max-w-3xl w-full py-3">
-                      <div className="bg-transparent">
-                        <div className="max-w-[58rem] px-2 mx-auto">
-                          {composer}
-                        </div>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-                <div className="mx-auto max-w-2xl mt-2">
-                  <div className="mx-5">
-                    <div className="mb-1 flex gap-1 text-xs font-normal items-center text-gray-600 dark:text-gray-400">
-                      {matches.length ? (
-                        <>
-                          <Icon
-                            name="bolt"
-                            className="size-3"
-                            strokeWidth="1.5"
-                          />
-                          {t("Suggested")}
-                        </>
-                      ) : (
-                        <div className="flex w-full self-start text-center items-center justify-center">
-                          {/* LICENSE covers this Open WebUI identifier. https://docs.openwebui.com/license */}
-                          Access Denied ‧ v0.11.4
-                        </div>
-                      )}
-                    </div>
-                    <div className="h-36 w-full">
-                      {matches.length > 0 && (
-                        <div
-                          role="list"
-                          className="max-h-36 overflow-auto scrollbar-none items-start"
-                        >
-                          {matches.map((prompt, idx) => (
-                            <button
-                              role="listitem"
-                              key={prompt.content}
-                              className="chat-suggestion flex flex-col flex-1 shrink-0 w-full justify-between px-2.5 py-1.5 rounded-lg bg-transparent transition-colors hover:text-gray-950 dark:hover:text-white group"
-                              style={{ animationDelay: `${idx * 45}ms` }}
-                              onClick={() => {
-                                autoScroll.current = true;
-                                controller.submit(prompt.content);
-                              }}
-                            >
-                              <div className="flex flex-col text-left leading-snug">
-                                <div className="text-sm font-normal transition group-hover:text-gray-950 dark:text-gray-300 dark:group-hover:text-white line-clamp-1">
-                                  {prompt.title[0]}
-                                </div>
-                                <div className="text-xs text-gray-600 group-hover:text-gray-900 dark:text-gray-400 dark:group-hover:text-gray-100 line-clamp-1">
-                                  {prompt.title[1]}
-                                </div>
-                              </div>
-                            </button>
-                          ))}
-                        </div>
-                      )}
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div
-                id="messages-container"
-                ref={scroll}
-                className="pb-2.5 flex flex-col justify-between w-full flex-auto overflow-auto h-0 max-w-full z-10 scrollbar-hidden"
-                onScroll={() => {
-                  const el = scroll.current!;
-                  autoScroll.current =
-                    el.scrollHeight - el.scrollTop <= el.clientHeight + 5;
-                  setAtBottom(autoScroll.current);
-                }}
-              >
-                <div className="h-full w-full flex flex-col">
-                  <div className="h-full flex pt-18">
-                    <div className="w-full pt-2">
-                      <section
-                        className="w-full"
-                        aria-labelledby="chat-conversation"
-                      >
-                        <h2 id="chat-conversation" className="sr-only">
-                          {t("Chat Conversation")}
-                        </h2>
-                        <div
-                          role="log"
-                          aria-live="polite"
-                          aria-relevant="additions"
-                          aria-atomic="false"
-                        >
-                          {messages.map((message) => {
-                            const siblings = messageSiblings(session, message);
-                            return (
-                              <div
-                                role="listitem"
-                                key={message.id}
-                                className={`flex flex-col justify-between px-3.5 mb-3 w-full max-w-[58rem] mx-auto rounded-lg group message-listitem ${isWebKit ? "" : "message-virtualized"}`}
-                              >
-                                {message.role === "user" ? (
-                                  <UserMessageView
-                                    message={message}
-                                    session={session}
-                                    controller={controller}
-                                    pending={pending}
-                                    onCopy={() => copy(message.content)}
-                                    onSelectBranch={(id) =>
-                                      select(message.parentId, id)
-                                    }
-                                  />
-                                ) : (
-                                  <AssistantMessageView
-                                    message={message}
-                                    branch={{
-                                      index: siblings.indexOf(message.id) + 1,
-                                      count: siblings.length,
-                                    }}
-                                    onNavigate={(path) => navigate(path)}
-                                    onCopy={() => copy(message.content)}
-                                    onSelectBranch={(index) => {
-                                      const id =
-                                        siblings[
-                                          Math.max(
-                                            0,
-                                            Math.min(
-                                              index - 1,
-                                              siblings.length - 1,
-                                            ),
-                                          )
-                                        ];
-                                      if (id) select(message.parentId, id);
-                                    }}
-                                    onSaveEdit={(text, asCopy) =>
-                                      controller.saveAssistantEdit(
-                                        message.id,
-                                        text,
-                                        asCopy,
-                                      )
-                                    }
-                                    onRegenerate={(suggestion) => {
-                                      autoScroll.current = true;
-                                      controller.regenerate(
-                                        message.id,
-                                        suggestion,
-                                      );
-                                    }}
-                                    onDelete={() =>
-                                      controller.deleteAssistant(message.id)
-                                    }
-                                    canRegenerate={!pending}
-                                    canDelete={!pending && siblings.length > 1}
-                                  />
-                                )}
-                              </div>
-                            );
-                          })}
-                        </div>
-                      </section>
-                      <div className="pb-18" />
-                    </div>
-                  </div>
-                </div>
-              </div>
-              <div className="chat-bottom-composer pb-2 z-10 relative">
-                {!atBottom && (
-                  <div className="absolute -top-12 left-0 right-0 flex justify-center z-30 pointer-events-none">
-                    <button
-                      aria-label={t("Scroll to bottom")}
-                      title={t("Scroll to bottom")}
-                      className="bg-white border border-gray-100 dark:border-none dark:bg-white/20 p-1.5 rounded-full pointer-events-auto"
-                      onClick={() => {
-                        autoScroll.current = true;
-                        scroll.current?.scrollTo({
-                          top: scroll.current.scrollHeight,
-                          behavior: "smooth",
-                        });
-                      }}
-                    >
-                      <svg
-                        className="w-5 h-5"
-                        viewBox="0 0 20 20"
-                        fill="currentColor"
-                        aria-hidden="true"
-                      >
-                        <path
-                          fillRule="evenodd"
-                          clipRule="evenodd"
-                          d="M10 3a.75.75 0 0 1 .75.75v10.638l3.96-4.158a.75.75 0 1 1 1.08 1.04l-5.25 5.5a.75.75 0 0 1-1.08 0l-5.25-5.5a.75.75 0 1 1 1.08-1.04l3.96 4.158V3.75A.75.75 0 0 1 10 3Z"
-                        />
-                      </svg>
-                    </button>
-                  </div>
-                )}
-                <div className="max-w-[58rem] px-2 mx-auto">{composer}</div>
-              </div>
-            </>
-          )}
-        </div>
-      </ChatEntrance>
+        )}
+        {composer}
+      </div>
+      {liveRegion}
     </div>
   );
 }
+
 function UserMessageView({
   message,
   session,
@@ -487,10 +375,10 @@ function UserMessageView({
   onSelectBranch: (id: string) => void;
 }) {
   const { t } = useI18n();
-  const { navigate } = useNavigation();
   const [edit, setEdit] = useState(false),
     [text, setText] = useState(message.content),
-    [indexEdit, setIndexEdit] = useState(false);
+    [indexEdit, setIndexEdit] = useState(false),
+    [copied, setCopied] = useState(false);
   const textarea = useRef<HTMLTextAreaElement>(null);
   const siblings = messageSiblings(session, message),
     index = siblings.indexOf(message.id) + 1;
@@ -507,196 +395,130 @@ function UserMessageView({
   };
   return (
     <div
-      className="flex w-full user-message group"
+      className="qa-msg qa-msg-user user-message"
       id={`message-${message.id}`}
       style={{ scrollMarginTop: "3rem" }}
     >
-      <div className="flex-auto w-0 max-w-full pl-1">
-        <div className="chat-user w-full min-w-full">
-          {edit ? (
-            <div className="w-full bg-gray-50 dark:bg-gray-800 rounded-3xl px-4 py-3 mb-2">
-              <div className="max-h-96 overflow-auto">
-                <textarea
-                  id={`message-edit-${message.id}`}
-                  ref={textarea}
-                  aria-label="Edit message"
-                  className="bg-transparent outline-hidden w-full resize-none text-[0.9375rem]"
-                  value={text}
-                  onChange={(e) => {
-                    setText(e.target.value);
-                    e.target.style.height = "";
-                    e.target.style.height = `${e.target.scrollHeight}px`;
-                  }}
-                  onKeyDown={(e) => {
-                    if (e.key === "Escape") setEdit(false);
-                    if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
-                      e.preventDefault();
-                      save(true);
-                    }
-                  }}
+      {edit ? (
+        <div className="qa-edit qa-edit-user">
+          <textarea
+            id={`message-edit-${message.id}`}
+            ref={textarea}
+            aria-label="Edit message"
+            className="qa-edit-input"
+            value={text}
+            onChange={(e) => {
+              setText(e.target.value);
+              e.target.style.height = "";
+              e.target.style.height = `${e.target.scrollHeight}px`;
+            }}
+            onKeyDown={(e) => {
+              if (e.key === "Escape") setEdit(false);
+              if (e.key === "Enter" && (e.metaKey || e.ctrlKey)) {
+                e.preventDefault();
+                save(true);
+              }
+            }}
+          />
+          <div className="qa-edit-actions">
+            <Button size="sm" variant="ghost" id="save-edit-message-button" onClick={() => save(false)}>
+              {t("Save")}
+            </Button>
+            <span className="qa-edit-spacer" />
+            <Button size="sm" variant="ghost" id="close-edit-message-button" onClick={() => setEdit(false)}>
+              {t("Cancel")}
+            </Button>
+            <Button
+              size="sm"
+              variant="primary"
+              id="confirm-edit-message-button"
+              disabled={pending}
+              onClick={() => save(true)}
+            >
+              {t("Send")}
+            </Button>
+          </div>
+        </div>
+      ) : (
+        <>
+          <div className="qa-bubble" dir="auto">
+            {message.content}
+          </div>
+          <div className="qa-msg-actions qa-msg-actions-user">
+            {siblings.length > 1 && (
+              <div className="qa-branch" dir="ltr">
+                <IconButton
+                  size="sm"
+                  tooltip={false}
+                  label={t("Previous message")}
+                  icon={<IconChevronLeft size={15} />}
+                  onClick={() => onSelectBranch(siblings[Math.max(0, index - 2)])}
+                />
+                {indexEdit ? (
+                  <span className="qa-branch-count">
+                    <input
+                      autoFocus
+                      type="number"
+                      aria-label="Message branch"
+                      min={1}
+                      max={siblings.length}
+                      defaultValue={index}
+                      onFocus={(e) => e.target.select()}
+                      className="chat-branch-input renderer-branch-input"
+                      onBlur={(e) => {
+                        onSelectBranch(
+                          siblings[
+                            Math.max(0, Math.min(Number(e.target.value) - 1, siblings.length - 1))
+                          ],
+                        );
+                        setIndexEdit(false);
+                      }}
+                      onKeyDown={(e) => {
+                        if (e.key === "Enter") e.currentTarget.blur();
+                      }}
+                    />
+                    /{siblings.length}
+                  </span>
+                ) : (
+                  <span className="qa-branch-count" onDoubleClick={() => setIndexEdit(true)}>
+                    {index}/{siblings.length}
+                  </span>
+                )}
+                <IconButton
+                  size="sm"
+                  tooltip={false}
+                  label={t("Next message")}
+                  icon={<IconChevronRight size={15} />}
+                  onClick={() =>
+                    onSelectBranch(siblings[Math.min(siblings.length - 1, index)])
+                  }
                 />
               </div>
-              <div className="mt-2 -mx-1 flex justify-between text-sm">
-                <button
-                  id="save-edit-message-button"
-                  className="px-2.5 py-1 border border-gray-100 dark:border-gray-700 text-gray-700 dark:text-gray-200 rounded-3xl"
-                  onClick={() => save(false)}
-                >
-                  {t("Save")}
-                </button>
-                <div className="flex space-x-1.5">
-                  <button
-                    id="close-edit-message-button"
-                    className="px-2.5 py-1 bg-white dark:bg-gray-900 rounded-3xl"
-                    onClick={() => setEdit(false)}
-                  >
-                    {t("Cancel")}
-                  </button>
-                  <button
-                    id="confirm-edit-message-button"
-                    disabled={pending}
-                    className="px-2.5 py-1 bg-gray-900 dark:bg-white text-gray-100 dark:text-gray-800 rounded-3xl"
-                    onClick={() => save(true)}
-                  >
-                    {t("Send")}
-                  </button>
-                </div>
-              </div>
-            </div>
-          ) : (
-            <>
-              <div className="w-full">
-                <div className="flex justify-end pb-1">
-                  <div className="rounded-3xl max-w-[90%] px-4 py-1.5 bg-gray-50 dark:bg-gray-850">
-                    <ChatAnswer
-                      messageId={message.id}
-                      content={message.content}
-                      citations={[]}
-                      onNavigate={(path) => navigate(path)}
-                      onSaveContent={(content) =>
-                        controller.saveUserEdit(message.id, content)
-                      }
-                    />
-                  </div>
-                </div>
-              </div>
-              <div className="flex justify-end text-gray-600 dark:text-gray-500">
-                <time
-                  dateTime={new Date(message.createdAt).toISOString()}
-                  title={new Date(message.createdAt).toLocaleString(undefined, {
-                    weekday: "long",
-                    year: "numeric",
-                    month: "long",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "2-digit",
-                  })}
-                  className="hover-reveal mr-2 self-center text-[0.6875rem] tabular-nums text-gray-400 dark:text-gray-600 select-none"
-                >
-                  {new Date(message.createdAt).toLocaleString(undefined, {
-                    month: "short",
-                    day: "numeric",
-                    hour: "numeric",
-                    minute: "2-digit",
-                  })}
-                </time>
-                <Tooltip content={t("Edit")} placement="bottom">
-                  <button
-                    aria-label={t("Edit")}
-                    className="hover-reveal p-1.5 rounded-lg edit-user-message-button"
-                    onClick={() => {
-                      setText(message.content);
-                      setEdit(true);
-                    }}
-                  >
-                    <Icon name="edit" className="size-4" strokeWidth="2.3" />
-                  </button>
-                </Tooltip>
-                <Tooltip content={t("Copy")} placement="bottom">
-                  <button
-                    aria-label={t("Copy")}
-                    className="hover-reveal p-1.5 rounded-lg"
-                    onClick={() => void onCopy()}
-                  >
-                    <Icon name="copy" className="size-4" strokeWidth="2.3" />
-                  </button>
-                </Tooltip>
-                {siblings.length > 1 && (
-                  <div className="flex self-center" dir="ltr">
-                    <button
-                      aria-label={t("Previous message")}
-                      className="self-center p-1 rounded-md"
-                      onClick={() =>
-                        onSelectBranch(siblings[Math.max(0, index - 2)])
-                      }
-                    >
-                      <Icon
-                        name="left"
-                        className="size-3.5"
-                        strokeWidth="2.5"
-                      />
-                    </button>
-                    {indexEdit ? (
-                      <div className="text-sm flex">
-                        <input
-                          autoFocus
-                          type="number"
-                          aria-label="Message branch"
-                          min={1}
-                          max={siblings.length}
-                          defaultValue={index}
-                          onFocus={(e) => e.target.select()}
-                          className="chat-branch-input"
-                          onBlur={(e) => {
-                            onSelectBranch(
-                              siblings[
-                                Math.max(
-                                  0,
-                                  Math.min(
-                                    Number(e.target.value) - 1,
-                                    siblings.length - 1,
-                                  ),
-                                )
-                              ],
-                            );
-                            setIndexEdit(false);
-                          }}
-                          onKeyDown={(e) => {
-                            if (e.key === "Enter") e.currentTarget.blur();
-                          }}
-                        />
-                        /{siblings.length}
-                      </div>
-                    ) : (
-                      <div
-                        className="text-sm tracking-widest"
-                        onDoubleClick={() => setIndexEdit(true)}
-                      >
-                        {index}/{siblings.length}
-                      </div>
-                    )}
-                    <button
-                      aria-label={t("Next message")}
-                      className="self-center p-1 rounded-md"
-                      onClick={() =>
-                        onSelectBranch(
-                          siblings[Math.min(siblings.length - 1, index)],
-                        )
-                      }
-                    >
-                      <Icon
-                        name="right"
-                        className="size-3.5"
-                        strokeWidth="2.5"
-                      />
-                    </button>
-                  </div>
-                )}
-              </div>
-            </>
-          )}
-        </div>
-      </div>
+            )}
+            <IconButton
+              size="sm"
+              label={t("Edit")}
+              className="edit-user-message-button"
+              icon={<IconCompose size={16} />}
+              onClick={() => {
+                setText(message.content);
+                setEdit(true);
+              }}
+            />
+            <IconButton
+              size="sm"
+              label={copied ? t("Copied") : t("Copy")}
+              icon={copied ? <IconCheck size={16} /> : <IconCopy size={16} />}
+              onClick={() =>
+                void onCopy().then(() => {
+                  setCopied(true);
+                  setTimeout(() => setCopied(false), 1600);
+                })
+              }
+            />
+          </div>
+        </>
+      )}
     </div>
   );
 }

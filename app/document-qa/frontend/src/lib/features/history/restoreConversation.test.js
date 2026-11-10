@@ -17,3 +17,8 @@ it('rejects malformed saved answers and unrecognized roles', () => {
 it('allows an empty thread without inventing messages', () => {
  expect(restoreConversation({ conversation_id: 'room', messages: [] })).toMatchObject({ id: 'room', messages: {}, currentId: null });
 });
+it('reads stored SQLite timestamps as UTC', () => {
+ const history = restoreConversation({ conversation_id: 'room', messages: [{ role: 'user', content: 'Q', created_at: '2026-11-10 14:00:00' }, { role: 'user', content: 'R', created_at: 'not a date' }] });
+ expect(history.messages['saved-0'].createdAt).toBe(Date.UTC(2026, 10, 10, 14, 0, 0));
+ expect(history.messages['saved-1'].createdAt).toBe(0);
+});

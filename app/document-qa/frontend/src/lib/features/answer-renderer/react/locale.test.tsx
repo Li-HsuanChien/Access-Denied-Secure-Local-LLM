@@ -19,7 +19,7 @@ it("uses the original translated source control keys and interpolation", async (
       onExpandedChange={expanded}
     />,
   );
-  expect(screen.getByText("1 Quelle")).toBeTruthy();
+  expect(screen.getByText(/^1 Quelle · 1 document$/)).toBeTruthy();
   fireEvent.click(screen.getByRole("button"));
   expect(expanded).toHaveBeenCalledWith(true);
 });

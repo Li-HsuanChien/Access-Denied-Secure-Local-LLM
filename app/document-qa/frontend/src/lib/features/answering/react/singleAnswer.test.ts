@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { createFixtureAnsweringClient } from "../fixtureAnsweringClient";
-import { formatAnswerForChat } from "./chatController";
+import { answerBasis, answerNotices, formatAnswerForChat } from "./chatController";
 
 describe("single answer presentation", () => {
   it("prefers cited document synthesis over supplementary general knowledge in legacy answers", async () => {
@@ -46,6 +46,19 @@ describe("single answer presentation", () => {
       ],
     });
     expect(text).toContain("No substitute is named.");
-    expect(text).toContain("Unsupported claims were withheld.");
+    // Safety warnings render once in the answer's notice, not inside the editable text.
+    expect(text).not.toContain("Unsupported claims were withheld.");
+    expect(answerNotices({ ...answer, warnings: [
+      { code: "citation_validation_failed", message: "Unsupported claims were withheld." },
+      { code: "citation_validation_failed", message: "Unsupported claims were withheld." },
+      { code: "insufficient_evidence", message: "No documents." },
+      { code: "history_save_failed", message: "Not saved." },
+    ] })).toEqual(["Unsupported claims were withheld."]);
+  });
+  it("labels each response with exactly one basis", async () => {
+    const answer = await createFixtureAnsweringClient({ delay: 0 }).ask("source", true);
+    expect(answerBasis({ ...answer, general_knowledge: "Extra." })).toBe("documents");
+    expect(answerBasis({ ...answer, documents: [], general_knowledge: "General." })).toBe("general");
+    expect(answerBasis({ ...answer, documents: [], general_knowledge: null })).toBe("none");
   });
 });

@@ -28,6 +28,7 @@ import { Icon } from "./Icon";
 import { PreviewPane } from "./PreviewPane";
 import { SourcePanel } from "./SourcePanel";
 import { useTooltips } from "./useTooltips";
+import { pageLabel } from "@/lib/features/design-system/react";
 import "./renderer.css";
 
 const alertThemes: Record<
@@ -91,7 +92,7 @@ function RawHtml({ text }: { text: string }) {
           <path
             d="M2 2h20l8 8v28H2Z M22 2v9h8 M10 10v5 M20 13v5 M9 29l3-3h7l3 3"
             fill="none"
-            stroke="#555"
+            stroke="currentColor"
             strokeWidth="2.5"
           />
         </svg>
@@ -119,10 +120,10 @@ function Writing({
       ? `${label} · ${attributes.recipient}`
       : label;
   return (
-    <div className="relative group my-2 rounded-2xl border border-gray-100 dark:border-gray-800 px-4 py-3">
+    <div className="relative group my-2 rounded-2xl qa-writing px-4 py-3">
       <div className="flex items-center justify-between gap-2 mb-2">
         <span
-          className="text-xs font-normal text-gray-500 dark:text-gray-400 truncate"
+          className="text-xs font-normal qa-muted truncate"
           dir="auto"
           title={header}
         >
@@ -167,7 +168,7 @@ function Detail({
         type="button"
         aria-expanded={open}
         onClick={() => setOpen(!open)}
-        className="py-0.5 text-[0.9375rem] text-gray-500 hover:text-gray-700 dark:hover:text-gray-300 transition block text-start disabled:cursor-default"
+        className="qa-details-toggle py-0.5 transition block text-start disabled:cursor-default"
       >
         <div className="w-full flex items-center justify-between gap-2">
           <div>{token.summary}</div>
@@ -205,9 +206,15 @@ export function MarkdownContent({
   onPreview,
   className = "markdown-prose",
   onCitation,
+  citationLabel,
+  activeCitation,
 }: {
   className?: string;
   onCitation?: (index: number, anchor: HTMLElement) => void;
+  /** Accessible name for inline citation chip `index` (one-based). */
+  citationLabel?: (index: number) => string;
+  /** One-based citation whose pop-up is open, for aria-expanded. */
+  activeCitation?: number | null;
   content: string;
   onNavigate: ChatAnswerProps["onNavigate"];
   onSaveContent: ChatAnswerProps["onSaveContent"];
@@ -249,7 +256,20 @@ export function MarkdownContent({
           rendered = <MathToken token={token} />;
           break;
         case "citation":
-          rendered = <>{(token.ids as number[] ?? []).map(id => <button key={id} type="button" className="citation-ref" aria-label={`View citation ${id}`} onClick={(event) => onCitation?.(id, event.currentTarget)}>[{id}]</button>)}</>;
+          rendered = <>{(token.ids as number[] ?? []).map(id => (
+            <button
+              key={id}
+              type="button"
+              className="citation-ref qa-cite"
+              aria-haspopup="dialog"
+              aria-expanded={activeCitation === id}
+              data-open={activeCitation === id || undefined}
+              aria-label={citationLabel?.(id) ?? `View citation ${id}`}
+              onClick={(event) => onCitation?.(id, event.currentTarget)}
+            >
+              {id}
+            </button>
+          ))}</>;
           break;
         case "footnote":
           rendered = (
@@ -269,7 +289,7 @@ export function MarkdownContent({
           rendered = (
             <span className="relative group w-fit flex items-center">
               <span
-                className="rounded-lg inline-flex h-[1.6875rem] min-w-8 gap-1.5 px-2 items-center justify-center overflow-hidden border border-gray-100/50 bg-gray-50/40 text-gray-500 dark:border-white/[0.04] dark:bg-white/[0.03] dark:text-gray-400"
+                className="qa-image-unavailable rounded-lg inline-flex h-[1.6875rem] min-w-8 gap-1.5 px-2 items-center justify-center overflow-hidden"
                 data-cy="image-unavailable"
               >
                 <Icon
@@ -311,7 +331,7 @@ export function MarkdownContent({
           rendered = null;
           break;
         case "hr":
-          rendered = <hr className="border-gray-50 dark:border-gray-850/30" />;
+          rendered = <hr />;
           break;
         case "heading":
           rendered = createElement(
@@ -414,16 +434,16 @@ export function MarkdownContent({
             <div className="relative w-full group mb-2">
               <div className="scrollbar-hidden relative overflow-x-auto max-w-full">
                 <table
-                  className="w-full text-sm text-start text-gray-500 dark:text-gray-400 max-w-full rounded-xl"
+                  className="qa-table w-full text-sm text-start max-w-full rounded-xl"
                   dir="auto"
                 >
-                  <thead className="text-xs text-gray-700 uppercase dark:text-gray-400 border-none">
+                  <thead className="text-xs uppercase border-none">
                     <tr>
                       {(token.header ?? []).map((cell, i) => (
                         <th
                           key={i}
                           scope="col"
-                          className="px-2.5! py-2! cursor-pointer border-b border-gray-100! dark:border-gray-800!"
+                          className="px-2.5! py-2! cursor-pointer"
                           style={
                             {
                               textAlign: token.align?.[i] ?? undefined,
@@ -445,7 +465,7 @@ export function MarkdownContent({
                         {row.map((cell, c) => (
                           <td
                             key={c}
-                            className={`px-3! py-2! text-gray-900 dark:text-white w-max ${r === (token.rows ?? []).length - 1 ? "" : "border-b border-gray-50! dark:border-gray-850!"}`}
+                            className={`px-3! py-2! w-max ${r === (token.rows ?? []).length - 1 ? "qa-last-row" : ""}`}
                             style={
                               {
                                 textAlign: token.align?.[c] ?? undefined,
@@ -545,11 +565,23 @@ export function ChatAnswer({
       data-message-id={messageId}
     >
       <MarkdownContent
+        className="markdown-prose qa-prose"
         content={content}
         onNavigate={onNavigate}
         onSaveContent={onSaveContent}
         onPreview={(kind, source) => setPreview({ kind, source })}
-        onCitation={(index, anchor) => { if (citations[index - 1]) { setCitationAnchor(anchor); setOpenCitation(index); } }}
+        activeCitation={openCitation}
+        citationLabel={(index) => {
+          const c = citations[index - 1];
+          return c ? `View citation ${index}: ${c.document_title}, ${pageLabel(c.page_start, c.page_end)}` : `View citation ${index}`;
+        }}
+        onCitation={(index, anchor) => {
+          if (!citations[index - 1]) return;
+          // A second press on the same chip closes its pop-up.
+          if (openCitation === index && citationAnchor === anchor) { setOpenCitation(null); return; }
+          setCitationAnchor(anchor);
+          setOpenCitation(index);
+        }}
       />
       <SourcePanel
         citations={citations}

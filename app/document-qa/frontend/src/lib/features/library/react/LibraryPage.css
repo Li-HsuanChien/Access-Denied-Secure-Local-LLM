@@ -1,15 +1,109 @@
-.library-page .picker { position: relative; display: grid; justify-items: center; gap: 2px; border: 1px dashed var(--workspace-line); border-radius: var(--workspace-radius-control); padding: var(--workspace-space-6) var(--workspace-space-4); text-align: center; cursor: pointer; transition: background-color var(--workspace-motion-fast), border-color var(--workspace-motion-fast); }
-.library-page .picker:hover, .library-page .picker:focus-within { border-color: var(--workspace-accent); background: var(--workspace-hover); }
-.library-page .picker.has-files { border-style: solid; }
-.library-page .picker:focus-within { outline: 2px solid var(--workspace-focus); outline-offset: 2px; }
-.library-page .picker input { position: absolute; inset: 0; opacity: 0; cursor: pointer; }
-.library-page .picker svg { width: 20px; height: 20px; margin-bottom: 4px; color: var(--workspace-accent); }
-.library-page .picker-title { font-weight: 500; }
-.library-page .picker .hint { max-width: 100%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.library-page .rejected { color: var(--workspace-error); }
+/* Library view, ported from prototypes/ui-revamp/src/styles/views.css (classes prefixed `lib-`). */
 
-.library-page .document-switch { display: flex; align-items: center; gap: .5rem; margin-inline: 1rem; white-space: nowrap; }
-.library-page .document-title { display: block; text-align: left; color: var(--workspace-accent); text-decoration: underline; overflow-wrap: anywhere; }
-.library-page .document-title:focus-visible { outline: 2px solid var(--workspace-focus); outline-offset: 2px; }
-.library-preview { padding: 1.5rem; }
-.library-preview .heading, .library-preview .actions { display: flex; justify-content: space-between; gap: .5rem; margin-block: .5rem; }
+.lib-page { position: relative; width: min(52rem, 100%); margin: 0 auto; padding: 20px 28px 64px; display: flex; flex-direction: column; gap: 20px; color: var(--ink); font-size: var(--text-md); line-height: 1.55; }
+.lib-page p, .lib-page h1, .lib-page h2, .lib-page ul { margin: 0; }
+.lib-page ul { padding: 0; list-style: none; }
+.lib-head { display: flex; align-items: flex-end; justify-content: space-between; gap: 16px; flex-wrap: wrap; }
+.lib-title { font-family: var(--font-serif); font-size: var(--text-display); font-weight: 500; letter-spacing: -0.02em; line-height: 1.15; }
+.lib-sub { color: var(--ink-2); margin-top: 4px; }
+.lib-actions { display: flex; gap: 8px; }
+.lib-section-title { font-size: var(--text-lg); font-weight: 650; letter-spacing: -0.005em; outline: none; }
+.lib-section-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 3px; border-radius: 4px; }
+.lib-error-text { color: inherit; }
+.lib-loading { display: flex; align-items: center; gap: 8px; color: var(--ink-3); padding: 20px 8px; }
+
+/* Drop zone */
+.lib-dropzone {
+	display: flex; align-items: center; gap: 12px; width: 100%; padding: 16px 18px; border-radius: var(--radius-lg); text-align: left;
+	border: 1.5px dashed var(--line-strong); background: transparent; color: var(--ink-2); font: inherit; cursor: pointer;
+	transition: background var(--fast), border-color var(--fast);
+}
+.lib-dropzone strong { color: var(--ink); font-weight: 600; }
+.lib-dropzone:hover:not(:disabled), .lib-dropzone[data-dragging] { background: var(--paper-raised); border-color: var(--accent); }
+.lib-dropzone:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.lib-dropzone:disabled { opacity: 0.55; cursor: default; }
+.lib-dropzone svg { color: var(--accent); flex-shrink: 0; }
+.lib-drop-overlay {
+	position: fixed; inset: 12px; z-index: 40; display: grid; place-content: center; justify-items: center; gap: 8px; pointer-events: none;
+	border-radius: var(--radius-xl); border: 2px dashed var(--accent); background: color-mix(in srgb, var(--paper) 88%, transparent); color: var(--accent); font-weight: 600;
+}
+
+/* Review tray: a sunken, dashed staging area, clearly "not used in answers yet". */
+.lib-review { display: flex; flex-direction: column; gap: 14px; padding: 18px 18px 16px; border-radius: 18px; background: var(--paper-sunken); border: 1.5px dashed var(--line-strong); animation: ui-fade-up var(--base) var(--ease); }
+.lib-review[data-phase='done'] { border-style: solid; border-color: color-mix(in srgb, var(--accent) 35%, transparent); background: var(--accent-soft); }
+.lib-review-head { display: flex; align-items: flex-start; justify-content: space-between; gap: 12px; }
+.lib-review-eyebrow { color: var(--warn); margin-bottom: 2px; }
+.lib-review[data-phase='done'] .lib-review-eyebrow { color: var(--accent-soft-ink); }
+.lib-review-list { display: flex; flex-direction: column; gap: 2px; }
+.lib-review-row { display: flex; align-items: center; gap: 12px; padding: 8px 10px; border-radius: 12px; background: var(--paper-raised); }
+.lib-review-icon { display: grid; place-items: center; width: 26px; height: 26px; border-radius: 50%; flex-shrink: 0; color: var(--ink-3); background: var(--paper-sunken); }
+.lib-review-row[data-status='accepted'] .lib-review-icon { color: var(--accent-ink); background: var(--accent); }
+.lib-review-row[data-status='rejected'] .lib-review-icon { color: var(--danger); background: var(--danger-soft); }
+.lib-review-main { flex: 1; min-width: 0; }
+/* app.css (Open WebUI markdown) makes `li p` inline; Library rows need block lines. */
+.lib-page li p { display: block; }
+.lib-review-name { font-weight: 600; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.lib-review-row[data-status='rejected'] .lib-review-name { color: var(--ink-2); }
+.lib-review-meta { font-size: var(--text-sm); color: var(--ink-3); overflow-wrap: anywhere; }
+.lib-review-row[data-status='rejected'] .lib-review-meta { color: var(--danger); }
+.lib-review[data-phase='done'] .lib-review-meta { color: var(--ink-2); margin-top: 2px; }
+.lib-review-foot { display: flex; flex-direction: column; gap: 14px; }
+.lib-review-buttons { display: flex; justify-content: flex-end; gap: 8px; flex-wrap: wrap; }
+.lib-review-none { color: var(--ink-2); font-size: var(--text-sm); }
+
+/* Publication progress: indeterminate, because the coordinator only reports text and elapsed time. */
+.lib-progress-block { display: grid; gap: 6px; justify-items: start; }
+.lib-progress { position: relative; width: 100%; height: 6px; border-radius: 999px; background: var(--line); overflow: hidden; margin-bottom: 6px; }
+.lib-progress span { position: absolute; inset: 0 auto 0 0; width: 35%; border-radius: inherit; background: var(--accent); animation: lib-indeterminate 1.6s var(--ease) infinite; }
+@keyframes lib-indeterminate { from { transform: translateX(-100%); } to { transform: translateX(290%); } }
+.lib-progress-step { font-weight: 600; }
+.lib-progress-meta { font-size: var(--text-sm); color: var(--ink-2); font-variant-numeric: tabular-nums; }
+.lib-progress-note { font-size: var(--text-sm); color: var(--ink-3); }
+.lib-progress-block .ui-btn { margin-top: 6px; }
+@media (prefers-reduced-motion: reduce) {
+	.lib-progress span { animation: none; width: 100%; opacity: 0.55; }
+}
+
+/* Documents already in use */
+.lib-docs { display: flex; flex-direction: column; gap: 8px; }
+.lib-docs-head { display: flex; align-items: center; justify-content: space-between; gap: 12px; min-height: 32px; }
+.lib-filter { display: flex; align-items: center; gap: 6px; height: 32px; padding: 0 10px; border-radius: 9px; border: 1px solid var(--line); color: var(--ink-3); }
+.lib-filter:focus-within { border-color: var(--accent); outline: 2px solid var(--focus); outline-offset: 1px; }
+.lib-filter input { border: 0; outline: none; background: transparent; width: 140px; font: inherit; font-size: var(--text-sm); color: var(--ink); }
+.lib-doc-list { display: flex; flex-direction: column; }
+.lib-doc { display: flex; align-items: center; gap: 14px; padding: 12px 8px; border-bottom: 1px solid var(--line); transition: background var(--fast); }
+.lib-doc:first-child { border-top: 1px solid var(--line); }
+.lib-doc:hover { background: color-mix(in srgb, var(--paper-raised) 70%, transparent); }
+.lib-doc-icon { display: grid; place-items: center; width: 36px; height: 44px; border-radius: var(--radius-sm); background: var(--paper-raised); color: var(--accent); box-shadow: inset 0 0 0 1px var(--line); flex-shrink: 0; }
+.lib-doc[data-off] .lib-doc-icon { color: var(--ink-3); background: transparent; }
+.lib-doc-main { flex: 1; min-width: 0; }
+.lib-doc-title { display: block; max-width: 100%; padding: 0; border: 0; background: none; font: inherit; font-weight: 600; text-align: left; color: var(--ink); border-radius: 4px; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; cursor: pointer; }
+.lib-doc-title:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
+.lib-doc-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
+.lib-doc[data-off] .lib-doc-title { color: var(--ink-2); }
+.lib-doc-meta { font-size: var(--text-sm); color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.lib-doc-toggle { display: flex; align-items: center; gap: 10px; }
+.lib-doc-toggle-label { font-size: var(--text-sm); color: var(--ink-2); min-width: 7.5em; text-align: right; }
+.lib-doc[data-off] .lib-doc-toggle-label { color: var(--ink-3); }
+.lib-doc-empty { padding: 20px 8px; color: var(--ink-3); }
+
+/* Empty library */
+.lib-empty { display: flex; flex-direction: column; align-items: center; text-align: center; gap: 8px; padding: 40px 16px; }
+.lib-empty h2 { font-family: var(--font-serif); font-size: 1.375rem; font-weight: 500; }
+.lib-empty p { color: var(--ink-2); max-width: 26rem; }
+.lib-empty-art { margin-bottom: 8px; }
+
+@media (max-width: 860px) {
+	.lib-page { padding: 8px 16px 48px; }
+}
+@media (max-width: 600px) {
+	.lib-title { font-size: 1.625rem; }
+	.lib-doc { flex-wrap: wrap; gap: 10px 12px; }
+	.lib-doc-main { flex-basis: calc(100% - 100px); }
+	.lib-doc-toggle { order: 3; margin-left: 50px; }
+	.lib-doc-toggle-label { min-width: 0; text-align: left; }
+	.lib-doc > .ui-icon-btn { order: 2; margin-left: auto; }
+	.lib-doc-meta { white-space: normal; }
+	.lib-review { padding: 14px 12px; }
+	.lib-review-buttons .ui-btn { flex: 1; }
+}

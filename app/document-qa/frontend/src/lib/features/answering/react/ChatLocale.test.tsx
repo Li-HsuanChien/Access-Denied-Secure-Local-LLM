@@ -48,38 +48,15 @@ function mount() {
   }
   return { input, type };
 }
-it("translates original Chat/model/drawer keys with interpolation and English fallback while preserving product prompts", async () => {
+it("keeps product prompts and reading-room copy in English while translated chrome falls back cleanly", async () => {
   const x = mount();
-  expect(screen.getAllByText("Local conversation").length).toBeGreaterThan(
-    0,
-  );
-  expect(screen.getByText("Suggéré")).toBeTruthy();
+  // Product copy is English-only; the composer, greeting and starters are not translated.
+  expect(screen.getByRole("heading", { name: "What would you like to find out?" })).toBeTruthy();
   expect(screen.getByText("Summarize the key points")).toBeTruthy();
-  fireEvent.click(
-    screen.getByLabelText("Modèle sélectionné : Document Assistant"),
-  );
-  expect(screen.getByLabelText("Rechercher dans les modèles")).toBeTruthy();
-  expect(
-    screen.getByLabelText("Sélectionner le modèle Document Assistant"),
-  ).toBeTruthy();
-  expect(screen.getByText("Définir comme valeur par défaut")).toBeTruthy();
-  expect(screen.getByLabelText("Compare")).toBeTruthy(); // Original empty French value falls back.
-  x.type("/status");
-  fireEvent.keyDown(x.input, { key: "Enter" });
-  expect(screen.getByText("Context usage")).toBeTruthy();
-  x.type("first\nsecond\nthird");
-  fireEvent.click(screen.getByLabelText("Expand input"));
-  expect(screen.getByRole("dialog", { name: "Entrée" })).toBeTruthy();
-  expect(
-    screen.getByRole("textbox", { name: "Entrez votre message ici..." }),
-  ).toBeTruthy();
-  fireEvent.keyDown(
-    within(screen.getByRole("dialog")).getByRole("button", { name: "Fermer" }),
-    {
-      key: "Escape",
-    },
-  );
-  expect(screen.queryByRole("dialog")).toBeNull();
+  expect(x.input.getAttribute("aria-label")).toBe("Ask a question about your library…");
+  // The parity model picker, slash commands and expanded drawer were removed by the redesign.
+  expect(screen.queryByLabelText("Modèle sélectionné : Document Assistant")).toBeNull();
+  expect(screen.queryByLabelText("Expand input")).toBeNull();
 });
 it("translates active Chat and transient user edit actions without translating user content", async () => {
   const x = mount();
@@ -87,7 +64,6 @@ it("translates active Chat and transient user edit actions without translating u
     x.type("English question");
     fireEvent.keyDown(x.input, { key: "Enter" });
   });
-  expect(screen.getByText("Nouvelle conversation")).toBeTruthy();
   expect(screen.getByText("Conversation par chat")).toBeTruthy();
   const user = document.querySelector(".user-message")! as HTMLElement;
   expect(within(user).getByText("English question")).toBeTruthy();

@@ -73,7 +73,7 @@ describe('routed workflow lifetime', () => {
 		runtime.services.history.save = vi.fn().mockReturnValueOnce(saved.promise).mockResolvedValue(true);
 		render(<App runtime={runtime} />);
 		submit('old'); submit('discard old queued');
-		fireEvent.click(screen.getByRole('link', { name: 'History' })); await screen.findByRole('heading', { name: 'History' });
+		fireEvent.click(screen.getByRole('link', { name: 'Search chats' })); await screen.findByRole('heading', { name: 'History' });
 		fireEvent.click(screen.getByRole('link', { name: 'New Chat' })); submit('new');
 		expect(runtime.services.answering.ask).toHaveBeenCalledTimes(1);
 		await act(async () => { first.resolve(answerFor('old')); });
@@ -90,15 +90,19 @@ describe('routed workflow lifetime', () => {
 		const runtime = runtimeFor(window), write = deferred<{ general_knowledge: boolean }>();
 		runtime.services.settings.update = vi.fn().mockReturnValueOnce(write.promise).mockRejectedValueOnce(new Error('write rejected'));
 		render(<App runtime={runtime} />);
-		const header = screen.getByRole('switch', { name: 'Include general model knowledge' }) as HTMLInputElement;
+		// The shell's copy of the preference lives in the readiness popover (a role="switch" button).
+		fireEvent.click(screen.getByRole('button', { name: /Assistant status/ }));
+		const header = await screen.findByRole('switch', { name: 'Include general model knowledge' });
+		const headerOn = () => header.getAttribute('aria-checked') === 'true';
 		const settings = screen.getByRole('switch', { name: /Include general model knowledge by default/ }) as HTMLInputElement;
+		await waitFor(() => expect(headerOn()).toBe(true));
 		fireEvent.click(settings);
 		await waitFor(() => expect(runtime.services.settings.update).toHaveBeenCalledTimes(1));
-		expect(header.checked).toBe(true); expect(settings.checked).toBe(true);
+		expect(headerOn()).toBe(true); expect(settings.checked).toBe(true);
 		await act(async () => { write.resolve({ general_knowledge: false }); });
-		expect(header.checked).toBe(false); expect(settings.checked).toBe(false);
+		expect(headerOn()).toBe(false); expect(settings.checked).toBe(false);
 		fireEvent.click(settings); await screen.findByText('write rejected');
-		expect(header.checked).toBe(false); expect(settings.checked).toBe(false);
+		expect(headerOn()).toBe(false); expect(settings.checked).toBe(false);
 	});
 	it('a history save failure leaves the routed answer visible and permits the next question', async () => {
 		const runtime = runtimeFor(window);

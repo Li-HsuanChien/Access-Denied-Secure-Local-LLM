@@ -92,9 +92,8 @@ export function createChatController(deps: Dependencies) {
             ? (result.answer.error?.message ?? "The local workflow failed.")
             : null,
         answer: result.answer,
-        content:
-          formatAnswerForChat(result.answer) +
-          (result.historyWarning ? `\n\n> ${result.historyWarning}` : ""),
+        // Warnings and the history notice render once, beside the answer (see answerNotices).
+        content: formatAnswerForChat(result.answer),
         historyWarning: result.historyWarning,
       });
     } catch (error) {
@@ -279,9 +278,34 @@ export function messageSiblings(
 }
 export function conversationText(session: ChatSession) {
   return visibleMessages(session)
-    .map((m) => `### ${m.role.toUpperCase()}\n${m.content}\n\n`)
+    .map((m) => `### ${m.role.toUpperCase()}\n${messageCopyText(m)}\n\n`)
     .join("")
     .trim();
+}
+export type AnswerBasis = "documents" | "general" | "none";
+/** Exactly one basis per response; document claims win over legacy supplementary knowledge. */
+export function answerBasis(answer: Immutable<Answer>): AnswerBasis {
+  if (answer.documents.length) return "documents";
+  return answer.general_knowledge ? "general" : "none";
+}
+/** Safety notices shown once beside the answer. The basis label already explains absent
+ * evidence, and the history-save failure has its own note (AssistantMessage.historyWarning). */
+export function answerNotices(answer: Immutable<Answer> | null): string[] {
+  if (!answer || answer.status === "failed") return [];
+  return [
+    ...new Set(
+      answer.warnings
+        .filter((w) => w.code !== "insufficient_evidence" && w.code !== "history_save_failed")
+        .map((w) => w.message)
+        .filter(Boolean),
+    ),
+  ];
+}
+/** Whole-message copy: the (possibly edited) presentation plus the notices shown beside it. */
+export function messageCopyText(message: ChatMessage): string {
+  if (message.role !== "assistant") return message.content;
+  const notes = [...answerNotices(message.answer), ...(message.historyWarning ? [message.historyWarning] : [])];
+  return [message.content, ...notes.map((n) => `> ${n}`)].filter(Boolean).join("\n\n");
 }
 /** Select one evidence basis, including for older saved answers with both fields. */
 export function formatAnswerForChat(answer: Immutable<Answer>): string {
@@ -302,7 +326,6 @@ export function formatAnswerForChat(answer: Immutable<Answer>): string {
     parts.push("I couldn’t find enough evidence in your documents to answer this question.");
   }
   parts.push(...answer.limitations);
-  // The basis label already explains absent evidence; keep other safety notices.
-  parts.push(...answer.warnings.filter(w => w.code !== "insufficient_evidence").map(w => `> ${w.message}`));
+  // Warnings are not part of the editable answer text: the view shows answerNotices() once.
   return [...new Set(parts.filter(Boolean))].join("\n\n") || "The local workflow returned no answer content.";
 }

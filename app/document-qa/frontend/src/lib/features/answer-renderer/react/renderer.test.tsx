@@ -111,7 +111,7 @@ describe("native chat renderer", () => {
     expect(navigate).toHaveBeenCalledWith("/library");
     expect(screen.getByText("External").hasAttribute("href")).toBe(false);
   });
-  it("delegates assistant edit/save-as-copy, branch selection, regeneration and confirmed deletion", () => {
+  it("delegates assistant edit/save-as-copy, branch selection, regeneration and confirmed deletion", async () => {
     const save = vi.fn(),
       regenerate = vi.fn(),
       remove = vi.fn(),
@@ -142,8 +142,11 @@ describe("native chat renderer", () => {
     expect(regenerate).toHaveBeenCalledWith("More Concise");
     fireEvent.click(screen.getByRole("button", { name: /^Delete$/ }));
     expect(remove).not.toHaveBeenCalled();
-    fireEvent.click(screen.getByRole("button", { name: "Confirm" }));
-    expect(remove).toHaveBeenCalledOnce();
+    const confirm = screen.getByRole("alertdialog", { name: "Delete message?" });
+    // Focus starts on Cancel so a stray Enter cannot delete.
+    expect(document.activeElement).toBe(within(confirm).getByRole("button", { name: "Cancel" }));
+    fireEvent.click(within(confirm).getByRole("button", { name: "Delete" }));
+    await vi.waitFor(() => expect(remove).toHaveBeenCalledOnce());
   });
   it("keeps validated source quotes separate from edits and closes the quote modal with Escape", async () => {
     const answer = await createFixtureAnsweringClient({ delay: 0 }).ask(
@@ -171,20 +174,29 @@ describe("native chat renderer", () => {
         canDelete={false}
       /></AppProviders>,
     );
-    fireEvent.click(screen.getByRole("button", { name: "Toggle 1 source" }));
+    expect(screen.getByText("Based on your documents")).toBeTruthy();
+    const toggle = screen.getByRole("button", { name: "1 Source · 1 document" });
+    expect(toggle.getAttribute("aria-expanded")).toBe("false");
+    fireEvent.click(toggle);
+    expect(toggle.getAttribute("aria-expanded")).toBe("true");
     fireEvent.click(
       screen.getByRole("button", {
         name: "View source: QA Reference Guide · p. 2",
       }),
     );
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getByText("Exact source text")).toBeTruthy();
+    expect(within(dialog).getByText("Original text")).toBeTruthy();
+    expect(within(dialog).getByRole("heading", { name: answer.citations[0].document_title })).toBeTruthy();
     expect(within(dialog).getByText(answer.citations[0].quote)).toBeTruthy();
     expect(services.answering.fetchSource).not.toHaveBeenCalled();
     fireEvent.click(within(dialog).getByRole('button', { name: 'Show document page' }));
-    expect(services.answering.fetchSource).toHaveBeenCalledWith(answer.citations[0].document_id, answer.collection_version);
-    fireEvent.keyDown(window, { key: "Escape" });
+    // The pop-up closes and the shared viewer opens; it loads the PDF only when it calls load().
     expect(screen.queryByRole("dialog")).toBeNull();
+    const opened = runtime.documentViewer.getSnapshot().current!;
+    expect(opened).toMatchObject({ title: answer.citations[0].document_title, citation: answer.citations[0], page: answer.citations[0].page_start });
+    expect(services.answering.fetchSource).not.toHaveBeenCalled();
+    void opened.load();
+    expect(services.answering.fetchSource).toHaveBeenCalledWith(answer.citations[0].document_id, answer.collection_version);
     fireEvent.click(screen.getByRole("button", { name: /^Edit$/ }));
     fireEvent.change(screen.getByRole("textbox", { name: "Edit message" }), {
       target: { value: "Changed presentation" },
@@ -197,14 +209,20 @@ describe("native chat renderer", () => {
     const answer = await createFixtureAnsweringClient({ delay: 0 }).ask('source', true);
     const quote = '<img src="https://example.invalid/probe" onerror="alert(1)">';
     render(<ChatAnswer messageId="inline" content="A supported claim. [1]" citations={[{ ...answer.citations[0], quote }]} onNavigate={vi.fn()} onSaveContent={vi.fn()} />);
-    const trigger = screen.getByRole('button', { name: 'View citation 1' });
+    const trigger = screen.getByRole('button', { name: /^View citation 1: / });
+    expect(trigger.textContent).toBe('1');
+    expect(trigger.getAttribute('aria-expanded')).toBe('false');
     trigger.focus();
     fireEvent.click(trigger);
     const dialog = await screen.findByRole('dialog');
     expect(within(dialog).getByText(quote)).toBeTruthy();
     expect(dialog.querySelector('img')).toBeNull();
+    expect(within(dialog).getByText('Original text')).toBeTruthy();
+    expect(trigger.getAttribute('aria-expanded')).toBe('true');
+    // Non-modal: no scroll lock, no inert page, and no "Show document page" without a library version.
     expect(document.body.style.overflow).not.toBe('hidden');
-    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(within(dialog).queryByRole('button', { name: 'Show document page' })).toBeNull();
+    fireEvent.keyDown(document.activeElement!, { key: 'Escape' });
     expect(screen.queryByRole('dialog')).toBeNull();
     expect(document.activeElement).toBe(trigger);
     fireEvent.click(trigger);
@@ -212,7 +230,7 @@ describe("native chat renderer", () => {
     fireEvent.pointerDown(document.body);
     expect(screen.queryByRole('dialog')).toBeNull();
   });
-  it("retains the pending assistant cursor with no action bar", () => {
+  it("shows one honest pending status with no action bar", () => {
     render(
       <AssistantMessageView
         message={{ ...message, status: "pending", content: "" }}
@@ -227,7 +245,7 @@ describe("native chat renderer", () => {
         canDelete={false}
       />,
     );
-    expect(screen.getByLabelText("Answer in progress")).toBeTruthy();
+    expect(screen.getByRole("status").textContent).toBe("Working on your answer…");
     expect(screen.queryByRole("button")).toBeNull();
   });
   it("preserves blocked iframe geometry without constructing resource nodes", () => {
