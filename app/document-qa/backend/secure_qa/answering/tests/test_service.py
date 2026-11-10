@@ -105,7 +105,7 @@ class CitationValidationTest(ServiceTestCase):
         self.assertEqual(answer.timing.attempts, 2)  # exactly one corrective attempt
         self.assertEqual([c.text for c in answer.documents], ["The annual limit is 50 mSv."])
         self.assertEqual([c.citation_id for c in answer.citations], ["S1"])
-        self.assertEqual(answer.general_knowledge, "ICRP sets international recommendations.")
+        self.assertIsNone(answer.general_knowledge)  # document answers never append general knowledge
         warning = next(w for w in answer.warnings if w.code == "citation_validation_failed")
         self.assertIn("2 statement(s) were withheld", warning.message)
 
@@ -124,6 +124,17 @@ class CitationValidationTest(ServiceTestCase):
 
 
 class InsufficientEvidenceTest(ServiceTestCase):
+    def test_retrieved_but_irrelevant_passages_fall_back_to_one_general_answer(self):
+        runtime = FakeModelRuntime(responses=[
+            "Limitations and uncertainty:\nThese passages don't answer the question.",
+            "General model knowledge:\nA general explanation.",
+        ])
+        answer = self.service(runtime).answer(QUESTION, self.store)
+        self.assertEqual(answer.general_knowledge, "A general explanation.")
+        self.assertEqual(answer.documents, [])
+        self.assertEqual(answer.citations, [])
+        self.assertEqual(answer.timing.attempts, 2)
+
     def test_nothing_above_threshold_gives_no_document_section_but_general_knowledge(self):
         runtime = FakeModelRuntime()
         answer = self.service(runtime, min_score=0.99).answer(QUESTION, self.store)

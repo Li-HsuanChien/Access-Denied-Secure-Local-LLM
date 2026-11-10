@@ -128,7 +128,7 @@ describe("mount-local chat controller", () => {
       "The answer could not be completed.",
     );
   });
-  it("keeps the history warning in transient Markdown and whole-message copy", async () => {
+  it("keeps the history warning beside the answer (not in editable Markdown) and in whole-message copy", async () => {
     let n = 0;
     const c = createChatController({
       createId: () => String(++n),
@@ -142,9 +142,14 @@ describe("mount-local chat controller", () => {
     });
     c.submit("question");
     await vi.waitFor(() =>
-      expect(visibleMessages(c.getSnapshot())[1].content).toContain(
-        "> This answer could not be saved.",
-      ),
+      expect(visibleMessages(c.getSnapshot())[1]).toMatchObject({
+        status: "complete",
+        historyWarning: "This answer could not be saved.",
+      }),
+    );
+    // Shown once by the save note, so the editable answer text does not repeat it.
+    expect(visibleMessages(c.getSnapshot())[1].content).not.toContain(
+      "This answer could not be saved.",
     );
     expect(conversationText(c.getSnapshot())).toContain(
       "> This answer could not be saved.",

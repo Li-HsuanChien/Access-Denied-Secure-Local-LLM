@@ -9,7 +9,6 @@ import type {
   Answer,
   Immutable,
 } from "../../react-contracts";
-import { workspaceVoice } from "../../personality/presentation";
 interface Dependencies {
   createId(): string;
   now(): number;
@@ -93,9 +92,8 @@ export function createChatController(deps: Dependencies) {
             ? (result.answer.error?.message ?? "The local workflow failed.")
             : null,
         answer: result.answer,
-        content:
-          formatAnswerForChat(result.answer) +
-          (result.historyWarning ? `\n\n> ${result.historyWarning}` : ""),
+        // Warnings and the history notice render once, beside the answer (see answerNotices).
+        content: formatAnswerForChat(result.answer),
         historyWarning: result.historyWarning,
       });
     } catch (error) {
@@ -280,49 +278,54 @@ export function messageSiblings(
 }
 export function conversationText(session: ChatSession) {
   return visibleMessages(session)
-    .map((m) => `### ${m.role.toUpperCase()}\n${m.content}\n\n`)
+    .map((m) => `### ${m.role.toUpperCase()}\n${messageCopyText(m)}\n\n`)
     .join("")
     .trim();
 }
-/** Ported formatter only; never calls the old adapter's request/save path. */
+export type AnswerBasis = "documents" | "general" | "none";
+/** Exactly one basis per response; document claims win over legacy supplementary knowledge. */
+export function answerBasis(answer: Immutable<Answer>): AnswerBasis {
+  if (answer.documents.length) return "documents";
+  return answer.general_knowledge ? "general" : "none";
+}
+/** Safety notices shown once beside the answer. The basis label already explains absent
+ * evidence, and the history-save failure has its own note (AssistantMessage.historyWarning). */
+export function answerNotices(answer: Immutable<Answer> | null): string[] {
+  if (!answer || answer.status === "failed") return [];
+  return [
+    ...new Set(
+      answer.warnings
+        .filter((w) => w.code !== "insufficient_evidence" && w.code !== "history_save_failed")
+        .map((w) => w.message)
+        .filter(Boolean),
+    ),
+  ];
+}
+/** Whole-message copy: the (possibly edited) presentation plus the notices shown beside it. */
+export function messageCopyText(message: ChatMessage): string {
+  if (message.role !== "assistant") return message.content;
+  const notes = [...answerNotices(message.answer), ...(message.historyWarning ? [message.historyWarning] : [])];
+  return [message.content, ...notes.map((n) => `> ${n}`)].filter(Boolean).join("\n\n");
+}
+/** Select one evidence basis, including for older saved answers with both fields. */
 export function formatAnswerForChat(answer: Immutable<Answer>): string {
-  const sections: string[] = [];
+  const parts: string[] = [];
   const citations = new Map(answer.citations.map((c, i) => [c.citation_id, i + 1]));
   if (answer.status === "failed") {
-    sections.push(
-      `> **The answer could not be completed.** ${answer.error?.message ?? "The local workflow failed."}`,
-    );
-    if (answer.error?.hint) sections.push(`_${answer.error.hint}_`);
+    parts.push(`> **The answer could not be completed.** ${answer.error?.message ?? "The local workflow failed."}`);
+    if (answer.error?.hint) parts.push(answer.error.hint);
   }
-  if (answer.status === "insufficient_evidence")
-    sections.push(
-      "> **There is not enough evidence in this library to answer this question.**",
-    );
-  if (answer.documents.length)
-    sections.push(
-      `### From your documents\n\n${answer.documents
-        .map((claim) => {
-          const refs = claim.citation_ids
-            .map((id) => (citations.has(id) ? `[${citations.get(id)}]` : ""))
-            .filter(Boolean)
-            .join(" ");
-          return `${claim.text}${refs ? ` ${refs}` : ""}`;
-        })
-        .join("\n\n")}`,
-    );
-  if (answer.general_knowledge)
-    sections.push(
-      `### General model knowledge\n\n${answer.general_knowledge}\n\n_${workspaceVoice.generalKnowledgeNotice}_`,
-    );
-  if (answer.limitations.length)
-    sections.push(
-      `### ${workspaceVoice.uncertaintyLabel}\n\n${answer.limitations.map((item) => `- ${item}`).join("\n")}`,
-    );
-  if (answer.warnings.length)
-    sections.push(
-      `> **Warnings**\n> ${answer.warnings.map((w) => w.message).join("\n> ")}`,
-    );
-  return (
-    sections.join("\n\n") || "The local workflow returned no answer content."
-  );
+  if (answer.documents.length) {
+    parts.push(answer.documents.map(claim => {
+      const refs = claim.citation_ids.filter(id => citations.has(id)).map(id => `[${citations.get(id)}]`).join(" ");
+      return `${claim.text}${refs ? ` ${refs}` : ""}`;
+    }).join("\n\n"));
+  } else if (answer.general_knowledge) {
+    parts.push(answer.general_knowledge);
+  } else if (answer.status === "insufficient_evidence") {
+    parts.push("I couldn’t find enough evidence in your documents to answer this question.");
+  }
+  parts.push(...answer.limitations);
+  // Warnings are not part of the editable answer text: the view shows answerNotices() once.
+  return [...new Set(parts.filter(Boolean))].join("\n\n") || "The local workflow returned no answer content.";
 }

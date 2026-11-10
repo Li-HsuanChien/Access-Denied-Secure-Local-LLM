@@ -1,0 +1,2 @@
+/* Document viewer slot wrapper; the viewer's own styles live with PdfPreview (library/react/PdfPreview.css). */
+.docview { display: flex; flex-direction: column; height: 100%; min-height: 0; background: var(--paper-sunken); color: var(--ink); }

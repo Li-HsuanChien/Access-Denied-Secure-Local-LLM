@@ -9,6 +9,9 @@ import { createLibrary } from './library';
 import { createPreferences } from './preferences';
 import { createNavigation } from '../routes/navigation';
 import { PinnedModelProvider } from '../../lib/features/desktop-shell/react/PinnedModel';
+import { ToastProvider } from '../../lib/features/design-system/react';
+import { createHealth, type HealthState } from './health';
+import { createDocumentViewer, type DocumentViewer } from './documentViewer';
 
 export function createDefaultServices(): AppServices {
 	return {
@@ -21,7 +24,8 @@ export function createDefaultServices(): AppServices {
 export function createAppRuntime(services: AppServices = createDefaultServices(), browser: Window = window) {
 	return {
 		services, preferences: createPreferences(services), answering: createAnswering(services),
-		library: createLibrary(services), navigation: createNavigation(browser)
+		library: createLibrary(services), navigation: createNavigation(browser),
+		health: createHealth(services), documentViewer: createDocumentViewer(browser.document)
 	};
 }
 export type AppRuntime = ReturnType<typeof createAppRuntime>;
@@ -34,7 +38,7 @@ function defaultRuntime() {
 export function AppProviders({ children, runtime }: { children: ReactNode; runtime?: AppRuntime }) {
 	const value = useRef(runtime ?? defaultRuntime()).current;
 	useEffect(() => { void value.preferences.refresh(); }, [value]);
-	return <RuntimeContext.Provider value={value}><PinnedModelProvider>{children}</PinnedModelProvider></RuntimeContext.Provider>;
+	return <RuntimeContext.Provider value={value}><PinnedModelProvider><ToastProvider>{children}</ToastProvider></PinnedModelProvider></RuntimeContext.Provider>;
 }
 function useRuntime() {
 	const runtime = useContext(RuntimeContext);
@@ -62,4 +66,16 @@ export function useNavigation(): Navigation {
 	const navigation = useRuntime().navigation;
 	const route = useSyncExternalStore(navigation.subscribe, navigation.getSnapshot);
 	return { route, navigate: navigation.navigate };
+}
+/** Shared readiness from `/health`. The shell refreshes it on mount; anyone may call refresh(). */
+export function useHealth(): HealthState & { refresh(): Promise<HealthState> } {
+	const health = useRuntime().health;
+	const state = useSyncExternalStore(health.subscribe, health.getSnapshot);
+	return { ...state, refresh: health.refresh };
+}
+/** Shared document viewer slot rendered by the shell (side panel >=1180px, full-screen dialog below). */
+export function useDocumentViewer(): DocumentViewer {
+	const viewer = useRuntime().documentViewer;
+	const { current } = useSyncExternalStore(viewer.subscribe, viewer.getSnapshot);
+	return { current, open: viewer.open, close: viewer.close };
 }

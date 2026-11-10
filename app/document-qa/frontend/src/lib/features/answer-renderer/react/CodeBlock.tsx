@@ -128,14 +128,14 @@ export function CodeBlock({
   if (["mermaid", "vega", "vega-lite"].includes(language))
     return <Diagram source={source} language={language} />;
   const button =
-    "bg-none border-none transition rounded-md px-1.5 py-0.5 bg-white dark:bg-black";
+    "bg-none border-none transition rounded-md px-1.5 py-0.5";
   return (
     <div>
       <div
         className="relative flex flex-col rounded-2xl border border-gray-100/30 dark:border-gray-850/30 my-0.5 overflow-clip renderer-code"
         dir="ltr"
       >
-        <div className="sticky top-0 left-0 right-0 py-1.5 px-3.5 gap-2 flex items-center justify-end w-full z-10 text-xs text-black dark:text-white bg-white dark:bg-black">
+        <div className="renderer-code-bar renderer-code-surface sticky top-0 left-0 right-0 py-1.5 px-3.5 gap-2 flex items-center justify-end w-full z-10 text-xs">
           <div className="flex-1 truncate">
             <span title={language}>{language}</span>
           </div>
@@ -183,10 +183,10 @@ export function CodeBlock({
         <div
           className={`language-${language} rounded-t-2xl -mt-8 rounded-b-2xl overflow-hidden`}
         >
-          <div className="pt-6.5 bg-white dark:bg-black" />
+          <div className="pt-6.5 renderer-code-surface" />
           {collapsed ? (
-            <div className="bg-white dark:bg-black dark:text-white rounded-b-2xl pt-1 pb-2 px-4 flex flex-col gap-2 text-xs">
-              <span className="text-gray-500 italic">
+            <div className="renderer-code-surface rounded-b-2xl pt-1 pb-2 px-4 flex flex-col gap-2 text-xs">
+              <span className="renderer-code-muted italic">
                 {t("{{COUNT}} hidden lines", {
                   COUNT: value.split("\n").length,
                 })}

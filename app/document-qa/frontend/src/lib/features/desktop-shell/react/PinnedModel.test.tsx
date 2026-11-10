@@ -20,7 +20,7 @@ function setup(){
  return {runtime,view};
 }
 it('shares temporary pin state across feature navigation and New Chat without settings writes',async()=>{
- const {runtime}=setup();await screen.findByText('1 document · 3 passages · local model ready');
+ const {runtime}=setup();await screen.findByText('Ready');
  const storage={...localStorage};
  fireEvent.click(screen.getByText('Keep model'));
  expect(screen.getByRole('button',{name:'Models'})).toBeTruthy();
@@ -71,12 +71,13 @@ it('reveals Unpin only with Shift and row hover and removes the shared pin',asyn
 it('selects the sole pinned model as a new Chat with its original fixed query and closes mobile navigation',()=>{
  window.innerWidth=390;const {runtime}=setup();
  fireEvent.click(screen.getByText('Keep model'));
- fireEvent.click(screen.getByRole('button',{name:'Open sidebar'}));
+ fireEvent.click(screen.getByRole('button',{name:'Open menu'}));
  const link=screen.getByRole('link',{name:'logo Document Assistant'});
  expect(link.getAttribute('href')).toBe('/?model=secure-qa-local');
  fireEvent.click(link);
  expect(runtime.navigation.getSnapshot()).toEqual({path:'/',chatEpoch:1,temporary:false});
  expect(window.location.pathname+window.location.search).toBe('/?model=secure-qa-local');
- expect(localStorage.sidebar).toBe('false');
+ // The phone drawer closes after navigating (drawer state is not persisted).
+ expect(document.getElementById('sidebar')!.getAttribute('data-open')).toBe('false');
  expect(screen.getByText('Hide model')).toBeTruthy();
 });

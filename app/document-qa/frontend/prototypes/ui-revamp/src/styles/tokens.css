@@ -1,0 +1,171 @@
+/*
+ * "Reading room" design tokens.
+ * Warm paper surfaces, ink text, evergreen for document-backed answers,
+ * indigo for general knowledge, saffron for source highlights.
+ * Every semantic color is paired with an icon or label; color never carries meaning alone.
+ */
+
+@font-face {
+	font-family: 'Inter Local';
+	src: url('../../../../static/assets/fonts/Inter-Variable.ttf') format('truetype');
+	font-weight: 100 900;
+	font-display: swap;
+}
+
+:root {
+	color-scheme: light;
+
+	/* Type: bundled Inter for interface text; the operating system's own serif for headings and quotations. */
+	--font-ui: 'Inter Local', ui-sans-serif, system-ui, -apple-system, 'Segoe UI', sans-serif;
+	--font-serif: ui-serif, 'New York', 'Iowan Old Style', 'Charter', 'Cambria', Georgia, serif;
+	--font-mono: ui-monospace, 'SF Mono', 'Cascadia Mono', Menlo, Consolas, monospace;
+
+	--text-xs: 0.75rem;
+	--text-sm: 0.8125rem;
+	--text-md: 0.9375rem;
+	--text-read: 1rem;
+	--text-lg: 1.125rem;
+	--text-xl: 1.5rem;
+	--text-display: 2rem;
+
+	/* Surfaces */
+	--paper: #fbf8f3;
+	--paper-side: #f4eee5;
+	--paper-raised: #fffdf9;
+	--paper-sunken: #f1e9dd;
+	--paper-quote: #fffaf0;
+	--scrim: rgb(38 30 22 / 0.32);
+
+	/* Ink */
+	--ink: #27221d;
+	--ink-2: #5d544a;
+	--ink-3: #6f6458;
+	--ink-inverse: #fffdf9;
+
+	--line: #e7ddd0;
+	--line-strong: #d5c8b7;
+	--hover: rgb(83 60 36 / 0.065);
+	--active: rgb(83 60 36 / 0.11);
+
+	/* Purpose colors */
+	--accent: #1e6a56;
+	--accent-hover: #175545;
+	--accent-ink: #ffffff;
+	--accent-soft: #e2efe8;
+	--accent-soft-ink: #175545;
+
+	--general: #5450a3;
+	--general-soft: #ebe9f8;
+
+	--saffron: #c98a1c;
+	--saffron-ink: #855708;
+	--highlight: rgb(244 196 82 / 0.42);
+	--highlight-strong: rgb(236 178 48 / 0.55);
+
+	--warn: #7e5410;
+	--warn-soft: #fbf1db;
+	--warn-line: #ead2a0;
+
+	--danger: #a33a2b;
+	--danger-hover: #8a2f22;
+	--danger-soft: #fbe9e4;
+
+	--focus: #1e6a56;
+
+	/* Shape and depth */
+	--radius-sm: 6px;
+	--radius: 10px;
+	--radius-lg: 16px;
+	--radius-xl: 24px;
+	--shadow-sm: 0 1px 2px rgb(60 40 20 / 0.06);
+	--shadow: 0 1px 2px rgb(60 40 20 / 0.05), 0 6px 20px -6px rgb(60 40 20 / 0.14);
+	--shadow-lg: 0 2px 6px rgb(60 40 20 / 0.06), 0 24px 60px -12px rgb(60 40 20 / 0.28);
+
+	/* Layout */
+	--sidebar-w: 268px;
+	--read-w: 46rem;
+	--topbar-h: 52px;
+
+	/* Motion */
+	--ease: cubic-bezier(0.2, 0.7, 0.2, 1);
+	--fast: 120ms;
+	--base: 200ms;
+}
+
+@media (prefers-color-scheme: dark) {
+	:root:not([data-theme='light']) {
+		color-scheme: dark;
+		--paper: #1c1916;
+		--paper-side: #161411;
+		--paper-raised: #25211d;
+		--paper-sunken: #131110;
+		--paper-quote: #221e19;
+		--scrim: rgb(0 0 0 / 0.5);
+		--ink: #f1ebe2;
+		--ink-2: #c3b8aa;
+		--ink-3: #a2968a;
+		--ink-inverse: #1c1916;
+		--line: #342e28;
+		--line-strong: #4a4239;
+		--hover: rgb(255 240 220 / 0.06);
+		--active: rgb(255 240 220 / 0.1);
+		--accent: #73c6a8;
+		--accent-hover: #8ad3b8;
+		--accent-ink: #0f211b;
+		--accent-soft: rgb(115 198 168 / 0.14);
+		--accent-soft-ink: #9ad9c1;
+		--general: #aeaaf2;
+		--general-soft: rgb(174 170 242 / 0.13);
+		--saffron: #e8b44f;
+		--saffron-ink: #e8b44f;
+		--highlight: rgb(240 190 70 / 0.3);
+		--highlight-strong: rgb(240 190 70 / 0.45);
+		--warn: #ebc074;
+		--warn-soft: rgb(235 192 116 / 0.1);
+		--warn-line: rgb(235 192 116 / 0.3);
+		--danger: #f29684;
+		--danger-hover: #f6ad9e;
+		--danger-soft: rgb(242 150 132 / 0.12);
+		--focus: #8ad3b8;
+		--shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -6px rgb(0 0 0 / 0.5);
+		--shadow-lg: 0 2px 6px rgb(0 0 0 / 0.3), 0 24px 60px -12px rgb(0 0 0 / 0.7);
+	}
+}
+
+:root[data-theme='dark'] {
+	color-scheme: dark;
+	--paper: #1c1916;
+	--paper-side: #161411;
+	--paper-raised: #25211d;
+	--paper-sunken: #131110;
+	--paper-quote: #221e19;
+	--scrim: rgb(0 0 0 / 0.5);
+	--ink: #f1ebe2;
+	--ink-2: #c3b8aa;
+	--ink-3: #a2968a;
+	--ink-inverse: #1c1916;
+	--line: #342e28;
+	--line-strong: #4a4239;
+	--hover: rgb(255 240 220 / 0.06);
+	--active: rgb(255 240 220 / 0.1);
+	--accent: #73c6a8;
+	--accent-hover: #8ad3b8;
+	--accent-ink: #0f211b;
+	--accent-soft: rgb(115 198 168 / 0.14);
+	--accent-soft-ink: #9ad9c1;
+	--general: #aeaaf2;
+	--general-soft: rgb(174 170 242 / 0.13);
+	--saffron: #e8b44f;
+	--saffron-ink: #e8b44f;
+	--highlight: rgb(240 190 70 / 0.3);
+	--highlight-strong: rgb(240 190 70 / 0.45);
+	--warn: #ebc074;
+	--warn-soft: rgb(235 192 116 / 0.1);
+	--warn-line: rgb(235 192 116 / 0.3);
+	--danger: #f29684;
+	--danger-hover: #f6ad9e;
+	--danger-soft: rgb(242 150 132 / 0.12);
+	--focus: #8ad3b8;
+	--shadow: 0 1px 2px rgb(0 0 0 / 0.3), 0 8px 24px -6px rgb(0 0 0 / 0.5);
+	--shadow-lg: 0 2px 6px rgb(0 0 0 / 0.3), 0 24px 60px -12px rgb(0 0 0 / 0.7);
+}

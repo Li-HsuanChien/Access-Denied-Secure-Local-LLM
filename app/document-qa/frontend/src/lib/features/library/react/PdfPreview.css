@@ -1,16 +1,102 @@
-.pdf-preview { min-width: 0; }
-.pdf-toolbar { display: flex; align-items: center; gap: .6rem; flex-wrap: wrap; padding: .5rem; }
-.pdf-toolbar input { width: 4rem; color: inherit; background: transparent; border: 1px solid var(--workspace-line); }
-.pdf-toolbar button { padding: .25rem .5rem; border: 1px solid var(--workspace-line); border-radius: .4rem; }
-.pdf-toolbar button:disabled { opacity: .4; }
-.pdf-pages { max-height: 65vh; overflow: auto; background: #888; }
-.pdf-page { position: relative; margin: auto; background: white; }
-.pdf-page canvas { display: block; }
-.pdf-page .textLayer { position: absolute; inset: 0; overflow: hidden; line-height: 1; text-size-adjust: none; transform-origin: 0 0; }
-.pdf-page .textLayer :is(span, br) { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0 0; }
-.pdf-page .textLayer ::selection { background: #3b82f680; }
-.pdf-citation-highlight { position: absolute; background: #facc2160; mix-blend-mode: multiply; pointer-events: none; border-radius: 2px; }
+/* Document viewer, ported from prototypes/ui-revamp/src/styles/pdf.css.
+ * Text-layer rules adapted from pdf.js's pdf_viewer.css (Apache-2.0). */
 
-.pdf-page .textLayer { --user-unit: 1; --total-scale-factor: calc(var(--scale-factor) * var(--user-unit)); --min-font-size: 1; --text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size)); --min-font-size-inv: calc(1 / var(--min-font-size)); }
-.pdf-page .textLayer > :not(.markedContent), .pdf-page .textLayer .markedContent span:not(.markedContent) { z-index: 1; --font-height: 0; font-size: calc(var(--text-scale-factor) * var(--font-height)); --scale-x: 1; --rotate: 0deg; transform: rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv)); }
+.pdf-viewer { display: flex; flex-direction: column; height: 100%; min-height: 0; min-width: 0; background: var(--paper-sunken); color: var(--ink); }
+.pdf-viewer-inline { height: auto; border-radius: 12px; overflow: hidden; border: 1px solid var(--line); }
+.pdf-viewer-inline .pdf-scroll { max-height: 65vh; flex: none; }
+
+.pdf-toolbar {
+	display: flex; align-items: center; gap: 8px; min-height: var(--topbar-h); padding: 8px 12px; flex-wrap: wrap;
+	background: var(--paper-raised); border-bottom: 1px solid var(--line);
+}
+.pdf-viewer-inline .pdf-toolbar { min-height: 0; justify-content: flex-end; }
+.pdf-title-wrap { flex: 1; min-width: 140px; }
+.pdf-title { margin: 0; font-size: var(--text-md); font-weight: 650; white-space: nowrap; overflow: hidden; text-overflow: ellipsis; outline: none; }
+.pdf-title:focus-visible { box-shadow: 0 0 0 2px var(--focus); border-radius: 4px; }
+.pdf-subtitle { margin: 0; font-size: var(--text-xs); color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.pdf-controls { display: flex; align-items: center; gap: 10px; }
+.pdf-pager, .pdf-zoom { display: flex; align-items: center; gap: 2px; padding: 2px; border-radius: 10px; background: var(--paper-sunken); }
+.pdf-page-input { display: flex; align-items: center; gap: 6px; font-size: var(--text-sm); color: var(--ink-2); padding: 0 4px; font-variant-numeric: tabular-nums; }
+.pdf-page-input input {
+	width: 3.2ch; min-width: 34px; height: 26px; padding: 0 2px; text-align: center; border-radius: 6px;
+	border: 1px solid var(--line-strong); background: var(--paper-raised); color: var(--ink); font: inherit; font-variant-numeric: tabular-nums;
+}
+.pdf-page-input input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.pdf-zoom-label { min-width: 46px; height: 26px; border-radius: 6px; font-size: var(--text-sm); font-weight: 600; color: var(--ink-2); font-variant-numeric: tabular-nums; background: transparent; border: 0; cursor: pointer; }
+.pdf-zoom-label:hover:not(:disabled) { background: var(--hover); color: var(--ink); }
+.pdf-zoom-label:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.pdf-zoom-label:disabled { opacity: 0.5; cursor: default; }
+
+.pdf-quote { border-bottom: 1px solid var(--line); background: var(--paper-raised); }
+.pdf-quote-toggle {
+	display: flex; align-items: center; gap: 10px; width: 100%; padding: 9px 16px; background: transparent; border: 0; cursor: pointer;
+	font: inherit; font-size: var(--text-sm); font-weight: 600; color: var(--ink-2); text-align: left;
+}
+.pdf-quote-toggle:hover { color: var(--ink); }
+.pdf-quote-toggle:focus-visible { outline: 2px solid var(--focus); outline-offset: -2px; }
+.pdf-quote-chev { margin-left: auto; flex-shrink: 0; transition: transform var(--base) var(--ease); }
+.pdf-quote[data-open] .pdf-quote-chev { transform: rotate(180deg); }
+.pdf-hl-swatch { flex-shrink: 0; width: 16px; height: 10px; border-radius: 3px; background: var(--highlight-strong); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--saffron) 60%, transparent); }
+.pdf-quote-body { padding: 0 16px 12px 42px; }
+.pdf-quote-text {
+	margin: 0; padding-left: 12px; border-left: 3px solid var(--saffron);
+	font-family: var(--font-serif); font-size: 0.95rem; line-height: 1.55; color: var(--ink); max-height: 7.5em; overflow: auto; white-space: pre-wrap; overflow-wrap: anywhere;
+}
+.pdf-quote-jump { margin: 6px 0 0; font-size: var(--text-sm); }
+
+.pdf-scroll { flex: 1; min-height: 0; overflow: auto; outline: none; position: relative; overscroll-behavior: contain; }
+.pdf-scroll:focus-visible { box-shadow: inset 0 0 0 2px var(--focus); }
+.pdf-pages { display: flex; flex-direction: column; align-items: center; gap: 16px; padding: 28px; min-width: min-content; }
+.pdf-page {
+	position: relative; flex-shrink: 0; background: #fff; border-radius: 3px; overflow: hidden;
+	box-shadow: 0 1px 3px rgb(40 30 20 / 0.12), 0 8px 24px -10px rgb(40 30 20 / 0.25);
+}
+.pdf-surface { position: absolute; inset: 0; }
+.pdf-surface canvas { display: block; width: 100%; height: 100%; }
+.pdf-page-placeholder { position: absolute; inset: 0; background: linear-gradient(90deg, #f6f3ee 0%, #fbf9f5 50%, #f6f3ee 100%); background-size: 200% 100%; animation: pdf-shimmer 1.6s linear infinite; }
+@keyframes pdf-shimmer { from { background-position: 200% 0; } to { background-position: -200% 0; } }
+.pdf-hl {
+	position: absolute; z-index: 2; pointer-events: none; border-radius: 3px; background: rgb(244 196 82 / 0.42);
+	mix-blend-mode: multiply; box-shadow: 0 0 0 1px rgb(201 138 28 / 0.35);
+	animation: pdf-hl-in 600ms var(--ease) both;
+}
+@keyframes pdf-hl-in { from { opacity: 0; transform: scaleX(0.6); transform-origin: left; } }
+.pdf-page-num { position: absolute; bottom: 8px; right: 10px; z-index: 3; font-size: 11px; color: #6b6158; background: rgb(255 255 255 / 0.85); padding: 1px 6px; border-radius: 999px; }
+.pdf-skeleton { position: relative; max-width: 100%; background: #fff; border-radius: 3px; box-shadow: var(--shadow); display: grid; place-items: center; }
+.pdf-loading { display: inline-flex; gap: 8px; align-items: center; color: #5f554c; font-size: var(--text-sm); }
+.pdf-page-error { position: absolute; inset: 0; display: grid; place-content: center; justify-items: center; gap: 10px; padding: 16px; text-align: center; background: var(--paper-raised); color: var(--ink-2); }
+.pdf-page-error p { margin: 0; }
+.pdf-state { margin: 40px auto; max-width: 420px; padding: 20px; border-radius: 14px; background: var(--paper-raised); color: var(--ink-2); text-align: center; display: grid; gap: 10px; justify-items: center; }
+.pdf-state p { margin: 0; }
+.pdf-state strong { color: var(--ink); }
+.pdf-state-detail { font-size: var(--text-sm); }
+
+.pdf-page .textLayer {
+	position: absolute; text-align: initial; inset: 0; overflow: clip; opacity: 1; line-height: 1;
+	text-size-adjust: none; forced-color-adjust: none; transform-origin: 0 0; caret-color: CanvasText; z-index: 1;
+	--user-unit: 1;
+	--total-scale-factor: calc(var(--scale-factor) * var(--user-unit));
+	--min-font-size: 1;
+	--text-scale-factor: calc(var(--total-scale-factor) * var(--min-font-size));
+	--min-font-size-inv: calc(1 / var(--min-font-size));
+}
+.pdf-page .textLayer :is(span, br) { color: transparent; position: absolute; white-space: pre; cursor: text; transform-origin: 0% 0%; }
+.pdf-page .textLayer > :not(.markedContent), .pdf-page .textLayer .markedContent span:not(.markedContent) {
+	z-index: 1; --font-height: 0; font-size: calc(var(--text-scale-factor) * var(--font-height));
+	--scale-x: 1; --rotate: 0deg; transform: rotate(var(--rotate)) scaleX(var(--scale-x)) scale(var(--min-font-size-inv));
+}
 .pdf-page .textLayer .markedContent { display: contents; }
+.pdf-page .textLayer ::selection { background: rgb(30 106 86 / 0.25); }
+.pdf-page .textLayer br::selection { background: transparent; }
+
+@media (max-width: 640px) {
+	.pdf-toolbar { gap: 6px; padding: 6px 8px; }
+	.pdf-title-wrap { min-width: 0; }
+	.pdf-controls { order: 1; width: 100%; justify-content: space-between; }
+	.pdf-pages { padding: 14px; }
+	.pdf-quote-body { padding-left: 16px; }
+}
+@media (prefers-reduced-motion: reduce) {
+	.pdf-page-placeholder, .pdf-hl { animation: none; }
+	.pdf-quote-chev { transition: none; }
+}

@@ -33,35 +33,40 @@ async function mount(locale: string, collapsed = false, pinControl = false) {
 it.each([
  ['fr-FR', 'Nouvelle conversation', 'Chat history', 'Fermer la barre latérale'],
  ['de-DE', 'Neuer Chat', 'Chatverlauf', 'Seitenleiste schließen']
-])('restores original expanded native shell labels in %s while retaining product English', async (locale, newChat, history, close) => {
+])('keeps localized native shell labels in the expanded sidebar in %s while product copy stays English', async (locale, newChat, history, close) => {
  const runtime = await mount(locale);
  expect(screen.getByRole('navigation', { name: history })).toBeTruthy();
  const link = screen.getByRole('link', { name: newChat });
  expect(link.textContent).toContain(newChat);
  expect(screen.getByRole('button', { name: close })).toBeTruthy();
- for(const label of ['Library', 'History', 'Settings']) expect(screen.getByRole('link', { name: label })).toBeTruthy();
- expect(screen.getByText('Local workspace')).toBeTruthy();
- expect(screen.getByText('Include general model knowledge')).toBeTruthy();
- expect(screen.getByRole('button', { name: 'Refresh' })).toBeTruthy();
- await screen.findByText('1 document · 2 passages · local model ready');
+ // Feature-owned destinations, readiness and the Open WebUI credit are product English.
+ for (const label of ['Search chats', 'Library', 'Settings']) expect(screen.getByRole('link', { name: label })).toBeTruthy();
+ expect(screen.getByText('Built on Open WebUI')).toBeTruthy();
+ await screen.findByText('Ready');
  fireEvent.click(link);
  expect(runtime.navigation.getSnapshot()).toEqual({ path: '/', chatEpoch: 1, temporary: false });
 });
 it.each([
  ['fr-FR', 'Nouvelle conversation', 'Chat history', 'Ouvrir la barre latérale'],
  ['de-DE', 'Neuer Chat', 'Chatverlauf', 'Seitenleiste öffnen']
-])('restores rail navigation accessibility and tooltip text in %s', async (locale, newChat, history, open) => {
+])('localizes the collapsed-sidebar controls and tooltip in %s', async (locale, newChat, history, open) => {
  await mount(locale, true);
- expect(screen.getByRole('navigation', { name: history })).toBeTruthy();
- expect(screen.getByRole('link', { name: newChat })).toBeTruthy();
+ // A collapsed sidebar is hidden and inert; the top bar carries Open Sidebar and New Chat.
+ const nav = document.getElementById('sidebar')!;
+ expect(nav.getAttribute('aria-label')).toBe(history);
+ expect(nav.hasAttribute('inert')).toBe(true);
+ expect(screen.getByRole('button', { name: newChat })).toBeTruthy();
  const button = screen.getByRole('button', { name: open });
- fireEvent.mouseEnter(button.parentElement!);
- await waitFor(() => expect(screen.getByRole('tooltip').textContent).toBe(open));
+ fireEvent.pointerEnter(button);
+ await waitFor(() => expect(screen.getByRole('tooltip').textContent).toBe(`${open}⌘B`.replace('⌘', /Mac/i.test(navigator.platform || navigator.userAgent) ? '⌘' : 'Ctrl+')));
+ fireEvent.click(button);
+ expect(screen.getByRole('navigation', { name: history })).toBe(nav);
+ expect(nav.hasAttribute('inert')).toBe(false);
 });
-it('retains the original hardcoded English mobile menu label in a localized shell', async () => {
+it('keeps the English phone menu label in a localized shell', async () => {
  window.innerWidth = 390;
  await mount('fr-FR');
- fireEvent.click(screen.getByRole('button', { name: 'Open sidebar' }));
+ fireEvent.click(screen.getByRole('button', { name: 'Open menu' }));
  expect(screen.getByRole('link', { name: 'Nouvelle conversation' })).toBeTruthy();
 });
 it('retains original English native keys through catalog fallback', async () => {

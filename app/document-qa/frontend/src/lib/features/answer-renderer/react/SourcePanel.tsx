@@ -1,11 +1,24 @@
 import { useI18n } from "@/react/i18n";
-import { useEffect, useState } from "react";
+import { useEffect, useId, useState } from "react";
 import type { SourcePanelProps } from "../../react-contracts/rendering";
 import type { Citation, Immutable } from "../../react-contracts/wire";
-import { PdfSource } from "../../library/react/PdfSource";
-import { Modal } from "./Modal";
-import { Icon } from "./Icon";
-import { MarkdownContent } from "./ChatAnswer";
+import {
+  useDocumentViewer,
+  useLibrary,
+  useServices,
+} from "../../../../react/providers";
+import {
+  Button,
+  IconBook,
+  IconButton,
+  IconFile,
+  IconOpenPage,
+  IconX,
+  Popover,
+  pageLabel,
+} from "@/lib/features/design-system/react";
+import { workspaceVoice } from "../../personality/presentation";
+
 function sourceName(citation: Immutable<Citation>): string {
   const pages =
     citation.page_start === citation.page_end
@@ -13,8 +26,144 @@ function sourceName(citation: Immutable<Citation>): string {
       : `pp. ${citation.page_start}–${citation.page_end}`;
   return `${citation.document_title} · ${pages}`;
 }
+
+/** "N sources · M documents" (counted from the validated citations, never from edited text). */
+export function sourceSummary(
+  citations: readonly Immutable<Citation>[],
+  t: ReturnType<typeof useI18n>["t"],
+): string {
+  const docs = new Set(citations.map((c) => c.document_id)).size;
+  const sources =
+    citations.length === 1
+      ? t("1 Source")
+      : t("{{COUNT}} Sources", { COUNT: citations.length });
+  return `${sources} · ${docs} ${docs === 1 ? "document" : "documents"}`;
+}
+
+/**
+ * "Show document page". Loads nothing itself: the shared document viewer calls `load()` only once
+ * it is shown. Uses runtime hooks, so it renders only when the answer has a collection version.
+ */
+function ShowDocumentPage({
+  citation,
+  version,
+  anchor,
+  onOpen,
+}: {
+  citation: Immutable<Citation>;
+  version: string;
+  anchor: HTMLElement | null;
+  onOpen: () => void;
+}) {
+  const viewer = useDocumentViewer();
+  const { answering } = useServices();
+  const library = useLibrary();
+  const versions = library.state.versions;
+  // Only claim removal when the library listing is loaded and no version still holds the document.
+  const removed =
+    versions.length > 0 &&
+    !versions.some((v) =>
+      v.documents?.some((d) => d.document_id === citation.document_id),
+    );
+  if (removed)
+    return (
+      <p className="qa-cite-missing">
+        <IconFile size={14} />
+        <span>
+          This document was removed from your library. The quote was saved
+          with the answer, but the page can’t be shown.
+        </span>
+      </p>
+    );
+  return (
+    <Button
+      variant="secondary"
+      size="sm"
+      icon={<IconOpenPage size={16} />}
+      onClick={() => {
+        onOpen();
+        viewer.open({
+          title: citation.document_title,
+          subtitle: pageLabel(citation.page_start, citation.page_end),
+          page: citation.page_start,
+          citation,
+          load: () => answering.fetchSource(citation.document_id, version),
+          returnFocus: anchor,
+        });
+      }}
+    >
+      {workspaceVoice.showDocumentPage}
+    </Button>
+  );
+}
+
+/** Quote-first, non-modal citation pop-up; the exact quote is plain, untrusted text. */
+function CitationPopover({
+  citation,
+  index,
+  anchor,
+  collectionVersion,
+  onClose,
+}: {
+  citation: Immutable<Citation>;
+  index: number;
+  anchor: HTMLElement | null;
+  collectionVersion?: string | null;
+  onClose: (refocus: boolean) => void;
+}) {
+  const { t } = useI18n();
+  const titleId = useId();
+  return (
+    <Popover
+      anchor={anchor}
+      open
+      onClose={(reason) => onClose(reason !== "outside" && reason !== "escape")}
+      labelledBy={titleId}
+      side="bottom"
+      align="start"
+      className="qa-cite-popover source-quote-popover"
+    >
+      <div className="qa-cite-head">
+        <span className="qa-cite-index" aria-hidden="true">
+          {index + 1}
+        </span>
+        <div className="qa-cite-meta">
+          <h2 id={titleId} className="qa-cite-title">
+            {citation.document_title}
+          </h2>
+          <p className="qa-cite-pages">
+            {pageLabel(citation.page_start, citation.page_end)}
+          </p>
+        </div>
+        <IconButton
+          size="sm"
+          tooltip={false}
+          label={t("Close source quote")}
+          icon={<IconX size={16} />}
+          onClick={() => onClose(true)}
+        />
+      </div>
+      <figure className="qa-source-quote">
+        <figcaption className="ui-eyebrow">Original text</figcaption>
+        <blockquote>{citation.quote}</blockquote>
+      </figure>
+      {collectionVersion != null && (
+        <div className="qa-cite-foot">
+          <ShowDocumentPage
+            citation={citation}
+            version={collectionVersion}
+            anchor={anchor}
+            onOpen={() => onClose(false)}
+          />
+        </div>
+      )}
+    </Popover>
+  );
+}
+
 export function SourcePanel({
   citations,
+  citationAnchor,
   collectionVersion,
   expanded,
   openCitation,
@@ -22,99 +171,82 @@ export function SourcePanel({
   onExpandedChange,
 }: SourcePanelProps) {
   const { t } = useI18n();
-  const [selected, setSelected] = useState<Immutable<Citation> | null>(null);
-  useEffect(() => { if (openCitation != null && citations[openCitation - 1]) setSelected(citations[openCitation - 1]); }, [openCitation, citations]);
-  const close = () => { setSelected(null); onCloseCitation?.(); };
+  const listId = useId();
+  const [selected, setSelected] = useState<{
+    index: number;
+    anchor: HTMLElement | null;
+  } | null>(null);
+  useEffect(() => {
+    if (openCitation != null && citations[openCitation - 1])
+      setSelected({ index: openCitation - 1, anchor: citationAnchor ?? null });
+    else if (openCitation == null) setSelected((s) => (s && s.anchor === citationAnchor ? null : s));
+  }, [openCitation, citationAnchor, citations]);
+  const close = (refocus: boolean) => {
+    const anchor = selected?.anchor;
+    setSelected(null);
+    onCloseCitation?.();
+    if (refocus) anchor?.focus({ preventScroll: true });
+  };
   if (!citations.length) return null;
+  const current = selected ? citations[selected.index] : null;
   return (
     <>
-      <div className="py-1 -mx-0.5 w-full flex gap-1 items-center flex-wrap">
+      <div className="qa-sources-bar">
         <button
           type="button"
-          className="text-xs font-normal text-gray-600 dark:text-gray-300 px-3.5 h-8 rounded-full hover:bg-gray-100 dark:hover:bg-gray-800 transition flex items-center gap-1 border border-gray-50 dark:border-gray-850/30"
-          aria-label={
-            citations.length === 1
-              ? t("Toggle 1 source")
-              : t("Toggle {{COUNT}} sources", { COUNT: citations.length })
-          }
+          className="qa-sources-toggle"
           aria-expanded={expanded}
+          aria-controls={expanded ? listId : undefined}
           onClick={() => onExpandedChange(!expanded)}
         >
-          <div>
-            {citations.length === 1
-              ? t("1 Source")
-              : t("{{COUNT}} Sources", { COUNT: citations.length })}
-          </div>
+          <IconBook size={15} />
+          {sourceSummary(citations, t)}
         </button>
       </div>
       {expanded && (
-        <div className="py-1.5">
-          <div className="text-xs gap-2 flex flex-col">
-            {citations.map((citation, index) => (
+        <ol id={listId} className="qa-sources-list">
+          {citations.map((citation, index) => (
+            <li key={citation.citation_id}>
               <button
                 type="button"
-                key={citation.citation_id}
+                className="qa-source-row"
+                aria-haspopup="dialog"
+                aria-expanded={selected?.index === index}
                 aria-label={t("View source: {{name}}", {
                   name: sourceName(citation),
                 })}
-                className="no-toggle outline-hidden flex dark:text-gray-300 bg-transparent text-gray-600 rounded-xl gap-1.5 items-center"
-                onClick={() => setSelected(citation)}
+                onClick={(event) => {
+                  const anchor = event.currentTarget;
+                  setSelected((s) =>
+                    s?.index === index && s.anchor === anchor
+                      ? null
+                      : { index, anchor },
+                  );
+                }}
               >
-                <div className="font-normal bg-gray-50 dark:bg-gray-850 rounded-md px-1">
+                <span className="qa-cite qa-cite-static" aria-hidden="true">
                   {index + 1}
-                </div>
-                <div className="flex-1 truncate hover:text-black dark:text-white/60 dark:hover:text-white transition text-left">
-                  {sourceName(citation)}
-                </div>
+                </span>
+                <span className="qa-source-row-title">
+                  {citation.document_title}
+                </span>
+                <span className="qa-source-row-pages">
+                  {pageLabel(citation.page_start, citation.page_end)}
+                </span>
               </button>
-            ))}
-          </div>
-        </div>
+            </li>
+          ))}
+        </ol>
       )}
-      {selected && (
-        <Modal label={sourceName(selected)} onClose={close}>
-          <div>
-            <div className="flex justify-between dark:text-gray-300 px-4.5 pt-3 pb-2">
-              <div className="text-sm font-medium self-center flex items-center">
-                {sourceName(selected)}
-              </div>
-              <button
-                type="button"
-                aria-label={t("Close citation modal")}
-                className="self-center rounded-lg p-1 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                onClick={close}
-              >
-                <Icon name="close" strokeWidth={1.5} />
-              </button>
-            </div>
-            {collectionVersion !== undefined && <div className="px-5 pb-3"><PdfSource documentId={selected.document_id} version={collectionVersion} citation={selected} /></div>}
-            <div className="flex flex-col md:flex-row w-full px-5 pb-5 md:space-x-4">
-              <div className="flex flex-col w-full dark:text-gray-200 overflow-y-scroll max-h-[22rem] scrollbar-thin gap-1">
-                <div className="flex flex-col w-full">
-                  <div className="text-sm font-normal dark:text-gray-300 flex items-center gap-2 w-fit mb-1">
-                    {t("Content")}{" "}
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      (
-                      {selected.page_start === selected.page_end
-                        ? `${t("page")} ${selected.page_start}`
-                        : `pages ${selected.page_start}–${selected.page_end}`}
-                      )
-                    </span>
-                  </div>
-                  <div className="text-sm prose dark:prose-invert markdown-prose-sm min-w-full max-w-full">
-                    <MarkdownContent
-                      className=""
-                      content={selected.quote.trim().replace(/\n\n+/g, "\n\n")}
-                      onNavigate={() => {}}
-                      onSaveContent={() => {}}
-                      onPreview={() => {}}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
-          </div>
-        </Modal>
+      {selected && current && (
+        <CitationPopover
+          key={`${selected.index}`}
+          citation={current}
+          index={selected.index}
+          anchor={selected.anchor}
+          collectionVersion={collectionVersion}
+          onClose={close}
+        />
       )}
     </>
   );

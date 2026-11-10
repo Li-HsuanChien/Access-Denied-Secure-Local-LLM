@@ -1,0 +1,429 @@
+{
+ "documents": {
+  "maintenance-handbook": {
+   "title": "Reactor Maintenance Handbook",
+   "file": "maintenance-handbook.pdf",
+   "pages": 6,
+   "size": 47822
+  },
+  "radiation-protection-guide": {
+   "title": "Radiation Protection Field Guide",
+   "file": "radiation-protection-guide.pdf",
+   "pages": 5,
+   "size": 44163
+  },
+  "annual-report-2024": {
+   "title": "Annual Facility Report 2024",
+   "file": "annual-report-2024.pdf",
+   "pages": 5,
+   "size": 45625
+  },
+  "spent-fuel-checklist": {
+   "title": "Spent Fuel Pool Inspection Checklist",
+   "file": "spent-fuel-checklist.pdf",
+   "pages": 3,
+   "size": 38681
+  },
+  "emergency-plan-2019": {
+   "title": "Emergency Preparedness Plan (2019 draft)",
+   "file": "emergency-plan-2019.pdf",
+   "pages": 4,
+   "size": 36201
+  }
+ },
+ "citations": {
+  "pump-30-day": {
+   "document": "maintenance-handbook",
+   "page_start": 3,
+   "page_end": 3,
+   "quote": "Primary coolant pumps shall receive a visual and vibration check every 30 days of normal operation. Where vibration exceeds the recorded baseline by more than 20 percent, an inspection shall be performed within 72 hours.",
+   "pages": [
+    {
+     "page_number": 3,
+     "highlight_rects": [
+      [
+       68.0,
+       190.0,
+       532.88,
+       201.72
+      ],
+      [
+       68.0,
+       205.5,
+       510.74,
+       217.22
+      ],
+      [
+       68.0,
+       221.0,
+       192.24,
+       232.72
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  },
+  "pump-18-month": {
+   "document": "maintenance-handbook",
+   "page_start": 4,
+   "page_end": 4,
+   "quote": "A full mechanical inspection of each primary coolant pump, including seals and bearings, shall be completed every 18 months and scheduled to coincide with the planned outage.",
+   "pages": [
+    {
+     "page_number": 4,
+     "highlight_rects": [
+      [
+       68.0,
+       106.5,
+       518.89,
+       118.22
+      ],
+      [
+       68.0,
+       122.0,
+       438.43,
+       133.72
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  },
+  "pump-log": {
+   "document": "spent-fuel-checklist",
+   "page_start": 1,
+   "page_end": 1,
+   "quote": "Confirm that the primary coolant pump log has been reviewed and signed within the past 30 days.",
+   "pages": [
+    {
+     "page_number": 1,
+     "highlight_rects": [
+      [
+       84.0,
+       222.5,
+       537.2,
+       234.22
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  },
+  "training-course": {
+   "document": "radiation-protection-guide",
+   "page_start": 2,
+   "page_end": 2,
+   "quote": "Before entering a controlled area for the first time, staff must complete the eight hour initial radiation safety course and pass its written assessment with a score of at least 80 percent. The qualification remains valid only while an annual refresher is completed.",
+   "pages": [
+    {
+     "page_number": 2,
+     "highlight_rects": [
+      [
+       68.0,
+       174.5,
+       529.84,
+       186.22
+      ],
+      [
+       68.0,
+       190.0,
+       524.05,
+       201.72
+      ],
+      [
+       68.0,
+       205.5,
+       337.48,
+       217.22
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  },
+  "dosimeter": {
+   "document": "radiation-protection-guide",
+   "page_start": 3,
+   "page_end": 3,
+   "quote": "A personal dosimeter must be issued and logged at the access point before each entry into a controlled area.",
+   "pages": [
+    {
+     "page_number": 3,
+     "highlight_rects": [
+      [
+       68.0,
+       106.5,
+       499.05,
+       118.22
+      ],
+      [
+       68.0,
+       122.0,
+       140.33,
+       133.72
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  },
+  "visitors": {
+   "document": "radiation-protection-guide",
+   "page_start": 3,
+   "page_end": 3,
+   "quote": "Visitors who have not completed the initial course may enter a controlled area only when escorted at all times by qualified staff and after receiving a safety briefing at the access point.",
+   "pages": [
+    {
+     "page_number": 3,
+     "highlight_rects": [
+      [
+       68.0,
+       230.0,
+       533.43,
+       241.72
+      ],
+      [
+       68.0,
+       245.5,
+       444.72,
+       257.22
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  },
+  "dose-rise": {
+   "document": "annual-report-2024",
+   "page_start": 3,
+   "page_end": 3,
+   "quote": "Average annual dose for monitored workers rose from 0.42 mSv in 2023 to 0.61 mSv in 2024.",
+   "pages": [
+    {
+     "page_number": 3,
+     "highlight_rects": [
+      [
+       68.0,
+       106.5,
+       502.51,
+       118.22
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  },
+  "dose-limit": {
+   "document": "annual-report-2024",
+   "page_start": 3,
+   "page_end": 3,
+   "quote": "All individual doses remained below the facility administrative limit of 5 mSv per year, which is set well below the regulatory limit.",
+   "pages": [
+    {
+     "page_number": 3,
+     "highlight_rects": [
+      [
+       68.0,
+       246.5,
+       539.77,
+       258.22
+      ],
+      [
+       68.0,
+       262.0,
+       186.96,
+       273.72
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  },
+  "outage-extended": {
+   "document": "annual-report-2024",
+   "page_start": 2,
+   "page_end": 3,
+   "quote": "The planned maintenance outage began in May and was extended by six weeks to complete replacement of the secondary heat exchanger.",
+   "pages": [
+    {
+     "page_number": 2,
+     "highlight_rects": [
+      [
+       68.0,
+       106.5,
+       497.93,
+       118.22
+      ],
+      [
+       68.0,
+       122.0,
+       284.43,
+       133.72
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    },
+    {
+     "page_number": 3,
+     "highlight_rects": [],
+     "coordinates_reliable": false,
+     "page_width": 612,
+     "page_height": 792
+    }
+   ]
+  },
+  "operating-days": {
+   "document": "annual-report-2024",
+   "page_start": 1,
+   "page_end": 1,
+   "quote": "The reactor operated for 214 days in 2024, compared with 251 days in 2023.",
+   "pages": [
+    {
+     "page_number": 1,
+     "highlight_rects": [
+      [
+       68.0,
+       163.0,
+       423.81,
+       174.72
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  },
+  "no-events": {
+   "document": "annual-report-2024",
+   "page_start": 1,
+   "page_end": 1,
+   "quote": "There were no reportable safety events. Two minor equipment faults were corrected during scheduled maintenance.",
+   "pages": [
+    {
+     "page_number": 1,
+     "highlight_rects": [
+      [
+       68.0,
+       203.0,
+       540.45,
+       214.72
+      ],
+      [
+       68.0,
+       218.5,
+       131.01,
+       230.22
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  },
+  "pool-monthly": {
+   "document": "spent-fuel-checklist",
+   "page_start": 1,
+   "page_end": 1,
+   "quote": "Complete this checklist once a month and after any event that could affect pool water level or chemistry.",
+   "pages": [
+    {
+     "page_number": 1,
+     "highlight_rects": [
+      [
+       68.0,
+       163.0,
+       499.57,
+       174.72
+      ],
+      [
+       68.0,
+       178.5,
+       115.82,
+       190.22
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  },
+  "pool-signoff": {
+   "document": "spent-fuel-checklist",
+   "page_start": 3,
+   "page_end": 3,
+   "quote": "Any item not satisfied must be reported to the shift supervisor before the form is filed, and the supervisor records the action taken.",
+   "pages": [
+    {
+     "page_number": 3,
+     "highlight_rects": [
+      [
+       255.2,
+       106.5,
+       539.78,
+       118.22
+      ],
+      [
+       68.0,
+       122.0,
+       381.76,
+       133.72
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  },
+  "drills": {
+   "document": "emergency-plan-2019",
+   "page_start": 2,
+   "page_end": 2,
+   "quote": "Building evacuation drills are held at least twice a year, one of which is unannounced.",
+   "pages": [
+    {
+     "page_number": 2,
+     "highlight_rects": [
+      [
+       465.18,
+       106.5,
+       502.52,
+       118.22
+      ],
+      [
+       68.0,
+       122.0,
+       424.38,
+       133.72
+      ]
+     ],
+     "coordinates_reliable": true,
+     "page_width": 612.0,
+     "page_height": 792.0
+    }
+   ]
+  }
+ }
+}

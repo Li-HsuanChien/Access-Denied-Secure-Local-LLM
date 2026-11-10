@@ -31,9 +31,9 @@ export function PreviewPane({
     <aside
       ref={tooltipRoot}
       aria-label="Artifact preview"
-      className={`renderer-artifact ${full ? "renderer-artifact-full" : ""} w-full h-full flex flex-col bg-white dark:bg-gray-850`}
+      className={`renderer-artifact ${full ? "renderer-artifact-full" : ""} w-full h-full flex flex-col`}
     >
-      <header className="pointer-events-auto z-20 flex justify-between items-center p-2.5 font-primary text-gray-900 dark:text-white">
+      <header className="pointer-events-auto z-20 flex justify-between items-center p-2.5 font-primary">
         <div className="flex-1 flex items-center justify-between pr-1">
           <div className="flex items-center space-x-2">
             <button

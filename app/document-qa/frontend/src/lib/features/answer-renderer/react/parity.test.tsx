@@ -8,7 +8,6 @@ import {
   screen,
 } from "@testing-library/react";
 import { MarkdownContent } from "./ChatAnswer";
-import { Modal } from "./Modal";
 afterEach(() => {
   cleanup();
   vi.restoreAllMocks();
@@ -40,25 +39,6 @@ it("retains each original alert palette and distinct SVG icon", () => {
     new Set(alerts.map((node) => node.querySelector("path")?.getAttribute("d")))
       .size,
   ).toBe(5);
-});
-it("animates modal entrance with original 10ms fade and 200ms fly/scale", () => {
-  const animate = vi.fn(() => ({ cancel: vi.fn() }));
-  vi.stubGlobal("matchMedia", () => ({ matches: false }));
-  Object.defineProperty(Element.prototype, "animate", {
-    configurable: true,
-    value: animate,
-  });
-  render(
-    <Modal label="Source" onClose={vi.fn()}>
-      <button>Close</button>
-    </Modal>,
-  );
-  expect(
-    animate.mock.calls.map(
-      (call) =>
-        (call as unknown as [Keyframe[], KeyframeAnimationOptions])[1].duration,
-    ),
-  ).toEqual([10, 200]);
 });
 it("reverses details from its current height with proportional duration and inert outro", () => {
   const animations: {

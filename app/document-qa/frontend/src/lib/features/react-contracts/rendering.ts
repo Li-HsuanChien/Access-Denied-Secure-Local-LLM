@@ -24,6 +24,7 @@ export type PreviewKind = 'html' | 'svg' | 'mermaid' | 'vega' | 'vega-lite';
 /** Renderer-owned result; never accepts caller-supplied trust/sanitized flags. */
 export interface InertPreview { readonly kind: PreviewKind; readonly source: string }
 export interface SourcePanelProps {
+ readonly citationAnchor?: HTMLElement | null;
  readonly openCitation?: number | null;
  readonly onCloseCitation?: () => void;
 	readonly citations: readonly Immutable<Citation>[];
