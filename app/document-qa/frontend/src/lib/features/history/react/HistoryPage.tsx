@@ -140,11 +140,13 @@ export function HistoryPage() {
 				<h2 id="opened-title">{selected.title}</h2><button className="btn" type="button" onClick={() => navigate(`/conversation/${encodeURIComponent(selected.conversation_id)}`)}>Continue conversation</button>
 				<p className="hint">{`Model ${selected.model_id || 'unknown'} · Collection ${selected.collection_version || 'unknown'}`}</p>
 				<p><strong>Question:</strong> {answer.question}</p>
-				{Array.isArray(answer.documents) && <div data-evidence-kind="document" className="evidence"><h3>From your documents</h3>{(answer.documents as Answer['documents']).map((claim, index) => <p key={index}>{claim.text}{' '}{(claim.citation_ids || []).map((id: string, citationIndex: number) => <span className="cite" key={`${id}-${citationIndex}`}>{id}</span>)}</p>)}</div>}
-				{answer.general_knowledge && <div data-evidence-kind="general" className="evidence"><h3>General model knowledge</h3><p>{answer.general_knowledge}</p></div>}
-				{Array.isArray(answer.limitations) && <div data-evidence-kind="uncertain" className="evidence"><h3>Limitations</h3><ul>{answer.limitations.map((item, index) => <li key={index}>{item}</li>)}</ul></div>}
+				{answer.documents.length > 0 && <div data-evidence-kind="document" className="evidence"><h3>Based on your documents</h3>{(answer.documents as Answer['documents']).map((claim, index) => <p key={index}>{claim.text}{' '}{(claim.citation_ids || []).map((id: string, citationIndex: number) => <span className="cite" key={`${id}-${citationIndex}`}>{id}</span>)}</p>)}</div>}
+				{!answer.documents.length && answer.general_knowledge && <div data-evidence-kind="general" className="evidence"><h3>General knowledge · no supporting documents</h3><p>{answer.general_knowledge}</p></div>}
+				{!answer.documents.length && !answer.general_knowledge && <div className="evidence"><h3>No supporting documents</h3><p>{answer.error?.message || 'I couldn’t find enough evidence in your documents to answer this question.'}</p></div>}
+				{answer.limitations.length > 0 && <div data-evidence-kind="uncertain" className="evidence"><h3>Limitations</h3><ul>{answer.limitations.map((item, index) => <li key={index}>{item}</li>)}</ul></div>}
+				{answer.warnings.filter(warning => warning.code !== 'insufficient_evidence').map((warning, index) => <p className="message notice" key={index}>{warning.message}</p>)}
 			</section>}
-			{Array.isArray(answer?.citations) && <section className="panel" aria-labelledby="sources-title">
+			{!!answer?.documents.length && !!answer.citations.length && <section className="panel" aria-labelledby="sources-title">
 				<h2 id="sources-title">Sources</h2>
 				{(answer.citations as Answer['citations']).map((citation, index) => <details key={`${citation.citation_id}-${index}`}><summary>{citation.document_title} · pages {citation.page_start}{citation.page_end !== citation.page_start ? `–${citation.page_end}` : ''}</summary><blockquote>{citation.quote}</blockquote></details>)}
 			</section>}

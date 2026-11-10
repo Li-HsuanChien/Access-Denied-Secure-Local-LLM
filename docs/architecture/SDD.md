@@ -57,14 +57,14 @@ The module hides PDF validation, extraction, chunking (E2's real ingestion pipel
 
 #### 4.2 Question Answering
 
-**Interface:** Accept a question, a retrieval source, and optional conversation memory, and return a structured answer containing document-supported sections, general-knowledge sections, citations, warnings, evidence mode, model version, collection version, and timing.
+**Interface:** Accept a question, a retrieval source, and optional conversation memory, and return a structured answer containing either document-supported claims or general-knowledge text, citations, warnings, evidence mode, model version, collection version, and timing.
 
 The module hides retrieval, relevance filtering, visual-evidence selection, page rendering, prompt construction, inference, citation validation, and — for a multi-turn thread — follow-up query rewriting and running-summary maintenance (see [ADR 0005](decisions/0005-per-conversation-context-management.md)).
 
 **Invariants:**
 
 - Every claim labeled as document-supported cites retrieved evidence.
-- General model knowledge is visibly labeled and never receives document citations.
+- A supported document answer takes precedence over general knowledge. New responses never contain both document claims and general-knowledge text. General knowledge is an optional fallback when no validated document answer exists; it is visibly labeled and never receives document citations.
 - No more than two page images are supplied for automatic visual analysis.
 - Conversation memory (running summary and recent turns) is supplied to the model as delimited context only; it is never a citable passage, and citation validation is unchanged. Memory is bounded to a token budget so one turn costs at most one extra small generation (§12).
 
@@ -108,7 +108,7 @@ The canonical frontend is React/TypeScript/Vite and preserves the actual Open We
 
 Thin routes compose feature-owned views under `frontend/src/lib/features/<feature>/react/`. Shared composition, routes and providers live in `frontend/src/react/`. `/` and `/qa` mount new Chat views with saved mode by default; `/library`, `/history` and `/settings` mount their workflows. `/c/:id` explicitly redirects to `/`, since local History stores individual answers rather than native Open WebUI branch graphs. Browser navigation/reload and New Chat start a fresh in-memory message graph; saved threads resume through `/conversation/:id`. No upstream session, chat-list, websocket or authentication bootstrap is used.
 
-The existing AnsweringClient validates loopback destinations, request/response envelopes and the backend-owned answer schema. Workflow modules remain authoritative for evidence selection, answer status, citation validation, publication and persistence. Chat formatting preserves labeled document claims, general knowledge, limitations and warnings. Full returned metadata is retained independently of editable presentation text. Sources preserve the observed quote/page-range UI; the absent page-render operation is an existing gap against §7.3, not permission to invent an API during migration. History uses its distinct plain claims and source-details presentation.
+The existing AnsweringClient validates loopback destinations, request/response envelopes and the backend-owned answer schema. Workflow modules remain authoritative for evidence selection, answer status, citation validation, publication and persistence. Chat formatting selects one labeled document or general answer and preserves limitations and safety warnings. Full returned metadata is retained independently of editable presentation text. Sources preserve the observed quote/page-range UI; the absent page-render operation is an existing gap against §7.3, not permission to invent an API during migration. History uses its distinct plain claims and source-details presentation.
 
 An application-lifetime answering coordinator permits one dispatched request, including across route/provider remounts. It sends the latest question, committed general-knowledge preference and, for saved chats, a stable conversation ID. The host persists threaded turns; only non-temporary requests without a conversation ID use the one-off best-effort history save. A save failure does not hide the answer. Chat owns its temporary graph, branch navigation, presentation edits, composer and ordinary queue. Navigation/New Chat discards unsent questions and prevents late results from entering the new session while the dispatched request still completes/saves. Cosmetic Stop and overlapping Send now are omitted: the host returns one result and has no answer cancellation operation.
 
@@ -178,19 +178,21 @@ Visual retrieval depends on surrounding extractable text because the MVP has no 
 
 #### 7.3 Answer Structure and Citations
 
-General model knowledge is enabled by default and may be disabled by the user. Every answer may contain three visibly distinct parts:
+General model knowledge is enabled by default and may be disabled by the user. Every response presents one natural answer with one basis label:
 
-- **From your documents:** Factual claims supported by the active collection, each with one or more citations.
-- **General model knowledge:** Uncited content explicitly labeled as not verified against the document collection.
-- **Limitations and uncertainty:** Missing, conflicting, weak, or visually inaccessible evidence.
+- **Based on your documents:** Assistant-written synthesis supported by the active collection, with citations for document claims. Partial coverage is explained naturally in this answer; no supplemental general-knowledge answer is appended.
+- **General knowledge · no supporting documents:** Used only when no validated document claims exist and general knowledge is enabled. This answer has no document citations.
+- With general knowledge disabled and insufficient evidence, explain the missing evidence plainly, labeled **No supporting documents**.
 
-Every citation identifies the document and page and expands into an on-demand rendering of the source page. When reliable text coordinates are available, the supporting passage is highlighted. Source pages are rendered client-side by the bundled pdf.js from the cached source PDF (fetched over the loopback `GET /v1/source` route), rather than rasterized to page images on the server ([ADR 0006](decisions/0006-cache-source-pdfs-for-citation-viewing.md)); the cited sentence is boxed from the stored `highlight_rects` when `coordinates_reliable`, else by matching the quote in the rendered text layer.
+The grounded generation requests document synthesis only. If it yields no validated claims and general knowledge is enabled, the workflow uses a general-only fallback. Citation-validation, truncation and other safety warnings remain visible. Existing saved payloads may contain both fields: presentation prefers document claims without rewriting the original record. Limits remain visible in the answer without mandatory competing section headings.
+
+Every citation identifies the document and page and opens an anchored, non-modal quote pop-up showing the exact citation text as plain untrusted text. Escape, the close button and outside interaction dismiss it; keyboard dismissal returns focus to its trigger. PDF loading is deferred until Show document page opens the existing source-page modal. When reliable text coordinates are available, the supporting passage is highlighted. Source pages are rendered client-side by the bundled pdf.js from the cached source PDF (fetched over the loopback `GET /v1/source` route), rather than rasterized to page images on the server ([ADR 0006](decisions/0006-cache-source-pdfs-for-citation-viewing.md)); the cited sentence is boxed from the stored `highlight_rects` when `coordinates_reliable`, else by matching the quote in the rendered text layer.
 
 After generation, the application verifies that document citations refer to evidence actually supplied to the model. Invalid or missing citations trigger one corrective generation attempt. If validation still fails, unsupported document claims are withheld and the interface explains the failure; correctly labeled general knowledge may remain.
 
 #### 7.4 User Interface Design
 
-The desktop shell uses React components preserving the observed pinned Open WebUI Sidebar and Chat presentation for navigation, message history within the active session, composer behavior, progress, and errors. The answering adapter presents separate document, general-knowledge, limitation, warning, and source sections. Each source includes its document title, page range, and supporting passage. The host health state is visible above the chat, and the user can disable general model knowledge. Library, persistent History, and Settings workflows remain owned by their feature modules.
+The desktop shell uses React components preserving the observed pinned Open WebUI Sidebar and Chat presentation for navigation, message history within the active session, composer behavior, progress, and errors. The answering adapter presents one answer with an evidence-basis label, inline citations, natural limitations, and necessary safety warnings. Each source includes its document title, page range, and supporting passage. The host health state is visible above the chat, and the user can disable general model knowledge. Library, persistent History, and Settings workflows remain owned by their feature modules.
 
 The interface uses a restrained, evidence-led visual voice: locally bundled typography, warm neutral surfaces, evergreen primary actions, and a compact spacing scale. Document-backed claims, general model knowledge, uncertainty, warnings, and errors have distinct semantic labels and visual treatments; color never carries meaning alone. Shared tokens and presentation copy live in the frontend `personality` feature and are retained during React parity migration. See [ADR 0003](decisions/0003-research-workspace-personality.md) for their origin and [ADR 0004](decisions/0004-react-frontend-parity.md) for the framework replacement.
 

@@ -9,7 +9,6 @@ import type {
   Answer,
   Immutable,
 } from "../../react-contracts";
-import { workspaceVoice } from "../../personality/presentation";
 interface Dependencies {
   createId(): string;
   now(): number;
@@ -284,45 +283,26 @@ export function conversationText(session: ChatSession) {
     .join("")
     .trim();
 }
-/** Ported formatter only; never calls the old adapter's request/save path. */
+/** Select one evidence basis, including for older saved answers with both fields. */
 export function formatAnswerForChat(answer: Immutable<Answer>): string {
-  const sections: string[] = [];
+  const parts: string[] = [];
   const citations = new Map(answer.citations.map((c, i) => [c.citation_id, i + 1]));
   if (answer.status === "failed") {
-    sections.push(
-      `> **The answer could not be completed.** ${answer.error?.message ?? "The local workflow failed."}`,
-    );
-    if (answer.error?.hint) sections.push(`_${answer.error.hint}_`);
+    parts.push(`> **The answer could not be completed.** ${answer.error?.message ?? "The local workflow failed."}`);
+    if (answer.error?.hint) parts.push(answer.error.hint);
   }
-  if (answer.status === "insufficient_evidence")
-    sections.push(
-      "> **There is not enough evidence in this library to answer this question.**",
-    );
-  if (answer.documents.length)
-    sections.push(
-      `### From your documents\n\n${answer.documents
-        .map((claim) => {
-          const refs = claim.citation_ids
-            .map((id) => (citations.has(id) ? `[${citations.get(id)}]` : ""))
-            .filter(Boolean)
-            .join(" ");
-          return `${claim.text}${refs ? ` ${refs}` : ""}`;
-        })
-        .join("\n\n")}`,
-    );
-  if (answer.general_knowledge)
-    sections.push(
-      `### General model knowledge\n\n${answer.general_knowledge}\n\n_${workspaceVoice.generalKnowledgeNotice}_`,
-    );
-  if (answer.limitations.length)
-    sections.push(
-      `### ${workspaceVoice.uncertaintyLabel}\n\n${answer.limitations.map((item) => `- ${item}`).join("\n")}`,
-    );
-  if (answer.warnings.length)
-    sections.push(
-      `> **Warnings**\n> ${answer.warnings.map((w) => w.message).join("\n> ")}`,
-    );
-  return (
-    sections.join("\n\n") || "The local workflow returned no answer content."
-  );
+  if (answer.documents.length) {
+    parts.push(answer.documents.map(claim => {
+      const refs = claim.citation_ids.filter(id => citations.has(id)).map(id => `[${citations.get(id)}]`).join(" ");
+      return `${claim.text}${refs ? ` ${refs}` : ""}`;
+    }).join("\n\n"));
+  } else if (answer.general_knowledge) {
+    parts.push(answer.general_knowledge);
+  } else if (answer.status === "insufficient_evidence") {
+    parts.push("I couldn’t find enough evidence in your documents to answer this question.");
+  }
+  parts.push(...answer.limitations);
+  // The basis label already explains absent evidence; keep other safety notices.
+  parts.push(...answer.warnings.filter(w => w.code !== "insufficient_evidence").map(w => `> ${w.message}`));
+  return [...new Set(parts.filter(Boolean))].join("\n\n") || "The local workflow returned no answer content.";
 }

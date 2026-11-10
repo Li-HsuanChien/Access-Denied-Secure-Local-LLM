@@ -37,11 +37,11 @@ it('lists saved records and opens a plain claims and native source-details view'
   const runtime = mount();
   await screen.findByText('What is the result?');
   fireEvent.click(screen.getByRole('button', { name: /^What is the result\? 2026-10-20/ }));
-  await screen.findByText('From your documents');
+  await screen.findByText('Based on your documents');
   expect(screen.getByText('The result is 42.')).toBeTruthy();
   expect(screen.getByText('S1')).toBeTruthy();
-  expect(screen.getByText('General model knowledge')).toBeTruthy();
-  expect(screen.getByText('A supporting note.')).toBeTruthy();
+  expect(screen.queryByText('General knowledge · no supporting documents')).toBeNull();
+  expect(screen.queryByText('A supporting note.')).toBeNull();
   expect(screen.getByText('Limitations')).toBeTruthy();
   expect(screen.getByText('Sources')).toBeTruthy();
   expect(screen.getByText('Guide · pages 2–3')).toBeTruthy();
@@ -63,10 +63,10 @@ it('deletes the selected record and clears its detail view', async () => {
   const runtime = mount();
   await screen.findByText('What is the result?');
   fireEvent.click(screen.getByRole('button', { name: /^What is the result\? 2026-10-20/ }));
-  await screen.findByText('From your documents');
+  await screen.findByText('Based on your documents');
   fireEvent.click(screen.getByRole('button', { name: 'Delete What is the result?' }));
   await screen.findByText('Conversation deleted.');
-  expect(screen.queryByText('From your documents')).toBeNull();
+  expect(screen.queryByText('Based on your documents')).toBeNull();
 });
 
 it('clears history only after native confirmation', async () => {
@@ -123,7 +123,7 @@ it('does not resurrect an open result after the record is deleted', async () => 
   fireEvent.click(screen.getByRole('button', { name: 'Delete What is the result?' }));
   resolveOpen(record);
   await screen.findByText('Conversation deleted.');
-  expect(screen.queryByText('From your documents')).toBeNull();
+  expect(screen.queryByText('Based on your documents')).toBeNull();
   expect(runtime.services.history.remove).toHaveBeenCalledWith('answer-1');
 });
 

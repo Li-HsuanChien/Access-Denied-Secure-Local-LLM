@@ -207,7 +207,7 @@ export function MarkdownContent({
   onCitation,
 }: {
   className?: string;
-  onCitation?: (index: number) => void;
+  onCitation?: (index: number, anchor: HTMLElement) => void;
   content: string;
   onNavigate: ChatAnswerProps["onNavigate"];
   onSaveContent: ChatAnswerProps["onSaveContent"];
@@ -249,7 +249,7 @@ export function MarkdownContent({
           rendered = <MathToken token={token} />;
           break;
         case "citation":
-          rendered = <>{(token.ids as number[] ?? []).map(id => <button key={id} type="button" className="citation-ref" aria-label={`View citation ${id}`} onClick={() => onCitation?.(id)}>[{id}]</button>)}</>;
+          rendered = <>{(token.ids as number[] ?? []).map(id => <button key={id} type="button" className="citation-ref" aria-label={`View citation ${id}`} onClick={(event) => onCitation?.(id, event.currentTarget)}>[{id}]</button>)}</>;
           break;
         case "footnote":
           rendered = (
@@ -531,6 +531,7 @@ export function ChatAnswer({
   onSaveContent,
 }: ChatAnswerProps) {
   const tooltipRoot = useTooltips<HTMLDivElement>();
+  const [citationAnchor, setCitationAnchor] = useState<HTMLElement | null>(null);
   const [openCitation, setOpenCitation] = useState<number | null>(null);
   const [expanded, setExpanded] = useState(false),
     [preview, setPreview] = useState<{
@@ -548,12 +549,13 @@ export function ChatAnswer({
         onNavigate={onNavigate}
         onSaveContent={onSaveContent}
         onPreview={(kind, source) => setPreview({ kind, source })}
-        onCitation={index => { if (citations[index - 1]) setOpenCitation(index); }}
+        onCitation={(index, anchor) => { if (citations[index - 1]) { setCitationAnchor(anchor); setOpenCitation(index); } }}
       />
       <SourcePanel
         citations={citations}
         collectionVersion={collectionVersion}
         openCitation={openCitation}
+        citationAnchor={citationAnchor}
         onCloseCitation={() => setOpenCitation(null)}
         expanded={expanded}
         onExpandedChange={setExpanded}

@@ -149,6 +149,11 @@ export function AssistantMessageView({
             className={`w-full flex flex-col relative ${editing ? "hidden" : ""}`}
             id="response-content-container"
           >
+            {message.answer && message.status !== "pending" && message.answer.status !== "failed" && (
+              <div className="answer-basis">
+                {message.answer.documents.length ? t("Based on your documents") : message.answer.general_knowledge ? t("General knowledge · no supporting documents") : t("No supporting documents")}
+              </div>
+            )}
             {message.content && (
               <ChatAnswer
                 key={message.id}

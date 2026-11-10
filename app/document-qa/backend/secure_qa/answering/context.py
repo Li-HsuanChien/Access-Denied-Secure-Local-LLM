@@ -23,7 +23,7 @@ from dataclasses import dataclass
 
 from ..library import SearchResult
 
-PROMPT_VERSION = "e3-rag-2026-10-05.1"
+PROMPT_VERSION = "e3-rag-2026-11-10.1"
 CHARS_PER_TOKEN = 3.5  # conservative for English prose; E2's token_estimate uses 4
 SAFETY_MARGIN_TOKENS = 128
 
@@ -41,10 +41,6 @@ Rules:
 3. Under "{HEADING_DOCUMENTS}" write short sentences that state only what the passages say. End every sentence with the label of each passage that supports it, in square brackets, for example [S1] or [S1][S3]. Only use labels that appear in the passages. If the passages don't answer the question, leave this heading out.
 """
 
-_RULE_GENERAL_ON = f"""4. Under "{HEADING_GENERAL}" you may add brief, useful background that is not in the passages. Never put passage labels there.
-5. Under "{HEADING_LIMITATIONS}" say what the passages don't cover, where they conflict, or that they don't answer the question.
-"""
-
 _RULE_GENERAL_OFF = f"""4. Use only the passages. Do not add general knowledge.
 5. Under "{HEADING_LIMITATIONS}" say what the passages don't cover, where they conflict, or that they don't answer the question.
 """
@@ -55,8 +51,7 @@ Write a brief answer from general knowledge under the heading "{HEADING_GENERAL}
 
 
 def system_prompt(general_knowledge: bool) -> str:
-    if general_knowledge:
-        return _RULES_COMMON.format(general_heading=HEADING_GENERAL + "\n") + _RULE_GENERAL_ON
+    # The preference controls service fallback, never supplemental content in a grounded answer.
     return _RULES_COMMON.format(general_heading="") + _RULE_GENERAL_OFF
 
 

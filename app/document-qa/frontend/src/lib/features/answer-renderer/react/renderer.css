@@ -3,6 +3,46 @@
   min-width: 0;
   width: 100%;
 }
+.answer-basis {
+  margin-bottom: 0.65rem;
+  color: var(--workspace-ink-muted);
+  font-size: 0.75rem;
+  line-height: 1.5;
+}
+.renderer-answer .citation-ref {
+  display: inline-flex;
+  margin-inline: 0.15rem;
+  padding: 0.05rem 0.4rem;
+  border-radius: 0.35rem;
+  background: var(--workspace-hover);
+  color: var(--workspace-evidence);
+  font-size: 0.75rem;
+  vertical-align: baseline;
+}
+.source-quote-popover {
+  position: fixed;
+  z-index: 9999;
+  top: 20%;
+  left: 1rem;
+  width: min(28rem, calc(100vw - 2rem));
+  max-height: calc(100dvh - 2rem);
+  overflow: auto;
+  padding: 1.25rem;
+  border-radius: 0.75rem;
+  background: var(--workspace-surface-raised);
+  color: var(--workspace-ink);
+  box-shadow: 0 12px 36px rgb(0 0 0 / 0.18);
+}
+.source-quote-heading { display: flex; align-items: start; justify-content: space-between; gap: 1rem; font-size: 0.875rem; }
+.source-quote-heading button { flex: none; padding: 0.25rem; border-radius: 0.3rem; }
+.source-quote-label { margin-top: 0.5rem; color: var(--workspace-ink-muted); font-size: 0.75rem; }
+.source-quote-text { margin: 1rem 0; white-space: pre-wrap; overflow-wrap: anywhere; font-size: 0.9375rem; line-height: 1.7; }
+.source-page-action { color: var(--workspace-accent); font-size: 0.8125rem; padding: 0.25rem 0; }
+.source-document-modal { padding: 1.5rem; }
+.source-quote-popover button:focus-visible { outline: 2px solid var(--workspace-focus); outline-offset: 3px; }
+@media (pointer: coarse) {
+  .source-quote-heading button, .source-page-action { min-height: 44px; min-width: 44px; }
+}
 .renderer-assistant-actions {
   min-height: 28px;
   position: relative;

@@ -5,7 +5,7 @@ import type { Citation, Immutable } from "../../react-contracts/wire";
 import { PdfSource } from "../../library/react/PdfSource";
 import { Modal } from "./Modal";
 import { Icon } from "./Icon";
-import { MarkdownContent } from "./ChatAnswer";
+import { QuotePopover } from "./QuotePopover";
 function sourceName(citation: Immutable<Citation>): string {
   const pages =
     citation.page_start === citation.page_end
@@ -15,6 +15,7 @@ function sourceName(citation: Immutable<Citation>): string {
 }
 export function SourcePanel({
   citations,
+  citationAnchor,
   collectionVersion,
   expanded,
   openCitation,
@@ -23,8 +24,50 @@ export function SourcePanel({
 }: SourcePanelProps) {
   const { t } = useI18n();
   const [selected, setSelected] = useState<Immutable<Citation> | null>(null);
-  useEffect(() => { if (openCitation != null && citations[openCitation - 1]) setSelected(citations[openCitation - 1]); }, [openCitation, citations]);
-  const close = () => { setSelected(null); onCloseCitation?.(); };
+  useEffect(() => {
+    if (openCitation != null && citations[openCitation - 1])
+      setSelected(citations[openCitation - 1]);
+  }, [openCitation, citations]);
+  const [showPage, setShowPage] = useState(false);
+  const [anchor, setAnchor] = useState<HTMLElement | null>(null);
+  useEffect(() => {
+    if (openCitation != null) {
+      setAnchor(citationAnchor ?? null);
+      setShowPage(false);
+    }
+  }, [openCitation, citationAnchor]);
+  const close = () => {
+    setSelected(null);
+    setShowPage(false);
+    onCloseCitation?.();
+    anchor?.focus();
+  };
+  const selectedName = selected ? sourceName(selected) : "";
+  const quote = selected && (
+    <>
+      <div className="source-quote-heading">
+        <strong>{selectedName}</strong>
+        <button
+          type="button"
+          aria-label={t("Close source quote")}
+          onClick={close}
+        >
+          <Icon name="close" />
+        </button>
+      </div>
+      <p className="source-quote-label">{t("Exact source text")}</p>
+      <blockquote className="source-quote-text">{selected.quote}</blockquote>
+      {collectionVersion != null && (
+        <button
+          type="button"
+          className="source-page-action"
+          onClick={() => setShowPage(!showPage)}
+        >
+          {t(showPage ? "Hide document page" : "Show document page")}
+        </button>
+      )}
+    </>
+  );
   if (!citations.length) return null;
   return (
     <>
@@ -58,7 +101,11 @@ export function SourcePanel({
                   name: sourceName(citation),
                 })}
                 className="no-toggle outline-hidden flex dark:text-gray-300 bg-transparent text-gray-600 rounded-xl gap-1.5 items-center"
-                onClick={() => setSelected(citation)}
+                onClick={(event) => {
+                  setAnchor(event.currentTarget);
+                  setShowPage(false);
+                  setSelected(citation);
+                }}
               >
                 <div className="font-normal bg-gray-50 dark:bg-gray-850 rounded-md px-1">
                   {index + 1}
@@ -71,48 +118,22 @@ export function SourcePanel({
           </div>
         </div>
       )}
-      {selected && (
-        <Modal label={sourceName(selected)} onClose={close}>
-          <div>
-            <div className="flex justify-between dark:text-gray-300 px-4.5 pt-3 pb-2">
-              <div className="text-sm font-medium self-center flex items-center">
-                {sourceName(selected)}
-              </div>
-              <button
-                type="button"
-                aria-label={t("Close citation modal")}
-                className="self-center rounded-lg p-1 text-gray-500 transition hover:bg-gray-50 hover:text-gray-700 dark:text-gray-400 dark:hover:bg-gray-800 dark:hover:text-gray-200"
-                onClick={close}
-              >
-                <Icon name="close" strokeWidth={1.5} />
-              </button>
-            </div>
-            {collectionVersion !== undefined && <div className="px-5 pb-3"><PdfSource documentId={selected.document_id} version={collectionVersion} citation={selected} /></div>}
-            <div className="flex flex-col md:flex-row w-full px-5 pb-5 md:space-x-4">
-              <div className="flex flex-col w-full dark:text-gray-200 overflow-y-scroll max-h-[22rem] scrollbar-thin gap-1">
-                <div className="flex flex-col w-full">
-                  <div className="text-sm font-normal dark:text-gray-300 flex items-center gap-2 w-fit mb-1">
-                    {t("Content")}{" "}
-                    <span className="text-sm text-gray-500 dark:text-gray-400">
-                      (
-                      {selected.page_start === selected.page_end
-                        ? `${t("page")} ${selected.page_start}`
-                        : `pages ${selected.page_start}–${selected.page_end}`}
-                      )
-                    </span>
-                  </div>
-                  <div className="text-sm prose dark:prose-invert markdown-prose-sm min-w-full max-w-full">
-                    <MarkdownContent
-                      className=""
-                      content={selected.quote.trim().replace(/\n\n+/g, "\n\n")}
-                      onNavigate={() => {}}
-                      onSaveContent={() => {}}
-                      onPreview={() => {}}
-                    />
-                  </div>
-                </div>
-              </div>
-            </div>
+      {selected && !showPage && (
+        <QuotePopover anchor={anchor} label={selectedName} onClose={close}>
+          {quote}
+        </QuotePopover>
+      )}
+      {selected && showPage && (
+        <Modal label={selectedName} onClose={close}>
+          <div className="source-document-modal">
+            {quote}
+            {collectionVersion != null && (
+              <PdfSource
+                documentId={selected.document_id}
+                version={collectionVersion}
+                citation={selected}
+              />
+            )}
           </div>
         </Modal>
       )}

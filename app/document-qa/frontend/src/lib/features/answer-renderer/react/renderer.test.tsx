@@ -178,8 +178,11 @@ describe("native chat renderer", () => {
       }),
     );
     const dialog = screen.getByRole("dialog");
-    expect(within(dialog).getByText("(page 2)")).toBeTruthy();
+    expect(within(dialog).getByText("Exact source text")).toBeTruthy();
     expect(within(dialog).getByText(answer.citations[0].quote)).toBeTruthy();
+    expect(services.answering.fetchSource).not.toHaveBeenCalled();
+    fireEvent.click(within(dialog).getByRole('button', { name: 'Show document page' }));
+    expect(services.answering.fetchSource).toHaveBeenCalledWith(answer.citations[0].document_id, answer.collection_version);
     fireEvent.keyDown(window, { key: "Escape" });
     expect(screen.queryByRole("dialog")).toBeNull();
     fireEvent.click(screen.getByRole("button", { name: /^Edit$/ }));
@@ -189,6 +192,25 @@ describe("native chat renderer", () => {
     fireEvent.click(screen.getByRole("button", { name: /^Save$/ }));
     expect(save).toHaveBeenCalledWith("Changed presentation", false);
     expect(JSON.stringify(answer)).toBe(original);
+  });
+  it("opens inline quotes as plain text and restores citation focus on Escape", async () => {
+    const answer = await createFixtureAnsweringClient({ delay: 0 }).ask('source', true);
+    const quote = '<img src="https://example.invalid/probe" onerror="alert(1)">';
+    render(<ChatAnswer messageId="inline" content="A supported claim. [1]" citations={[{ ...answer.citations[0], quote }]} onNavigate={vi.fn()} onSaveContent={vi.fn()} />);
+    const trigger = screen.getByRole('button', { name: 'View citation 1' });
+    trigger.focus();
+    fireEvent.click(trigger);
+    const dialog = await screen.findByRole('dialog');
+    expect(within(dialog).getByText(quote)).toBeTruthy();
+    expect(dialog.querySelector('img')).toBeNull();
+    expect(document.body.style.overflow).not.toBe('hidden');
+    fireEvent.keyDown(window, { key: 'Escape' });
+    expect(screen.queryByRole('dialog')).toBeNull();
+    expect(document.activeElement).toBe(trigger);
+    fireEvent.click(trigger);
+    await screen.findByRole('dialog');
+    fireEvent.pointerDown(document.body);
+    expect(screen.queryByRole('dialog')).toBeNull();
   });
   it("retains the pending assistant cursor with no action bar", () => {
     render(

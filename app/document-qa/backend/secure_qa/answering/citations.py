@@ -103,7 +103,7 @@ def corrective_instruction(violations: list[Violation], supplied: list[str]) -> 
         f"{problems}\n\n"
         "Rewrite the whole answer under the same headings. Every sentence under \"From your documents:\" must end "
         f"with one or more of these labels in square brackets: {', '.join(supplied)}. Move anything the passages "
-        "don't support to \"General model knowledge:\" without labels, or leave it out."
+        "don't support out of the answer. Do not append general knowledge."
     )
 
 
