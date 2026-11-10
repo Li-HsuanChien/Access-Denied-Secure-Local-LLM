@@ -1,0 +1,27 @@
+{
+	"version": "0.0.1",
+	"configurations": [
+		{
+			"name": "ui-prototype",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": [
+				"--prefix",
+				"app/document-qa/frontend",
+				"run",
+				"prototype"
+			],
+			"port": 5180
+		},
+		{
+			"name": "frontend-dev",
+			"runtimeExecutable": "npm",
+			"runtimeArgs": [
+				"--prefix",
+				"app/document-qa/frontend",
+				"run",
+				"dev"
+			],
+			"port": 5173
+		}
+	]
+}
