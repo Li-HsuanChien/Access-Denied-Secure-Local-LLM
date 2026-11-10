@@ -1,0 +1,239 @@
+{
+  "chunker": {
+    "chunker_version": "refchunk-3.1.0",
+    "config_id": "cfg_baa3dd28b8db",
+    "min_chunk_chars": 100,
+    "overlap_chars": 200,
+    "respect_sentence_boundaries": true,
+    "sorted_reading_order": true,
+    "strip_running_headers": true,
+    "target_chars": 1200
+  },
+  "documents": [
+    {
+      "aliases": [],
+      "byte_size": 1291325,
+      "checksum_sha256": "591a0381163923768eee93a5908e0f1d68e184be4365493c2f05c76df707abcd",
+      "chunk_count": 18,
+      "chunk_set_sha256": "3d9a7af0817e727c983ec5735b06b789e22743452cc91063a0cfe91a3fe9d01b",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "files": {
+        "chunks": {
+          "bytes": 49082,
+          "path": "chunks/doc_72f2433a1e2f2e6340f14040.jsonl",
+          "sha256": "8a92616b36d301ccc81cfc2dbda80ce8f3e2476f551eb3538531cb0ce0234d29"
+        },
+        "extraction": {
+          "bytes": 2865,
+          "path": "extraction/doc_72f2433a1e2f2e6340f14040.json",
+          "sha256": "84fbc60a2f858d30cb9ecce984385fec3535a556064b8e564fdba805151d6df1"
+        },
+        "source": {
+          "bytes": 1291325,
+          "path": "sources/doc_72f2433a1e2f2e6340f14040.pdf",
+          "sha256": "591a0381163923768eee93a5908e0f1d68e184be4365493c2f05c76df707abcd"
+        }
+      },
+      "outcome": "accepted",
+      "page_count": 24,
+      "pages_with_text": 24,
+      "pages_without_text": [],
+      "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+      "text_chars": 16094,
+      "text_sha256": "f772e535234499ccd5462ba88a18385fb931acb587c0a8dca9daea00954c565e",
+      "times_supplied": 1,
+      "warnings": []
+    },
+    {
+      "aliases": [],
+      "byte_size": 4523404,
+      "checksum_sha256": "75b01b7b75102fa1052f88554ae9dcbf9f2313052708259541dce504d08e66f0",
+      "chunk_count": 50,
+      "chunk_set_sha256": "f2c87d6924ded512670a441e98d9308fdb31f03aa0d593cb9e0c27b39ad66521",
+      "document_id": "doc_baeb6812f56c040063d6c6a6",
+      "files": {
+        "chunks": {
+          "bytes": 118242,
+          "path": "chunks/doc_baeb6812f56c040063d6c6a6.jsonl",
+          "sha256": "94c196ef15622e6e485840d1e22c4a5371b72141284165319a457ccfc1994cc1"
+        },
+        "extraction": {
+          "bytes": 1694,
+          "path": "extraction/doc_baeb6812f56c040063d6c6a6.json",
+          "sha256": "06c22e2564ba18ac498c996471819acb1546901e48dc2bb8493488601646bb9a"
+        },
+        "source": {
+          "bytes": 4523404,
+          "path": "sources/doc_baeb6812f56c040063d6c6a6.pdf",
+          "sha256": "75b01b7b75102fa1052f88554ae9dcbf9f2313052708259541dce504d08e66f0"
+        }
+      },
+      "outcome": "accepted",
+      "page_count": 13,
+      "pages_with_text": 13,
+      "pages_without_text": [],
+      "source_filename": "layout_arxiv_two_column_2112.11583.pdf",
+      "text_chars": 43207,
+      "text_sha256": "df02ac57420177aa379a74cb2620558c64eb2b5d6307f8db2072438a047b6b97",
+      "times_supplied": 1,
+      "warnings": []
+    },
+    {
+      "aliases": [],
+      "byte_size": 3521252,
+      "checksum_sha256": "8b21195361acc2b2abd0eeae6a0a5bdf0100b24b342612d2c129fabbdb910708",
+      "chunk_count": 194,
+      "chunk_set_sha256": "7683b2f42916506edfa82f7b197d2d3dc6c9d2755dadf375a73e064a1bf45a8c",
+      "document_id": "doc_c6bc43bd1751359d6d17bb09",
+      "files": {
+        "chunks": {
+          "bytes": 518996,
+          "path": "chunks/doc_c6bc43bd1751359d6d17bb09.jsonl",
+          "sha256": "503a59f7b863bcfe97d1c3766dfa19ee0186744d6d83661f817d0a12595a5401"
+        },
+        "extraction": {
+          "bytes": 16159,
+          "path": "extraction/doc_c6bc43bd1751359d6d17bb09.json",
+          "sha256": "043a09579b2c423c75cac4d8ca0173cef7d769033903b5104eda4db0146aa250"
+        },
+        "source": {
+          "bytes": 3521252,
+          "path": "sources/doc_c6bc43bd1751359d6d17bb09.pdf",
+          "sha256": "8b21195361acc2b2abd0eeae6a0a5bdf0100b24b342612d2c129fabbdb910708"
+        }
+      },
+      "outcome": "accepted",
+      "page_count": 142,
+      "pages_with_text": 136,
+      "pages_without_text": [
+        4,
+        6,
+        8,
+        10,
+        12,
+        94
+      ],
+      "source_filename": "large_doe_nuclear_physics_v1_original.pdf",
+      "text_chars": 187221,
+      "text_sha256": "989c257e282ae1d0f009f8923aba87bf6c86385d569f5f04a3ac3419acf7474a",
+      "times_supplied": 1,
+      "warnings": []
+    }
+  ],
+  "documents_file": {
+    "bytes": 1197,
+    "path": "documents.jsonl",
+    "sha256": "fedc2b2e4c2b8ed1bb08751cd5824cbaae5c30f26d2da2e4eee3e9d8f50bfef1"
+  },
+  "extractor": "pymupdf/1.28.2",
+  "integrity": {
+    "chunk_set_sha256": "870a9783ea67892b1c8357457a7fea971842254da34116e5cf061f48b4a7b789",
+    "files_sha256": "0d164f4d81eae717ff7552961eef54f65381d7bfa76294a55d76f7ac332862df"
+  },
+  "kind": "e2.ingest_manifest",
+  "pipeline_version": "e2-pipeline-1.0.0",
+  "policy": {
+    "extraction_restricted": "reject",
+    "max_bytes": 209715200,
+    "max_pages": 2000,
+    "min_chars_per_page_when_repaired": 200,
+    "min_pages_with_text_ratio_reject": 0.1,
+    "min_pages_with_text_ratio_warn": 0.95,
+    "repaired_document": "accept_with_warning"
+  },
+  "rejected": [
+    {
+      "aliases": [],
+      "byte_size": 645662,
+      "checksum_sha256": "15ac99c11b070c5861641e3cd818a94b7ec08dd4bdb3dbfb6d7a92a997ad55a1",
+      "failed_check": "structural_integrity",
+      "reject_detail": "The file is damaged: text was recovered from only 3 of 24 pages.",
+      "reject_reason": "corrupt",
+      "source_filename": "corrupt_truncated_50pct.pdf",
+      "times_supplied": 1
+    },
+    {
+      "aliases": [],
+      "byte_size": 4112,
+      "checksum_sha256": "5e432dbabf05446614615fde2ce1b142ef6f967d945b5110b6480f354661af09",
+      "failed_check": "parser_opens",
+      "reject_detail": "The file could not be parsed as a PDF.",
+      "reject_reason": "corrupt",
+      "source_filename": "corrupt_header_only.pdf",
+      "times_supplied": 1
+    },
+    {
+      "aliases": [],
+      "byte_size": 324,
+      "checksum_sha256": "810e860602528ae5a4c7787734c6a829b1ee405102faf9b01263316b2035c744",
+      "failed_check": "magic_bytes",
+      "reject_detail": "The file is a zip container.",
+      "reject_reason": "non_pdf",
+      "source_filename": "nonpdf_zip_container_renamed.pdf",
+      "times_supplied": 1
+    },
+    {
+      "aliases": [],
+      "byte_size": 4876651,
+      "checksum_sha256": "838a61e040386438785fc95e3f741461b23884c1a595f74ed2062926bbf1947e",
+      "failed_check": "text_yield",
+      "reject_detail": "Only 0 of 24 non-blank pages contain extractable text.",
+      "reject_reason": "scanned_only",
+      "source_filename": "scanned_no_text_layer.pdf",
+      "times_supplied": 1
+    },
+    {
+      "aliases": [],
+      "byte_size": 1288832,
+      "checksum_sha256": "af0867bcbbfa008e7512aed8bba9f19fdbf456e97f0e7c4db594af2250ebb26e",
+      "failed_check": "no_open_password",
+      "reject_detail": "The file is password-protected and cannot be read.",
+      "reject_reason": "password_protected",
+      "source_filename": "protected_user_password.pdf",
+      "times_supplied": 1
+    },
+    {
+      "aliases": [],
+      "byte_size": 0,
+      "checksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "failed_check": "file_nonempty",
+      "reject_detail": "The file is empty.",
+      "reject_reason": "corrupt",
+      "source_filename": "corrupt_empty.pdf",
+      "times_supplied": 1
+    },
+    {
+      "aliases": [],
+      "byte_size": 114,
+      "checksum_sha256": "e56cf7ab7f86787a6ca654d063417606fd1e95d5e1724a418901f9dedcb8f086",
+      "failed_check": "magic_bytes",
+      "reject_detail": "The file is not a PDF.",
+      "reject_reason": "non_pdf",
+      "source_filename": "nonpdf_plaintext_renamed.pdf",
+      "times_supplied": 1
+    }
+  ],
+  "review": {
+    "confirmation_required": true,
+    "confirmation_token": "ack_8e5d33d6a64fc236"
+  },
+  "schema_version": "1.0.0",
+  "seal": {
+    "manifest_sha256": "1474c5fc384c4b665a949782a761522dfcbe21517364cbe191e07aff53d71b1b",
+    "run_id": "run_1474c5fc384c4b66"
+  },
+  "totals": {
+    "accepted": 3,
+    "accepted_with_warnings": 0,
+    "candidates": 10,
+    "chunk_bytes": 686320,
+    "chunks": 262,
+    "duplicates": 0,
+    "pages": 179,
+    "rejected": 7,
+    "source_bytes": 9335981,
+    "text_chars": 246522,
+    "warnings": 0
+  },
+  "validator_version": "e2-validate-2.0.0"
+}

@@ -1,0 +1,171 @@
+{
+  "corpus": "e2-sample-corpus",
+  "corpus_version": 1,
+  "corpus_list_sha256": "df1021469c3765c5a7e99120f08e067e5637d3e0150443d3f88566ddf817f086",
+  "command": "python3 tools/ingest_corpus.py",
+  "run_id": "run_1474c5fc384c4b66",
+  "manifest_sha256": "1474c5fc384c4b665a949782a761522dfcbe21517364cbe191e07aff53d71b1b",
+  "chunk_set_sha256": "870a9783ea67892b1c8357457a7fea971842254da34116e5cf061f48b4a7b789",
+  "files_sha256": "0d164f4d81eae717ff7552961eef54f65381d7bfa76294a55d76f7ac332862df",
+  "versions": {
+    "pipeline": "e2-pipeline-1.0.0",
+    "validator": "e2-validate-2.0.0",
+    "chunker": "refchunk-3.1.0",
+    "chunker_config_id": "cfg_baa3dd28b8db",
+    "extractor": "pymupdf/1.28.2",
+    "schema": "1.0.0"
+  },
+  "chunker": {
+    "min_chunk_chars": 100,
+    "overlap_chars": 200,
+    "respect_sentence_boundaries": true,
+    "sorted_reading_order": true,
+    "strip_running_headers": true,
+    "target_chars": 1200
+  },
+  "policy": {
+    "extraction_restricted": "reject",
+    "max_bytes": 209715200,
+    "max_pages": 2000,
+    "min_chars_per_page_when_repaired": 200,
+    "min_pages_with_text_ratio_reject": 0.1,
+    "min_pages_with_text_ratio_warn": 0.95,
+    "repaired_document": "accept_with_warning"
+  },
+  "totals": {
+    "files": 10,
+    "accepted": 3,
+    "accepted_with_warnings": 0,
+    "rejected": 7,
+    "duplicates": 0,
+    "pages": 179,
+    "chunks": 262,
+    "text_chars": 246522,
+    "warnings": 0
+  },
+  "documents": [
+    {
+      "id": "normal-nrc-ch01",
+      "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+      "document_id": "doc_72f2433a1e2f2e6340f14040",
+      "outcome": "accepted",
+      "pages": 24,
+      "pages_with_text": 24,
+      "pages_without_text": [],
+      "chunks": 18,
+      "text_chars": 16094,
+      "checksum_sha256": "591a0381163923768eee93a5908e0f1d68e184be4365493c2f05c76df707abcd",
+      "text_sha256": "f772e535234499ccd5462ba88a18385fb931acb587c0a8dca9daea00954c565e",
+      "chunk_set_sha256": "3d9a7af0817e727c983ec5735b06b789e22743452cc91063a0cfe91a3fe9d01b",
+      "warnings": []
+    },
+    {
+      "id": "layout-arxiv-two-column",
+      "source_filename": "layout_arxiv_two_column_2112.11583.pdf",
+      "document_id": "doc_baeb6812f56c040063d6c6a6",
+      "outcome": "accepted",
+      "pages": 13,
+      "pages_with_text": 13,
+      "pages_without_text": [],
+      "chunks": 50,
+      "text_chars": 43207,
+      "checksum_sha256": "75b01b7b75102fa1052f88554ae9dcbf9f2313052708259541dce504d08e66f0",
+      "text_sha256": "df02ac57420177aa379a74cb2620558c64eb2b5d6307f8db2072438a047b6b97",
+      "chunk_set_sha256": "f2c87d6924ded512670a441e98d9308fdb31f03aa0d593cb9e0c27b39ad66521",
+      "warnings": []
+    },
+    {
+      "id": "large-doe-hdbk-1019-v1-original",
+      "source_filename": "large_doe_nuclear_physics_v1_original.pdf",
+      "document_id": "doc_c6bc43bd1751359d6d17bb09",
+      "outcome": "accepted",
+      "pages": 142,
+      "pages_with_text": 136,
+      "pages_without_text": [
+        4,
+        6,
+        8,
+        10,
+        12,
+        94
+      ],
+      "chunks": 194,
+      "text_chars": 187221,
+      "checksum_sha256": "8b21195361acc2b2abd0eeae6a0a5bdf0100b24b342612d2c129fabbdb910708",
+      "text_sha256": "989c257e282ae1d0f009f8923aba87bf6c86385d569f5f04a3ac3419acf7474a",
+      "chunk_set_sha256": "7683b2f42916506edfa82f7b197d2d3dc6c9d2755dadf375a73e064a1bf45a8c",
+      "warnings": []
+    }
+  ],
+  "rejects": [
+    {
+      "id": "corrupt-truncated",
+      "source_filename": "corrupt_truncated_50pct.pdf",
+      "checksum_sha256": "15ac99c11b070c5861641e3cd818a94b7ec08dd4bdb3dbfb6d7a92a997ad55a1",
+      "reject_reason": "corrupt",
+      "expected_reject_reason": "corrupt",
+      "failed_check": "structural_integrity",
+      "reject_detail": "The file is damaged: text was recovered from only 3 of 24 pages."
+    },
+    {
+      "id": "corrupt-header-only",
+      "source_filename": "corrupt_header_only.pdf",
+      "checksum_sha256": "5e432dbabf05446614615fde2ce1b142ef6f967d945b5110b6480f354661af09",
+      "reject_reason": "corrupt",
+      "expected_reject_reason": "corrupt",
+      "failed_check": "parser_opens",
+      "reject_detail": "The file could not be parsed as a PDF."
+    },
+    {
+      "id": "nonpdf-zip",
+      "source_filename": "nonpdf_zip_container_renamed.pdf",
+      "checksum_sha256": "810e860602528ae5a4c7787734c6a829b1ee405102faf9b01263316b2035c744",
+      "reject_reason": "non_pdf",
+      "expected_reject_reason": "non_pdf",
+      "failed_check": "magic_bytes",
+      "reject_detail": "The file is a zip container."
+    },
+    {
+      "id": "scanned-no-text",
+      "source_filename": "scanned_no_text_layer.pdf",
+      "checksum_sha256": "838a61e040386438785fc95e3f741461b23884c1a595f74ed2062926bbf1947e",
+      "reject_reason": "scanned_only",
+      "expected_reject_reason": "scanned_only",
+      "failed_check": "text_yield",
+      "reject_detail": "Only 0 of 24 non-blank pages contain extractable text."
+    },
+    {
+      "id": "protected-user-password",
+      "source_filename": "protected_user_password.pdf",
+      "checksum_sha256": "af0867bcbbfa008e7512aed8bba9f19fdbf456e97f0e7c4db594af2250ebb26e",
+      "reject_reason": "password_protected",
+      "expected_reject_reason": "password_protected",
+      "failed_check": "no_open_password",
+      "reject_detail": "The file is password-protected and cannot be read."
+    },
+    {
+      "id": "corrupt-empty",
+      "source_filename": "corrupt_empty.pdf",
+      "checksum_sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "reject_reason": "corrupt",
+      "expected_reject_reason": "corrupt",
+      "failed_check": "file_nonempty",
+      "reject_detail": "The file is empty."
+    },
+    {
+      "id": "nonpdf-plaintext",
+      "source_filename": "nonpdf_plaintext_renamed.pdf",
+      "checksum_sha256": "e56cf7ab7f86787a6ca654d063417606fd1e95d5e1724a418901f9dedcb8f086",
+      "reject_reason": "non_pdf",
+      "expected_reject_reason": "non_pdf",
+      "failed_check": "magic_bytes",
+      "reject_detail": "The file is not a PDF."
+    }
+  ],
+  "verification": {
+    "deep": true,
+    "ok": true,
+    "checks_passed": 19,
+    "checks_total": 19
+  }
+}

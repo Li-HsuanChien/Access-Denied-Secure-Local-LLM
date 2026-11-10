@@ -11,8 +11,11 @@ and rectangles come out, in a sealed directory the document store can publish.
 | Validation, extraction, chunking | `src/ingest.py`, `src/sentences.py` |
 | Import pipeline and its manifest | `src/pipeline.py`, `schemas/ingest_manifest.schema.json`, `schemas/import_report.schema.json` |
 | Fixture set | `fixtures/`, labeled in `manifest.json` |
+| Sample corpus and its ingest command | `corpus/corpus.json`, `tools/ingest_corpus.py`, output in `corpus/out/` |
 | Sample-document demo | `demo.py` (live), `WALKTHROUGH.md` (written), `walkthrough/chunk_viewer.html` (visual) |
-| Tests | `tests/test_contracts.py` (32), `tests/test_chunking.py` (11), `tests/test_pipeline.py` (36) |
+| Tests | `tests/test_contracts.py` (34), `tests/test_chunking.py` (11), `tests/test_pipeline.py` (38), `tests/test_corpus.py` (9) |
+| Profiling: time, memory, disk, parser work, output | `tools/profile_ingest.py`, results in `perf/` |
+| For E3 and E4: integration notes, dependency list | `integration/README.md`, `DEPENDENCIES.md` |
 
 Three ways to walk through one document, for three audiences:
 
@@ -76,8 +79,8 @@ offsets and highlight rectangles. The Citation record in SDD 5.1 now allows a
 page range; the Chunk record there still says one page number. Numbers and
 reasoning are in `WALKTHROUGH.md` section 4.
 
-The four open policy decisions below are configuration in `IngestionPolicy`,
-not conditionals in the parser. `test_policy_decisions_are_live_knobs` proves
+The four policy decisions below (three still open, the size cap settled) are
+configuration in `IngestionPolicy`, not conditionals in the parser. `test_policy_decisions_are_live_knobs` proves
 each one flips behavior from config alone.
 
 ## From PDF to text stream
@@ -201,10 +204,18 @@ the sealed directory holds nothing it cannot attribute to an accepted document.
 **Nothing half-written is ever a run.** An attempt lives in `runs/.partial-*`
 until it is sealed. `load_run()` refuses anything that is not sealed or that
 fails verification. A full disk, a cancellation or an error removes the
-attempt. `recover()`, for startup after a crash, deletes interrupted attempts
-and nothing else: a `run_*` directory that no longer verifies is moved to
-`quarantine/` with its PDFs, because it may be a good run that was damaged
-later, and a folder the pipeline did not create is left alone.
+attempt. A killed process can't do that, so the next `prepare()` removes
+`.partial-*` folders once it holds the lock, before it checks for disk space, and
+records each one in the journal. `recover()`, for startup after a crash, deletes
+interrupted attempts and nothing else: a `run_*` directory that no longer verifies
+is moved to `quarantine/` with its PDFs, because it may be a good run that was
+damaged later, and a folder the pipeline did not create is left alone.
+
+**`prune()` refuses rather than guesses.** A run holds the only staged copy of its
+PDFs. `prune(root, keep)` raises `Busy` during an open import, `ValueError` for an
+empty or unknown `keep`, and `IntegrityError` if a kept run fails its seal, and
+deletes nothing in those cases. It only removes `run_*` folders in this root that
+hold a manifest, never `quarantine/`, other folders or symbolic links.
 
 **A failure that is not the file's fault is not a verdict on the file.** An
 exception from the caller's progress or cancel callback, or a failure to write
@@ -220,6 +231,88 @@ compare what it indexed against what E2 sealed.
 
 Embedding, indexing and activating a collection version are E3's. This module
 stops at a verified directory.
+
+## The sample corpus
+
+`corpus/corpus.json` lists the collection E2 hands to indexing, and
+`tools/ingest_corpus.py` is the one command that ingests it:
+
+```bash
+python3 tools/ingest_corpus.py           # ingest, seal, deep-verify; writes corpus/out/
+python3 tools/ingest_corpus.py --check   # ingest again from scratch; exit 1 unless the output is identical
+```
+
+It runs the import pipeline above over every listed file as one batch, seals the
+run under `corpus/runs/` and verifies it, re-extracting every PDF. It then
+writes three files to `corpus/out/`: the sealed run's `manifest.json` byte for
+byte, `summary.json` with the counts, checksums, versions and every reject, and
+`SUMMARY.md`, the same for reading. None of them holds a path, a time or a
+machine detail, so the same corpus, code and settings always give the same
+bytes. `tests/test_corpus.py` ingests into a fresh directory and requires the
+committed outputs back exactly. A change to extraction or chunking therefore
+fails that test until the outputs are regenerated, and the regeneration shows
+up in review as a diff of the counts and checksums.
+
+**Version 1 is small.** It holds the three real documents E2 has: the NRC
+Reactor Concepts chapter (24 pages), the arXiv two-column paper (13) and the DOE
+handbook in its original typesetting (142). That is 179 pages, well short of the
+2,000 to 5,000 pages the PRD expects of the initial collection. Adding a
+document is one entry in `corpus.json` (path, SHA-256, size, source and
+licence), then rerunning the command. The DOE reflow, the 1,200-page synthetic
+file and the adversarial document are fixtures, not collection documents: the
+first two repeat text already in the corpus, and the third is a test for
+E3 and E5.
+
+**Rejects are part of the batch on purpose.** The batch also carries the seven
+fixtures labelled `reject`, so every run shows how a reject is explained: a
+reason from the SDD 6.1 vocabulary, the check that failed and a sentence of
+detail. A file is rejected only if the corpus list expects it, for the reason
+the list gives. Any other outcome stops the run before anything is sealed: a
+document rejected, a bad file accepted, a reject for another reason, or a file
+whose bytes no longer match its checksum. That expectation stands in for the
+user's confirmation of the rejected set. No reject reaches the sealed run.
+
+`corpus/runs/` keeps only the run just sealed. A rerun after a change to the
+code or the corpus removes the earlier runs, each about 10 MB.
+
+## Time and memory
+
+`tools/profile_ingest.py` imports a fixed set of targets, each in a fresh
+process, and records the time, the peak RSS, the Python heap peak, how often
+MuPDF opened a document and built a text page, and fingerprints of the output.
+Pointed at an older checkout with `--code`, it measures that code on the same
+files, and `--compare` then lists both side by side, exiting 1 if any output
+differs:
+
+```bash
+python3 tools/profile_ingest.py --label patched
+python3 tools/profile_ingest.py --label baseline --code <ingestion/ folder of the older checkout>
+python3 tools/profile_ingest.py --compare perf/baseline.json perf/patched.json
+```
+
+The profile also records disk use: the run's size, the peak during an import and a
+rerun, and what remains after an import that follows a killed one.
+
+The current figures, on an M-series Mac (macOS 26, Python 3.14, PyMuPDF
+1.28.2), medians of 3 runs. Import is prepare and commit; the deep verify
+re-extracts every accepted PDF and is timed separately.
+
+| Target | Pages | Chunks | Import | Deep verify | Peak RSS | Python heap peak |
+|---|---|---|---|---|---|---|
+| NRC chapter | 24 | 18 | 0.16 s | 0.13 s | 67 MB | 4.7 MB |
+| arXiv two-column paper | 13 | 50 | 0.29 s | 0.23 s | 77 MB | 4.9 MB |
+| DOE handbook, original | 142 | 194 | 1.21 s | 1.18 s | 81 MB | 8.9 MB |
+| Synthetic, 1,200 pages | 1,200 | 3,409 | 12.40 s | 13.16 s | 142 MB | 51.7 MB |
+| Sample corpus, 10 files | 179 | 262 | 1.83 s | 1.82 s | 87 MB | 8.9 MB |
+
+The interpreter and PyMuPDF take 60 to 66 MB of RSS before the first file is read.
+Most of the remaining time is MuPDF building each page's text dictionary. Compare times
+only within one report, because they moved between sessions on the same laptop: the week 6
+code took 12.60 s on 1,200 pages in this session and 7.49 s when `perf/REPORT.md` was
+written. That report covers week 6. `perf/REPORT-week7.md` covers week 7, including what
+an unchanged rerun still costs: it parses everything again and briefly needs twice the
+run's disk. `perf/CANDIDATE.md` records normal, duplicate, large and invalid PDFs going
+through this build together, from `tools/candidate_run.py`.
 
 ## Known limitations
 
@@ -243,8 +336,11 @@ these is a cut in the wrong place; they are about the text itself.
   two-column zones (acknowledgments above references) is read as one zone.
 - **Figure labels** on the NRC slides come out as a column of short lines in no
   useful order, attached to the first sentence that follows them.
-- **Ligatures and line-end hyphens are kept as printed** (`ﬁ`, `real-` /
-  `izing`), so a plain keyword search for `specifications` can miss.
+- **Line-end hyphens are kept as printed** (`real-` / `izing`), so a plain
+  keyword search for a hyphenated word can miss. They are not joined because
+  the stream cannot tell `ramifi-` / `cations` from a real compound broken at
+  its hyphen, such as `self-` / `contained`. Ligatures, which used to have the
+  same effect (`ﬁ`), are expanded to letters since `refchunk-3.1.0`.
 - **Highlights are whole spans.** The first and last highlighted line of a chunk
   can include a few words outside it.
 - **English only.** The abbreviation and sentence-opener lists are English.
@@ -277,9 +373,16 @@ src/
   sentences.py     sentence boundaries and line-cut grading
   pipeline.py      the import flow: stage, validate, chunk, review, seal, verify
 tests/
-  test_contracts.py    32 tests: schemas, IDs, provenance, validation outcomes, damaged files
+  test_contracts.py    34 tests: schemas, IDs, provenance, validation outcomes, damaged files
   test_chunking.py     11 tests: where chunks begin and end
-  test_pipeline.py     36 tests: the import flow against its acceptance criteria
+  test_pipeline.py     43 tests: the import flow against its acceptance criteria
+  test_corpus.py        9 tests: the corpus ingest, its rejects and its rerun consistency
+corpus/
+  corpus.json      the sample corpus: documents and intake checks, with checksums
+  out/             generated by tools/ingest_corpus.py: manifest, summary, SUMMARY.md
+  runs/            the sealed run, rebuilt by the command (not committed)
+perf/          profiles and reports: REPORT.md (week 6), REPORT-week7.md, CANDIDATE.md
+integration/   for E3 and E4: integration notes, the E3 patch and its benchmark
 fixtures/
   normal/       baseline happy path
   large/        the DOE handbook twice: a 96-page text reflow and the 142-page original
@@ -300,16 +403,21 @@ tools/
   probe_fixtures.py          measures actual parser behavior, writes probe_results.json
   build_manifest.py          merges descriptors + measurements into manifest.json
   build_walkthrough.py       regenerates WALKTHROUGH.md from live output
+  ingest_corpus.py           ingests corpus/corpus.json and writes corpus/out/
+  profile_ingest.py          times and measures an import per target; compares two profiles
+  candidate_run.py           runs normal, duplicate, large and invalid PDFs end to end
 manifest.json                the labeled corpus: 16 fixtures, expected outcomes, checksums
 probe_results.json           raw measurement output
 ```
 
 ```bash
-pip install -r requirements.txt      # PyMuPDF is pinned: chunk IDs depend on the extractor
-python3 tests/test_contracts.py      # 32/32, about a minute (it reads the 1,200-page fixture)
+pip install -r requirements-dev.txt  # PyMuPDF is pinned: chunk IDs depend on the extractor
+                                     # to run without the tests: requirements.txt (DEPENDENCIES.md)
+python3 tests/test_contracts.py      # 34/34, about a minute (it reads the 1,200-page fixture)
 python3 tests/test_chunking.py       # 11/11
-python3 tests/test_pipeline.py       # 36/36; two of them need E3_LIBRARY=<E3 checkout>/secure_qa/library
+python3 tests/test_pipeline.py       # 43/43; two of them need E3_LIBRARY=<E3 checkout>/secure_qa/library
                                      # and are reported as SKIPPED without it
+python3 tests/test_corpus.py         # 9/9
 python3 tools/build_walkthrough.py   # regenerates the demo
 ```
 
@@ -350,7 +458,7 @@ have an expected outcome.
 | `scanned_mixed_text_and_image_pages` | scanned | *decision* | per-page text yield |
 | `nonpdf_zip_container_renamed` | nonpdf | reject | magic bytes |
 | `nonpdf_plaintext_renamed` | nonpdf | reject | magic bytes |
-| `oversized_1200_pages` | oversized | *decision* | page/byte cap, not yet set |
+| `oversized_1200_pages` | oversized | accept | under the 2,000-page / 200 MB cap (decision 4, settled) |
 | `adversarial_prompt_injection` | adversarial | accept | must not be filtered |
 
 ## Findings that shaped validation
@@ -414,15 +522,14 @@ only evidence. It is now read for every page: the file is accepted with a
 no Unicode map is visible to a reader and empty to search; it is reported as
 unreadable, not counted among the blank pages.
 
-## Four policy decisions awaiting sign-off
+## Policy decisions: three awaiting sign-off, one settled
 
-Each is a fixture sitting at `decision_required` in the manifest, and each is a
-field of `IngestionPolicy` with the recommended value as its default, so the
+Each open one is a fixture sitting at `decision_required` in the manifest, and
+each is a field of `IngestionPolicy` with the recommended value as its default, so the
 code behaves one defined way today and changing the decision is a one-line
 change. Under the defaults `corrupt_bad_xref` and `scanned_mixed` are accepted
 with a warning, `protected_owner_password_no_extract` is rejected, and
-`oversized_1200_pages` is accepted (the placeholder cap is 2,000 pages and
-200 MB). The policy in force is recorded in every validation result and every
+`oversized_1200_pages` is accepted (the cap is 2,000 pages and 200 MB). The policy in force is recorded in every validation result and every
 run manifest. A misspelt setting raises `ValueError` when the policy is built;
 it used to select the permissive branch without a word.
 
@@ -438,9 +545,12 @@ it used to select the permissive branch without a word.
    per-document threshold, and does the import report name the dropped pages?
    Recommend accept-with-warning plus an explicit page list, so QA can tell a
    parser bug from a scan without reopening the source.
-4. **The size cap** (`oversized_1200_pages`) — page count, byte size, or both,
-   and at what number? Currently unset, which is why this fixture has no fixed
-   expected outcome.
+4. **The size cap** (`oversized_1200_pages`). **Settled on 2026-10-20:** the
+   cap stays at 2,000 pages and 200 MB, both checked. A 1,200-page file ingests
+   without trouble, so nothing technical calls for a lower number, and 2,000
+   pages is above any single document expected in a 2,000 to 5,000-page
+   collection. The fixture is now labelled `accept`; `max_pages=1000` still
+   rejects it, which the live-knobs test keeps proving.
 
 ## Notes on individual fixtures
 

@@ -1,0 +1,98 @@
+{
+  "corpus": "e2-sample-corpus",
+  "version": 1,
+  "description": "The real documents E2 holds: public NRC, DOE and arXiv PDFs, ingested as one batch together with the labelled bad files from the fixture set, so the run shows how rejects are explained. Only the documents reach the sealed run.",
+  "documents": [
+    {
+      "id": "normal-nrc-ch01",
+      "path": "fixtures/normal/normal_nrc_reactor_concepts_ch01.pdf",
+      "title": "Reactor Concepts Manual, Ch.1: Nuclear Power for Electrical Generation",
+      "source": "U.S. Nuclear Regulatory Commission, Technical Training Center",
+      "source_url": "https://www.nrc.gov/reading-rm/basic-ref/students/for-educators/01.pdf",
+      "license": "U.S. Government work, public domain",
+      "bytes": 1291325,
+      "sha256": "591a0381163923768eee93a5908e0f1d68e184be4365493c2f05c76df707abcd",
+      "pages": 24
+    },
+    {
+      "id": "layout-arxiv-two-column",
+      "path": "fixtures/layout/layout_arxiv_two_column_2112.11583.pdf",
+      "title": "Nuclear History, Politics, and Futures from (A)toms-to-(Z)oom",
+      "source": "arXiv:2112.11583",
+      "source_url": "https://arxiv.org/pdf/2112.11583",
+      "license": "arXiv preprint; verify the per-paper license before redistributing",
+      "bytes": 4523404,
+      "sha256": "75b01b7b75102fa1052f88554ae9dcbf9f2313052708259541dce504d08e66f0",
+      "pages": 13
+    },
+    {
+      "id": "large-doe-hdbk-1019-v1-original",
+      "path": "fixtures/large/large_doe_nuclear_physics_v1_original.pdf",
+      "title": "DOE Fundamentals Handbook: Nuclear Physics and Reactor Theory, Vol 1 (original typesetting)",
+      "source": "U.S. Department of Energy, DOE-HDBK-1019/1-93",
+      "source_url": "https://www.navsea.navy.mil/Portals/103/Documents/NNPTC/Radiation/doe_reactor_theory_v1.pdf",
+      "license": "U.S. Government work, public domain. Cover: \"Distribution Statement A. Approved for public release; distribution is unlimited.\"",
+      "bytes": 3521252,
+      "sha256": "8b21195361acc2b2abd0eeae6a0a5bdf0100b24b342612d2c129fabbdb910708",
+      "pages": 142
+    }
+  ],
+  "intake_checks": [
+    {
+      "id": "corrupt-truncated",
+      "path": "fixtures/corrupt/corrupt_truncated_50pct.pdf",
+      "title": "NRC Ch.1 truncated at 50% of bytes",
+      "bytes": 645662,
+      "sha256": "15ac99c11b070c5861641e3cd818a94b7ec08dd4bdb3dbfb6d7a92a997ad55a1",
+      "expected_reject_reason": "corrupt"
+    },
+    {
+      "id": "corrupt-header-only",
+      "path": "fixtures/corrupt/corrupt_header_only.pdf",
+      "title": "Valid %PDF- header followed by binary garbage",
+      "bytes": 4112,
+      "sha256": "5e432dbabf05446614615fde2ce1b142ef6f967d945b5110b6480f354661af09",
+      "expected_reject_reason": "corrupt"
+    },
+    {
+      "id": "corrupt-empty",
+      "path": "fixtures/corrupt/corrupt_empty.pdf",
+      "title": "Zero-byte file",
+      "bytes": 0,
+      "sha256": "e3b0c44298fc1c149afbf4c8996fb92427ae41e4649b934ca495991b7852b855",
+      "expected_reject_reason": "corrupt"
+    },
+    {
+      "id": "protected-user-password",
+      "path": "fixtures/protected/protected_user_password.pdf",
+      "title": "NRC Ch.1 encrypted with a user (open) password",
+      "bytes": 1288832,
+      "sha256": "af0867bcbbfa008e7512aed8bba9f19fdbf456e97f0e7c4db594af2250ebb26e",
+      "expected_reject_reason": "password_protected"
+    },
+    {
+      "id": "scanned-no-text",
+      "path": "fixtures/scanned/scanned_no_text_layer.pdf",
+      "title": "NRC Ch.1 rendered to page images with no text layer",
+      "bytes": 4876651,
+      "sha256": "838a61e040386438785fc95e3f741461b23884c1a595f74ed2062926bbf1947e",
+      "expected_reject_reason": "scanned_only"
+    },
+    {
+      "id": "nonpdf-zip",
+      "path": "fixtures/nonpdf/nonpdf_zip_container_renamed.pdf",
+      "title": "OOXML-shaped zip container with a .pdf extension",
+      "bytes": 324,
+      "sha256": "810e860602528ae5a4c7787734c6a829b1ee405102faf9b01263316b2035c744",
+      "expected_reject_reason": "non_pdf"
+    },
+    {
+      "id": "nonpdf-plaintext",
+      "path": "fixtures/nonpdf/nonpdf_plaintext_renamed.pdf",
+      "title": "UTF-8 text file with a .pdf extension",
+      "bytes": 114,
+      "sha256": "e56cf7ab7f86787a6ca654d063417606fd1e95d5e1724a418901f9dedcb8f086",
+      "expected_reject_reason": "non_pdf"
+    }
+  ]
+}

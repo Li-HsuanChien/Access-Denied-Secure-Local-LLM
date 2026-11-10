@@ -8,6 +8,7 @@ E2 ingestion pipeline: candidate PDFs in, one sealed run directory out.
     verify(run_dir)       ->  Verification
     load_run(run_dir)     ->  Run        the only way a consumer reads a run
     recover(root)                        remove what an interrupted attempt left
+    prune(root, keep)                    delete sealed runs nothing needs any more
 
 What "sealed" means
 -------------------
@@ -18,7 +19,8 @@ run_id is derived from the manifest's own hash. A directory that is still named
 not a run. load_run() refuses it. recover() deletes interrupted attempts, moves
 a run_* directory that no longer verifies into quarantine/ (it may be a good
 run that was damaged later, so it is never deleted), and leaves alone anything
-it did not create.
+it did not create. prepare() removes interrupted attempts too, once it holds
+the job lock: with the lock held, no attempt under runs/ can still be alive.
 
 What never reaches a sealed run
 -------------------------------
@@ -70,6 +72,8 @@ RUN_NAME = re.compile(r'run_[0-9a-f]{16}$')
 # not part of a run and must not make an intact one fail verification.
 OS_METADATA = frozenset({'.DS_Store', 'Thumbs.db', 'desktop.ini'})
 COPY_BLOCK = 1 << 20
+TEXT_BLOCK = 1 << 18                        # characters encoded at a time when hashing a text stream
+CHUNK_BATCH = 256                           # chunks encoded and written at a time
 DISK_RESERVE_BYTES = 64 * 1024 * 1024       # never fill the volume to the last block
 
 log = logging.getLogger('e2.ingest')
@@ -150,9 +154,34 @@ def _sha256_file(path: Path) -> tuple[str, int]:
     return digest.hexdigest(), size
 
 
+def _text_sha256(text: str) -> str:
+    """SHA-256 of the text as UTF-8, encoded a slice at a time instead of copied whole."""
+    digest = hashlib.sha256()
+    for at in range(0, len(text), TEXT_BLOCK):
+        digest.update(text[at:at + TEXT_BLOCK].encode('utf-8'))
+    return digest.hexdigest()
+
+
 def _write(path: Path, data: bytes, durable: bool = True) -> None:
     with open(path, 'wb') as handle:         # binary: no newline translation on Windows
         handle.write(data)
+        if durable:
+            handle.flush()
+            os.fsync(handle.fileno())
+
+
+def _write_chunks(path: Path, chunks: list[Chunk], need_space: Callable[[int], None],
+                  durable: bool = True) -> None:
+    """
+    Write a chunk file a batch at a time, so the encoded lines of a long document
+    are never all in memory together. need_space(bytes) raises if a batch will
+    not fit; it is asked before each one is written.
+    """
+    with open(path, 'wb') as handle:         # binary: no newline translation on Windows
+        for at in range(0, len(chunks), CHUNK_BATCH):
+            lines = [_line(k.to_dict()) for k in chunks[at:at + CHUNK_BATCH]]
+            need_space(sum(map(len, lines)))
+            handle.writelines(lines)
         if durable:
             handle.flush()
             os.fsync(handle.fileno())
@@ -461,6 +490,9 @@ def prepare(paths: Iterable[str | Path], root: str | Path, *,
     passed to commit() or discard(); use it as a context manager to make sure
     one of the two happens. On any exception - cancellation, a full disk, a
     bug - the attempt directory is removed before the exception leaves.
+
+    What a killed process left under runs/ is removed first, so its bytes are
+    not counted against this import's disk check.
     """
     policy, config = policy or IngestionPolicy(), config or ChunkerConfig()
     # Built before the lock is taken: a bad argument must not leave the root locked.
@@ -505,6 +537,7 @@ def prepare(paths: Iterable[str | Path], root: str | Path, *,
 
     try:
         _silence_mupdf()
+        _sweep_interrupted(runs, journal)
         partial.mkdir()
         for sub in ('incoming', 'sources', 'chunks', 'extraction'):
             (partial / sub).mkdir()
@@ -656,24 +689,26 @@ def prepare(paths: Iterable[str | Path], root: str | Path, *,
             else:
                 text, pages, made = processed.text, processed.pages, processed.chunks
                 document = result.document
-                blob = b''.join(_line(k.to_dict()) for k in made)
                 table = {
                     'schema_version': MANIFEST_SCHEMA_VERSION,
                     'document_id': document['document_id'],
                     'extractor': EXTRACTOR, 'chunker_config_id': config.config_id,
                     'text_chars': len(text),
-                    'text_sha256': hashlib.sha256(text.encode('utf-8')).hexdigest(),
+                    'text_sha256': _text_sha256(text),
                     'pages': [{'page_number': p.number, 'char_start': p.char_start,
                                'char_end': p.char_end, 'width': p.width, 'height': p.height,
                                'has_text': p.has_text, 'spans': len(p.spans)} for p in pages],
                 }
                 table_blob = json.dumps(table, sort_keys=True, separators=(',', ':'),
                                         ensure_ascii=True).encode('ascii') + b'\n'
-                need = len(blob) + len(table_blob) + DISK_RESERVE_BYTES
-                free = disk_free(root)
-                if free < need:
-                    raise InsufficientDiskSpace(need, free)
-                _write(partial / 'chunks' / f'{document["document_id"]}.jsonl', blob, durable)
+
+                def need_space(size: int) -> None:
+                    need, free = size + len(table_blob) + DISK_RESERVE_BYTES, disk_free(root)
+                    if free < need:
+                        raise InsufficientDiskSpace(need, free)
+
+                _write_chunks(partial / 'chunks' / f'{document["document_id"]}.jsonl', made,
+                              need_space, durable)
                 _write(partial / 'extraction' / f'{document["document_id"]}.json', table_blob, durable)
                 c.document_id = document['document_id']
                 c.page_count, c.chunk_count = document['page_count'], len(made)
@@ -687,7 +722,7 @@ def prepare(paths: Iterable[str | Path], root: str | Path, *,
                     'chunk_count': len(made),
                 }
                 state['warnings'] += len(result.warnings)
-                del text, pages, made, blob, processed      # one document in memory at a time
+                del text, pages, made, processed            # one document in memory at a time
 
             c.seconds = round(time.perf_counter() - t_file, 4)
             state['files'] += 1
@@ -1131,7 +1166,7 @@ def verify(run_dir: str | Path, *, deep: bool = False, sealed: bool = True) -> V
                     n += 1
             rebuilt = ''.join(stream)
             if (len(rebuilt) != d['text_chars']
-                    or hashlib.sha256(rebuilt.encode('utf-8')).hexdigest() != d['text_sha256']):
+                    or _text_sha256(rebuilt) != d['text_sha256']):
                 problems['text_stream_rebuilt'].append(f'{doc_id}: rebuilt stream does not hash to text_sha256')
             if n != d['chunk_count'] or n < 1:
                 problems['chunk_counts'].append(f'{doc_id}: {n} lines, manifest says {d["chunk_count"]}')
@@ -1173,8 +1208,11 @@ def verify(run_dir: str | Path, *, deep: bool = False, sealed: bool = True) -> V
                 source = run_dir / d['files']['source']['path']
                 again = process(source, policy, config, source_filename=d['source_filename'],
                                 checksum_sha256=d['checksum_sha256'], byte_size=d['byte_size'])
-                blob = b''.join(_line(k.to_dict()) for k in (again.chunks or []))
-                if hashlib.sha256(blob).hexdigest() != d['files']['chunks']['sha256']:
+                digest = hashlib.sha256()
+                for k in again.chunks or []:
+                    digest.update(_line(k.to_dict()))
+                del again
+                if digest.hexdigest() != d['files']['chunks']['sha256']:
                     different.append(d['document_id'])
             check('reextraction_reproduces_chunks', not different,
                   ', '.join(different[:3]) or f'{len(manifest["documents"])} documents re-extracted '
@@ -1218,6 +1256,35 @@ def _tree_bytes(path: Path) -> int:
     return sum(p.stat().st_size for p in path.rglob('*') if p.is_file())
 
 
+def _sweep_interrupted(runs: Path, journal: _Journal) -> None:
+    """
+    Remove the attempts a dead process left under runs/. The caller holds the job
+    lock, so none of them is still being written. A leftover that cannot be
+    removed is journalled and left for recover(): it does not stop this import.
+    """
+    for entry in sorted(runs.iterdir()):
+        if not entry.name.startswith(PARTIAL_PREFIX) or entry.is_symlink() or not entry.is_dir():
+            continue
+        try:
+            size = _tree_bytes(entry)
+            shutil.rmtree(entry)
+        except OSError as exc:
+            journal('leftover_kept', reason='interrupted_attempt', name=entry.name,
+                    error=type(exc).__name__)
+        else:
+            journal('leftover_removed', reason='interrupted_attempt', name=entry.name, bytes=size)
+
+
+def _seal_intact(run_dir: Path) -> bool:
+    """The manifest hashes to itself and to the directory's name. Reads no other file."""
+    try:
+        manifest = json.loads((run_dir / 'manifest.json').read_bytes())
+        return (_seal({k: v for k, v in manifest.items() if k != 'seal'}) == manifest.get('seal')
+                and manifest['seal']['run_id'] == run_dir.name)
+    except (ValueError, KeyError, TypeError, AttributeError, OSError):
+        return False
+
+
 def recover(root: str | Path, *, quarantine: bool = False) -> list[dict]:
     """
     Call at startup (SDD 9, unexpected shutdown). Returns what it found under
@@ -1251,15 +1318,9 @@ def recover(root: str | Path, *, quarantine: bool = False) -> list[dict]:
                 why, action = 'not_a_run', 'ignored'
             elif not (entry / 'manifest.json').is_file():
                 why, action = 'no_manifest', 'quarantined'
+            elif _seal_intact(entry):
+                continue
             else:
-                try:
-                    manifest = json.loads((entry / 'manifest.json').read_bytes())
-                    good = _seal({k: v for k, v in manifest.items() if k != 'seal'}) == manifest.get('seal') \
-                        and manifest['seal']['run_id'] == entry.name
-                except (ValueError, KeyError, TypeError, AttributeError, OSError):
-                    good = False
-                if good:
-                    continue
                 why, action = 'manifest_seal_mismatch', 'quarantined'
             size = _tree_bytes(entry)
             if action == 'quarantined':
@@ -1294,17 +1355,55 @@ def list_runs(root: str | Path) -> list[str]:
     if not runs.is_dir():
         return []
     return sorted(p.name for p in runs.iterdir()
-                  if p.is_dir() and p.name.startswith(RUN_PREFIX) and (p / 'manifest.json').is_file())
+                  if RUN_NAME.match(p.name) and not p.is_symlink() and p.is_dir()
+                  and (p / 'manifest.json').is_file())
 
 
 def prune(root: str | Path, keep: Iterable[str]) -> list[str]:
-    """Delete sealed runs not named in keep. E3 calls this with the runs behind its active and previous versions."""
-    keep, removed = set(keep), []
-    for name in list_runs(root):
-        if name not in keep:
-            shutil.rmtree(Path(root) / 'runs' / name)
+    """
+    Delete sealed runs not named in keep, and return their names. Meant to be
+    called with the runs behind the active and previous versions.
+
+    A run holds the only staged copy of its PDFs, so this refuses rather than
+    guesses. It raises Busy while an import is open, ValueError if keep is empty
+    or names a run that is not here (a mistyped name would otherwise cost every
+    other run), and IntegrityError if a run in keep fails its seal. In all three
+    cases nothing is deleted.
+
+    Only run folders holding a manifest are touched: quarantine/, other folders
+    and symbolic links stay where they are. A run is first renamed to an attempt
+    name, so a crash part-way through a delete leaves something the next import
+    sweeps away, not something that still looks like a run.
+    """
+    root, keep = Path(root), set(keep)
+    if not keep:
+        raise ValueError('prune() needs at least one run to keep.')
+    if not (root / 'runs').is_dir():
+        raise ValueError('This root has no runs.')
+    lock = _JobLock(root)
+    lock.acquire()
+    try:
+        present = list_runs(root)
+        unknown = keep - set(present)
+        if unknown:
+            raise ValueError(f'These runs are not in this root: {sorted(unknown)}')
+        runs = root / 'runs'
+        for name in sorted(keep):
+            if not _seal_intact(runs / name):
+                raise IntegrityError(f'Run {name} fails its seal, so nothing was pruned.')
+        journal, removed = _Journal(root, 'prune'), []
+        for name in present:
+            if name in keep:
+                continue
+            size = _tree_bytes(runs / name)
+            doomed = runs / f'{PARTIAL_PREFIX}pruned-{name}'
+            os.replace(runs / name, doomed)
+            shutil.rmtree(doomed)
             removed.append(name)
-    return removed
+            journal('run_pruned', run_id=name, bytes=size)
+        return removed
+    finally:
+        lock.release()
 
 
 # ---------------------------------------------------------------------------
@@ -1341,7 +1440,7 @@ def trace(run: Run, document_id: str, ordinal: int) -> dict:
         'document_id': document_id, 'chunk': chunk, 'text_chars': doc['text_chars'],
         'text_checksum_matches': text_checksum(chunk['text']) == chunk['text_checksum_sha256'],
         'stream_slice_matches': text[chunk['char_start']:chunk['char_end']] == chunk['text'],
-        'stream_sha256_matches': hashlib.sha256(text.encode('utf-8')).hexdigest() == doc['text_sha256'],
+        'stream_sha256_matches': _text_sha256(text) == doc['text_sha256'],
         'spans': spans,
     }
 

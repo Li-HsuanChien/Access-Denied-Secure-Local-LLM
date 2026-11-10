@@ -13,6 +13,7 @@ Run:  python3 tests/test_contracts.py
 from __future__ import annotations
 
 import json
+import re
 import shutil
 import sys
 import tempfile
@@ -301,7 +302,7 @@ def test_policy_decisions_are_live_knobs():
     # Decision 1: repaired documents
     assert validate(xref, IngestionPolicy(repaired_document='accept_with_warning')).outcome != Outcome.REJECTED
     assert validate(xref, IngestionPolicy(repaired_document='reject')).outcome == Outcome.REJECTED
-    return 'all four open decisions flip behavior from config alone'
+    return 'all four policy decisions, three open and the settled size cap, flip behavior from config alone'
 
 
 def test_truncation_is_caught_despite_correct_page_count():
@@ -642,6 +643,39 @@ def test_normal_pdfs_extract_page_text():
             f'yield text; the other {blank_pages} are blank in the PDF')
 
 
+def test_each_page_is_read_once():
+    """
+    Week 6: extraction builds one text page per page, and a second only for a
+    page that yields no text, to count its images. Before, every page was read
+    twice, the second time with every image on it loaded.
+    """
+    scanned = FIX / 'scanned' / 'scanned_mixed_text_and_image_pages.pdf'
+    built: list[int] = []
+    real = pymupdf.Page.get_textpage
+
+    def counted(self, *args, **kwargs):
+        built.append(self.number)
+        return real(self, *args, **kwargs)
+
+    pymupdf.Page.get_textpage = counted
+    seen = []
+    try:
+        for path in (NORMAL, ORIGINAL, scanned):
+            built.clear()
+            text, pages, doc = extract(path)
+            doc.close()
+            empty = [p for p in pages if not p.has_text]
+            assert len(built) == len(pages) + len(empty), (
+                f'{path.name}: {len(built)} text pages built for {len(pages)} pages, {len(empty)} without text')
+            seen.append((path.name, len(pages), len(empty)))
+    finally:
+        pymupdf.Page.get_textpage = real
+    lost = [p.number for p in pages if not p.has_text and not p.images]
+    assert not lost, f'{scanned.name}: image-only pages counted no image: {lost}'
+    return ('text pages built: ' + ', '.join(f'{n + e} for {n} pages ({e} without text)' for _, n, e in seen)
+            + f'; the {len(empty)} scanned pages still report their image')
+
+
 def test_pages_without_text_are_always_on_record():
     """
     Nothing is lost silently. The text_yield check lists every page without
@@ -804,6 +838,24 @@ def test_running_headers_are_stripped():
     assert 'HYDROELECTRIC PLANT' in stripped
     saved = len(kept) - len(stripped)
     return f'{saved} chars of running boilerplate removed ({100 * saved // len(kept)}% of the raw stream)'
+
+
+def test_ligatures_are_expanded():
+    """
+    A font's 'fi' or 'ff' glyph reaches the stream as two letters, not as one
+    presentation-form code point (U+FB00 to U+FB06). Left in, "ﬁnd" matches
+    neither "find" in a keyword search nor in most embedding vocabularies; E3
+    found it in 46 of 309 chunks of the arXiv paper.
+    """
+    ligature = re.compile('[ﬀ-ﬆ]')
+    expanded = 0
+    for path in ACCEPTING:
+        text = _stream(path)
+        found = ligature.findall(text)
+        assert not found, f'{path.name}: {len(found)} ligature code points, e.g. {found[:3]}'
+        expanded += text.count('fi') + text.count('ff') + text.count('fl')
+    assert expanded, 'no fi/ff/fl at all: the fixtures no longer exercise this'
+    return f'no ligature code points in {len(ACCEPTING)} documents; {expanded} fi/ff/fl pairs read as letters'
 
 
 def test_reading_order_follows_the_page():

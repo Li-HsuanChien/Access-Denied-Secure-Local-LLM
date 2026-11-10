@@ -32,6 +32,7 @@ from .validation import (Check, CheckStatus, IngestionPolicy, Outcome,
 VALIDATOR_VERSION = 'e2-validate-2.0.0'
 EXTRACTOR = f'pymupdf/{getattr(pymupdf, "__version__", "unknown")}'
 PDF_MAGIC = b'%PDF-'
+_HASH_BLOCK = 1 << 20                        # bytes read at a time when hashing a file
 
 
 # ---------------------------------------------------------------------------
@@ -52,7 +53,7 @@ class _Page:
     width: float         # as displayed, i.e. after any page rotation
     height: float
     spans: list[_Span]
-    images: int = 0      # image blocks drawn on the page
+    images: int = 0      # image blocks drawn on the page; counted only when it yields no text
     undecoded: int = 0   # lines left out because no glyph on them could be named
     damaged: bool = False    # the parser reported damage while reading the page
 
@@ -276,14 +277,21 @@ def _set_on(blocks: list[dict], gutter: tuple[float, float]) -> bool:
 
 
 # Text only: by default the 'dict' output carries every image's bytes, which
-# nothing here reads. The images are counted instead.
-_TEXT_FLAGS = pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES
+# nothing here reads. Images are counted, and only on pages that yield no text
+# (see extract_document).
+#
+# Ligatures are expanded: a font's single 'fi' glyph comes out as 'f' + 'i',
+# not as U+FB01. Kept, the ligature splits the word for search and embedding
+# ("ﬁnd" does not match "find"); on the arXiv fixture 113 of them did. The span
+# box is the same either way, so highlights are unaffected.
+_TEXT_FLAGS = (pymupdf.TEXTFLAGS_DICT & ~pymupdf.TEXT_PRESERVE_IMAGES
+               & ~pymupdf.TEXT_PRESERVE_LIGATURES)
 
 
-def _page_blocks(page, sort: bool) -> tuple[list[dict], int, int]:
+def _page_blocks(page, sort: bool) -> tuple[list[dict], int]:
     """
-    A page's text blocks, holding the lines that carry ink; how many images the
-    page draws; and how many lines were left out as unreadable glyphs.
+    A page's text blocks, holding the lines that carry ink, and how many lines
+    were left out as unreadable glyphs.
 
     PyMuPDF reports boxes in the page as stored, before any /Rotate. That frame
     is the right one for reading order and for finding margins, because it is
@@ -302,7 +310,7 @@ def _page_blocks(page, sort: bool) -> tuple[list[dict], int, int]:
     """
     box = page.cropbox                    # get_text() coordinates are in the unrotated page
     turn = page.rotation_matrix if page.rotation else None
-    blocks, images, undecoded = [], len(page.get_image_info()), 0
+    blocks, undecoded = [], 0
     for block in page.get_text('dict', sort=sort, flags=_TEXT_FLAGS)['blocks']:
         if block.get('type') != 0:            # 0 = text block
             continue
@@ -323,7 +331,7 @@ def _page_blocks(page, sort: bool) -> tuple[list[dict], int, int]:
                                                        max(s['size'] for s in spans))})
         if lines:
             blocks.append({'bbox': tuple(block['bbox']), 'lines': lines})
-    return blocks, images, undecoded
+    return blocks, undecoded
 
 
 def _in_order(blocks: list[dict]) -> list[_Line]:
@@ -338,12 +346,6 @@ def _in_order(blocks: list[dict]) -> list[_Line]:
     # page's own text it cannot split a sentence.
     return ([line for line in flat if line.frame == main]
             + [line for line in flat if line.frame != main])
-
-
-def _page_lines(page, sort: bool) -> tuple[list[_Line], int]:
-    """One page read by itself: its lines in reading order and its image count."""
-    blocks, images, _ = _page_blocks(page, sort)
-    return _in_order(_reading_order(blocks) if sort else blocks), images
 
 
 def _body_size(page_lines: list[list[_Line]]) -> float:
@@ -604,17 +606,21 @@ def extract_document(doc, *, sort: bool = True, strip_boilerplate: bool = True,
 
     Every page the document declares is loaded by number, so a page that is
     not there raises instead of quietly ending the loop.
+
+    Images are counted only on the pages that end up with no text. Counting
+    them means MuPDF reads the page a second time with its images loaded, and
+    the count is only ever asked of a page with nothing to read.
     """
     total = doc.page_count
     pymupdf.TOOLS.mupdf_warnings()            # start clean: what follows is about these pages
     read = []
     for index in range(total):
         page = doc.load_page(index)
-        blocks, images, undecoded = _page_blocks(page, sort)
+        blocks, undecoded = _page_blocks(page, sort)
         printed = pymupdf.TOOLS.mupdf_warnings()
         if said is not None:
             said.extend(printed.splitlines())
-        read.append((blocks, images, undecoded, bool(_DAMAGE.search(printed)),
+        read.append((blocks, undecoded, bool(_DAMAGE.search(printed)),
                      page.rect.width, page.rect.height))
         if on_page is not None:
             on_page(index + 1, total)
@@ -632,13 +638,15 @@ def extract_document(doc, *, sort: bool = True, strip_boilerplate: bool = True,
             if ordered[index] is blocks and _set_on(blocks, shared[0]):
                 ordered[index] = _by_columns(blocks, list(shared))
     layout = [(_in_order(blocks), *rest) for blocks, (_, *rest) in zip(ordered, read)]
+    del read, ordered                         # the blocks; their lines live on in layout
     drop = _running_lines([lines for lines, *_ in layout]) if strip_boilerplate else {}
 
     parts: list[str] = []
     pages: list[_Page] = []
     cursor = 0
 
-    for index, (lines, images, undecoded, damaged, width, height) in enumerate(layout):
+    for index, (lines, undecoded, damaged, width, height) in enumerate(layout):
+        layout[index] = None                  # a page's lines are spent once its spans are made
         page_start = cursor
         spans: list[_Span] = []
         for number, line in enumerate(lines):
@@ -657,8 +665,12 @@ def extract_document(doc, *, sort: bool = True, strip_boilerplate: bool = True,
         if cursor > page_start:
             parts.append('\n')
             cursor += 1
-        pages.append(_Page(index + 1, page_start, cursor, width, height, spans, images,
+        pages.append(_Page(index + 1, page_start, cursor, width, height, spans, 0,
                            undecoded, damaged))
+    for page in pages:
+        if not page.has_text:
+            page.images = len(doc.load_page(page.number - 1).get_image_info())
+    pymupdf.TOOLS.mupdf_warnings()            # the pages were read above; this was a second look
     return ''.join(parts), pages
 
 
@@ -743,6 +755,18 @@ def validate(path: str | Path, policy: IngestionPolicy | None = None, *,
     return _validate(path, policy, source_filename=source_filename)
 
 
+def _hash_file(path: Path) -> tuple[str, int, bytes]:
+    """The file's SHA-256, size and first 8 bytes, read in blocks rather than whole."""
+    digest, size, head = hashlib.sha256(), 0, b''
+    with open(path, 'rb') as handle:
+        while block := handle.read(_HASH_BLOCK):
+            if not head:
+                head = block[:8]
+            digest.update(block)
+            size += len(block)
+    return digest.hexdigest(), size, head
+
+
 def _validate(path: str | Path, policy: IngestionPolicy | None = None, *,
               source_filename: str | None = None, checksum_sha256: str | None = None,
               byte_size: int | None = None, sort: bool = True, strip_boilerplate: bool = True,
@@ -759,9 +783,7 @@ def _validate(path: str | Path, policy: IngestionPolicy | None = None, *,
     policy = policy or IngestionPolicy()
     path = Path(path)
     if checksum_sha256 is None or byte_size is None:
-        raw = path.read_bytes()
-        byte_size, checksum_sha256, head = len(raw), hashlib.sha256(raw).hexdigest(), raw[:8]
-        del raw
+        checksum_sha256, byte_size, head = _hash_file(path)
     else:
         with open(path, 'rb') as handle:
             head = handle.read(8)
@@ -1272,7 +1294,7 @@ def chunks(path: str | Path, config: ChunkerConfig | None = None,
     """
     config = config or ChunkerConfig()
     path = Path(path)
-    document_id = document_id or Document.make_id(path.read_bytes())
+    document_id = document_id or Document.id_from_checksum(_hash_file(path)[0])
 
     text, pages, doc = extract(path, sort=config.sorted_reading_order,
                                strip_boilerplate=config.strip_running_headers)

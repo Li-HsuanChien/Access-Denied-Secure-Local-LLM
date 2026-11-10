@@ -15,6 +15,7 @@ Run:  python3 tests/test_pipeline.py            (all)
 from __future__ import annotations
 
 import ast
+import hashlib
 import importlib.util
 import io
 import json
@@ -37,7 +38,7 @@ from jsonschema import Draft202012Validator
 from referencing import Registry, Resource
 
 from src import pipeline as P
-from src.ingest import chunks, extract, validate
+from src.ingest import chunks, extract, process, validate
 from src.schema import ChunkerConfig, Document
 from src.validation import IngestionPolicy, RejectReason
 
@@ -647,6 +648,64 @@ def test_same_bytes_under_two_names_is_one_document():
             f'recorded as aliases')
 
 
+def test_a_duplicate_is_never_parsed():
+    """A second copy is recognised by its checksum while it is copied, before the parser sees it."""
+    work = fresh('dup-parse-src')
+    work.mkdir(parents=True)
+    shutil.copy(NORMAL, work / 'again.pdf')
+    shutil.copy(NOT_PDF, work / 'again_not_a.pdf')
+    parsed: list[str] = []
+    real = P.process
+
+    def counted(path, *args, **kwargs):
+        parsed.append(kwargs.get('source_filename'))
+        return real(path, *args, **kwargs)
+
+    P.process = counted
+    try:
+        review = P.prepare([NORMAL, work / 'again.pdf', NOT_PDF, work / 'again_not_a.pdf'],
+                           fresh('dup-parse'))
+    finally:
+        P.process = real
+    assert sorted(parsed) == sorted([NORMAL.name, NOT_PDF.name]), parsed
+    assert [c.disposition for c in review.candidates] == ['accepted', 'duplicate', 'rejected', 'duplicate']
+    (r,) = review.rejected
+    assert r['source_filename'] == 'again_not_a.pdf' and r['aliases'] == [NOT_PDF.name], r
+    assert r['times_supplied'] == 2 and review.totals['duplicates'] == 2, (r, review.totals)
+    assert sorted(p.name for p in (review.partial_dir / 'sources').iterdir()) == [
+        f'{review.documents[0]["document_id"]}.pdf']
+    P.discard(review)
+    return ('4 files, 2 parsed: a second copy of an accepted file and of a rejected one are both '
+            'matched by checksum and recorded as names on the first')
+
+
+def test_the_import_root_keeps_only_runs_the_lock_and_the_journal():
+    """No temporary file outlives the import, whatever its ending."""
+    def left(root: Path) -> list[str]:
+        sealed = set(P.list_runs(root))         # a sealed run and everything in it is meant to stay
+        return sorted(p.relative_to(root).as_posix() for p in root.rglob('*')
+                      if not (len(p.relative_to(root).parts) > 1 and p.relative_to(root).parts[1] in sealed))
+
+    expected = ['ingest.lock', 'journal.jsonl', 'runs']
+    endings = {}
+    root = fresh('tidy-sealed')
+    review = P.prepare([NORMAL, NORMAL, NOT_PDF, TRUNCATED], root)
+    run = P.commit(review, acknowledge_rejections=review.confirmation_token)
+    endings['sealed with rejects and a duplicate'] = (left(root), expected)
+    again = P.ingest([NORMAL, NORMAL, NOT_PDF, TRUNCATED], root, acknowledge_rejections=True)
+    assert again.reused and P.list_runs(root) == [run.run_id], P.list_runs(root)
+    endings['the same inputs again, run reused'] = (left(root), expected)
+    root = fresh('tidy-declined')
+    P.discard(P.prepare([NORMAL, NOT_PDF], root))
+    endings['declined at review'] = (left(root), expected)
+    root = fresh('tidy-none')
+    P.discard(P.prepare([NOT_PDF, LOCKED], root), 'nothing_accepted')
+    endings['nothing accepted'] = (left(root), expected)
+    for ending, (found, want) in endings.items():
+        assert found == want, f'{ending}: left {found}'
+    return f'{len(endings)} endings ({", ".join(endings)}): nothing left but runs/, ingest.lock and journal.jsonl'
+
+
 def test_two_files_with_one_name_are_two_documents():
     work = fresh('clash-src')
     (work / 'a').mkdir(parents=True)
@@ -866,6 +925,187 @@ def test_recover_deletes_only_what_it_knows_is_throwaway():
     assert [f['action'] for f in P.recover(root)] == ['ignored']
     return ('a damaged run is moved to quarantine/ with its PDF, a foreign folder is left alone, '
             'an interrupted attempt is deleted, and the intact run is untouched')
+
+
+def test_an_import_removes_what_a_killed_one_left():
+    """A crash leftover is not kept until someone calls recover(), and only leftovers are removed."""
+    root = fresh('sweep')
+    run = P.ingest([ADVERSARIAL], root, durable=False)
+    outside = fresh('sweep-outside')
+    outside.mkdir()
+    (outside / 'keep.txt').write_text('not under runs/')
+    runs = root / 'runs'
+    (runs / '.partial-link').symlink_to(outside, target_is_directory=True)
+    (runs / 'my-notes').mkdir()
+    (runs / 'my-notes' / 'keep.txt').write_text('not made by the pipeline')
+    dead = runs / '.partial-20260101T000000Z-1-abcdef'
+    (dead / 'sources').mkdir(parents=True)
+    (dead / 'sources' / 'half.pdf').write_bytes(b'%PDF-1.4 half a copy')
+
+    seen = []
+    def free(path):                                    # asked by the disk check
+        seen.append(dead.exists())
+        return 10**12
+    second = P.ingest([NORMAL], root, disk_free=free, durable=False)
+    assert seen[0] is False, 'the leftover was counted against the disk check'
+    assert not dead.exists()
+    assert (outside / 'keep.txt').exists() and (runs / '.partial-link').is_symlink()
+    assert (runs / 'my-notes' / 'keep.txt').exists()
+    assert set(P.list_runs(root)) == {run.run_id, second.run_id}
+    swept = [e for e in _journal(root) if e['event'] == 'leftover_removed']
+    assert [(e['name'], e['bytes']) for e in swept] == [(dead.name, 20)], swept
+
+    # One that cannot be removed is reported, and does not stop the import.
+    if os.geteuid() != 0:
+        stuck = runs / '.partial-20260101T000000Z-2-abcdef'
+        (stuck / 'sources').mkdir(parents=True)
+        (stuck / 'sources' / 'half.pdf').write_bytes(b'%PDF-1.4')
+        os.chmod(stuck / 'sources', 0o500)
+        try:
+            P.discard(P.prepare([ADVERSARIAL], root, durable=False))
+            kept = [e for e in _journal(root) if e['event'] == 'leftover_kept']
+            assert [e['name'] for e in kept] == [stuck.name], kept
+        finally:
+            os.chmod(stuck / 'sources', 0o700)
+    return 'swept before the disk check and journalled; a symlink, a foreign folder and a sealed run stayed'
+
+
+def test_prune_refuses_rather_than_guesses():
+    """prune() deletes the only staged copy of a run's PDFs, so a doubtful call deletes nothing."""
+    root = fresh('prune')
+    keep = P.ingest([ADVERSARIAL], root, durable=False)
+    other = P.ingest([NORMAL], root, durable=False)
+    third = P.ingest([ADVERSARIAL, NORMAL], root, durable=False)
+    runs = root / 'runs'
+    (runs / 'my-notes').mkdir()
+    (root / P.QUARANTINE_DIR).mkdir()
+    (root / P.QUARANTINE_DIR / 'set-aside').mkdir()
+    elsewhere = fresh('prune-elsewhere')
+    shutil.copytree(third.path, elsewhere)
+    link = runs / 'run_00000000000000aa'
+    link.symlink_to(elsewhere, target_is_directory=True)
+
+    def listing():                                     # an open review adds its own attempt folder
+        return sorted(p.name for p in runs.iterdir() if not p.name.startswith(P.PARTIAL_PREFIX))
+    everything = listing()
+
+    def refused(error, names):
+        try:
+            P.prune(root, names)
+        except error:
+            assert listing() == everything, f'{names} deleted something'
+            return
+        raise AssertionError(f'prune({names}) was accepted')
+
+    refused(ValueError, [])
+    refused(ValueError, [keep.run_id, 'run_0000000000000000'])
+    refused(ValueError, [link.name])                   # a link to a run is not a run in this root
+    manifest = keep.path / 'manifest.json'
+    good = manifest.read_bytes()
+    manifest.write_bytes(good.replace(b'"schema_version"', b'"schema_versions"', 1))
+    refused(P.IntegrityError, [keep.run_id])
+    manifest.write_bytes(good)
+    review = P.prepare([ADVERSARIAL], root, durable=False)
+    refused(P.Busy, [keep.run_id])
+    P.discard(review)
+    try:
+        P.prune(fresh('prune-nothing-here'), [keep.run_id])
+        raise AssertionError('pruned a root that does not exist')
+    except ValueError:
+        pass
+
+    removed = P.prune(root, [keep.run_id])
+    assert removed == sorted([other.run_id, third.run_id]), removed
+    assert P.list_runs(root) == [keep.run_id] and P.verify(keep.path).ok
+    assert (runs / 'my-notes').is_dir() and (root / P.QUARANTINE_DIR / 'set-aside').is_dir()
+    assert link.is_symlink() and (elsewhere / 'manifest.json').is_file(), 'followed a link'
+    assert not list(runs.glob('.partial-*')), 'left a renamed run behind'
+    pruned = {e['run_id']: e['bytes'] for e in _journal(root) if e['event'] == 'run_pruned'}
+    assert set(pruned) == set(removed) and all(pruned.values()), pruned
+
+    # A crash between the rename and the delete leaves an attempt, and the next import sweeps it.
+    half = runs / f'{P.PARTIAL_PREFIX}pruned-{other.run_id}'
+    half.mkdir()
+    P.discard(P.prepare([ADVERSARIAL], root, durable=False))
+    assert not half.exists()
+    return 'empty, unknown, linked, damaged and busy calls all refused with nothing deleted; a good call removed 2 runs'
+
+
+def test_sources_are_never_modified():
+    """Read-only copies of every kind of file, through every entry point and every ending."""
+    work = fresh('read-only-sources')
+    work.mkdir()
+    for path in sorted(FIX.rglob('*.pdf')):
+        if path != OVERSIZED:                          # takes as long as all the others together
+            shutil.copy2(path, work / path.name)
+    malformed = [work / p.name for p in (TRUNCATED, NOT_PDF, LOCKED)]
+
+    def snapshot():
+        return {p.name: (hashlib.sha256(p.read_bytes()).hexdigest(), p.stat().st_size,
+                         p.stat().st_mtime_ns, p.stat().st_mode) for p in work.iterdir()}
+
+    paths = sorted(work.iterdir())
+    for p in paths:
+        os.chmod(p, 0o444)
+    os.chmod(work, 0o555)
+    try:
+        before = snapshot()
+        for path in malformed + [work / NORMAL.name]:
+            validate(path)
+            process(path)
+        chunks(work / NORMAL.name)
+        extract(work / NORMAL.name)[2].close()
+        P.discard(P.prepare(paths, fresh('ro-declined'), durable=False))
+        try:
+            P.prepare(paths, fresh('ro-cancelled'), cancel=lambda: True)
+        except P.Cancelled:
+            pass
+        run = P.ingest(paths, fresh('ro-sealed'), acknowledge_rejections=True, durable=False)
+        assert P.verify(run.path, deep=True).ok
+        P.trace(run, run.manifest['documents'][0]['document_id'], 0)
+        again = P.ingest(paths, run.path.parent.parent, acknowledge_rejections=True, durable=False)
+        assert again.reused
+        P.recover(run.path.parent.parent)
+        after = snapshot()
+    finally:
+        os.chmod(work, 0o755)
+    assert after == before, sorted(k for k in before if after.get(k) != before[k])
+    assert set(after) == {p.name for p in paths}, 'something was written next to a source'
+    rejected = len(run.manifest['rejected'])
+    assert rejected >= 7, rejected
+    return (f'{len(paths)} read-only files, {rejected} of them rejected: same bytes, size, mtime and mode, '
+            'and nothing new beside them, after validate, process, chunks, a decline, a cancel, a seal and a rerun')
+
+
+def test_chunk_files_do_not_depend_on_the_batch_size():
+    """Bounded batches change how much is in memory while writing, and nothing about what is written."""
+    size = P.CHUNK_BATCH
+    ids, calls = {}, {}
+    try:
+        for batch in (1, 5, 10_000):
+            P.CHUNK_BATCH = batch
+            root = fresh(f'batch-{batch}')
+            calls[batch] = []
+            def free(path, seen=calls[batch]):
+                seen.append(1)
+                return 10**12
+            run = P.ingest([NORMAL], root, disk_free=free, durable=False)
+            ids[batch] = run.run_id
+            count = run.manifest['totals']['chunks']
+    finally:
+        P.CHUNK_BATCH = size
+    assert len(set(ids.values())) == 1, ids
+    # One check before anything is copied, then one per batch: the disk is asked as the file grows.
+    assert [len(calls[b]) for b in (1, 5, 10_000)] == [1 + count, 1 + (count + 4) // 5, 2], calls
+    return f'batches of 1, 5 and 10,000 give run {ids[1]} from {count} chunks, with a disk check per batch'
+
+
+def test_the_candidate_build_handles_the_week_7_inputs():
+    """Normal, duplicate, large and invalid PDFs, end to end, through the tool the demo runs."""
+    done = subprocess.run([sys.executable, str(ROOT / 'tools' / 'candidate_run.py'), '--check'],
+                          capture_output=True, text=True)
+    assert done.returncode == 0, done.stdout[-1500:] + done.stderr[-1500:]
+    return done.stdout.strip().splitlines()[-1]
 
 
 def test_verify_judges_the_run_and_not_its_surroundings():

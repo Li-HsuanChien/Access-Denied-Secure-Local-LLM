@@ -1,0 +1,5 @@
+# Tests and fixture tooling. Not needed to run or ship ingestion.
+-r requirements.txt
+jsonschema==4.26.0
+pikepdf==10.15.0
+reportlab==5.0.1

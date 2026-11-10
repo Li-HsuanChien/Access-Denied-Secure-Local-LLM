@@ -1,0 +1,338 @@
+{
+  "code_revision": "1c18893",
+  "host": {
+    "platform": "macOS-26.6.2",
+    "machine": "arm64",
+    "python": "3.14.4",
+    "pymupdf": "1.28.2",
+    "cpus": 11
+  },
+  "repeat": 3,
+  "targets": {
+    "normal": {
+      "description": "NRC Reactor Concepts ch. 1",
+      "files": 1,
+      "seconds": {
+        "prepare": 0.112,
+        "commit": 0.016,
+        "verify_deep": 0.105
+      },
+      "cpu_seconds": 0.228,
+      "peak_rss_mb": {
+        "after_import": 69.8,
+        "after_verify": 70.0,
+        "interpreter_at_start": 64.4
+      },
+      "python_heap_peak_mb": 3.4,
+      "work": {
+        "prepare": {
+          "documents_opened": 1,
+          "text_pages_built": 48
+        },
+        "verify_deep": {
+          "documents_opened": 1,
+          "text_pages_built": 48
+        }
+      },
+      "leftovers": [
+        "ingest.lock",
+        "journal.jsonl"
+      ],
+      "output_identical_across_runs": true,
+      "output": {
+        "run_id": "run_0a4c3d9fc18b5dfe",
+        "manifest_sha256": "0a4c3d9fc18b5dfec335bf959cb7a4acce9c18bdbc4d7a41570170f3b97e6322",
+        "chunk_set_sha256": "3d9a7af0817e727c983ec5735b06b789e22743452cc91063a0cfe91a3fe9d01b",
+        "verified": true,
+        "checks": "19/19",
+        "documents": [
+          {
+            "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+            "pages": 24,
+            "chunks": 18,
+            "text_sha256": "f772e535234499ccd5462ba88a18385fb931acb587c0a8dca9daea00954c565e",
+            "chunk_set_sha256": "3d9a7af0817e727c983ec5735b06b789e22743452cc91063a0cfe91a3fe9d01b"
+          }
+        ],
+        "rejected": [],
+        "totals": {
+          "accepted": 1,
+          "rejected": 0,
+          "duplicates": 0,
+          "pages": 24,
+          "chunks": 18
+        }
+      }
+    },
+    "layout": {
+      "description": "arXiv two-column paper",
+      "files": 1,
+      "seconds": {
+        "prepare": 0.165,
+        "commit": 0.019,
+        "verify_deep": 0.157
+      },
+      "cpu_seconds": 0.335,
+      "peak_rss_mb": {
+        "after_import": 75.1,
+        "after_verify": 75.6,
+        "interpreter_at_start": 59.0
+      },
+      "python_heap_peak_mb": 5.6,
+      "work": {
+        "prepare": {
+          "documents_opened": 1,
+          "text_pages_built": 26
+        },
+        "verify_deep": {
+          "documents_opened": 1,
+          "text_pages_built": 26
+        }
+      },
+      "leftovers": [
+        "ingest.lock",
+        "journal.jsonl"
+      ],
+      "output_identical_across_runs": true,
+      "output": {
+        "run_id": "run_ec3b993accd81d15",
+        "manifest_sha256": "ec3b993accd81d15b0aed0cb958a27eae0b46c840a75f7372d22ff4be70454db",
+        "chunk_set_sha256": "f2c87d6924ded512670a441e98d9308fdb31f03aa0d593cb9e0c27b39ad66521",
+        "verified": true,
+        "checks": "19/19",
+        "documents": [
+          {
+            "source_filename": "layout_arxiv_two_column_2112.11583.pdf",
+            "pages": 13,
+            "chunks": 50,
+            "text_sha256": "df02ac57420177aa379a74cb2620558c64eb2b5d6307f8db2072438a047b6b97",
+            "chunk_set_sha256": "f2c87d6924ded512670a441e98d9308fdb31f03aa0d593cb9e0c27b39ad66521"
+          }
+        ],
+        "rejected": [],
+        "totals": {
+          "accepted": 1,
+          "rejected": 0,
+          "duplicates": 0,
+          "pages": 13,
+          "chunks": 50
+        }
+      }
+    },
+    "large": {
+      "description": "DOE handbook, original typesetting",
+      "files": 1,
+      "seconds": {
+        "prepare": 0.983,
+        "commit": 0.023,
+        "verify_deep": 0.998
+      },
+      "cpu_seconds": 1.998,
+      "peak_rss_mb": {
+        "after_import": 80.6,
+        "after_verify": 82.1,
+        "interpreter_at_start": 58.9
+      },
+      "python_heap_peak_mb": 11.9,
+      "work": {
+        "prepare": {
+          "documents_opened": 1,
+          "text_pages_built": 284
+        },
+        "verify_deep": {
+          "documents_opened": 1,
+          "text_pages_built": 284
+        }
+      },
+      "leftovers": [
+        "ingest.lock",
+        "journal.jsonl"
+      ],
+      "output_identical_across_runs": true,
+      "output": {
+        "run_id": "run_5b0394ac8837c56b",
+        "manifest_sha256": "5b0394ac8837c56b2e96d259803d9f0d822aa4884239a9c641bf75f3a79baf67",
+        "chunk_set_sha256": "7683b2f42916506edfa82f7b197d2d3dc6c9d2755dadf375a73e064a1bf45a8c",
+        "verified": true,
+        "checks": "19/19",
+        "documents": [
+          {
+            "source_filename": "large_doe_nuclear_physics_v1_original.pdf",
+            "pages": 142,
+            "chunks": 194,
+            "text_sha256": "989c257e282ae1d0f009f8923aba87bf6c86385d569f5f04a3ac3419acf7474a",
+            "chunk_set_sha256": "7683b2f42916506edfa82f7b197d2d3dc6c9d2755dadf375a73e064a1bf45a8c"
+          }
+        ],
+        "rejected": [],
+        "totals": {
+          "accepted": 1,
+          "rejected": 0,
+          "duplicates": 0,
+          "pages": 142,
+          "chunks": 194
+        }
+      }
+    },
+    "oversized": {
+      "description": "1,200-page synthetic document",
+      "files": 1,
+      "seconds": {
+        "prepare": 7.586,
+        "commit": 0.11,
+        "verify_deep": 7.679
+      },
+      "cpu_seconds": 15.274,
+      "peak_rss_mb": {
+        "after_import": 170.3,
+        "after_verify": 183.1,
+        "interpreter_at_start": 58.9
+      },
+      "python_heap_peak_mb": 69.2,
+      "work": {
+        "prepare": {
+          "documents_opened": 1,
+          "text_pages_built": 2400
+        },
+        "verify_deep": {
+          "documents_opened": 1,
+          "text_pages_built": 2400
+        }
+      },
+      "leftovers": [
+        "ingest.lock",
+        "journal.jsonl"
+      ],
+      "output_identical_across_runs": true,
+      "output": {
+        "run_id": "run_d4fe78a58ed01dbb",
+        "manifest_sha256": "d4fe78a58ed01dbb57fd62dcff208f6eb1a040c14dec61b2f53210aed095588e",
+        "chunk_set_sha256": "f762bde33c6219f57eb93fa31e215849856dcb82e6ab106c7a5bb8747d1720e1",
+        "verified": true,
+        "checks": "19/19",
+        "documents": [
+          {
+            "source_filename": "oversized_1200_pages.pdf",
+            "pages": 1200,
+            "chunks": 3409,
+            "text_sha256": "ab983ac664afc106b8be8add6c45df288ce651a123dc31c02d66336269ec71eb",
+            "chunk_set_sha256": "f762bde33c6219f57eb93fa31e215849856dcb82e6ab106c7a5bb8747d1720e1"
+          }
+        ],
+        "rejected": [],
+        "totals": {
+          "accepted": 1,
+          "rejected": 0,
+          "duplicates": 0,
+          "pages": 1200,
+          "chunks": 3409
+        }
+      }
+    },
+    "corpus": {
+      "description": "sample corpus: 3 documents and 7 files to reject",
+      "files": 10,
+      "seconds": {
+        "prepare": 1.338,
+        "commit": 0.034,
+        "verify_deep": 1.297
+      },
+      "cpu_seconds": 2.652,
+      "peak_rss_mb": {
+        "after_import": 86.3,
+        "after_verify": 93.6,
+        "interpreter_at_start": 59.1
+      },
+      "python_heap_peak_mb": 12.0,
+      "work": {
+        "prepare": {
+          "documents_opened": 7,
+          "text_pages_built": 454
+        },
+        "verify_deep": {
+          "documents_opened": 3,
+          "text_pages_built": 358
+        }
+      },
+      "leftovers": [
+        "ingest.lock",
+        "journal.jsonl"
+      ],
+      "output_identical_across_runs": true,
+      "output": {
+        "run_id": "run_1474c5fc384c4b66",
+        "manifest_sha256": "1474c5fc384c4b665a949782a761522dfcbe21517364cbe191e07aff53d71b1b",
+        "chunk_set_sha256": "870a9783ea67892b1c8357457a7fea971842254da34116e5cf061f48b4a7b789",
+        "verified": true,
+        "checks": "19/19",
+        "documents": [
+          {
+            "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+            "pages": 24,
+            "chunks": 18,
+            "text_sha256": "f772e535234499ccd5462ba88a18385fb931acb587c0a8dca9daea00954c565e",
+            "chunk_set_sha256": "3d9a7af0817e727c983ec5735b06b789e22743452cc91063a0cfe91a3fe9d01b"
+          },
+          {
+            "source_filename": "layout_arxiv_two_column_2112.11583.pdf",
+            "pages": 13,
+            "chunks": 50,
+            "text_sha256": "df02ac57420177aa379a74cb2620558c64eb2b5d6307f8db2072438a047b6b97",
+            "chunk_set_sha256": "f2c87d6924ded512670a441e98d9308fdb31f03aa0d593cb9e0c27b39ad66521"
+          },
+          {
+            "source_filename": "large_doe_nuclear_physics_v1_original.pdf",
+            "pages": 142,
+            "chunks": 194,
+            "text_sha256": "989c257e282ae1d0f009f8923aba87bf6c86385d569f5f04a3ac3419acf7474a",
+            "chunk_set_sha256": "7683b2f42916506edfa82f7b197d2d3dc6c9d2755dadf375a73e064a1bf45a8c"
+          }
+        ],
+        "rejected": [
+          {
+            "source_filename": "corrupt_truncated_50pct.pdf",
+            "reject_reason": "corrupt",
+            "failed_check": "structural_integrity"
+          },
+          {
+            "source_filename": "corrupt_header_only.pdf",
+            "reject_reason": "corrupt",
+            "failed_check": "parser_opens"
+          },
+          {
+            "source_filename": "nonpdf_zip_container_renamed.pdf",
+            "reject_reason": "non_pdf",
+            "failed_check": "magic_bytes"
+          },
+          {
+            "source_filename": "scanned_no_text_layer.pdf",
+            "reject_reason": "scanned_only",
+            "failed_check": "text_yield"
+          },
+          {
+            "source_filename": "protected_user_password.pdf",
+            "reject_reason": "password_protected",
+            "failed_check": "no_open_password"
+          },
+          {
+            "source_filename": "corrupt_empty.pdf",
+            "reject_reason": "corrupt",
+            "failed_check": "file_nonempty"
+          },
+          {
+            "source_filename": "nonpdf_plaintext_renamed.pdf",
+            "reject_reason": "non_pdf",
+            "failed_check": "magic_bytes"
+          }
+        ],
+        "totals": {
+          "accepted": 3,
+          "rejected": 7,
+          "duplicates": 0,
+          "pages": 179,
+          "chunks": 262
+        }
+      }
+    }
+  }
+}

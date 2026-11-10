@@ -247,15 +247,16 @@ DESCRIPTORS = {
     'oversized/oversized_1200_pages.pdf': dict(
         id='oversized-1200p',
         category='oversized',
-        expected_outcome='decision_required',
-        reject_reason='oversized',
+        expected_outcome='accept',
+        reject_reason=None,
         title='1,200-page synthetic document with per-page markers',
         source=None, source_url=None, license='synthetic, built from the DOE text',
         derived_from='tools/doe_hdbk_1019_v1_source.txt',
         detection_signal='page count or byte size exceeds the configured cap',
-        notes=('E2 has not yet set the per-document cap, so this fixture has no fixed '
-               'expected outcome; it exists to force the number into the validation '
-               'schema. Every page carries a unique marker of the form '
+        notes=('Decision 4, settled on 2026-10-20: the per-document cap stays at 2,000 pages '
+               'and 200 MB, so this 1,200-page file is accepted. A 1,200-page file ingests '
+               'without trouble, so nothing technical needs a lower cap; the fixture still '
+               'shows the cap is a live setting (max_pages=1000 rejects it). Every page carries a unique marker of the form '
                '"marker-0042-xray", so retrieval tests can target an exact deep page '
                'and prove that page provenance survives a long document. Also usable as '
                'a component of the 10,000-page stress corpus due in Week 8.'),

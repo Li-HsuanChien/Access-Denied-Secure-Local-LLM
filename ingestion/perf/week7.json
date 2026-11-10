@@ -1,0 +1,398 @@
+{
+  "code_revision": "905a75b+uncommitted src/ changes",
+  "host": {
+    "platform": "macOS-26.6.2",
+    "machine": "arm64",
+    "python": "3.14.4",
+    "pymupdf": "1.28.2",
+    "cpus": 11
+  },
+  "repeat": 3,
+  "targets": {
+    "normal": {
+      "description": "NRC Reactor Concepts ch. 1",
+      "files": 1,
+      "seconds": {
+        "prepare": 0.127,
+        "commit": 0.03,
+        "verify_deep": 0.128
+      },
+      "cpu_seconds": 0.278,
+      "peak_rss_mb": {
+        "after_import": 67.1,
+        "after_verify": 67.3,
+        "interpreter_at_start": 59.9
+      },
+      "python_heap_peak_mb": 4.7,
+      "work": {
+        "prepare": {
+          "documents_opened": 1,
+          "text_pages_built": 24
+        },
+        "verify_deep": {
+          "documents_opened": 1,
+          "text_pages_built": 24
+        }
+      },
+      "leftovers": [
+        "ingest.lock",
+        "journal.jsonl"
+      ],
+      "output_identical_across_runs": true,
+      "output": {
+        "run_id": "run_0a4c3d9fc18b5dfe",
+        "manifest_sha256": "0a4c3d9fc18b5dfec335bf959cb7a4acce9c18bdbc4d7a41570170f3b97e6322",
+        "chunk_set_sha256": "3d9a7af0817e727c983ec5735b06b789e22743452cc91063a0cfe91a3fe9d01b",
+        "verified": true,
+        "checks": "19/19",
+        "documents": [
+          {
+            "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+            "pages": 24,
+            "chunks": 18,
+            "text_sha256": "f772e535234499ccd5462ba88a18385fb931acb587c0a8dca9daea00954c565e",
+            "chunk_set_sha256": "3d9a7af0817e727c983ec5735b06b789e22743452cc91063a0cfe91a3fe9d01b"
+          }
+        ],
+        "rejected": [],
+        "totals": {
+          "accepted": 1,
+          "rejected": 0,
+          "duplicates": 0,
+          "pages": 24,
+          "chunks": 18
+        }
+      },
+      "disk": {
+        "run_mb": {
+          "sources": 1.23,
+          "chunks": 0.05,
+          "extraction": 0.0,
+          "other": 0.01
+        },
+        "import_peak_mb": 1.29,
+        "root_after_import_mb": 1.29,
+        "rerun_peak_mb": 2.52,
+        "root_after_killed_import_mb": 1.29
+      }
+    },
+    "layout": {
+      "description": "arXiv two-column paper",
+      "files": 1,
+      "seconds": {
+        "prepare": 0.25,
+        "commit": 0.037,
+        "verify_deep": 0.232
+      },
+      "cpu_seconds": 0.51,
+      "peak_rss_mb": {
+        "after_import": 77.3,
+        "after_verify": 79.6,
+        "interpreter_at_start": 61.3
+      },
+      "python_heap_peak_mb": 4.9,
+      "work": {
+        "prepare": {
+          "documents_opened": 1,
+          "text_pages_built": 13
+        },
+        "verify_deep": {
+          "documents_opened": 1,
+          "text_pages_built": 13
+        }
+      },
+      "leftovers": [
+        "ingest.lock",
+        "journal.jsonl"
+      ],
+      "output_identical_across_runs": true,
+      "output": {
+        "run_id": "run_ec3b993accd81d15",
+        "manifest_sha256": "ec3b993accd81d15b0aed0cb958a27eae0b46c840a75f7372d22ff4be70454db",
+        "chunk_set_sha256": "f2c87d6924ded512670a441e98d9308fdb31f03aa0d593cb9e0c27b39ad66521",
+        "verified": true,
+        "checks": "19/19",
+        "documents": [
+          {
+            "source_filename": "layout_arxiv_two_column_2112.11583.pdf",
+            "pages": 13,
+            "chunks": 50,
+            "text_sha256": "df02ac57420177aa379a74cb2620558c64eb2b5d6307f8db2072438a047b6b97",
+            "chunk_set_sha256": "f2c87d6924ded512670a441e98d9308fdb31f03aa0d593cb9e0c27b39ad66521"
+          }
+        ],
+        "rejected": [],
+        "totals": {
+          "accepted": 1,
+          "rejected": 0,
+          "duplicates": 0,
+          "pages": 13,
+          "chunks": 50
+        }
+      },
+      "disk": {
+        "run_mb": {
+          "sources": 4.31,
+          "chunks": 0.11,
+          "extraction": 0.0,
+          "other": 0.01
+        },
+        "import_peak_mb": 4.44,
+        "root_after_import_mb": 4.44,
+        "rerun_peak_mb": 8.75,
+        "root_after_killed_import_mb": 4.44
+      }
+    },
+    "large": {
+      "description": "DOE handbook, original typesetting",
+      "files": 1,
+      "seconds": {
+        "prepare": 1.174,
+        "commit": 0.039,
+        "verify_deep": 1.183
+      },
+      "cpu_seconds": 2.383,
+      "peak_rss_mb": {
+        "after_import": 81.0,
+        "after_verify": 82.0,
+        "interpreter_at_start": 59.8
+      },
+      "python_heap_peak_mb": 8.9,
+      "work": {
+        "prepare": {
+          "documents_opened": 1,
+          "text_pages_built": 148
+        },
+        "verify_deep": {
+          "documents_opened": 1,
+          "text_pages_built": 148
+        }
+      },
+      "leftovers": [
+        "ingest.lock",
+        "journal.jsonl"
+      ],
+      "output_identical_across_runs": true,
+      "output": {
+        "run_id": "run_5b0394ac8837c56b",
+        "manifest_sha256": "5b0394ac8837c56b2e96d259803d9f0d822aa4884239a9c641bf75f3a79baf67",
+        "chunk_set_sha256": "7683b2f42916506edfa82f7b197d2d3dc6c9d2755dadf375a73e064a1bf45a8c",
+        "verified": true,
+        "checks": "19/19",
+        "documents": [
+          {
+            "source_filename": "large_doe_nuclear_physics_v1_original.pdf",
+            "pages": 142,
+            "chunks": 194,
+            "text_sha256": "989c257e282ae1d0f009f8923aba87bf6c86385d569f5f04a3ac3419acf7474a",
+            "chunk_set_sha256": "7683b2f42916506edfa82f7b197d2d3dc6c9d2755dadf375a73e064a1bf45a8c"
+          }
+        ],
+        "rejected": [],
+        "totals": {
+          "accepted": 1,
+          "rejected": 0,
+          "duplicates": 0,
+          "pages": 142,
+          "chunks": 194
+        }
+      },
+      "disk": {
+        "run_mb": {
+          "sources": 3.36,
+          "chunks": 0.49,
+          "extraction": 0.02,
+          "other": 0.01
+        },
+        "import_peak_mb": 3.88,
+        "root_after_import_mb": 3.88,
+        "rerun_peak_mb": 7.76,
+        "root_after_killed_import_mb": 3.88
+      }
+    },
+    "oversized": {
+      "description": "1,200-page synthetic document",
+      "files": 1,
+      "seconds": {
+        "prepare": 12.197,
+        "commit": 0.207,
+        "verify_deep": 13.16
+      },
+      "cpu_seconds": 23.656,
+      "peak_rss_mb": {
+        "after_import": 142.1,
+        "after_verify": 144.0,
+        "interpreter_at_start": 59.9
+      },
+      "python_heap_peak_mb": 51.7,
+      "work": {
+        "prepare": {
+          "documents_opened": 1,
+          "text_pages_built": 1200
+        },
+        "verify_deep": {
+          "documents_opened": 1,
+          "text_pages_built": 1200
+        }
+      },
+      "leftovers": [
+        "ingest.lock",
+        "journal.jsonl"
+      ],
+      "output_identical_across_runs": true,
+      "output": {
+        "run_id": "run_d4fe78a58ed01dbb",
+        "manifest_sha256": "d4fe78a58ed01dbb57fd62dcff208f6eb1a040c14dec61b2f53210aed095588e",
+        "chunk_set_sha256": "f762bde33c6219f57eb93fa31e215849856dcb82e6ab106c7a5bb8747d1720e1",
+        "verified": true,
+        "checks": "19/19",
+        "documents": [
+          {
+            "source_filename": "oversized_1200_pages.pdf",
+            "pages": 1200,
+            "chunks": 3409,
+            "text_sha256": "ab983ac664afc106b8be8add6c45df288ce651a123dc31c02d66336269ec71eb",
+            "chunk_set_sha256": "f762bde33c6219f57eb93fa31e215849856dcb82e6ab106c7a5bb8747d1720e1"
+          }
+        ],
+        "rejected": [],
+        "totals": {
+          "accepted": 1,
+          "rejected": 0,
+          "duplicates": 0,
+          "pages": 1200,
+          "chunks": 3409
+        }
+      },
+      "disk": {
+        "run_mb": {
+          "sources": 2.5,
+          "chunks": 7.6,
+          "extraction": 0.13,
+          "other": 0.01
+        },
+        "import_peak_mb": 10.24,
+        "root_after_import_mb": 10.24,
+        "rerun_peak_mb": 20.49,
+        "root_after_killed_import_mb": 10.25
+      }
+    },
+    "corpus": {
+      "description": "sample corpus: 3 documents and 7 files to reject",
+      "files": 10,
+      "seconds": {
+        "prepare": 1.772,
+        "commit": 0.061,
+        "verify_deep": 1.817
+      },
+      "cpu_seconds": 3.517,
+      "peak_rss_mb": {
+        "after_import": 87.4,
+        "after_verify": 88.7,
+        "interpreter_at_start": 60.2
+      },
+      "python_heap_peak_mb": 8.9,
+      "work": {
+        "prepare": {
+          "documents_opened": 7,
+          "text_pages_built": 278
+        },
+        "verify_deep": {
+          "documents_opened": 3,
+          "text_pages_built": 185
+        }
+      },
+      "leftovers": [
+        "ingest.lock",
+        "journal.jsonl"
+      ],
+      "output_identical_across_runs": true,
+      "output": {
+        "run_id": "run_1474c5fc384c4b66",
+        "manifest_sha256": "1474c5fc384c4b665a949782a761522dfcbe21517364cbe191e07aff53d71b1b",
+        "chunk_set_sha256": "870a9783ea67892b1c8357457a7fea971842254da34116e5cf061f48b4a7b789",
+        "verified": true,
+        "checks": "19/19",
+        "documents": [
+          {
+            "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+            "pages": 24,
+            "chunks": 18,
+            "text_sha256": "f772e535234499ccd5462ba88a18385fb931acb587c0a8dca9daea00954c565e",
+            "chunk_set_sha256": "3d9a7af0817e727c983ec5735b06b789e22743452cc91063a0cfe91a3fe9d01b"
+          },
+          {
+            "source_filename": "layout_arxiv_two_column_2112.11583.pdf",
+            "pages": 13,
+            "chunks": 50,
+            "text_sha256": "df02ac57420177aa379a74cb2620558c64eb2b5d6307f8db2072438a047b6b97",
+            "chunk_set_sha256": "f2c87d6924ded512670a441e98d9308fdb31f03aa0d593cb9e0c27b39ad66521"
+          },
+          {
+            "source_filename": "large_doe_nuclear_physics_v1_original.pdf",
+            "pages": 142,
+            "chunks": 194,
+            "text_sha256": "989c257e282ae1d0f009f8923aba87bf6c86385d569f5f04a3ac3419acf7474a",
+            "chunk_set_sha256": "7683b2f42916506edfa82f7b197d2d3dc6c9d2755dadf375a73e064a1bf45a8c"
+          }
+        ],
+        "rejected": [
+          {
+            "source_filename": "corrupt_truncated_50pct.pdf",
+            "reject_reason": "corrupt",
+            "failed_check": "structural_integrity"
+          },
+          {
+            "source_filename": "corrupt_header_only.pdf",
+            "reject_reason": "corrupt",
+            "failed_check": "parser_opens"
+          },
+          {
+            "source_filename": "nonpdf_zip_container_renamed.pdf",
+            "reject_reason": "non_pdf",
+            "failed_check": "magic_bytes"
+          },
+          {
+            "source_filename": "scanned_no_text_layer.pdf",
+            "reject_reason": "scanned_only",
+            "failed_check": "text_yield"
+          },
+          {
+            "source_filename": "protected_user_password.pdf",
+            "reject_reason": "password_protected",
+            "failed_check": "no_open_password"
+          },
+          {
+            "source_filename": "corrupt_empty.pdf",
+            "reject_reason": "corrupt",
+            "failed_check": "file_nonempty"
+          },
+          {
+            "source_filename": "nonpdf_plaintext_renamed.pdf",
+            "reject_reason": "non_pdf",
+            "failed_check": "magic_bytes"
+          }
+        ],
+        "totals": {
+          "accepted": 3,
+          "rejected": 7,
+          "duplicates": 0,
+          "pages": 179,
+          "chunks": 262
+        }
+      },
+      "disk": {
+        "run_mb": {
+          "sources": 8.9,
+          "chunks": 0.65,
+          "extraction": 0.02,
+          "other": 0.04
+        },
+        "import_peak_mb": 9.63,
+        "root_after_import_mb": 9.63,
+        "rerun_peak_mb": 19.25,
+        "root_after_killed_import_mb": 9.64
+      }
+    }
+  }
+}

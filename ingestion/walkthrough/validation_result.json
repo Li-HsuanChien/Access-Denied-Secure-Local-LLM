@@ -1,6 +1,6 @@
 {
   "schema_version": "1.0.0",
-  "validated_at": "2026-10-13T08:50:56+00:00",
+  "validated_at": "2026-10-20T16:58:25+00:00",
   "validator_version": "e2-validate-2.0.0",
   "extractor": "pymupdf/1.28.2",
   "source_path": "fixtures/normal/normal_nrc_reactor_concepts_ch01.pdf",

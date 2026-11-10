@@ -90,8 +90,8 @@ Chunker configuration, whose hash participates in every chunk ID:
   "sorted_reading_order": true,
   "strip_running_headers": true,
   "respect_sentence_boundaries": true,
-  "chunker_version": "refchunk-3.0.0",
-  "config_id": "cfg_821e9f258539"
+  "chunker_version": "refchunk-3.1.0",
+  "config_id": "cfg_baa3dd28b8db"
 }
 ```
 
@@ -101,7 +101,7 @@ This produced **18 chunks**. Here is chunk 0 in full, which is exactly what a
 ```json
 {
   "schema_version": "1.0.0",
-  "chunk_id": "chk_c3cbf93684c33201e4e07d6d",
+  "chunk_id": "chk_17a4da21ece41172e0468345",
   "document_id": "doc_72f2433a1e2f2e6340f14040",
   "ordinal": 0,
   "text": "Nuclear\nPower\n for\nElectrical\nGeneration\nThe purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a\nnuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant\nhas many similarities to other electrical generating facilities.  It should also be obvious that nuclear\npower plants have some significant differences from other plants.\n\nStationary Coil\nDrive Shaft\nRotor\nElectrical\nOutput\nFlange\nGenerator Housing\nELECTRICAL GENERATOR\nOf the several known methods to produce electricity, by far the most practical for large scale production\nand distribution involves the use of an “electrical generator.”  In an electrical generator, a magnet (rotor)\nrevolves inside a coil of wire (stator), creating a flow of electrons inside the wire.  This flow of electrons\nis called electricity.  Some mechanical device (wind turbine, water turbine, steam turbine, diesel engine,\netc.) must be available to provide the motive force for the rotor.\n\n",
@@ -269,8 +269,8 @@ This produced **18 chunks**. Here is chunk 0 in full, which is exactly what a
     }
   ],
   "token_estimate": 256,
-  "chunker_config_id": "cfg_821e9f258539",
-  "chunker_version": "refchunk-3.0.0"
+  "chunker_config_id": "cfg_baa3dd28b8db",
+  "chunker_version": "refchunk-3.1.0"
 }
 ```
 
@@ -308,13 +308,13 @@ roughly half of them would point at the wrong one.
 | NRC training manual (baseline) | 24 | 671 | 18 | 14 | 78% | 4 |
 | DOE handbook (text reflow) | 96 | 2049 | 213 | 83 | 39% | 3 |
 | DOE handbook (original typesetting) | 142 | 1318 | 194 | 121 | 62% | 4 |
-| arXiv paper (two column) | 13 | 3314 | 50 | 13 | 26% | 2 |
+| arXiv paper (two column) | 13 | 3324 | 50 | 13 | 26% | 2 |
 
 It is not an NRC quirk. It shows up on dense prose too, because a chunk boundary
 has no reason to coincide with a page boundary.
 
 The fix is `page_spans`: one entry per page the chunk touches. Chunk
-`chk_c3cbf93684c33201e4e07d6d` spans pages 1–2:
+`chk_17a4da21ece41172e0468345` spans pages 1–2:
 
 | page | document offsets | page-local offsets | highlight rects | coords reliable |
 |---|---|---|---|---|
@@ -349,7 +349,7 @@ One chunk spanning 2 pages expands into 2 citation targets:
 {
   "schema_version": "1.0.0",
   "document_id": "doc_72f2433a1e2f2e6340f14040",
-  "chunk_id": "chk_c3cbf93684c33201e4e07d6d",
+  "chunk_id": "chk_17a4da21ece41172e0468345",
   "page_number": 1,
   "highlight_rects": [
     [

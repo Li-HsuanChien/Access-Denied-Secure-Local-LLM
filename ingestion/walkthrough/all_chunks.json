@@ -7,14 +7,14 @@
     "sorted_reading_order": true,
     "strip_running_headers": true,
     "respect_sentence_boundaries": true,
-    "chunker_version": "refchunk-3.0.0",
-    "config_id": "cfg_821e9f258539"
+    "chunker_version": "refchunk-3.1.0",
+    "config_id": "cfg_baa3dd28b8db"
   },
   "chunk_count": 18,
   "chunks": [
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_c3cbf93684c33201e4e07d6d",
+      "chunk_id": "chk_17a4da21ece41172e0468345",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 0,
       "text": "Nuclear\nPower\n for\nElectrical\nGeneration\nThe purpose of a nuclear power plant is not to produce or release “Nuclear Power.”  The purpose of a\nnuclear power plant is to produce electricity.  It should not be surprising, then, that a nuclear power plant\nhas many similarities to other electrical generating facilities.  It should also be obvious that nuclear\npower plants have some significant differences from other plants.\n\nStationary Coil\nDrive Shaft\nRotor\nElectrical\nOutput\nFlange\nGenerator Housing\nELECTRICAL GENERATOR\nOf the several known methods to produce electricity, by far the most practical for large scale production\nand distribution involves the use of an “electrical generator.”  In an electrical generator, a magnet (rotor)\nrevolves inside a coil of wire (stator), creating a flow of electrons inside the wire.  This flow of electrons\nis called electricity.  Some mechanical device (wind turbine, water turbine, steam turbine, diesel engine,\netc.) must be available to provide the motive force for the rotor.\n\n",
@@ -182,12 +182,12 @@
         }
       ],
       "token_estimate": 256,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_7a9f6f58f24a7f7149b2a656",
+      "chunk_id": "chk_916827df8ccaa1387f983742",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 1,
       "text": "This flow of electrons\nis called electricity.  Some mechanical device (wind turbine, water turbine, steam turbine, diesel engine,\netc.) must be available to provide the motive force for the rotor.\n\nWhen a turbine is attached to the electrical generator, the kinetic energy (i.e., motion) of the wind, falling\nwater, or steam pushes against the fan-type blades of the turbine, causing the turbine, and therefore, the\nattached rotor of the electrical generator, to spin and produce electricity.\n\nHYDROELECTRIC PLANT\nELECTRICAL\nGENERATOR\nW ATER\nINLET\nVALVE\nDAM\nW ATER\nOUTLET\nW ATER\nTURBINE\nIn a hydroelectric power plant, water, flowing from a higher level to a lower level, travels through the\nmetal blades of a water turbine, causing the rotor of the electrical generator to spin and produce\nelectricity.\n\nThrottle\nA\nValve\nC\nB\nElectric\nGenerator\nMain\nTurbine\nMain\nCondenser\nD\nFuel\nSupply\nFeedwater\nPump\nE\nF\nBoiler\nFOSSIL FUEL STEAM PLANT\nIn a fossil-fueled power plant, heat, from the burning of coal, oil, or natural gas, converts (boils) water\ninto steam (A), which is piped to the turbine (B).  ",
@@ -499,12 +499,12 @@
         }
       ],
       "token_estimate": 274,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_037b707b0a52ff51759f59f4",
+      "chunk_id": "chk_98443aa737dde37b52b3c361",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 2,
       "text": "Throttle\nA\nValve\nC\nB\nElectric\nGenerator\nMain\nTurbine\nMain\nCondenser\nD\nFuel\nSupply\nFeedwater\nPump\nE\nF\nBoiler\nFOSSIL FUEL STEAM PLANT\nIn a fossil-fueled power plant, heat, from the burning of coal, oil, or natural gas, converts (boils) water\ninto steam (A), which is piped to the turbine (B).  In the turbine, the steam passes through the blades,\nwhich spins the electrical generator (C), resulting in a flow of electricity.  After leaving the turbine, the\nsteam is converted (condensed) back into water in the condenser (D).  The water is then pumped (E)\nback to the boiler (F) to be reheated and converted back into steam.\n\nThrottle\nValve\nMain\nTurbine\nElectric\nGenerator\nNuclear\nSteam\nMain\nCondenser\nSupply\nSystem\nFeedwater\nPump\nNuclear Fuel Steam Plant\nIn a nuclear power plant, many of the components are similar to those in a fossil-fueled plant, except that\nthe steam boiler is replaced by a Nuclear Steam Supply System (NSSS).  The NSSS consists of a nuclear\nreactor and all of the components necessary to produce high pressure steam, which will be used to turn\nthe turbine for the electrical generator.\n\n",
@@ -804,12 +804,12 @@
         }
       ],
       "token_estimate": 277,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_c0e1d5d630b4a72987f0dc26",
+      "chunk_id": "chk_0d7340130d1b3826643500bc",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 3,
       "text": "The NSSS consists of a nuclear\nreactor and all of the components necessary to produce high pressure steam, which will be used to turn\nthe turbine for the electrical generator.\n\nFission\nLike a fossil-fueled plant, a nuclear power plant boils water to produce electricity.  Unlike a fossil-fueled\nplant, the nuclear plant’s energy does not come from the combustion of fuel, but from the fissioning\n(splitting) of fuel atoms.\n\nENRICHMENT\n(% U-235)\nUranium Ore (0.7%)\n   Fuel Pellet (3.5%)\nThe most common fuel for the electrical producing reactor plants in the United States is uranium.  The\nuranium starts out as ore, and contains a very low percentage (or low enrichment) of the desired atoms\n(U-235).  The U-235 is a more desirable atom for fuel, because it is easier to cause the U-235 atoms to\nfission (split) than the much more abundant U-238 atoms.  Therefore, the fuel fabrication process\nincludes steps to increase the number of U-235 atoms in relation to the number of U-238 atoms\n(enrichment process).\n\n",
@@ -959,12 +959,12 @@
         }
       ],
       "token_estimate": 252,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_23963ad2f53efbdd4e276114",
+      "chunk_id": "chk_a8e7d0343ea3d95ac67ade8a",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 4,
       "text": "Therefore, the fuel fabrication process\nincludes steps to increase the number of U-235 atoms in relation to the number of U-238 atoms\n(enrichment process).\n\nCHEMICAL CONVERSION TO UF6\nENRICHMENT\nPELLETIZING\nTubing & End Plugs\nROD LOADING\nSpacers & Tie Plates\nBUNDLE ASSEMBLY\nBUNDLE FINAL INSPECTION\nPACKAGING & SHIPPING\nSITE INSPECTION & CHANNELING\nOnce the fuel has been enriched, it is fabricated into ceramic pellets.  The pellets are stacked into 12-foot\nlong, slender metal tubes, generally made of a zirconium alloy.  The tube is called the “fuel cladding.”\nWhen a tube is filled with the uranium pellets, it is pressurized with helium gas, and plugs are installed\nand welded to seal the tube.  The filled rod is called a “fuel rod.”  The fuel rods are bundled together into\n“fuel assemblies” or “fuel elements.”  The completed assemblies are now ready to be shipped to the plant\nfor installation into the reactor vessel.\n\nREACTOR FUEL ASSEMBLIES\nBoth boiling water reactor and pressurized water reactor fuel assemblies consist of the same major\ncomponents.  These major components are the fuel rods, the spacer grids, and the upper and lower end\nfittings.  ",
@@ -1150,12 +1150,12 @@
         }
       ],
       "token_estimate": 291,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_1a15542a59e00d99db1615fd",
+      "chunk_id": "chk_5e86bb3387c800f44aea19eb",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 5,
       "text": "These major components are the fuel rods, the spacer grids, and the upper and lower end\nfittings.  The fuel assembly drawing on page 1-11 shows these major components (pressurized water\nreactor fuel assembly).\nThe fuel rods contain the ceramic fuel pellets.  The fuel rods are approximately 12 feet long and contain\na space at the top for the collection of any gases that are produced by the fission process.  These rods are\narranged in a square matrix ranging from 17 x 17 for pressurized water reactors to 8 x 8 for boiling water\nreactors.\nThe spacer grids separate the individual rods with pieces of sprung metal.  This provides the rigidity of\nthe assemblies and allows the coolant to flow freely up through the assemblies and around the fuel rods.\nSome spacer grids may have flow mixing vanes that are used to promote mixing of the coolant as it\nflows around and though the fuel assembly.\nThe upper and lower end fittings serve as the upper and lower structural elements of the assemblies.  The\nlower fitting (or bottom nozzle) will direct the coolant flow to the assembly through several small holes\nmachined into the fitting.  ",
@@ -1263,12 +1263,12 @@
         }
       ],
       "token_estimate": 283,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_ff55dd19d73b96d377e2c6b3",
+      "chunk_id": "chk_ec95180c9baaf4e28c06a1a1",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 6,
       "text": "The\nlower fitting (or bottom nozzle) will direct the coolant flow to the assembly through several small holes\nmachined into the fitting.  There are also holes drilled in the upper fitting to allow the coolant flow to\nexit the fuel assembly.  The upper end fitting will also have a connecting point for the refueling\nequipment to attach for the moving of the fuel with a crane.\nFor pressurized water reactor fuel, there will also be guide tubes in which the control rods travel.  The\nguide tubes will be welded to the spacer grids and attached to the upper and lower end fittings.  The\nguide tubes provide a channel for the movement of the control rods and provide for support of the rods.\nThe upper end of the control rod will be attached to a drive shaft, which will be used to position the rod\nduring operations.\nA brief description and a picture of boiling water reactor fuel can be found in Chapter3 (pages 3-3 and\n3-7).\n\n",
@@ -1364,12 +1364,12 @@
         }
       ],
       "token_estimate": 231,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_0125f014b19c9974503ce241",
+      "chunk_id": "chk_2eab3285d0571a4c00c10d4d",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 7,
       "text": "A brief description and a picture of boiling water reactor fuel can be found in Chapter3 (pages 3-3 and\n3-7).\n\nHOLD DOWN SPRING\nROD CLUSTER CONTROL\nTOP NOZZLE\nFUEL ROD\nCONTROL ROD\nTHIMBLE TUBE\nGRID\nMIXING VANES\nBULGE JOINTS\nDASHPOT REGION\nGRID SPRING\nDIMPLE\nBOTTOM NOZZLE\nTHIMBLE SCREW\n\nAt the nuclear power plant, the fuel assemblies are inserted vertically into the reactor vessel (a large steel\ntank filled with water with a removable top).  The fuel is placed in a precise grid pattern known as the\n“reactor core.”\n\nContainment/Drywell\nReactor\nVessel\nSteam\nTurbine Building\nLine\nThrottle\nElectrical\nGenerator\nValve\nSteam Dryer\n&\nMoisture\nSeparator\nTurbine\nReactor Core\nCondenser\nJet Pump\nTo/From\nRiver\nRecirculation\nPump\nPump\nContainment Suppression Chamber\nThere are two basic types of reactor plants being used in the United States to produce electricity, the\nboiling water reactor (BWR) and the pressurized water reactor (PWR).  The boiling water reactor\noperates in essentially the same way as a fossil-fueled generating plant.  Inside the reactor vessel, a\nsteam/water mixture is produced when very pure water (reactor coolant) moves upward through the core\nabsorbing heat.  ",
@@ -1717,12 +1717,12 @@
         }
       ],
       "token_estimate": 296,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_a3bc6236ed14c69a3fcf4949",
+      "chunk_id": "chk_3de0db011f09d3277f999e1d",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 8,
       "text": "Inside the reactor vessel, a\nsteam/water mixture is produced when very pure water (reactor coolant) moves upward through the core\nabsorbing heat.  The major difference in the operation of a boiling water reactor as compared to other\nnuclear systems is the steam void formation in the core.  The steam/water mixture leaves the top of the\ncore and enters two stages of moisture separation, where water droplets are removed before the steam\nis allowed to enter the steam line.  The steam line, in turn, directs the steam to the main turbine, causing\nit to turn the turbine and the attached electrical generator.  The unused steam is exhausted to the\ncondenser where it is condensed into water.  The resulting water (condensate) is pumped out of the\ncondenser with a series of pumps and back to the reactor vessel.  The recirculation pumps and the jet\npumps allow the operator to vary coolant flow through the core and to change reactor power.\nBoiling water reactors are manufactured in the United States by the General Electric Company, San Jose,\nCalifornia.  Boiling water reactors comprise about one-third of the power reactors in the United States.\n\n",
@@ -1818,12 +1818,12 @@
         }
       ],
       "token_estimate": 287,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_d5ecb5e6710e1208d1558e49",
+      "chunk_id": "chk_8c69d47fc38742defbcfa7ba",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 9,
       "text": "Boiling water reactors comprise about one-third of the power reactors in the United States.\n\nContainment\nThrottle\nValve\nS/G\nP\nZ\nR\nElectric\nGenerator\nMain\nTurbine\nMain\nCondenser\nCore\nRCP\nReactor Coolant\nFeedwater\nSystem\nPump\nThe pressurized water reactor (PWR) differs from the boiling water reactor in that steam is produced in\nthe steam generator rather than in the reactor vessel.  The pressurizer keeps the water that is flowing\nthrough the reactor vessel under very high pressure (more than 2,200 pounds per square inch) to prevent\nit from boiling, even at operating temperatures of more than 600EF.  Pressurized water reactors make\nup about two-thirds of the power reactors in the United States.\nPressurized water reactors were manufactured in the United States by Westinghouse Electric Corporation\n(Pittsburgh, Pennsylvania), Babcock and Wilcox Company (Lynchburg, Virginia), and the Combustion\nEngineering Company (Windsor, Connecticut).\n\n",
@@ -2027,12 +2027,12 @@
         }
       ],
       "token_estimate": 236,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_89777332e16ea81dfd2ac9b8",
+      "chunk_id": "chk_bb7a51d28e4bd204bdc14586",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 10,
       "text": "Pressurized water reactors were manufactured in the United States by Westinghouse Electric Corporation\n(Pittsburgh, Pennsylvania), Babcock and Wilcox Company (Lynchburg, Virginia), and the Combustion\nEngineering Company (Windsor, Connecticut).\n\nThrottle\nValve\nSteam\nGenerator\nElectric\nGenerator\nMain\nTurbine\nCore\nMain\nCondenser\nHelium\nCirculator\nFeedwater Pump\nHigh Temperature Gas-Cooled Reactor (HTGR)\nAnother type of reactor uses helium gas instead of water as its media for removing heat from the core.\nThe only high temperature gas-cooled reactor (HTGR) in the United States was the Fort St. Vrain plant\nin Colorado.  The plant was manufactured by General Atomic Company of La Jolla, California.  High\ntemperature gas-cooled reactors are widely used in other countries.\n\nOther\n(biomass fuels, wood, wind,\nPetroleum\nphotovoltaic, and solar)\n(2%)\n(<1%)\nGas\n(10%)\nNuclear\n(22%)\nCoal\n(55%)\nHydroelectric\n(10%)\nElectrical Production by Type\nCommercial nuclear power plants generate approximately 22% of the electricity produced in the United\nStates.  The total generation is approximately 3,800 thousand gigawatt-hours.\n",
@@ -2314,12 +2314,12 @@
         }
       ],
       "token_estimate": 280,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_101a0ea2b44a31e0b052a843",
+      "chunk_id": "chk_688add5edc4033b12e556437",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 11,
       "text": "The total generation is approximately 3,800 thousand gigawatt-hours.\nFor comparison purposes, nuclear generation accounts for the following of the total electrical production\nin some other countries:   75% in France, 46% in Sweden, 43% in Ukraine, 39% in south Korea, 30%\nin Germany, and 30% in Japan.\nThe electricity produced in the United States from nuclear power is equivalent to 31% of the world’s\ntotal nuclear generated electrical power.  This compares with 16% for France, 13% for Japan, 7% for\nGermany, 5% for Russia, and 4% for South Korea and United Kingdom.\n\nRegion I\nRegion II\n1\n3\n4\n2\n9\n20\n7\n13\nRegion III\nRegion IV\n1\n1\n1\n11\n8\n8\n11\n4\nWestinghouse\nGeneral Electric\nCombustion Engineering\nBabcock & Wilcox\nThere are currently 104 licensed commercial nuclear power plants in the United States.  Of the 104\nplants, 48 were built by Westinghouse, 35 by General Electric, 14 by Combustion Engineering, and 7\nby Babcock & Wilcox.\nThe illustration above shows the breakdown of the plants, by vendor, assigned to the four NRC Regions.\n\n",
@@ -2565,12 +2565,12 @@
         }
       ],
       "token_estimate": 260,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_23ce12860c94f831af0203bb",
+      "chunk_id": "chk_58dc1108b65ad3bfa3912bb2",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 12,
       "text": "The illustration above shows the breakdown of the plants, by vendor, assigned to the four NRC Regions.\n\nSTEAM\nELECTRIC\nGENERATOR\nMAIN\nTURBINE\nMAIN\nCONDENSER\nCONDENSATE\nPUMP\nCIRCULATING\nWATER PUMP\nTo operate properly, all steam plants, whether nuclear or fossil-fueled, need a circulating water system\nto remove excess heat from the steam system in order to condense the steam, and transfer that heat to\nthe environment.  The circulating water system pumps water from the environment (river, lake, ocean)\nthrough thousands of metal tubes in the plant’s condenser.  Steam exiting the plant’s turbine is very\nrapidly cooled and condensed into water when it comes in contact with the much cooler tubes.  Since\nthe tubes provide a barrier between the steam and the environment, there is no physical contact between\nthe plant’s steam and the cooling water.  Because a condenser operates at a vacuum, any tube leakage\nin this system will produce an “inflow” of water into the condenser rather than an “outflow” of water\nto the environment.\n\n",
@@ -2732,12 +2732,12 @@
         }
       ],
       "token_estimate": 258,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_9153009ebe51db0e0ade0a9f",
+      "chunk_id": "chk_16ecc6b22feee459d74a8a09",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 13,
       "text": "Because a condenser operates at a vacuum, any tube leakage\nin this system will produce an “inflow” of water into the condenser rather than an “outflow” of water\nto the environment.\n\nELECTRIC\nGENERATOR\nMAIN\nTURBINE\nDISCHARGE\nMAIN\nCONDENSER\nLarge Body\nof Water\n(ocean, lake, etc.)\nINTAKE\nCIRCULATING\nWATER PUMP\nPower plants located on the ocean (or other large bodies of water) will often discharge their circulating\nwater directly back to the ocean under strict environmental protection regulations.  Water is taken from\nthe ocean, pumped through the thousands of small tubes in the condenser to remove the excess heat, and\nis then discharged back into the ocean.  The expected temperature increase from circulating water inlet\nto outlet is about 5 to 10 degrees Fahrenheit.\n\nELECTRIC\nGENERATOR\nMAIN\nTURBINE\nFANS\nMAIN\nCONDENSER\nFORCED DRAFT\nCOOLING TOWER\nCIRCULATING\nWATER PUMP\nMost nuclear power plants not located on the ocean need cooling towers to remove the excess heat from\nthe circulating water system.  One type of cooling tower is the forced draft cooling tower.  ",
@@ -2989,12 +2989,12 @@
         }
       ],
       "token_estimate": 268,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_1fdb13b16571b773e10ff6f5",
+      "chunk_id": "chk_7a3a4184e5050595a50e59a3",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 14,
       "text": "One type of cooling tower is the forced draft cooling tower.  The\ncirculating water is pumped into the tower, after passing through the condenser, and allowed to splash\ndownward through the tower, transferring some of its heat to the air.  Several large electrical fans,\nlocated at the top of the cooling tower, provide forced air circulation for more efficient cooling.\n\nELECTRIC\nGENERATOR\nMAIN\nTURBINE\nCOOLING\nTOWER\nMAIN\nCONDENSER\nCIRCULATING\nWATER PUMP\nThe taller hourglass shaped, natural convection cooling towers do not require fans to transfer the excess\nheat from the circulating water system into the air.  Rather, the natural tendency of hot air to rise\nremoves the excess heat as the circulating water splashes down inside the cooling tower.  These towers\nare typically several hundred feet tall.\n\nCold Dry Air\n35\n30\n25\nWarm\nGrams of\nWater per\n20\nWet\nAir\n15\nCubic\nMeter\nof Air\n10\n5\n30\n50\n70\n90\nEF\nThe “steam” vented from the top of a cooling tower is really lukewarm water vapor.  IT IS NOT\nRADIOACTIVE.  ",
@@ -3288,12 +3288,12 @@
         }
       ],
       "token_estimate": 254,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_ce10b6ea9bf968a5548c3a8f",
+      "chunk_id": "chk_24548b74925082c5e732f262",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 15,
       "text": "IT IS NOT\nRADIOACTIVE.  As the warm, wet air from inside the cooling tower contacts the cooler, dryer air\nabove the cooling tower, the water vapor which cannot be held by the cooler air forms a visible cloud.\nThis is because the colder the air is, the lower its ability to hold water.  The released cloud of vapor will\nonly be visible until it is dispersed and absorbed by the air.  The graph above shows air’s ability to hold\nwater as air temperature increases.\n",
@@ -3353,12 +3353,12 @@
         }
       ],
       "token_estimate": 115,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_aa0d553d21660f199bb2da71",
+      "chunk_id": "chk_8e6971770942d11a2c480d87",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 16,
       "text": "The released cloud of vapor will\nonly be visible until it is dispersed and absorbed by the air.  The graph above shows air’s ability to hold\nwater as air temperature increases.\n100% RELATIVE HUMIDITY\n\nPRESSURIZED WATER REACTOR PLANT LAYOUT\nCONTAINMENT BUILDING\nREACTOR\nCOOLANT SYSTEM\nMSR\nS/G\nELECTRIC\nGENERATOR\nHP\nLP\nP\nZ\nR\nCOOLING TOWER\nMAIN\nTURBINE\nMAIN\nCONDENSER\nCO R E\nRHR\nHX\nRCP\nFW\nHTR\nRHR\nPUMP\nCONDENSATE\nPUMP\nPUMP\nMAIN FEED\nCIRC. WATER\nPUMP\nCONTAINMENT\nSUMP\nTURBINE BUILDING\nAUXILIARY BUILDING\nThe major structures at a pressurized water reactor plant are:\n•\nThe containment building, which houses the reactor and its high pressure steam\ngenerating equipment;\n•\nThe turbine building, which houses the steam turbines, condensers, and the electrical\ngenerator; and\n•\nThe auxiliary building, which houses normal and emergency support systems (such as\nthe residual heat removal (RHR) system, fuel handling and storage equipment,\nlaboratories, maintenance areas, and the control room).\nDepending upon the plant location and environmental regulations, there may or may not be a cooling\ntower to remove the excess heat from the facility.\n\n",
@@ -3712,12 +3712,12 @@
         }
       ],
       "token_estimate": 284,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     },
     {
       "schema_version": "1.0.0",
-      "chunk_id": "chk_5548c933566212602d43340f",
+      "chunk_id": "chk_9c6e9889881bbd0088c3a6a7",
       "document_id": "doc_72f2433a1e2f2e6340f14040",
       "ordinal": 17,
       "text": "Depending upon the plant location and environmental regulations, there may or may not be a cooling\ntower to remove the excess heat from the facility.\n\nContainment/Drywell\nReactor\nVessel\nSteam\nTurbine Building\nLine\nThrottle\nElectrical\nGenerator\nValve\nSteam Dryer\n&\nMoisture\nSeparator\nTurbine\nReactor Core\nCondenser\nJet Pump\nTo/From\nRiver\nRecirculation\nPump\nPump\nContainment Suppression Chamber\nThe major structures at a boiling water reactor plant are:\n•\nThe primary containment, which includes the suppression chamber, and houses the\nreactor and recirculation pumps;\n•\nThe reactor building (secondary containment), which surrounds the primary containment\nand serves many of the same functions as a pressurized water reactor’s auxiliary building;\nand\n•\nThe turbine building.\nDepending upon the plant location, there may or may not be a cooling tower to remove excess heat from\nthe facility.\n\n",
@@ -3981,8 +3981,8 @@
         }
       ],
       "token_estimate": 222,
-      "chunker_config_id": "cfg_821e9f258539",
-      "chunker_version": "refchunk-3.0.0"
+      "chunker_config_id": "cfg_baa3dd28b8db",
+      "chunker_version": "refchunk-3.1.0"
     }
   ]
 }
