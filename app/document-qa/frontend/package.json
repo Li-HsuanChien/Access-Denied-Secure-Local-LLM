@@ -18,7 +18,10 @@
 		"build:react": "npm run build",
 		"preview:react": "npm run preview",
 		"check:react": "npm run check",
-		"test:react": "npm run test:frontend"
+		"test:react": "npm run test:frontend",
+		"prototype": "vite --config prototypes/ui-revamp/vite.config.ts",
+		"prototype:build": "vite build --config prototypes/ui-revamp/vite.config.ts",
+		"prototype:check": "tsc --noEmit -p prototypes/ui-revamp/tsconfig.json"
 	},
 	"dependencies": {
 		"@codemirror/autocomplete": "6.20.1",
