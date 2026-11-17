@@ -66,7 +66,7 @@ The user explicitly selected `gpt-6.1-sol` to replace unavailable Terra for shel
 
 ## Run
 
-Use Node 20–22 and npm 10 or newer. From the repository root, `./start.sh` or `python3 launch.py` starts the existing interactive development launcher. On Windows, use `start.cmd`.
+Use Node 20–24 and npm 10 or newer. From the repository root, `./start.sh` or `python3 launch.py` starts the existing interactive development launcher. On Windows, use `start.cmd`.
 
 For frontend commands:
 

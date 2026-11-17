@@ -10,9 +10,11 @@ import {
 	Button, ConfirmDialog, IconAlert, IconButton, IconCheck, IconEye, IconFile, IconMore, IconSearch, IconTrash,
 	IconUpload, IconX, Menu, Spinner, Switch, VisuallyHidden, formatBytes, useToast
 } from '../../design-system/react';
+import { GroupDialog, type GroupDialogValue } from './GroupDialog';
 import './LibraryPage.css';
 
 type LibraryDocument = LibraryState['versions'][number]['documents'][number];
+type LibraryGroup = LibraryState['groups'][number];
 type Phase = 'checking' | 'staged' | 'ready' | 'publishing' | 'failed' | 'cancelled' | 'done';
 
 /** Prefix of the coordinator's success notice after a publication completes. */
@@ -72,6 +74,10 @@ export function LibraryPage() {
 	const [menu, setMenu] = useState<{ id: string; anchor: HTMLElement } | null>(null);
 	const [pendingDelete, setPendingDelete] = useState<{ version: string; id: string; title: string } | null>(null);
 	const [pendingToggle, setPendingToggle] = useState<string | null>(null);
+	const [groupMenu, setGroupMenu] = useState<{ id: string; anchor: HTMLElement } | null>(null);
+	const [groupEditor, setGroupEditor] = useState<GroupDialogValue | null>(null);
+	const [pendingGroupDelete, setPendingGroupDelete] = useState<{ id: string; name: string } | null>(null);
+	const newGroupButton = useRef<HTMLButtonElement>(null);
 	const [doneVisible, setDoneVisible] = useState(() => state.notice.startsWith(PUBLISHED_NOTICE));
 	const [cancelRequested, setCancelRequested] = useState(false);
 
@@ -80,6 +86,15 @@ export function LibraryPage() {
 	const docs = active?.documents ?? [];
 	const enabledDocs = docs.filter(doc => doc.enabled !== false);
 	const enabledPages = enabledDocs.reduce((sum, doc) => sum + (doc.page_count ?? 0), 0);
+	const groups = useMemo(() => {
+		const enabled = new Map(docs.map(doc => [doc.document_id, doc.enabled !== false]));
+		return state.groups.map(group => {
+			const members = group.document_ids.filter(id => enabled.has(id));
+			const onCount = members.filter(id => enabled.get(id)).length;
+			// A group is on only when every member is on; one member off shows the whole group as off.
+			return { group, members, onCount, on: members.length > 0 && onCount === members.length };
+		});
+	}, [docs, state.groups]);
 	const shown = useMemo(() => {
 		const needle = filter.trim().toLowerCase();
 		return needle ? docs.filter(doc => `${documentTitle(doc)} ${doc.source_filename ?? ''}`.toLowerCase().includes(needle)) : docs;
@@ -259,6 +274,19 @@ export function LibraryPage() {
 		finally { if (mounted.current) setPendingToggle(null); }
 	}
 
+	async function toggleGroup(group: LibraryGroup, members: readonly string[], next: boolean) {
+		if (!active || state.busy || !members.length) return;
+		setPendingToggle(`group:${group.group_id}`);
+		try { await library.setDocumentsEnabled(active.version_id, members, next); }
+		finally { if (mounted.current) setPendingToggle(null); }
+	}
+
+	async function saveGroup(value: GroupDialogValue) {
+		await library.saveGroup(value.groupId, value.name, value.documentIds);
+		if (mounted.current) setGroupEditor(null);
+	}
+
+	const menuGroup = groupMenu ? state.groups.find(group => group.group_id === groupMenu.id) : undefined;
 	const menuDoc = menu ? docs.find(doc => doc.document_id === menu.id) : undefined;
 	const error = fileError || state.error;
 	// 'cancelled' only means a cancel was requested before the publication ended; the coordinator's own
@@ -452,6 +480,34 @@ export function LibraryPage() {
 			)}
 
 			{docs.length > 0 ? (
+				<>
+				<section className="lib-docs lib-groups" aria-labelledby="groups-title">
+					<div className="lib-docs-head">
+						<h2 id="groups-title" className="lib-section-title">Groups</h2>
+						<Button ref={newGroupButton} size="sm" variant="secondary" disabled={state.busy} onClick={() => setGroupEditor({ groupId: null, name: '', documentIds: [] })}>New group</Button>
+					</div>
+					{groups.length > 0 ? (
+						<ul className="lib-doc-list">
+							{groups.map(({ group, members, onCount, on }) => (
+								<li key={group.group_id} className="lib-doc" data-off={!on || undefined}>
+									<span className="lib-doc-icon" aria-hidden="true"><IconFile size={18} /></span>
+									<div className="lib-doc-main">
+										<p className="lib-doc-title lib-group-title">{group.name}</p>
+										<p className="lib-doc-meta">{members.length ? `${onCount} of ${plural(members.length, 'PDF', 'PDFs')} on` : 'No PDFs in your library'}</p>
+									</div>
+									<div className="lib-doc-toggle">
+										<span className="lib-doc-toggle-label" aria-hidden="true">{on ? 'All used' : 'Not all used'}</span>
+										<Switch checked={on} pending={pendingToggle === `group:${group.group_id}`} disabled={!members.length || (state.busy && pendingToggle !== `group:${group.group_id}`)} label={`Use group ${group.name} in answers`} onChange={next => void toggleGroup(group, members, next)} />
+									</div>
+									<IconButton size="sm" label={`More options for group ${group.name}`} icon={<IconMore size={16} />} aria-haspopup="menu" aria-expanded={groupMenu?.id === group.group_id} onClick={event => {
+										const anchor = event.currentTarget;
+										setGroupMenu(current => current?.id === group.group_id ? null : { id: group.group_id, anchor });
+									}} />
+								</li>
+							))}
+						</ul>
+					) : <p className="lib-doc-meta lib-groups-empty">Group PDFs to switch them on or off together.</p>}
+				</section>
 				<section className="lib-docs" aria-labelledby="in-library">
 					<div className="lib-docs-head">
 						<h2 id="in-library" className="lib-section-title">In your library</h2>
@@ -489,6 +545,7 @@ export function LibraryPage() {
 						{shown.length === 0 && <li className="lib-doc-empty">No documents match “{filter}”.</li>}
 					</ul>
 				</section>
+				</>
 			) : !loaded ? (
 				<p className="lib-loading" role="status"><Spinner size={16} /> Loading your library…</p>
 			) : !phase && (
@@ -512,6 +569,40 @@ export function LibraryPage() {
 						if (menuDoc && active) setPendingDelete({ version: active.version_id, id: menuDoc.document_id, title: documentTitle(menuDoc) });
 					} }
 				]}
+			/>
+			<Menu
+				label="Group options"
+				anchor={groupMenu?.anchor ?? null}
+				open={!!groupMenu && !!menuGroup}
+				onClose={() => setGroupMenu(null)}
+				items={[
+					{ label: 'Edit…', disabled: state.busy, onSelect: () => {
+						if (menuGroup) setGroupEditor({ groupId: menuGroup.group_id, name: menuGroup.name, documentIds: menuGroup.document_ids });
+					} },
+					{ label: 'Delete group…', icon: <IconTrash size={16} />, destructive: true, disabled: state.busy, onSelect: () => {
+						if (menuGroup) setPendingGroupDelete({ id: menuGroup.group_id, name: menuGroup.name });
+					} }
+				]}
+			/>
+			<GroupDialog
+				open={!!groupEditor}
+				initial={groupEditor}
+				documents={docs.map(doc => ({ id: doc.document_id, title: documentTitle(doc) }))}
+				busy={state.busy}
+				onCancel={() => setGroupEditor(null)}
+				onSave={saveGroup}
+			/>
+			<ConfirmDialog
+				open={!!pendingGroupDelete}
+				title="Delete this group?"
+				description={<><strong>{pendingGroupDelete?.name}</strong> will be removed. Its PDFs stay in your library with their current on/off settings.</>}
+				confirmLabel="Delete group"
+				onCancel={() => setPendingGroupDelete(null)}
+				onConfirm={async () => {
+					if (pendingGroupDelete) await library.deleteGroup(pendingGroupDelete.id);
+					setPendingGroupDelete(null);
+				}}
+				fallbackFocus={() => newGroupButton.current ?? addButton.current}
 			/>
 			<ConfirmDialog
 				open={!!pendingDelete}

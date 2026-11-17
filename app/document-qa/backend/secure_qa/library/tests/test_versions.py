@@ -126,6 +126,50 @@ class VersionsTest(unittest.TestCase):
                 self.versions.delete_document(version_id, doc_id, confirmed=True)
         self.assertTrue(self.versions.check_integrity().ok)
 
+    def test_groups_save_edit_list_delete_and_survive_publication(self):
+        chunks, docs = synthetic()
+        version = self.versions.publish(chunks, docs)
+        a, b = docs[0]["document_id"], docs[1]["document_id"]
+        group = self.versions.save_group(None, "  Safety  ", [a, b, a])
+        self.assertEqual((group["name"], group["document_ids"]), ("Safety", [a, b]))
+        self.versions.save_group(group["group_id"], "Safety rules", [a, b])
+        self.assertEqual(self.versions.listing()["groups"], [{"group_id": group["group_id"], "name": "Safety rules", "document_ids": [a, b]}])
+        self.reopen()
+        appended = self.versions.publish([], [], append=True, remove_document=b)  # deletion keeps the group, drops the member
+        self.assertEqual(self.versions.listing()["groups"][0]["document_ids"], [a])
+        self.assertEqual(len(self.versions.versions()), 1, "groups never create versions")
+        self.assertTrue(self.versions.delete_group(group["group_id"]))
+        self.assertEqual(self.versions.listing()["groups"], [])
+        self.assertEqual(self.versions.active().version_id, appended.version_id)
+        self.assertNotEqual(appended.version_id, version.version_id)
+
+    def test_group_validation_rejects_bad_names_ids_and_unknown_groups(self):
+        version = self.versions.publish(*synthetic())
+        document_id = next(iter(version.documents))
+        for name, ids in [("", [document_id]), ("x" * 81, [document_id]), ("ok", []), ("ok", [1])]:
+            with self.assertRaises(ValueError):
+                self.versions.save_group(None, name, ids)
+        with self.assertRaises(LookupError):
+            self.versions.save_group(None, "ok", ["missing"])
+        with self.assertRaises(LookupError):
+            self.versions.save_group("nope", "ok", [document_id])
+        with self.assertRaises(LookupError):
+            self.versions.delete_group("nope")
+        self.assertEqual(self.versions.listing()["groups"], [])
+
+    def test_batch_switch_is_atomic(self):
+        version = self.versions.publish(*synthetic())
+        ids = list(version.documents)
+        self.versions.set_documents_enabled(version.version_id, ids, False)
+        self.assertTrue(all(not self.versions.document_enabled(version.version_id, d) for d in ids))
+        with self.assertRaises(LookupError):
+            self.versions.set_documents_enabled(version.version_id, [ids[0], "missing"], True)
+        self.assertFalse(self.versions.document_enabled(version.version_id, ids[0]), "a stale id changes nothing")
+        self.versions.set_documents_enabled(version.version_id, ids, True)
+        self.assertTrue(all(self.versions.document_enabled(version.version_id, d) for d in ids))
+        with self.assertRaises(ValueError):
+            self.versions.set_documents_enabled(version.version_id, ids, "false")
+
     def test_failed_delete_preserves_library_and_selection(self):
         version = self.versions.publish(*synthetic())
         document_id = next(iter(version.documents))

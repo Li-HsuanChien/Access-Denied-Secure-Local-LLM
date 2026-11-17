@@ -83,6 +83,6 @@ Several local multimodal models and compression levels may be evaluated. The dep
 - Multi-device deployment
 - Integration with live sensitive systems
 
-In Knowledge Collections, uploads add PDFs to the library. Each PDF has a persistent on/off control for use in future answers and a Delete action requiring explicit confirmation. Disabled PDFs remain available for preview; deleting removes the PDF and its searchable content. Snapshot rollback is no longer a user-facing library workflow.
+In Knowledge Collections, uploads add PDFs to the library. Each PDF has a persistent on/off control for use in future answers and a Delete action requiring explicit confirmation. PDFs can also be collected into named groups (a PDF may be in several). A group's switch turns all of its PDFs on or off together; a group shows as on only when every PDF in it is on, so switching a partly-off group on turns all of its PDFs on. Deleting a group never deletes its PDFs. Disabled PDFs remain available for preview; deleting removes the PDF and its searchable content. Snapshot rollback is no longer a user-facing library workflow.
 
 Normal chats save to local history when persistence is enabled. Users can explicitly start a temporary chat with a frontend flag that defaults to off. Temporary chats remain only in the current view, never save turns or answers to local history, and currently do not provide follow-up memory. Starting a saved chat exits temporary mode.

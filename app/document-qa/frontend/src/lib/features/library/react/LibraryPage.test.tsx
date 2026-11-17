@@ -197,3 +197,58 @@ it('turns a PDF off through the host, keeps it previewable, and requires confirm
 	fireEvent.click(within(await screen.findByRole('alertdialog')).getByRole('button', { name: 'Delete document' }));
 	await waitFor(() => expect(runtime.services.library.deleteDocument).toHaveBeenCalledWith('v1', 'doc1', true));
 });
+
+function groupLibrary(enabled: [boolean, boolean], groups = [{ group_id: 'g1', name: 'Policies', document_ids: ['doc1', 'doc2'] }]) {
+	return (services: Services) => {
+		services.library.versions = vi.fn(async () => ({ active: 'v1', groups, versions: [{ version_id: 'v1', status: 'active', created_at: '', document_count: 2, chunk_count: 4, documents: [
+			{ document_id: 'doc1', source_filename: 'a.pdf', display_title: 'Alpha', page_count: 1, enabled: enabled[0] },
+			{ document_id: 'doc2', source_filename: 'b.pdf', display_title: 'Beta', page_count: 1, enabled: enabled[1] }
+		] }] }));
+		services.library.setDocumentsEnabled = vi.fn(async (_v, _ids, on) => ({ enabled: on }));
+		services.library.saveGroup = vi.fn(async (id, name, ids) => ({ group: { group_id: id ?? 'g-new', name, document_ids: ids } }));
+		services.library.deleteGroup = vi.fn(async () => ({ deleted: true }));
+	};
+}
+
+it('shows a group as off when any member is off, and switching it on turns every member on in one batch', async () => {
+	const runtime = setup(false, groupLibrary([true, false]));
+	const groupSwitch = await screen.findByRole('switch', { name: 'Use group Policies in answers' });
+	expect(groupSwitch.getAttribute('aria-checked')).toBe('false');
+	expect(screen.getByText('1 of 2 PDFs on')).toBeTruthy();
+	fireEvent.click(groupSwitch);
+	await waitFor(() => expect(runtime.services.library.setDocumentsEnabled).toHaveBeenCalledWith('v1', ['doc1', 'doc2'], true));
+	await screen.findByText('Group is on for future answers.');
+});
+
+it('shows a group as on only when every member is on, and switching it off turns them all off', async () => {
+	const runtime = setup(false, groupLibrary([true, true]));
+	const groupSwitch = await screen.findByRole('switch', { name: 'Use group Policies in answers' });
+	expect(groupSwitch.getAttribute('aria-checked')).toBe('true');
+	fireEvent.click(groupSwitch);
+	await waitFor(() => expect(runtime.services.library.setDocumentsEnabled).toHaveBeenCalledWith('v1', ['doc1', 'doc2'], false));
+	await screen.findByText('Group is off for future answers. Preview remains available.');
+});
+
+it('creates a group from a name and chosen PDFs, and deletes a group only after confirmation', async () => {
+	const runtime = setup(false, groupLibrary([true, true], []));
+	fireEvent.click(await screen.findByRole('button', { name: 'New group' }));
+	const dialog = await screen.findByRole('dialog', { name: 'New group' });
+	const save = within(dialog).getByRole('button', { name: 'Save group' }) as HTMLButtonElement;
+	expect(save.disabled).toBe(true);
+	fireEvent.change(within(dialog).getByLabelText('Group name'), { target: { value: ' Reports ' } });
+	fireEvent.click(within(dialog).getByLabelText('Beta'));
+	expect(save.disabled).toBe(false);
+	fireEvent.click(save);
+	await waitFor(() => expect(runtime.services.library.saveGroup).toHaveBeenCalledWith(null, 'Reports', ['doc2']));
+	await waitFor(() => expect(screen.queryByRole('dialog', { name: 'New group' })).toBeNull());
+});
+
+it('removes a group without touching its PDFs after confirmation', async () => {
+	const runtime = setup(false, groupLibrary([true, false]));
+	fireEvent.click(await screen.findByRole('button', { name: 'More options for group Policies' }));
+	fireEvent.click(await screen.findByRole('menuitem', { name: 'Delete group…' }));
+	expect(runtime.services.library.deleteGroup).not.toHaveBeenCalled();
+	fireEvent.click(within(await screen.findByRole('alertdialog', { name: 'Delete this group?' })).getByRole('button', { name: 'Delete group' }));
+	await waitFor(() => expect(runtime.services.library.deleteGroup).toHaveBeenCalledWith('g1'));
+	expect(runtime.services.library.setDocumentsEnabled).not.toHaveBeenCalled();
+});

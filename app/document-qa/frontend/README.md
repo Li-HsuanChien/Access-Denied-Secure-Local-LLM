@@ -43,7 +43,7 @@ In this mode the host loads the staged local embedding model from `models/all-Mi
 
 ## Commands
 
-Use Node.js 20–22 and npm 10 or newer. The canonical commands are:
+Use Node.js 20–24 and npm 10 or newer. The canonical commands are:
 
 ```sh
 npm run dev:qa       # loopback Vite server at 127.0.0.1:5173

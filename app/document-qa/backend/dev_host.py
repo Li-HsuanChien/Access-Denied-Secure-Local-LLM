@@ -75,6 +75,10 @@ OPERATIONS = {
     "library.versions": ({}, ()),
     "library.set_document_enabled": ({"version_id": str, "document_id": str, "enabled": bool}, ("version_id", "document_id", "enabled")),
     "library.delete_document": ({"version_id": str, "document_id": str, "confirmed": bool}, ("version_id", "document_id", "confirmed")),
+    # Document groups: stored in the library catalog; a group switch is one atomic batch write (no new version).
+    "library.set_documents_enabled": ({"version_id": str, "document_ids": list, "enabled": bool}, ("version_id", "document_ids", "enabled")),
+    "library.save_group": ({"group_id": str, "name": str, "document_ids": list}, ("name", "document_ids")),
+    "library.delete_group": ({"group_id": str}, ("group_id",)),
     "library.rollback": ({}, ()),
     "library.integrity": ({}, ()),
     "history.save": ({"conversation_id": str, "title": str, "answer": dict}, ("conversation_id", "title", "answer")),
@@ -354,7 +358,8 @@ class Handler(BaseHTTPRequestHandler):
         if problem:
             return self._error(400, request_id, "invalid_request", problem, "See the request envelope in dev_host.py.")
         exclusive = body["operation"] in {"answering.ask", "library.publish", "library.rollback",
-                                            "library.set_document_enabled", "library.delete_document"}
+                                            "library.set_document_enabled", "library.delete_document",
+                                            "library.set_documents_enabled", "library.save_group", "library.delete_group"}
         if exclusive and not self.server.library_job.acquire(blocking=False):
             return self._error(409, request_id, "busy", "Another library or answer job is running.", "Wait for it to finish and try again.")
         try:
@@ -428,6 +433,21 @@ class Handler(BaseHTTPRequestHandler):
             answer.warnings.append(Notice("history_save_failed", "This answer is available here, but could not be saved to local history."))
         return answer
 
+    @staticmethod
+    def _group_operation(versions, operation: str, payload: dict) -> dict:
+        """Thin dispatch to the Library's group interface; validation lives in CollectionVersions."""
+        try:
+            if operation == "library.set_documents_enabled":
+                enabled = versions.set_documents_enabled(payload["version_id"], payload["document_ids"], payload["enabled"])
+                return {"enabled": enabled}
+            if operation == "library.save_group":
+                return {"group": versions.save_group(payload.get("group_id"), payload["name"], payload["document_ids"])}
+            return {"deleted": versions.delete_group(payload["group_id"])}
+        except LookupError as exc:
+            raise LibraryRequestError("stale_document", str(exc), "Refresh Knowledge Collections and try again.") from None
+        except ValueError as exc:
+            raise LibraryRequestError("invalid_request", str(exc), "Check the group name and selected PDFs.", 400) from None
+
     def _library(self, request_id: str, operation: str, payload: dict) -> None:
         host = self.server
         try:
@@ -449,6 +469,8 @@ class Handler(BaseHTTPRequestHandler):
                 except LookupError as exc:
                     raise LibraryRequestError("stale_document", str(exc), "Refresh Knowledge Collections and try again.") from None
                 result = {"enabled": enabled}
+            elif operation in ("library.set_documents_enabled", "library.save_group", "library.delete_group"):
+                result = self._group_operation(host.versions, operation, payload)
             elif operation == "library.delete_document":
                 if not payload["confirmed"]:
                     raise LibraryRequestError("confirmation_required", "Confirm deletion before removing this PDF.", "Review the PDF name and confirm Delete.")

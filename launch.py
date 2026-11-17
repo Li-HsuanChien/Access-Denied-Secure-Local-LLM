@@ -158,23 +158,23 @@ def check_prerequisites() -> None:
     npm = shutil.which("npm")
     if not node or not npm:
         hint = {
-            "nt": "Install Node.js 20-22 from https://nodejs.org/ and reopen the terminal.",
-            "darwin": "Install Node.js 20-22: `brew install node@22`, or from https://nodejs.org/.",
-        }.get(sys.platform, "Install Node.js 20-22 from your package manager or https://nodejs.org/.")
+            "nt": "Install Node.js 20-24 from https://nodejs.org/ and reopen the terminal.",
+            "darwin": "Install Node.js 20-24: `brew install node@22`, or from https://nodejs.org/.",
+        }.get(sys.platform, "Install Node.js 20-24 from your package manager or https://nodejs.org/.")
         fail(f"Node.js and npm are required for the frontend but were not found on PATH.\n    {hint}")
     try:
         result = subprocess.run([node, "--version"], capture_output=True, text=True)
         if result.returncode != 0:
-            fail("Could not read the Node.js version. Reinstall Node.js 20-22 and try again.")
+            fail("Could not read the Node.js version. Reinstall Node.js 20-24 and try again.")
         ver = result.stdout.strip()
         match = re.fullmatch(r"v?(\d+)\.\d+\.\d+", ver)
-        if not match or not 20 <= int(match.group(1)) <= 22:
-            fail(f"Node.js 20 through 22 is required; found {ver or 'an unknown version'}. Install Node.js 20-22 and run again.")
+        if not match or not 20 <= int(match.group(1)) <= 24:
+            fail(f"Node.js 20 through 24 is required; found {ver or 'an unknown version'}. Install Node.js 20-24 and run again.")
         NODE_EXECUTABLE = node
         NODE_VERSION = ver
         ok(f"Node.js {ver}")
     except OSError as exc:
-        fail(f"Could not run Node.js ({exc}). Install Node.js 20-22 and try again.")
+        fail(f"Could not run Node.js ({exc}). Install Node.js 20-24 and try again.")
 
 
 # -------------------------------------------------- python environment --
@@ -213,7 +213,7 @@ def ensure_backend_deps(py: Path) -> None:
 def install_fingerprint(frontend_dir: Path, node_version: str, platform_name: str, architecture: str) -> str:
     """Hash exact manifests and runtime identity using unambiguous length-delimited fields."""
     match = re.fullmatch(r"v?(\d+)\.\d+\.\d+", node_version)
-    if not match or not 20 <= int(match.group(1)) <= 22:
+    if not match or not 20 <= int(match.group(1)) <= 24:
         raise ValueError(f"Unsupported Node.js version for frontend install receipt: {node_version}")
     fields = (
         str(INSTALL_RECEIPT_FORMAT).encode(),

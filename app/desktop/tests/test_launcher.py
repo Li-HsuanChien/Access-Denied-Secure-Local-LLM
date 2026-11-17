@@ -140,9 +140,18 @@ class FrontendInstallReceiptTests(unittest.TestCase):
     def test_unsupported_node_major_is_rejected_during_prerequisite_check(self):
         with patch.object(launcher, "step"), patch.object(launcher, "ok"), patch.object(launcher, "fail", side_effect=SystemExit(1)):
             with patch.object(launcher.shutil, "which", side_effect=("/node", "/npm")):
-                with patch.object(launcher.subprocess, "run", return_value=SimpleNamespace(returncode=0, stdout="v23.0.0")):
+                with patch.object(launcher.subprocess, "run", return_value=SimpleNamespace(returncode=0, stdout="v25.0.0")):
                     with self.assertRaises(SystemExit):
                         launcher.check_prerequisites()
+
+    def test_node_24_is_accepted_by_prerequisite_check_and_install_receipt(self):
+        with patch.object(launcher, "step"), patch.object(launcher, "ok"), patch.object(launcher, "fail", side_effect=SystemExit(1)):
+            with patch.object(launcher.shutil, "which", side_effect=("/node", "/npm")):
+                with patch.object(launcher.subprocess, "run", return_value=SimpleNamespace(returncode=0, stdout="v24.16.0")):
+                    launcher.check_prerequisites()
+        self.assertTrue(launcher.install_fingerprint(self.frontend, "v24.16.0", "win32", "AMD64"))
+        with self.assertRaises(ValueError):
+            launcher.install_fingerprint(self.frontend, "v25.0.0", "win32", "AMD64")
 
     def test_windows_npm_command_construction_is_preserved(self):
         with patch.object(launcher, "IS_WINDOWS", True):

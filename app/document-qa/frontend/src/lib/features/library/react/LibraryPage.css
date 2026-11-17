@@ -81,6 +81,16 @@
 .lib-doc-title:hover { text-decoration: underline; text-underline-offset: 3px; text-decoration-color: var(--line-strong); }
 .lib-doc-title:focus-visible { outline: 2px solid var(--focus); outline-offset: 2px; }
 .lib-doc[data-off] .lib-doc-title { color: var(--ink-2); }
+.lib-group-title { margin: 0; cursor: default; }
+.lib-group-title:hover { text-decoration: none; }
+.lib-groups-empty { margin: 0; padding: 4px 8px; }
+.lib-group-form { display: flex; flex-direction: column; gap: 16px; }
+.lib-group-name { display: flex; flex-direction: column; gap: 6px; font-size: var(--text-sm); color: var(--ink-2); }
+.lib-group-name input { font: inherit; font-size: var(--text-md); color: var(--ink); background: var(--paper-raised); border: 1px solid var(--line-strong); border-radius: 8px; padding: 8px 10px; }
+.lib-group-name input:focus-visible { outline: 2px solid var(--focus); outline-offset: 1px; }
+.lib-group-members { display: flex; flex-direction: column; gap: 10px; margin: 0; padding: 0; border: 0; max-height: 40vh; overflow-y: auto; }
+.lib-group-members legend { padding: 0; margin-bottom: 8px; font-size: var(--text-sm); color: var(--ink-2); }
+.lib-group-count { color: var(--ink-3); margin-left: 6px; }
 .lib-doc-meta { font-size: var(--text-sm); color: var(--ink-3); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
 .lib-doc-toggle { display: flex; align-items: center; gap: 10px; }
 .lib-doc-toggle-label { font-size: var(--text-sm); color: var(--ink-2); min-width: 7.5em; text-align: right; }

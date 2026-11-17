@@ -1,7 +1,7 @@
 /** Existing backend schema is authoritative. These exports do not alter its wire format. */
 export type { Answer, Citation, HealthStatus, HostError, AnsweringClient } from '../answering/types';
 export type { ConversationHistoryClient, SavedConversation } from '../history/historyClient';
-export type { LibraryClient, FileReview, CollectionVersion } from '../library/libraryClient';
+export type { LibraryClient, FileReview, CollectionVersion, DocumentGroup } from '../library/libraryClient';
 export type { SettingsClient, UserSettings } from '../settings/settingsClient';
 
 /** Views receive immutable data; presentation edits never mutate validated answers. */

@@ -308,6 +308,26 @@ class DevHostDocumentManagementTest(_Base, unittest.TestCase):
         self.assertEqual(self.op("library.set_document_enabled", target | {"enabled": True})[1]["error"]["code"], "stale_document")
         self.assertEqual(self.op("library.delete_document", target | {"confirmed": True})[1]["error"]["code"], "stale_document")
 
+    def test_groups_and_batch_switch_through_wire(self):
+        version_id = self.version.version_id
+        ids = sorted(self.version.documents)
+        status, body = self.op("library.save_group", {"name": "Policies", "document_ids": ids})
+        self.assertEqual(status, 200)
+        group = body["result"]["group"]
+        self.assertEqual(self.op("library.versions")[1]["result"]["groups"], [group])
+        self.assertEqual(self.op("library.set_documents_enabled", {"version_id": version_id, "document_ids": ids, "enabled": False})[1]["result"], {"enabled": False})
+        self.assertTrue(all(not d["enabled"] for d in self.op("library.versions")[1]["result"]["versions"][0]["documents"]))
+        stale = self.op("library.set_documents_enabled", {"version_id": version_id, "document_ids": [ids[0], "missing"], "enabled": True})
+        self.assertEqual((stale[0], stale[1]["error"]["code"]), (409, "stale_document"))
+        self.assertFalse(self.versions.document_enabled(version_id, ids[0]))
+        self.assertEqual(self.op("library.save_group", {"name": " ", "document_ids": ids})[1]["error"]["code"], "invalid_request")
+        self.assertEqual(self.op("library.set_documents_enabled", {"version_id": version_id, "document_ids": ids, "enabled": "true"})[0], 400)
+        self.assertEqual(self.op("library.save_group", group | {"name": "Renamed"})[1]["result"]["group"]["name"], "Renamed")
+        self.assertEqual(self.op("library.delete_group", {"group_id": group["group_id"]})[1]["result"], {"deleted": True})
+        self.assertEqual(self.op("library.delete_group", {"group_id": group["group_id"]})[1]["error"]["code"], "stale_document")
+        with self.server.library_job:
+            self.assertEqual(self.op("library.set_documents_enabled", {"version_id": version_id, "document_ids": ids, "enabled": True})[1]["error"]["code"], "busy")
+
     def test_job_gate_rejects_mutations_and_answers_and_releases_on_error(self):
         target = {"version_id": self.version.version_id, "document_id": next(iter(self.version.documents))}
         with self.server.library_job:
@@ -413,7 +433,7 @@ class DevHostEmptyLibraryTest(_Base, unittest.TestCase):
         shutil.rmtree(cls.dir, ignore_errors=True)
 
     def test_versions_rollback_and_integrity_with_nothing_published_are_actionable(self):
-        self.assertEqual(self.op("library.versions")[1]["result"], {"active": None, "versions": []})
+        self.assertEqual(self.op("library.versions")[1]["result"], {"active": None, "versions": [], "groups": []})
         self.assertEqual(self.op("library.rollback")[1]["error"]["code"], "no_previous_version")
         self.assertEqual(self.op("library.integrity")[1]["error"]["code"], "no_active_collection")
 

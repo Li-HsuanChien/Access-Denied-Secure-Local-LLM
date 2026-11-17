@@ -28,7 +28,7 @@ function services(): AppServices {
 			enabled: vi.fn(async () => true), setEnabled: vi.fn(async (v) => v)
 		},
 		library: {
-			setDocumentEnabled: vi.fn(), deleteDocument: vi.fn(), review: vi.fn(async () => ({ review_id: 'review-1', accepted: [{ name: 'a.pdf', size: 10 }],
+			setDocumentEnabled: vi.fn(), deleteDocument: vi.fn(), setDocumentsEnabled: vi.fn(), saveGroup: vi.fn(), deleteGroup: vi.fn(), review: vi.fn(async () => ({ review_id: 'review-1', accepted: [{ name: 'a.pdf', size: 10 }],
 				rejected: [], warning: null, requires_confirmation: false })),
 			publish: vi.fn(), status: vi.fn(async () => ({ status: 'running', stage: 'indexing', done: 1, total: 2 })),
 			cancel: vi.fn(async () => true), versions: vi.fn(async () => ({ active: null, versions: [] })),

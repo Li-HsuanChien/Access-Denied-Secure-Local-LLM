@@ -23,6 +23,7 @@ import json
 import os
 import shutil
 import threading
+import uuid
 from collections.abc import Iterable, Mapping, Sequence
 from dataclasses import asdict, dataclass, field
 from datetime import datetime, timezone
@@ -34,6 +35,7 @@ from .embedding import Embedder
 
 CATALOG_SCHEMA = "secure-qa-collections/1"
 COLLECTION_PREFIX = "secure_qa_"
+GROUP_NAME_MAX = 80
 SOURCES_DIR = "sources"  # <root>/sources/<version_id>/<document_id>.pdf — cached originals for citation viewing (ADR 0006)
 
 
@@ -138,7 +140,13 @@ class CollectionVersions:
                     "documents": [document | {"enabled": document["document_id"] not in disabled}
                                   for document in version.summary()["documents"]],
                 })
-            return {"active": catalog["active"], "versions": versions}
+            active = catalog["versions"].get(catalog["active"], {}).get("documents", {}) if catalog["active"] else {}
+            groups = sorted(
+                ({"group_id": group_id, "name": group["name"],
+                  "document_ids": [d for d in group["document_ids"] if d in active]}
+                 for group_id, group in catalog.get("document_groups", {}).items()),
+                key=lambda g: (g["name"].casefold(), g["group_id"]))
+            return {"active": catalog["active"], "versions": versions, "groups": groups}
 
     def open_active(self) -> ChromaStore:
         """A read-only store bound to the version that is active now.
@@ -162,19 +170,53 @@ class CollectionVersions:
         return document_id not in catalog.get("disabled_documents", {}).get(version_id, [])
 
     def set_document_enabled(self, version_id: str, document_id: str, enabled: bool) -> bool:
+        return self.set_documents_enabled(version_id, [document_id], enabled)
+
+    def set_documents_enabled(self, version_id: str, document_ids: Sequence[str], enabled: bool) -> bool:
+        """Switch several documents on or off in one atomic catalog write; a stale id changes nothing."""
         if type(enabled) is not bool:
             raise ValueError("enabled must be a boolean")
+        ids = _document_ids(document_ids)
         with self._lock:
             catalog = self._read_catalog()
-            self._require_current_document(catalog, version_id, document_id)
+            for document_id in ids:
+                self._require_current_document(catalog, version_id, document_id)
             selections = catalog.get("disabled_documents", {})
             disabled = set(selections.get(version_id, []))
             if enabled:
-                disabled.discard(document_id)
+                disabled -= set(ids)
             else:
-                disabled.add(document_id)
+                disabled |= set(ids)
             self._write_catalog(catalog | {"disabled_documents": selections | {version_id: sorted(disabled)}})
             return enabled
+
+    def save_group(self, group_id: str | None, name: str, document_ids: Sequence[str]) -> dict:
+        """Create (group_id=None) or replace a named group of active documents. Groups never create versions."""
+        if not isinstance(name, str) or not (name := name.strip()) or len(name) > GROUP_NAME_MAX:
+            raise ValueError(f"Group name must be 1-{GROUP_NAME_MAX} characters")
+        ids = _document_ids(document_ids)
+        with self._lock:
+            catalog = self._read_catalog()
+            groups = catalog.get("document_groups", {})
+            if group_id is None:
+                group_id = uuid.uuid4().hex
+            elif group_id not in groups:
+                raise LookupError("The group no longer exists. Refresh and try again.")
+            for document_id in ids:
+                self._require_current_document(catalog, catalog["active"], document_id)
+            group = {"name": name, "document_ids": ids}
+            self._write_catalog(catalog | {"document_groups": groups | {group_id: group}})
+            return {"group_id": group_id} | group
+
+    def delete_group(self, group_id: str) -> bool:
+        """Remove a group only; its documents and their on/off states are untouched."""
+        with self._lock:
+            catalog = self._read_catalog()
+            groups = dict(catalog.get("document_groups", {}))
+            if groups.pop(group_id, None) is None:
+                raise LookupError("The group no longer exists. Refresh and try again.")
+            self._write_catalog(catalog | {"document_groups": groups})
+            return True
 
     def delete_document(self, version_id: str, document_id: str, *, confirmed: bool = False) -> CollectionVersion:
         if confirmed is not True:
@@ -325,6 +367,7 @@ class CollectionVersions:
                 versions[old_active] = catalog["versions"][old_active] | {"status": "previous"}
             self._write_catalog({
                 "schema": CATALOG_SCHEMA,
+                "document_groups": catalog.get("document_groups", {}),
                 "disabled_documents": {
                     **({old_active: catalog.get("disabled_documents", {}).get(old_active, [])} if old_active else {}),
                     version_id: sorted(set(catalog.get("disabled_documents", {}).get(catalog["active"], [])) & set(version.documents)) if append else [],
@@ -471,6 +514,13 @@ class CollectionVersions:
 def _integrity(pairs: Iterable[tuple[str, str]]) -> str:
     lines = "\n".join(f"{cid} {checksum}" for cid, checksum in sorted(pairs))
     return hashlib.sha256(lines.encode("utf-8")).hexdigest()
+
+
+def _document_ids(document_ids: Sequence[str]) -> list[str]:
+    """A non-empty, de-duplicated list of document id strings, in the order given."""
+    if not isinstance(document_ids, (list, tuple)) or not document_ids or not all(isinstance(d, str) for d in document_ids):
+        raise ValueError("document_ids must be a non-empty list of document ids")
+    return list(dict.fromkeys(document_ids))
 
 
 def _now() -> str:

@@ -11,7 +11,7 @@ The one-command launcher creates the Python environment, installs backend and fr
 - **Windows:** double-click `start.cmd`, or run it from a terminal.
 - **macOS / Linux:** `./start.sh` (or `bash start.sh`).
 
-Requirements: Python 3.11+, Node.js 20–22, and npm 10+ on your PATH. The first run installs dependencies and takes a few minutes. The launcher records a manifest/runtime fingerprint in `node_modules`; it runs `npm ci` again when manifests, Node major version, platform, architecture, or required packages change. If you run `npm ci` manually, the next launcher run may perform one additional install to create its receipt. Setup downloads (pip, npm, and any weights you opt into) use the network; running services stay bound to `127.0.0.1`.
+Requirements: Python 3.11+, Node.js 20–24, and npm 10+ on your PATH. The first run installs dependencies and takes a few minutes. The launcher records a manifest/runtime fingerprint in `node_modules`; it runs `npm ci` again when manifests, Node major version, platform, architecture, or required packages change. If you run `npm ci` manually, the next launcher run may perform one additional install to create its receipt. Setup downloads (pip, npm, and any weights you opt into) use the network; running services stay bound to `127.0.0.1`.
 
 For this staged Apple-silicon machine, the faster real-model demo starts with
 `./app/desktop/start-demo-macos.command`. See the [demo runbook](docs/development/macos-text-demo.md)

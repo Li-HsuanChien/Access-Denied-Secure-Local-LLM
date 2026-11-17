@@ -1,4 +1,4 @@
-import type { CollectionVersion, FileReview, Immutable } from './wire';
+import type { CollectionVersion, DocumentGroup, FileReview, Immutable } from './wire';
 export interface SelectedPdf { readonly name: string; readonly size: number; readonly data: string }
 export interface Publication {
 	readonly requestId: string;
@@ -16,6 +16,7 @@ export interface LibraryState {
 	readonly busy: boolean;
 	readonly publication: Publication | null;
 	readonly versions: readonly Immutable<CollectionVersion>[];
+	readonly groups: readonly Immutable<DocumentGroup>[];
 	readonly notice: string;
 	readonly error: string;
 }
@@ -30,6 +31,10 @@ export interface Library {
 	rollback(): Promise<void>;
  setDocumentEnabled(versionId: string, documentId: string, enabled: boolean): Promise<void>;
  deleteDocument(versionId: string, documentId: string): Promise<void>;
+	/** One atomic batch: every listed document is switched together. */
+	setDocumentsEnabled(versionId: string, documentIds: readonly string[], enabled: boolean): Promise<void>;
+	saveGroup(groupId: string | null, name: string, documentIds: readonly string[]): Promise<void>;
+	deleteGroup(groupId: string): Promise<void>;
 	/** Reset non-job route state on exit; never removes an active publication. */
 	leave(): void;
 }

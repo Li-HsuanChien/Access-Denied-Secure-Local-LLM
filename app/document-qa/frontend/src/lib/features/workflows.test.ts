@@ -29,6 +29,22 @@ describe('feature workflow clients', () => {
 		expect(JSON.parse(String(vi.mocked(fetch).mock.calls[0][1]?.body)).payload).toEqual({ version_id: 'v1', document_id: 'doc1', confirmed: true });
 	});
 
+	it('sends group batches and group edits through Library operations', async () => {
+		const body = () => JSON.parse(String(vi.mocked(fetch).mock.calls[0][1]?.body));
+		hostReply('library.set_documents_enabled', { enabled: true });
+		await createLibraryClient().setDocumentsEnabled('v1', ['doc1', 'doc2'], true);
+		expect([body().operation, body().payload]).toEqual(['library.set_documents_enabled', { version_id: 'v1', document_ids: ['doc1', 'doc2'], enabled: true }]);
+		hostReply('library.save_group', { group: { group_id: 'g1', name: 'A', document_ids: ['doc1'] } });
+		await createLibraryClient().saveGroup(null, 'A', ['doc1']);
+		expect(body().payload).toEqual({ name: 'A', document_ids: ['doc1'] });
+		hostReply('library.save_group', { group: { group_id: 'g1', name: 'B', document_ids: ['doc1'] } });
+		await createLibraryClient().saveGroup('g1', 'B', ['doc1']);
+		expect(body().payload).toEqual({ group_id: 'g1', name: 'B', document_ids: ['doc1'] });
+		hostReply('library.delete_group', { deleted: true });
+		await createLibraryClient().deleteGroup('g1');
+		expect(body().payload).toEqual({ group_id: 'g1' });
+	});
+
 	it('opens saved conversations through the History interface', async () => {
 		hostReply('history.open', { conversation: { collection_version: 'v2', model_id: 'm1' } });
 		expect(await createHistoryClient().open('c1')).toMatchObject({ collection_version: 'v2', model_id: 'm1' });

@@ -4,7 +4,7 @@ import { createStore, errorMessage } from './store';
 export function createLibrary(services: AppServices) {
 	const store = createStore<LibraryState>({
 		selected: [], review: null, confirmed: false, attempted: false, busy: false,
-		publication: null, versions: [], notice: '', error: ''
+		publication: null, versions: [], groups: [], notice: '', error: ''
 	});
 	let poll: ReturnType<typeof setTimeout> | undefined;
 	let clock: ReturnType<typeof setInterval> | undefined;
@@ -21,7 +21,7 @@ export function createLibrary(services: AppServices) {
 		const read = ++versionRead;
 		try {
 			const result = await services.library.versions();
-			if (read === versionRead) store.update((s) => ({ ...s, versions: result.versions }));
+			if (read === versionRead) store.update((s) => ({ ...s, versions: result.versions, groups: result.groups ?? [] }));
 		} catch (e) { if (read === versionRead) fail(e); }
 	}
 	async function pollStatus(requestId: string) {
@@ -65,6 +65,15 @@ export function createLibrary(services: AppServices) {
   setDocumentEnabled(versionId: string, documentId: string, enabled: boolean) {
    return mutateDocument(() => services.library.setDocumentEnabled(versionId, documentId, enabled), enabled ? 'PDF is on for future answers.' : 'PDF is off for future answers. Preview remains available.');
   },
+		setDocumentsEnabled(versionId: string, documentIds: readonly string[], enabled: boolean) {
+			return mutateDocument(() => services.library.setDocumentsEnabled(versionId, [...documentIds], enabled), enabled ? 'Group is on for future answers.' : 'Group is off for future answers. Preview remains available.');
+		},
+		saveGroup(groupId: string | null, name: string, documentIds: readonly string[]) {
+			return mutateDocument(() => services.library.saveGroup(groupId, name, [...documentIds]), 'Group saved.');
+		},
+		deleteGroup(groupId: string) {
+			return mutateDocument(() => services.library.deleteGroup(groupId), 'Group deleted. Its PDFs are unchanged.');
+		},
   deleteDocument(versionId: string, documentId: string) {
    return mutateDocument(() => services.library.deleteDocument(versionId, documentId, true), 'PDF was deleted from the library.');
   },
