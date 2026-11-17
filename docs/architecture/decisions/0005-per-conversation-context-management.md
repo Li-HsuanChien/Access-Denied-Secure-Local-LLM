@@ -3,6 +3,8 @@
 **Status: active; reflected in the [System Design Document](../SDD.md) §4.2, §4.3.**
 **Date:** 2026-10-22.
 
+**Update 2026-11-17:** [ADR 0011](0011-text-answer-latency.md) supersedes model-generated summary maintenance with bounded deterministic exchange excerpts. Follow-up rewriting remains model-assisted. The original implementation called both rewrite and summary on follow-ups, despite the one-extra-generation intent below.
+
 ## Context
 
 The MVP answered each question standalone: the host sent only the current question to the

@@ -58,17 +58,34 @@ class MemoryTest(unittest.TestCase):
         self.assertIn("do not cite", block)
         self.assertIn("So far: dose limits.", block)
 
-    def test_summary_update_falls_back_to_heuristic_and_stays_bounded(self):
+    def test_summary_keeps_the_validated_answer_and_stays_bounded(self):
         answer = {"status": "answered", "documents": [{"text": "The limit is 20 mSv per year."}]}
         summary = m.update_summary(_BrokenRuntime(), "", "What is the dose limit?", answer)
         self.assertIn("dose limit", summary)
         self.assertIn("20 mSv", summary)
         self.assertLessEqual(len(summary), m.MAX_SUMMARY_CHARS)
 
-    def test_summary_update_uses_the_model_when_available(self):
-        runtime = _ScriptedRuntime("The analyst asked about dose limits; the assistant cited 20 mSv/year.")
-        summary = m.update_summary(runtime, "old", "q", {"status": "answered"})
-        self.assertEqual(summary, "The analyst asked about dose limits; the assistant cited 20 mSv/year.")
+    def test_summary_preserves_exchange_without_a_second_model_generation(self):
+        runtime = _ScriptedRuntime("Invented fact that must never enter conversation memory.")
+        summary = m.update_summary(runtime, "Earlier: fuel rods.", "How long are they?", {
+            "status": "answered", "documents": [{"text": "Approximately 12 feet long."}]})
+        self.assertIn("Earlier: fuel rods.", summary)
+        self.assertIn("How long are they?", summary)
+        self.assertIn("Approximately 12 feet long.", summary)
+        self.assertNotIn("Invented fact", summary)
+        self.assertEqual(runtime.calls, [], "Saving memory must not occupy the model slot after the answer")
+
+    def test_bounded_summary_retains_recent_exchanges_for_later_rewrite(self):
+        runtime = _ScriptedRuntime()
+        summary = ""
+        for i in range(20):
+            summary = m.update_summary(runtime, summary, f"Question {i} about fuel rods", {
+                "documents": [{"text": f"Answer {i}: approximately 12 feet long."}]})
+        self.assertLessEqual(len(summary), m.MAX_SUMMARY_CHARS)
+        self.assertIn("Question 19 about fuel rods", summary)
+        self.assertIn("Answer 19: approximately 12 feet long.", summary)
+        self.assertNotIn("Question 0 about fuel rods", summary)
+        self.assertEqual(runtime.calls, [])
 
 
 if __name__ == "__main__":

@@ -462,14 +462,17 @@ def choose_mode(forced: str | None) -> str:
     return "real" if ask("Enter 1 or 2", default="1") == "2" else "demo"
 
 
-def start_stack(mode: str, py: Path) -> None:
+def start_stack(mode: str, py: Path, *, runtime_config: Path | None = None) -> None:
     sup = Supervisor()
     host_cmd = [str(py), str(BACKEND_DIR / "dev_host.py")]
 
     if mode == "real":
         step("Starting the local AI runtime")
         # Bare `up` starts the loopback API server and blocks (no --chat = no interactive prompt).
-        sup.start("llama runtime", [str(venv_bin(py, "docqa-runtime")), "up"], cwd=RUNTIME_DIR)
+        runtime_cmd = [str(venv_bin(py, "docqa-runtime")), "up"]
+        if runtime_config is not None:
+            runtime_cmd += ["--config", str(runtime_config)]
+        sup.start("llama runtime", runtime_cmd, cwd=RUNTIME_DIR)
         if not wait_for(RUNTIME_URL, "llama runtime", timeout=240):
             sup.shutdown()
             fail("The model runtime did not become ready. See its output above.")

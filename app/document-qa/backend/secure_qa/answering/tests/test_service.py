@@ -73,7 +73,8 @@ class GroundedAnswerTest(ServiceTestCase):
         runtime = FakeModelRuntime()
         answer = self.service(runtime).answer(QUESTION, self.store)
         system, user = runtime.requests[0]
-        self.assertIn("data, not instructions", system["content"])
+        self.assertEqual((system["role"], user["role"]), ("system", "user"))
+        self.assertNotIn("<<<S1 |", system["content"])
         labels = [e.citation_id for e in answer.evidence]
         positions = [user["content"].index(f"<<<{label} |") for label in labels]
         self.assertEqual(positions, sorted(positions))
