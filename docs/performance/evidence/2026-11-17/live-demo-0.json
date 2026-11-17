@@ -1,0 +1,183 @@
+{
+  "elapsed_s": 5.104869125003461,
+  "resources": {
+    "peak_sampled_rss_bytes": 1970946048,
+    "peak_by_pid": {
+      "8009": 21479424,
+      "8075": 143032320,
+      "8029": 1806434304
+    },
+    "swap_before": {
+      "total": 7516192768,
+      "used": 6412894208,
+      "free": 1103298560,
+      "percent": 85.3,
+      "sin": 73164488704,
+      "sout": 98257059840
+    },
+    "swap_after": {
+      "total": 7516192768,
+      "used": 6385631232,
+      "free": 1130561536,
+      "percent": 85.0,
+      "sin": 73218113536,
+      "sout": 98288517120
+    },
+    "swap_in_bytes": 53624832,
+    "swap_out_bytes": 31457280
+  },
+  "response": {
+    "request_id": "latency-demo-0",
+    "operation": "answering.ask",
+    "result": {
+      "request_id": "latency-demo-0",
+      "question": "How long are the fuel rods in a reactor fuel assembly?",
+      "status": "answered",
+      "evidence_mode": "text",
+      "documents": [
+        {
+          "text": "Fuel rods in a reactor fuel assembly are approximately 12 feet long.",
+          "citation_ids": [
+            "S1",
+            "S2"
+          ]
+        }
+      ],
+      "general_knowledge": null,
+      "limitations": [],
+      "citations": [
+        {
+          "citation_id": "S1",
+          "document_id": "doc_72f2433a1e2f2e6340f14040",
+          "document_title": "Normal Nrc Reactor Concepts Ch01",
+          "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+          "page_start": 10,
+          "page_end": 10,
+          "pages": [
+            {
+              "page_number": 10,
+              "page_char_start": 505,
+              "page_char_end": 904,
+              "highlight_rects": [],
+              "coordinates_reliable": false,
+              "page_width": 612.0,
+              "page_height": 792.0
+            }
+          ],
+          "chunk_ids": [
+            "chk_ee78f760d7e1084b11c59504"
+          ],
+          "char_start": 5788,
+          "char_end": 6187,
+          "text_checksum_sha256": "09e9925318a2d69e0b97abf1a42646d667c46544360411950ef95fdac4876eb7",
+          "quote": "fuel rods are approximately 12 feet long and contain\na space at the top for the collection of any gases that are produced by the fission process.  These rods are\narranged in a square matrix ranging from 17 x 17 for pressurized water reactors to 8 x 8 for boiling water\nreactors.\nThe spacer grids separate the individual rods with pieces of sprung metal.  This provides the rigidity of\nthe assemblies",
+          "evidence_type": "text",
+          "score": 0.7552,
+          "rank": 1
+        },
+        {
+          "citation_id": "S2",
+          "document_id": "doc_72f2433a1e2f2e6340f14040",
+          "document_title": "Normal Nrc Reactor Concepts Ch01",
+          "source_filename": "normal_nrc_reactor_concepts_ch01.pdf",
+          "page_start": 10,
+          "page_end": 10,
+          "pages": [
+            {
+              "page_number": 10,
+              "page_char_start": 192,
+              "page_char_end": 584,
+              "highlight_rects": [],
+              "coordinates_reliable": false,
+              "page_width": 612.0,
+              "page_height": 792.0
+            }
+          ],
+          "chunk_ids": [
+            "chk_5a45b4d6aaa44d2659994731"
+          ],
+          "char_start": 5475,
+          "char_end": 5867,
+          "text_checksum_sha256": "bb5cd006f510bbf189e7cd5f3535985c9f8e95b4f48c00441c775c1055a23d07",
+          "quote": "assemblies consist of the same major\ncomponents.  These major components are the fuel rods, the spacer grids, and the upper and lower end\nfittings.  The fuel assembly drawing on page 1-11 shows these major components (pressurized water\nreactor fuel assembly).\nThe fuel rods contain the ceramic fuel pellets.  The fuel rods are approximately 12 feet long and contain\na space at the top for the",
+          "evidence_type": "text",
+          "score": 0.6588,
+          "rank": 2
+        }
+      ],
+      "evidence": [
+        {
+          "citation_id": "S1",
+          "chunk_id": "chk_ee78f760d7e1084b11c59504",
+          "document_id": "doc_72f2433a1e2f2e6340f14040",
+          "page_start": 10,
+          "page_end": 10,
+          "score": 0.7552,
+          "rank": 1,
+          "cited": true
+        },
+        {
+          "citation_id": "S2",
+          "chunk_id": "chk_5a45b4d6aaa44d2659994731",
+          "document_id": "doc_72f2433a1e2f2e6340f14040",
+          "page_start": 10,
+          "page_end": 10,
+          "score": 0.6588,
+          "rank": 2,
+          "cited": true
+        },
+        {
+          "citation_id": "S3",
+          "chunk_id": "chk_c2cf78fd56313b75fb231ad9",
+          "document_id": "doc_72f2433a1e2f2e6340f14040",
+          "page_start": 10,
+          "page_end": 12,
+          "score": 0.5497,
+          "rank": 3,
+          "cited": false
+        },
+        {
+          "citation_id": "S4",
+          "chunk_id": "chk_13f2c0f37484281743db182e",
+          "document_id": "doc_72f2433a1e2f2e6340f14040",
+          "page_start": 10,
+          "page_end": 11,
+          "score": 0.5328,
+          "rank": 4,
+          "cited": false
+        },
+        {
+          "citation_id": "S5",
+          "chunk_id": "chk_2d944b1ae00a425be55f758a",
+          "document_id": "doc_72f2433a1e2f2e6340f14040",
+          "page_start": 9,
+          "page_end": 10,
+          "score": 0.5247,
+          "rank": 5,
+          "cited": false
+        }
+      ],
+      "warnings": [],
+      "model": {
+        "model_id": "qwen3-1.7b-q4_k_m",
+        "name": "Qwen3 1.7B",
+        "quant": "Q4_K_M",
+        "api_version": "2026-09-v1",
+        "runtime_version": "0.2.0",
+        "stub": false
+      },
+      "collection_version": "v0001",
+      "prompt_version": "e3-rag-2026-11-17.1",
+      "timing": {
+        "retrieval_ms": 272.1,
+        "generation_ms": 4007.7,
+        "total_ms": 4309.4,
+        "attempts": 1,
+        "prompt_tokens": 844,
+        "completion_tokens": 22
+      },
+      "error": null,
+      "schema_version": "1.0.0"
+    }
+  }
+}
