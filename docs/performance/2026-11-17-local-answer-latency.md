@@ -111,7 +111,7 @@ The first NRC call used 1,727 input tokens and 20 output tokens, versus 1,723/18
 
 The first 1.7B run passed 10/11 strict golden checks. Manual source review found the half-life answer was correct and cited the exact definition on DOE PDF page 36, while the fixture only allowed the summary definition on page 42. The existing `also_evidence` annotation was extended with the exact page-36 text; the original failed record is preserved, and the entire suite was rerun. This is a ground-truth annotation correction, not a weakened citation validator. Earlier notes about losing the half-life evidence with top two referred to the incomplete annotation; page 36 is also valid at rank two. No top-two inference result is claimed.
 
-Manual review also found a remaining 1.7B quality limitation: its follow-up states the correct 17×17 PWR matrix but adds an unnecessary caveat about the exact matrix size. The automated fact/citation checks do not catch that caveat. It is not a missing citation or fabricated matrix, but the smaller model is not claimed to have identical prose quality to 4B. The broader quality and visual-question gates remain open. The smaller candidates were tested with Metal, not qualified on CPU; the user requested the accelerated demo before that additional comparison.
+Manual review also found a remaining 1.7B quality limitation: its follow-up states the correct 17×17 PWR matrix but adds an unnecessary caveat about the exact matrix size. The automated fact/citation checks do not catch that caveat. It is not a missing citation or fabricated matrix, but the smaller model is not claimed to have identical prose quality to 4B. The broader quality and visual-question gates remain open. The initial smaller-candidate tests used Metal. The resumed CPU comparison below establishes additional latency and quality limitations.
 
 ## Measurement interpretation and remaining work
 
@@ -178,3 +178,35 @@ Early `baseline` startup is the sum of runtime, embedding and store timers becau
 Baseline source commit: `465c7f5c34c926a248257b4d29613dd4a629346f`. The harness freezes its old prompt/summary in `latency_baseline.py`; production uses `e3-rag-2026-11-17.1`. Earlier exploratory records retained the source prompt-version label despite an override; their saved `system_prompt` and SHA-256 identify the actual tested prompt. Later override runs use a `latency-<hash>` label. No report relies on the version label alone.
 
 Regression verification: answering, conversation/history, host integration and runtime evaluation tests passed **117 tests, 1 skipped**, with five third-party deprecation warnings. Existing citation correction, truncation, offline and concurrency checks remain; new tests cover no post-answer summary model call, bounded retained memory and saved history/citations. This is backend verification; no UI or visual-model qualification is claimed.
+
+## Resumed investigation: smaller CPU and two-passage Metal
+
+These serial runs used the same M3/16 GB machine under the user’s ongoing workload. The demo was stopped for measurement and restored afterward. Both used Qwen3-1.7B Q4_K_M with thinking disabled. CPU retained five passages; the Metal experiment supplied two. No production settings were changed.
+
+| Case | 1.7B CPU, five passages, s | 1.7B Metal, two passages, s |
+|---|---:|---:|
+| c01 | 30.545 | 3.821 |
+| warm | 1.406 | 0.685 |
+| c02 | 23.161 | 5.623 |
+| c03 | 29.776 | 5.640 |
+| c05 | 100.876 | 2.949 |
+| i01 | 120.300 | 2.584 |
+| o01 | 0.057 | 0.056 |
+| o03 | 0.066 | 0.048 |
+| missing | 160.714 | 4.308 |
+| fallback | 3.466 | 2.701 |
+| followup | 122.926 | 9.500 |
+
+CPU startup was 9.219 s and first NRC response 30.545 s (39.764 s together); peak sampled RSS was 2.535 GiB. Startup/request intervals recorded 1,112.3 MiB system swap-in and 2,144.1 MiB swap-out. Eight of eleven automated checks passed. Pressure and follow-up generation timed out; the missing-temperature case incorrectly presented a cited absence claim after one corrective call. Thus the CPU profile fails both reliable latency and refusal quality, despite correct supported answers on other cases.
+
+The half-life CPU answer took 100.876 s: 37.665 s prompt processing and 63.124 s generation for only 30 output tokens. This shows that generation stalls as well as prefill can dominate under the current workload. Retrieval and citation validation remain small. The observed swap is system-wide and does not prove a sole cause.
+
+Two-passage Metal startup was 11.722 s and peak RSS 2.156 GiB, with 21.4 MiB system swap-in and zero swap-out. NRC input was 799 tokens (versus 1,727 with five passages), and the response took 3.820 s versus 2.623 s in the earlier five-passage run. Different workload moments prevent attributing this difference to the setting. There is no consistent measured benefit sufficient to adopt top two.
+
+Ten of eleven strict checks passed for top two. The half-life failure was another incomplete expected-source annotation: its cited page-36 passage explicitly says activity falls by half in one half-life. Manual review accepts that citation; the strict failed record is preserved without changing the fixture again. Its follow-up retained the correct core matrix fact but added a misleading caveat treating the PWR/BWR values as a range for PWR alone.
+
+**Correction to the initial quality assessment:** the original 1.7B Metal fallback and both resumed configurations correctly named France but fabricated the opponent, venue and, in some runs, date and score. The earlier “11 checks passed” describes automated checks, not complete semantic correctness. The fallback check only tests refusal status, labeling and absence of document claims; it does not verify general-knowledge facts. General knowledge off is recommended for a strictly document-grounded demo. No preference was silently changed. The supported NRC answer and source citations remain verified.
+
+The five-passage Metal demo remains selected. The original CPU default and 8 GB qualification gate remain unchanged. Further qualification needs repeated controlled measurements on the reference laptop, a larger corpus, and semantic evaluation of general answers and follow-up caveats. The current investigation does not establish reliable sub-30-second CPU performance.
+
+[CPU evidence](evidence/2026-11-17/qwen3-small-cpu.json), [two-passage Metal evidence](evidence/2026-11-17/qwen3-small-top2.json), and the updated CSV preserve every call, timeout, token count and resource measurement. Actual demo probes are saved as [first](evidence/2026-11-17/live-demo-0.json) and [repeat](evidence/2026-11-17/live-demo-1.json).

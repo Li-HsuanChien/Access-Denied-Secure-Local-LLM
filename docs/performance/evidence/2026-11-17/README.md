@@ -26,3 +26,5 @@ All questions, answers and quotes in these opt-in evaluation files come from pub
 [Flat measurements](measurements.csv) summarize per-request records. JSON preserves the separate usage/timing for each grounded, corrective, rewrite, summary and general fallback call. HTTP 200 can contain an application failure; inspect `answer.status` and call status, not transport success alone.
 
 A false golden `evidence_retrieved` check on a timeout means the final failed answer has no evidence, not necessarily that retrieval missed. Later records separately capture `retrieval.hits` and `expected_evidence_found`. Citation resolution checks source IDs, quotes, offsets and checksums; read the investigation for semantic review and missing-fact classification findings.
+
+Resumed comparisons: [smaller CPU](qwen3-small-cpu.json), [two-passage Metal](qwen3-small-top2.json). Public model provenance: [1.5B](small-model-provenance.json), [1.7B](qwen3-small-model-provenance.json). Actual demo: [first NRC request](live-demo-0.json), [repeat](live-demo-1.json). Automated fallback checks do not establish factual correctness; see the report’s corrected semantic assessment.

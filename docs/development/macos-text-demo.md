@@ -31,7 +31,7 @@ Verified public-fixture questions include:
 - Which companies manufactured pressurized water reactors in the United States?
 - What exact melting temperature does the NRC chapter give for the fuel rods?
 
-For unsupported-question demonstrations, disable General knowledge if the desired
+For a strictly document-grounded demo, keep General knowledge off: the smaller model fabricated details in the general-knowledge test despite labeling the answer correctly. For unsupported-question demonstrations, disable General knowledge if the desired
 behavior is a refusal. With it enabled, unsupported questions may receive visibly
 labeled general model knowledge without document citations, as designed.
 
