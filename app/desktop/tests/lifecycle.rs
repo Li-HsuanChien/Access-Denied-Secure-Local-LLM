@@ -51,3 +51,39 @@ fn readiness_reads_real_http_and_refuses_failed_health() {
         assert_eq!(result.is_ok(), status == 200, "HTTP {status}: {result:?}");
     }
 }
+
+#[test]
+fn runtime_startup_failure_shows_the_runtime_hint_and_ignores_other_files() {
+    let dir = std::env::temp_dir().join(format!("docqa-ready-{}", std::process::id()));
+    std::fs::create_dir_all(&dir).unwrap();
+    let file = dir.join("runtime-ready.json");
+
+    assert_eq!(
+        lifecycle::runtime_startup_failure(&file),
+        None,
+        "missing file"
+    );
+    for text in [
+        "{\"status\": \"err",
+        "{\"base_url\": \"http://127.0.0.1:8080\"}",
+        "{\"status\": \"error\", \"exit_code\": 3, \"error\": {\"code\": \"x\", \"message\": \"\", \"hint\": \"h\"}}",
+    ] {
+        std::fs::write(&file, text).unwrap();
+        assert_eq!(lifecycle::runtime_startup_failure(&file), None, "{text}");
+    }
+
+    std::fs::write(
+        &file,
+        r#"{"status": "error", "exit_code": 4, "error": {"code": "insufficient_ram",
+            "message": "Not enough free memory to load the model.",
+            "hint": "Close other apps\nand try again."}}"#,
+    )
+    .unwrap();
+    let shown = lifecycle::runtime_startup_failure(&file).unwrap();
+    assert_eq!(
+        shown,
+        "The local model could not start: Not enough free memory to load the model. \
+         Close other apps and try again. (error code: insufficient_ram)"
+    );
+    std::fs::remove_dir_all(&dir).unwrap();
+}

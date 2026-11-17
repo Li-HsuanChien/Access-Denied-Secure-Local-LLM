@@ -185,7 +185,7 @@ model is ready:
 On failure it prints `{"status": "error", "error": {code, message, hint}}` and exits with a non-zero code. Since
 2026-11-03, `--ready-file` also receives the failure, as `{"status": "error", "exit_code": N, "error": {code, message,
 hint}}`, for configuration errors as well as startup failures. A supervising app can read that file when the process
-exits and show the hint (`contract/ready-error.schema.json`).
+exits and show the hint (`contract/ready-error.schema.json`). The desktop shell does this since 2026-11-10.
 
 | Exit code | Meaning |
 |---|---|

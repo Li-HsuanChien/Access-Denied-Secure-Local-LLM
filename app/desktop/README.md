@@ -17,6 +17,9 @@ service startup, readiness, failure display and shutdown. Windows Job Objects
 stop the entire service tree when the desktop exits. The webview has no shell or
 filesystem capability. Ports 8764 (instance ownership), 8765 (host) and, for real
 mode, 8080 (runtime) must be available. Existing listeners cause a visible error.
+If the model runtime stops during startup, the shell reads the runtime's
+`runtime-ready.json` (in the data folder's `runtime/`) and shows its message,
+hint and error code, for example `insufficient_ram`, instead of a generic error.
 
 See [release instructions](../release/README.md) for the local build, acceptance
 commands, workflow triggers and real-model staging. The implementation decision

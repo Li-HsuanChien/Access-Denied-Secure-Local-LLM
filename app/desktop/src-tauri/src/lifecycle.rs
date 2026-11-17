@@ -181,6 +181,39 @@ pub fn health(port: u16) -> Result<serde_json::Value, String> {
     serde_json::from_str(body).map_err(|_| "Invalid health JSON".into())
 }
 
+/// Reads the runtime's `--ready-file` after it stopped during startup. The
+/// runtime writes `{"status": "error", "error": {code, message, hint}}`
+/// (contract/ready-error.schema.json); a missing, partial or success file
+/// gives `None`, so the caller keeps its generic message.
+pub fn runtime_startup_failure(ready_file: &Path) -> Option<String> {
+    let value: serde_json::Value = serde_json::from_slice(&fs::read(ready_file).ok()?).ok()?;
+    if value["status"] != "error" {
+        return None;
+    }
+    let field = |name: &str| {
+        let text = value["error"][name].as_str().unwrap_or("");
+        let words: Vec<&str> = text.split_whitespace().collect();
+        words
+            .join(" ")
+            .chars()
+            .filter(|c| !c.is_control())
+            .take(400)
+            .collect::<String>()
+    };
+    let (code, message, hint) = (field("code"), field("message"), field("hint"));
+    if message.is_empty() {
+        return None;
+    }
+    let mut text = format!("The local model could not start: {message}");
+    if !hint.is_empty() {
+        text.push_str(&format!(" {hint}"));
+    }
+    if !code.is_empty() {
+        text.push_str(&format!(" (error code: {code})"));
+    }
+    Some(text)
+}
+
 pub fn start(payload: &Path, data: &Path, cancel: &AtomicBool) -> Result<Services, String> {
     fs::create_dir_all(data).map_err(|_| "Cannot create the application data folder.")?;
     let mut services = Services::new()?;
@@ -210,6 +243,14 @@ pub fn start(payload: &Path, data: &Path, cancel: &AtomicBool) -> Result<Service
             let embeddings = runtime.join("embedding");
             let output = data.join("runtime");
             fs::create_dir_all(&output).map_err(|_| "Cannot create the runtime data folder.")?;
+            // A file left by an earlier launch must not explain this one.
+            let ready = output.join("runtime-ready.json");
+            if ready.exists() && fs::remove_file(&ready).is_err() {
+                return Err(
+                    "Cannot reset the runtime status file. Close other DocQA windows and restart."
+                        .into(),
+                );
+            }
             services.spawn(
                 &exe,
                 &[
@@ -225,10 +266,14 @@ pub fn start(payload: &Path, data: &Path, cancel: &AtomicBool) -> Result<Service
                     "127.0.0.1",
                     "--port",
                     "8080",
+                    "--ready-file",
+                    ready.to_str().ok_or("Invalid path")?,
                 ],
                 &output,
             )?;
-            services.wait(8080, false, cancel)?;
+            services
+                .wait(8080, false, cancel)
+                .map_err(|generic| runtime_startup_failure(&ready).unwrap_or(generic))?;
             services.spawn(
                 &exe,
                 &[
