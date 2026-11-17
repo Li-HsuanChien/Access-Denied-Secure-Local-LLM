@@ -2,6 +2,7 @@
 
 from docqa_runtime.bench import Thresholds, analyse, models_for_bench, run_matrix
 from docqa_runtime.evals import INJECTED_PASSAGE, ITEMS, eval_messages, score, summarise
+from docqa_runtime.prompts import SYSTEM_PROMPT
 
 BY_ID = {i.id: i for i in ITEMS}
 
@@ -22,7 +23,7 @@ L = "\nLimitations and uncertainty:\n"
 
 def test_prompt_is_the_product_format():
     system, user = eval_messages(BY_ID["remote-days"])
-    assert system["content"].startswith("You answer an analyst's question using numbered passages")
+    assert system == {"role": "system", "content": SYSTEM_PROMPT}
     assert user["content"].startswith("Passages:\n\n<<<S1 | handbook.pdf | page 12>>>")
     assert user["content"].endswith("Answer using the rules above.")
     inj = eval_messages(BY_ID["inject-allowance"])[1]["content"]

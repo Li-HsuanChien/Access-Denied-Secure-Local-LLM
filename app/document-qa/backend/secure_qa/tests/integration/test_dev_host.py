@@ -231,6 +231,24 @@ class DevHostTest(unittest.TestCase):
         finally:
             self.call("POST", "/v1/requests", {"request_id": "d", "operation": "history.delete", "payload": {"conversation_id": room}})
 
+    def test_saved_first_answer_does_not_generate_a_summary_and_still_saves_memory(self):
+        room = "summary_latency_regression"
+        before = len(self.runtime.requests)
+        try:
+            status, body, _ = self.ask(conversation_id=room, general_knowledge=False)
+            answer = body["result"]
+            self.assertEqual((status, answer["status"]), (200, "answered"))
+            self.assertEqual(len(self.runtime.requests) - before, answer["timing"]["attempts"])
+            _, opened, _ = self.call("POST", "/v1/requests", {
+                "request_id": "read", "operation": "history.open", "payload": {"conversation_id": room}})
+            conversation = opened["result"]["conversation"]
+            self.assertEqual([m["role"] for m in conversation["messages"]], ["user", "assistant"])
+            self.assertIn("occupational dose limit", conversation["summary"])
+            self.assertTrue(answer["citations"])
+        finally:
+            self.call("POST", "/v1/requests", {
+                "request_id": "delete", "operation": "history.delete", "payload": {"conversation_id": room}})
+
 
 FIXTURES = REPO_ROOT / "ingestion" / "fixtures"
 CORPUS_FILES = [FIXTURES / "normal" / "normal_nrc_reactor_concepts_ch01.pdf",

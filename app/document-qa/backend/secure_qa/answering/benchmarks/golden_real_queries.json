@@ -80,6 +80,13 @@
         "page": 42,
         "contains": "required for the activity to decrease to one-half its original value"
       },
+      "also_evidence": [
+        {
+          "source_filename": "large_doe_nuclear_physics_v1.pdf",
+          "page": 36,
+          "contains": "The radioactive half-life is defined as the amount of time required for the activity to decrease to one-half of its original value"
+        }
+      ],
       "answer_facts": [
         "one-half"
       ]

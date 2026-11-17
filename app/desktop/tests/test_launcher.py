@@ -149,5 +149,20 @@ class FrontendInstallReceiptTests(unittest.TestCase):
             self.assertEqual(launcher.npm_cmd("ci"), ["cmd", "/c", "npm", "ci"])
 
 
+class PreparedRuntimeProfileTests(unittest.TestCase):
+    def test_prepared_profile_uses_explicit_config_and_preserves_loopback_host(self):
+        profile = Path("/staged/runtime.demo-macos.toml")
+        py = Path("/staged/.venv/bin/python")
+        with patch.object(launcher, "Supervisor") as supervisor, \
+                patch.object(launcher, "wait_for", return_value=True), \
+                patch.object(launcher.webbrowser, "open"):
+            supervisor.return_value.first_exited.return_value = ("frontend", 0)
+            launcher.start_stack("real", py, runtime_config=profile)
+        calls = supervisor.return_value.start.call_args_list
+        self.assertEqual(calls[0].args[1], [str(py.parent / "docqa-runtime"), "up", "--config", str(profile)])
+        self.assertIn("http://127.0.0.1:8080", calls[1].args[1])
+        supervisor.return_value.shutdown.assert_called_once()
+
+
 if __name__ == "__main__":
     unittest.main()

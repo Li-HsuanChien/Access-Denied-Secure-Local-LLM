@@ -66,7 +66,7 @@ The module hides retrieval, relevance filtering, visual-evidence selection, page
 - Every claim labeled as document-supported cites retrieved evidence.
 - A supported document answer takes precedence over general knowledge. New responses never contain both document claims and general-knowledge text. General knowledge is an optional fallback when no validated document answer exists; it is visibly labeled and never receives document citations.
 - No more than two page images are supplied for automatic visual analysis.
-- Conversation memory (running summary and recent turns) is supplied to the model as delimited context only; it is never a citable passage, and citation validation is unchanged. Memory is bounded to a token budget so one turn costs at most one extra small generation (§12).
+- Conversation memory (running summary and recent turns) is supplied to the model as delimited context only; it is never a citable passage, and citation validation is unchanged. The running summary uses bounded deterministic excerpts of validated exchanges; only follow-up retrieval rewriting can add a memory-related model call ([ADR 0011](decisions/0011-text-answer-latency.md)). Memory is bounded to a token budget and adds at most one small generation per turn; citation correction and general fallback have independent limits (§12).
 
 #### 4.3 Conversation History
 
@@ -188,6 +188,8 @@ General model knowledge is enabled by default and may be disabled by the user. E
 
 The grounded generation requests document synthesis only. If it yields no validated claims and general knowledge is enabled, the workflow uses a general-only fallback. Citation-validation, truncation and other safety warnings remain visible. Existing saved payloads may contain both fields: presentation prefers document claims without rewriting the original record. Limits remain visible in the answer without mandatory competing section headings.
 
+The grounded prompt asks for direct, concise facts and only relevant limitations. Missing requested facts belong only in limitations, without document citations or a document-backed absence claim. Prompt version `e3-rag-2026-11-17.1` retains the same retrieval budget, output ceiling and citation-validation workflow ([ADR 0011](decisions/0011-text-answer-latency.md)).
+
 Every citation identifies the document and page and opens an anchored, non-modal quote pop-up showing the exact citation text as plain untrusted text. Escape, the close button and outside interaction dismiss it; keyboard dismissal returns focus to its trigger. PDF loading is deferred until Show document page opens the shared document viewer: a side panel at 1180px and wider, a full-screen dialog below that. When reliable text coordinates are available, the supporting passage is highlighted. Source pages are rendered client-side by the bundled pdf.js from the cached source PDF (fetched over the loopback `GET /v1/source` route), rather than rasterized to page images on the server ([ADR 0006](decisions/0006-cache-source-pdfs-for-citation-viewing.md)); the cited sentence is boxed from the stored `highlight_rects` when `coordinates_reliable`, else by matching the quote in the rendered text layer.
 
 After generation, the application verifies that document citations refer to evidence actually supplied to the model. Invalid or missing citations trigger one corrective generation attempt. If validation still fails, unsupported document claims are withheld and the interface explains the failure; correctly labeled general knowledge may remain.
@@ -266,7 +268,11 @@ Docker, self-updating behavior, and an internal web server are not required.
 - Stress-test collection: Up to 10,000 pages.
 - Visual evidence: At most two rendered page images per question.
 
+The explicitly selected [Apple-silicon text-demo profile](../development/macos-text-demo.md) uses a staged Qwen3-1.7B Q4_K_M model with Metal and thinking disabled ([ADR 0011](decisions/0011-text-answer-latency.md)). It does not replace the CPU reference/release configuration or qualify visual answering. Its prepared launcher performs no installs or downloads.
+
 The selected model must fit in memory with the desktop application and active document store. Functional compatibility is tested on all supported platforms; latency and peak-memory qualification occur on the reference laptop.
+
+The [17 November 2026 investigation](../performance/2026-11-17-local-answer-latency.md) records real-weight HTTP end-to-end timings, including saved-chat work, prompt processing, generation, validation, retries, additional calls, RSS and system swap. Its Apple M3/16 GB results are development measurements, not qualification of the 8 GB reference laptop. The existing answer wire timing covers the answering-service interval; it does not include host persistence after that interval.
 
 ### 13. Testing, Model Evaluation, and Acceptance
 

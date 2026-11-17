@@ -7,14 +7,14 @@ Modern conversational-RAG, not naive full-history replay:
 * a follow-up question is rewritten into a standalone retrieval query so that
   "and for workers?" still searches the collection well.
 
-Both the rewrite and the summary update are single short model calls that
-degrade gracefully to deterministic heuristics (and are skipped entirely when
-there is no prior context), so a thread never costs more than one extra small
-generation per turn and stays inside the one-question/8 GB budget (SDD §12).
+Only the follow-up rewrite calls the model, with a raw-question fallback on
+error and no call when there is no prior context. The running summary retains
+bounded excerpts of the question and validated answer deterministically. Saving
+memory therefore neither adds a second generation nor evicts the evidence
+prompt from the runtime's single slot (SDD §12; ADR 0011).
 
-The conversation block is context, never citable evidence: the system prompt
-and citation validation are unchanged, so every document-supported claim still
-cites a retrieved passage (SDD §7.3).
+The conversation block is context, never citable evidence: every
+document-supported claim must still cite a retrieved passage (SDD §7.3).
 """
 
 from __future__ import annotations
@@ -62,23 +62,12 @@ def rewrite_query(runtime, question: str, conversation: Conversation | None, *, 
 
 
 def update_summary(runtime, old_summary: str, question: str, answer: dict | None, *, max_tokens: int = 160) -> str:
-    """Fold the latest exchange into the running summary (heuristic on model error)."""
-    headline = _answer_headline(answer)
-    messages = [
-        {"role": "system", "content":
-            "You maintain a brief running summary of a conversation between an analyst and their document assistant. "
-            "Keep it under about 100 words, factual, and do not include citations or passage labels."},
-        {"role": "user", "content":
-            f"Current summary:\n{old_summary or '(none)'}\n\nNew exchange:\nQ: {_one_line(question)}\nA: {headline}\n\nUpdated summary:"},
-    ]
-    try:
-        text = runtime.complete(messages, max_tokens=max_tokens, temperature=0.0, seed=42).text
-        summary = " ".join(text.split()).strip()
-        if summary:
-            return summary[:MAX_SUMMARY_CHARS]
-    except Exception:
-        pass
-    return _heuristic_summary(old_summary, question, headline)
+    """Keep bounded exchange excerpts without generating new text.
+
+    ``runtime`` and ``max_tokens`` remain accepted for caller compatibility;
+    neither is used. Memory is context only, never a source of verified claims.
+    """
+    return _heuristic_summary(old_summary, question, _answer_headline(answer))
 
 
 def context_block(conversation: Conversation | None) -> str | None:
