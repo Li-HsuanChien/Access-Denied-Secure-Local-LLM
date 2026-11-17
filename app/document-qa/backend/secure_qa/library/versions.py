@@ -309,7 +309,24 @@ class CollectionVersions:
         can be opened in the source PDF later (ADR 0006). It is best-effort:
         documents without a provided source are simply not cached.
         """
-        chunks = list(chunks)
+        chunks, documents = list(chunks), list(documents)
+        options = dict(smoke_query=smoke_query, sources=sources, append=append, remove_document=remove_document)
+        with self._lock:
+            try:
+                return self._publish(chunks, documents, **options)
+            except PublishError as exc:
+                # shortcut: chromadb 1.5.9 intermittently loses a collection's in-process HNSW reader
+                # ("Nothing found on disk") while the files are intact; a fresh client reloads them.
+                # Retry once; drop this when the pinned chromadb fixes it.
+                if "Nothing found on disk" not in str(exc.__cause__ or ""):
+                    raise
+                self._client.close()
+                self._client = open_client(self.root / "chroma")
+                return self._publish(chunks, documents, **options)
+
+    def _publish(self, chunks: list[Chunk], documents: list[dict], *, smoke_query: str | None,
+                 sources: Mapping[str, str | Path | bytes] | None,
+                 append: bool, remove_document: str | None) -> CollectionVersion:
         incoming_chunks = list(chunks)
         records = {d["document_id"]: dict(d) for d in documents}
         with self._lock:
